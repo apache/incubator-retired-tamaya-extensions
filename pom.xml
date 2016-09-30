@@ -22,19 +22,20 @@ under the License.
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.apache</groupId>
-        <artifactId>apache</artifactId>
-        <version>18</version>
+        <groupId>org.apache.tamaya</groupId>
+        <artifactId>tamaya-all</artifactId>
+        <version>0.3-incubating-SNAPSHOT</version>
     </parent>
-    <groupId>org.apache.tamaya</groupId>
-    <artifactId>tamaya-all</artifactId>
-    <version>0.3-incubating-SNAPSHOT</version>
+
+    <groupId>org.apache.tamaya.ext</groupId>
+    <artifactId>tamaya-extensions-all</artifactId>
+
     <packaging>pom</packaging>
 
-    <name>Apache Tamaya</name>
-    <description>Apache Tamaya - Java Configuration</description>
+    <name>Apache Tamaya Extensions</name>
+    <description>Extension modules for Apache Tamaya</description>
     <url>https://tamaya.incubator.apache.org</url>
-    <inceptionYear>2014</inceptionYear>
+    <inceptionYear>2016</inceptionYear>
 
     <organization>
         <name>Apache Software Foundation</name>

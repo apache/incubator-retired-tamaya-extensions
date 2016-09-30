@@ -23,9 +23,10 @@ under the License.
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.apache.tamaya</groupId>
-        <artifactId>tamaya-all</artifactId>
+        <groupId>org.apache.tamaya.ext</groupId>
+        <artifactId>tamaya-extensions</artifactId>
         <version>0.3-incubating-SNAPSHOT</version>
+        <relativePath>..</relativePath>
     </parent>
 
     <artifactId>tamaya-extension-distribution</artifactId>
