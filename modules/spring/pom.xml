@@ -20,8 +20,8 @@ under the License.
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
+        <artifactId>tamaya-extensions</artifactId>
         <groupId>org.apache.tamaya.ext</groupId>
-        <artifactId>tamaya-integration</artifactId>
         <version>0.3-incubating-SNAPSHOT</version>
     </parent>
 
