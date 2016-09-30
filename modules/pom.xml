@@ -44,7 +44,6 @@ under the License.
         <module>integration</module>
 
         <module>json</module>
-        <module>mutable-config</module>
         <module>optional</module>
         <module>resolver</module>
         <module>resources</module>
