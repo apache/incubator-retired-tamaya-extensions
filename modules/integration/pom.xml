@@ -34,7 +34,6 @@ under the License.
         <module>spring</module>
         <module>cdi-se</module>
         <module>cdi</module>
-        <module>camel</module>
     </modules>
 
 </project>
