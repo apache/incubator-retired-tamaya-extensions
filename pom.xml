@@ -135,11 +135,6 @@ under the License.
     </mailingLists>
 
     <distributionManagement>
-        <site>
-            <id>apache-tamaya-website</id>
-            <name>Apache Tamaya Website</name>
-            <url>scm:svn:https://svn.apache.org/repos/asf/incubator/tamaya/site/trunk</url>
-        </site>
     </distributionManagement>
 
     <ciManagement>
