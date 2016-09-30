@@ -33,7 +33,6 @@ under the License.
     <packaging>pom</packaging>
 
     <modules>
-        <module>builder</module>
         <module>classloader-support</module>
         <module>collections</module>
         <module>events</module>
