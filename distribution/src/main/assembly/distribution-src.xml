@@ -36,8 +36,6 @@ under the License.
                 <exclude>**/target/**</exclude>
                 <exclude>**/*.iml</exclude> <!-- IntelliJ IDEA module file -->
                 <exclude>**/.idea/**</exclude> <!-- IntelliJ project directory -->
-                <exclude>**/jqassistant.datastore/**</exclude> <!-- JQAssistant data directory -->
-                <exclude>**/sandbox/**</exclude> <!-- Sandbox modules are not released -->
                 <exclude>**/*.log</exclude>
                 <exclude>**/*.jar</exclude>
                 <exclude>**/pom.xml.releaseBackup</exclude>
