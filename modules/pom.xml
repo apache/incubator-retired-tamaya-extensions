@@ -47,7 +47,6 @@ under the License.
         <module>optional</module>
         <module>resolver</module>
         <module>resources</module>
-        <module>server</module>
         <module>spi-support</module>
         <module>yaml</module>
     </modules>
