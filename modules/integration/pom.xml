@@ -37,7 +37,6 @@ under the License.
         <module>osgi</module>
         <module>camel</module>
         <module>etcd</module>
-        <module>consul</module>
     </modules>
 
 </project>
