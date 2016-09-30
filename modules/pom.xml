@@ -44,7 +44,6 @@ under the License.
         <module>integration</module>
 
         <module>json</module>
-        <module>management</module>
         <module>model</module>
         <module>mutable-config</module>
         <module>optional</module>
