@@ -136,7 +136,7 @@ under the License.
 
     <ciManagement>
         <system>Jenkins</system>
-        <url>https://builds.apache.org/job/tamaya-extensions</url>
+        <url>https://builds.apache.org/view/Tamaya/</url>
     </ciManagement>
 
     <developers>
