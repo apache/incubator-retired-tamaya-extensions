@@ -29,7 +29,7 @@ under the License.
         <relativePath>..</relativePath>
     </parent>
     <artifactId>tamaya-yaml</artifactId>
-    <name>Apache Tamaya Modules - YAML Support</name>
+    <name>Apache Tamaya YAML Support</name>
     <packaging>bundle</packaging>
     <inceptionYear>2016</inceptionYear>
 

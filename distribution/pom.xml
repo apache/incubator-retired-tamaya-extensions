@@ -30,7 +30,7 @@ under the License.
     </parent>
 
     <artifactId>tamaya-extension-distribution</artifactId>
-    <name>Apache Tamaya Distribution</name>
+    <name>Apache Tamaya Extension Distribution</name>
     <inceptionYear>2015</inceptionYear>
 
     <dependencies>

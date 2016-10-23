@@ -28,7 +28,7 @@ under the License.
         <relativePath>..</relativePath>
     </parent>
     <artifactId>tamaya-resources</artifactId>
-    <name>Apache Tamaya Modules - Resource Services</name>
+    <name>Apache Tamaya Resource Services</name>
     <packaging>bundle</packaging>
 
     <properties>

@@ -28,7 +28,7 @@ under the License.
         <relativePath>..</relativePath>
     </parent>
     <artifactId>tamaya-formats</artifactId>
-    <name>Apache Tamaya Modules - Formats</name>
+    <name>Apache Tamaya Modules Formats</name>
     <packaging>bundle</packaging>
 
     <properties>

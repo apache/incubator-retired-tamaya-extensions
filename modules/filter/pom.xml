@@ -29,7 +29,7 @@ under the License.
     </parent>
 
     <artifactId>tamaya-filter</artifactId>
-    <name>Apache Tamaya Modules - Adaptive Configuration Filtering</name>
+    <name>Apache Tamaya Adaptive Configuration Filtering</name>
     <packaging>bundle</packaging>
 
     <properties>
