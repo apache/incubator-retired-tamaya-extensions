@@ -38,14 +38,12 @@ under the License.
         <module>formats</module>
         <module>functions</module>
         <module>injection</module>
-        <module>injection-api</module>
-        <module>json</module>
+        <module>mutable-config</module>
         <module>optional</module>
         <module>resolver</module>
         <module>resources</module>
         <module>spi-support</module>
         <module>spring</module>
-        <module>yaml</module>
     </modules>
 
     <build>
