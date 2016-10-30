@@ -75,7 +75,7 @@ public class DefaultConfiguration implements Configuration {
         if(configData==null){
             return null;
         }
-        return PropertyFiltering.applyFilter(key, configData.getConfigEntries(), configurationContext);
+        return PropertyFilterManager.applyFilter(key, configData.getConfigEntries(), configurationContext);
     }
 
     /**
@@ -124,7 +124,7 @@ public class DefaultConfiguration implements Configuration {
      */
     @Override
     public Map<String, String> getProperties() {
-        return PropertyFiltering.applyFilters(evaluateUnfilteredMap(), configurationContext);
+        return PropertyFilterManager.applyFilters(evaluateUnfilteredMap(), configurationContext);
     }
 
     /**

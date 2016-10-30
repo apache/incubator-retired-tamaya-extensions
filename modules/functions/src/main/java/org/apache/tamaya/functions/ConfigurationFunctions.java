@@ -124,6 +124,11 @@ public final class ConfigurationFunctions {
         }
 
         @Override
+        public PropertySource getPropertySource(String name) {
+            return null;
+        }
+
+        @Override
         public <T> void addPropertyConverter(TypeLiteral<T> typeToConvert, PropertyConverter<T> propertyConverter) {
             // ignore
         }

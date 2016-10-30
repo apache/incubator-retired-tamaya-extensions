@@ -16,22 +16,19 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.apache.tamaya.ext</groupId>
-        <artifactId>tamaya-extensions-all</artifactId>
+        <artifactId>tamaya-extensions</artifactId>
         <version>0.3-incubating-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
-
-    <artifactId>tamaya-spisupport</artifactId>
-    <name> Apache Tamaya Common Support Classes</name>
-    <description>Apache Tamaya Support Classes useful when implementing the Tamaya SPI or code independent of the core RI
-        implementation.</description>
+    <artifactId>tamaya-mutable-config</artifactId>
+    <name>Apache Tamaya Modules - Mutable Configuration</name>
+    <description>This module provides abstraction, if your scenario needs to actively change configuration entries
+        and write changes back to some property sources, files etc.</description>
     <packaging>bundle</packaging>
 
     <properties>
@@ -44,21 +41,25 @@ under the License.
             <artifactId>tamaya-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- Test scope only, do not create a code dependency! -->
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-spisupport</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
             <artifactId>tamaya-core</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>java-hamcrest</artifactId>
         </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>java-hamcrest</artifactId>
         </dependency>
     </dependencies>
 
@@ -71,7 +72,7 @@ under the License.
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            org.apache.tamaya.spisupport
+                            org.apache.tamaya.mutableconfig
                         </Export-Package>
                     </instructions>
                 </configuration>

@@ -56,10 +56,7 @@ public class DefaultConfigurationContextChangeListener implements ConfigEventLis
                     .setContext(context);
             if (!affectedPropertySources.isEmpty()) {
                 Set<String> propertySourceNames = new HashSet<>();
-                for (PropertySource removed : contextChange.getRemovedPropertySources()) {
-                    propertySourceNames.add(removed.getName());
-                }
-                newContextBuilder.removePropertySources(propertySourceNames);
+                newContextBuilder.removePropertySources(contextChange.getRemovedPropertySources());
             }
             newContextBuilder.addPropertySources(contextChange.getAddedPropertySources());
             newContextBuilder.addPropertySources(contextChange.getUpdatedPropertySources());
