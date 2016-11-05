@@ -21,15 +21,16 @@ under the License.
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.apache.tamaya</groupId>
-        <artifactId>tamaya-all</artifactId>
-        <version>0.3-incubating-SNAPSHOT</version>
-    </parent>
 
+  <parent>
+      <groupId>org.apache</groupId>
+      <artifactId>apache</artifactId>
+      <version>18</version>
+      <relativePath>org.apache:apache</relativePath>
+   </parent>
     <groupId>org.apache.tamaya.ext</groupId>
     <artifactId>tamaya-extensions-all</artifactId>
-
+    <version>0.3-incubating-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Apache Tamaya Extensions</name>
