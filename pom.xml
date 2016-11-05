@@ -48,6 +48,7 @@ under the License.
     </prerequisites>
 
     <properties>
+<additionalparam>-Xdoclint:none</additionalparam>
         <commons-io.version>2.5</commons-io.version>
         <findbugs.skip>false</findbugs.skip>
         <jdkVersion>1.7</jdkVersion>
