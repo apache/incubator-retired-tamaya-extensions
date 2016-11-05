@@ -405,7 +405,7 @@ under the License.
                     <artifactId>maven-toolchains-plugin</artifactId>
                     <version>${toolchains.plugin}</version>
                 </plugin>
-
+<!--
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>findbugs-maven-plugin</artifactId>
@@ -434,7 +434,7 @@ under the License.
                         </dependency>
                     </dependencies>
                 </plugin>
-
+-->
                 <plugin>
                     <groupId>org.asciidoctor</groupId>
                     <artifactId>asciidoctor-maven-plugin</artifactId>
