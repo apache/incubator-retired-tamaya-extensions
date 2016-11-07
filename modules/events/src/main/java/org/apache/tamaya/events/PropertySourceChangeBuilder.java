@@ -60,29 +60,23 @@ public final class PropertySourceChangeBuilder {
      */
     Long timestamp;
 
-    /** The type of change. */
-    ChangeType changeType;
-
     /**
      * Constructor.
      *
      * @param source the underlying configuration/provider, not null.
-     * @param changeType kind of change.
      */
-    private PropertySourceChangeBuilder(PropertySource source, ChangeType changeType) {
+    private PropertySourceChangeBuilder(PropertySource source) {
         this.source = Objects.requireNonNull(source);
-        this.changeType = Objects.requireNonNull(changeType);
     }
 
     /**
      * Creates a new instance of this builder.
      *
      * @param source the underlying property provider/configuration, not null.
-     * @param changeType kind of change.
      * @return the builder for chaining.
      */
-    public static PropertySourceChangeBuilder of(PropertySource source, ChangeType changeType) {
-        return new PropertySourceChangeBuilder(source, changeType);
+    public static PropertySourceChangeBuilder of(PropertySource source) {
+        return new PropertySourceChangeBuilder(source);
     }
 
     /**
@@ -235,10 +229,6 @@ public final class PropertySourceChangeBuilder {
         this.delta.clear();
     }
 
-    public PropertySourceChangeBuilder setChangeType(ChangeType changeType) {
-        this.changeType = changeType;
-        return this;
-    }
 
     /**
      * Builds the corresponding change set.
@@ -258,6 +248,5 @@ public final class PropertySourceChangeBuilder {
         return "PropertiesChangeBuilder [source=" + source + ", " +
                 ", delta=" + delta + "]";
     }
-
 
 }

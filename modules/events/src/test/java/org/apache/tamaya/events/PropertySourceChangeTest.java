@@ -1,29 +1,26 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ *  or more contributor license agreements.  See the NOTICE file
+ *  distributed with this work for additional information
+ *  regarding copyright ownership.  The ASF licenses this file
+ *  to you under the Apache License, Version 2.0 (the
+ *  "License"); you may not use this file except in compliance
+ *  with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
  */
-package org.apache.tamaya.events.delta;
+package org.apache.tamaya.events;
 
 import org.apache.tamaya.core.propertysource.EnvironmentPropertySource;
 import org.apache.tamaya.core.propertysource.SimplePropertySource;
 import org.apache.tamaya.core.propertysource.SystemPropertySource;
-import org.apache.tamaya.events.ChangeType;
-import org.apache.tamaya.events.PropertySourceChange;
-import org.apache.tamaya.events.PropertySourceChangeBuilder;
 import org.apache.tamaya.spi.PropertySource;
 import org.junit.Test;
 
@@ -40,36 +37,28 @@ public class PropertySourceChangeTest {
     private static final PropertySource myPS = new SystemPropertySource();
 
     @Test
-    public void testGetChangeType() throws Exception {
-        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS, ChangeType.DELETED).build();
-        assertEquals(change.getChangeType(), ChangeType.DELETED);
-        change = PropertySourceChangeBuilder.of(myPS, ChangeType.UPDATED).build();
-        assertEquals(change.getChangeType(), ChangeType.UPDATED);
-    }
-
-    @Test
     public void testGetPropertySource() throws Exception {
-        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS, ChangeType.DELETED).build();
+        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS).build();
         assertEquals(change.getResource().getName(), myPS.getName());
     }
 
     @Test
     public void testGetVersion() throws Exception {
-        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS, ChangeType.DELETED)
+        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS)
                 .setVersion("myVersion1").build();
         assertEquals(change.getVersion(), "myVersion1");
     }
 
     @Test
     public void testGetTimestamp() throws Exception {
-        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS, ChangeType.DELETED)
+        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS)
                 .setTimestamp(111L).build();
         assertEquals(change.getTimestamp(), 111L);
     }
 
     @Test
     public void testGetEvents() throws Exception {
-        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS, ChangeType.DELETED)
+        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS)
                 .addChanges(
                         new EnvironmentPropertySource()
                 ).build();
@@ -78,7 +67,7 @@ public class PropertySourceChangeTest {
 
     @Test
     public void testGetRemovedSize() throws Exception {
-        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS, ChangeType.UPDATED)
+        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS)
                 .addChanges(
                         new EnvironmentPropertySource()
                 ).build();
@@ -87,7 +76,7 @@ public class PropertySourceChangeTest {
 
     @Test
     public void testGetAddedSize() throws Exception {
-        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS, ChangeType.DELETED)
+        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS)
                 .addChanges(
                         new EnvironmentPropertySource()
                 ).build();
@@ -96,7 +85,7 @@ public class PropertySourceChangeTest {
 
     @Test
     public void testGetUpdatedSize() throws Exception {
-        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS, ChangeType.DELETED)
+        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS)
                 .addChanges(
                         new EnvironmentPropertySource()
                 ).build();
@@ -113,7 +102,7 @@ public class PropertySourceChangeTest {
         testData.put("key1", "value2");
         testData.put("key3", "value3");
         PropertySource ps2 = new SimplePropertySource("test", testData);
-        PropertySourceChange change = PropertySourceChangeBuilder.of(ps1, ChangeType.UPDATED)
+        PropertySourceChange change = PropertySourceChangeBuilder.of(ps1)
                 .addChanges(
                         ps2
                 ).build();
@@ -132,7 +121,7 @@ public class PropertySourceChangeTest {
         testData.put("key1", "value2");
         testData.put("key3", "value3");
         PropertySource ps2 = new SimplePropertySource("test", testData);
-        PropertySourceChange change = PropertySourceChangeBuilder.of(ps1, ChangeType.UPDATED)
+        PropertySourceChange change = PropertySourceChangeBuilder.of(ps1)
                 .addChanges(
                         ps2
                 ).build();
@@ -151,7 +140,7 @@ public class PropertySourceChangeTest {
         testData.put("key1", "value2");
         testData.put("key3", "value3");
         PropertySource ps2 = new SimplePropertySource("test", testData);
-        PropertySourceChange change = PropertySourceChangeBuilder.of(ps1, ChangeType.UPDATED)
+        PropertySourceChange change = PropertySourceChangeBuilder.of(ps1)
                 .addChanges(
                         ps2
                 ).build();
@@ -162,7 +151,7 @@ public class PropertySourceChangeTest {
 
     @Test
     public void testContainsKey() throws Exception {
-        PropertySourceChange change = PropertySourceChangeBuilder.of(new EnvironmentPropertySource(), ChangeType.DELETED)
+        PropertySourceChange change = PropertySourceChangeBuilder.of(new EnvironmentPropertySource())
                 .addChanges(
                         myPS
                 ).build();
@@ -171,10 +160,10 @@ public class PropertySourceChangeTest {
 
     @Test
     public void testIsEmpty() throws Exception {
-        PropertySourceChange change = PropertySourceChangeBuilder.of(new EnvironmentPropertySource(), ChangeType.DELETED)
+        PropertySourceChange change = PropertySourceChangeBuilder.of(new EnvironmentPropertySource())
                 .build();
         assertTrue(change.isEmpty());
-        change = PropertySourceChangeBuilder.of(new EnvironmentPropertySource(), ChangeType.DELETED)
+        change = PropertySourceChangeBuilder.of(new EnvironmentPropertySource())
                 .addChanges(
                         myPS
                 ).build();
@@ -182,27 +171,9 @@ public class PropertySourceChangeTest {
     }
 
     @Test
-    public void testOfAdded() throws Exception {
-        PropertySourceChange change = PropertySourceChange.ofAdded(myPS);
-        assertNotNull(change);
-        assertEquals(change.getChangeType(), ChangeType.NEW);
-    }
-
-    @Test
-    public void testOfDeleted() throws Exception {
-        PropertySourceChange change = PropertySourceChange.ofDeleted(myPS);
-        assertNotNull(change);
-        assertEquals(change.getChangeType(), ChangeType.DELETED);
-    }
-
-    @Test
     public void testToString() throws Exception {
-        PropertySourceChange change = PropertySourceChange.ofAdded(myPS);
+        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS).build();
         String toString = change.toString();
-        assertNotNull(toString);
-        assertTrue(toString.contains(myPS.getName()));
-        change = PropertySourceChange.ofDeleted(myPS);
-        toString = change.toString();
         assertNotNull(toString);
         assertTrue(toString.contains(myPS.getName()));
     }

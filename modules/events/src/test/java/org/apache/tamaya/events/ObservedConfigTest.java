@@ -21,7 +21,7 @@ package org.apache.tamaya.events;
 import org.apache.commons.io.FileUtils;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
-import org.junit.Ignore;
+import org.apache.tamaya.events.folderobserver.TestObservingProvider;
 import org.junit.Test;
 
 import java.io.File;
@@ -30,6 +30,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test (currently manual) to test configuration changes.
@@ -37,33 +38,38 @@ import static org.junit.Assert.assertEquals;
 public class ObservedConfigTest {
 
     @Test
-    @Ignore // reactivate later...
     public void testChangingConfig() throws IOException {
-        Configuration config = ConfigurationProvider.getConfiguration().with(TestConfigView.of());
-
-        Map<String, String> props = config.getProperties();
-        assertEquals(props.get("test"), "test2");
-        assertEquals(props.get("testValue1"), "value");
-        assertNull(props.get("testValue2"));
-
-        //insert a new properties file into the tempdirectory
-        FileUtils.writeStringToFile(
-                new File(TestObservingProvider.propertyLocation.toFile(), "test2.properties"),
-                "testValue2=anotherValue");
-
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        ConfigEventManager.setChangeMonitoringPeriod(100L);
+        ConfigEventManager.enableChangeMonitoring(true);
+        while(MyConfigObserver.event==null) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            ConfigEvent<?> event = MyConfigObserver.event;
+            if(event!=null) {
+                assertTrue(event instanceof ConfigurationChange);
+                ConfigurationChange cChange = (ConfigurationChange) event;
+                if(cChange.isAdded("random.new")){
+                    MyConfigObserver.event=null;
+                }else {
+                    assertTrue(cChange.isUpdated("random.new"));
+                    break;
+                }
+            }
         }
 
-        config = ConfigurationProvider.getConfiguration().with(TestConfigView.of());
+    }
 
-        props = config.getProperties();
+    public static final class MyConfigObserver implements ConfigEventListener{
 
-        assertEquals(props.get("test"), "test2");
-        assertEquals(props.get("testValue1"), "value");
-        assertEquals(props.get("testValue2"), "anotherValue");
+        public static volatile ConfigEvent<?> event;
+
+        @Override
+        public void onConfigEvent(ConfigEvent<?> event) {
+            MyConfigObserver.event = event;
+        }
     }
 
 }

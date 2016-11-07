@@ -46,8 +46,6 @@ public final class PropertySourceChange implements ConfigEvent<PropertySource>, 
     private long timestamp = System.currentTimeMillis();
     /** The recorded changes. */
     private final Map<String,PropertyChangeEvent> changes = new HashMap<>();
-    /** The overall type of change. */
-    private final ChangeType changeType;
 
     /**
      * Constructor used by {@link PropertySourceChangeBuilder}.
@@ -64,15 +62,6 @@ public final class PropertySourceChange implements ConfigEvent<PropertySource>, 
         if(builder.timestamp!=null){
             this.timestamp = builder.timestamp;
         }
-        this.changeType = builder.changeType;
-    }
-
-    /**
-     * Gets the type of change for this PropertySource.
-     * @return the type of change for this PropertySource, never null.
-     */
-    public ChangeType getChangeType(){
-        return this.changeType;
     }
 
     @Override
@@ -212,28 +201,9 @@ public final class PropertySourceChange implements ConfigEvent<PropertySource>, 
     }
 
 
-    /**
-     * Create a change event for a new PropertySource that was added.
-     * @param propertySource the new property source, not null.
-     * @return a new PropertySourceChange, representing a PropertySource that was added.
-     */
-    public static PropertySourceChange ofAdded(PropertySource propertySource) {
-        return PropertySourceChangeBuilder.of(propertySource, ChangeType.NEW).build();
-    }
-
-    /**
-     * Create a change event for a deleted PropertySource.
-     * @param propertySource the deleted property source, not null.
-     * @return a new PropertySourceChange, representing a PropertySource that was deleted.
-     */
-    public static PropertySourceChange ofDeleted(PropertySource propertySource) {
-        return PropertySourceChangeBuilder.of(propertySource, ChangeType.DELETED).build();
-    }
-
     @Override
     public String toString() {
         return "PropertySourceChange{" +
-                "changeType=" + changeType +
                 ", propertySource=" + propertySource +
                 ", version='" + version + '\'' +
                 ", timestamp=" + timestamp +

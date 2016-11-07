@@ -62,17 +62,18 @@ public class DefaultConfigChangeObserver {
 
     public void checkConfigurationUpdate() {
         LOG.finest("Checking configuration for changes...");
-        FrozenConfiguration newConfig = FrozenConfiguration.of(ConfigurationProvider.getConfiguration());
+        FrozenConfiguration frozenConfig = FrozenConfiguration.of(ConfigurationProvider.getConfiguration());
         ConfigurationChange changes;
         if(lastConfig==null){
-            changes = ConfigurationChangeBuilder.of(newConfig).putAll(newConfig.getProperties())
+            lastConfig = frozenConfig;
+            changes = ConfigurationChangeBuilder.of().putAll(frozenConfig.getProperties())
                     .build();
         }else{
-            changes = ConfigurationChangeBuilder.of(lastConfig).addChanges(newConfig)
+            changes = ConfigurationChangeBuilder.of(lastConfig).addChanges(frozenConfig)
                     .build();
         }
         if(!changes.isEmpty()) {
-            LOG.info("Identified configuration changes, publishing change event...");
+            LOG.info("Identified configuration changes, publishing changes:\n" + changes);
             ConfigEventManager.fireEvent(changes);
         }
     }

@@ -40,9 +40,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.events.ConfigEventManager;
-import org.apache.tamaya.events.ConfigurationContextChange;
-import org.apache.tamaya.events.ConfigurationContextChangeBuilder;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
 import org.apache.tamaya.spisupport.BasePropertySource;
@@ -181,23 +178,7 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
             propertySources.clear();
             final Collection<PropertySource> sourcesRead = readConfiguration(directory);
             this.propertySources.addAll(sourcesRead);
-            triggerConfigChange(existingPropertySources, propertySources);
         }
-    }
-
-
-    private void triggerConfigChange(List<PropertySource> originalPropertySources,
-                                     List<PropertySource> newPropertySources) {
-        final ConfigurationContextChangeBuilder b = ConfigurationContextChangeBuilder.of();
-        for (final PropertySource ps : originalPropertySources) {
-            b.removedPropertySource(ps);
-        }
-        for (final PropertySource ps : newPropertySources) {
-            b.newPropertySource(ps);
-        }
-        final ConfigurationContextChange changeEvent = b.build();
-        LOG.fine("Trigger Config Context Change: " + changeEvent);
-        ConfigEventManager.fireEvent(changeEvent);
     }
 
     @Override

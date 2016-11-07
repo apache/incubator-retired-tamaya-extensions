@@ -30,10 +30,7 @@ import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -56,7 +53,10 @@ public final class FrozenConfiguration implements Configuration, Serializable {
      */
     private FrozenConfiguration(Configuration config) {
         this.properties.putAll(config.getProperties());
-        this.properties.put("[meta]frozenAt", String.valueOf(System.currentTimeMillis()));
+        this.properties.put("_frozenAt", String.valueOf(System.currentTimeMillis()));
+        if(!this.properties.containsKey("_id")) {
+            this.properties.put("_id", UUID.randomUUID().toString());
+        }
         this.properties = Collections.unmodifiableMap(this.properties);
     }
 

@@ -121,6 +121,9 @@ public final class ConfigurationChange implements ConfigEvent<Configuration>, Se
     public int getRemovedSize() {
         int removedCount = 0;
         for(PropertyChangeEvent ev:this.changes.values()){
+            if(ev.getPropertyName().startsWith("_")){
+                continue;
+            }
             if(ev.getNewValue() == null){
                 removedCount++;
             }
@@ -135,6 +138,9 @@ public final class ConfigurationChange implements ConfigEvent<Configuration>, Se
     public int getAddedSize() {
         int addedCount = 0;
         for(PropertyChangeEvent ev:this.changes.values()){
+            if(ev.getPropertyName().startsWith("_")){
+                continue;
+            }
             if(ev.getOldValue() == null &&
                     ev.getNewValue() != null){
                 addedCount++;
@@ -150,6 +156,9 @@ public final class ConfigurationChange implements ConfigEvent<Configuration>, Se
     public int getUpdatedSize() {
         int updatedCount = 0;
         for(PropertyChangeEvent ev:this.changes.values()){
+            if(ev.getPropertyName().startsWith("_")){
+                continue;
+            }
             if( ev.getOldValue()!=null && ev.getNewValue()!=null){
                 updatedCount++;
             }
@@ -210,9 +219,12 @@ public final class ConfigurationChange implements ConfigEvent<Configuration>, Se
     @Override
     public String toString() {
         return "ConfigurationChange{" +
-                "configuration=" + configuration +
-                ", version='" + version + '\'' +
-                ", timestamp=" + timestamp +
+                "\n configuration-id = " + configuration.getOrDefault("_id", "-") +
+                "\n change-id        = " + version +
+                "\n timestamp        = " + timestamp +
+                "\n added            = " + this.getAddedSize() +
+                "\n updated          = " + this.getUpdatedSize() +
+                "\n removed          = " + this.getRemovedSize() + '\n' +
                 '}';
     }
 }
