@@ -32,11 +32,6 @@ public class MapPropertySource extends BasePropertySource {
     private final String name;
 
     /**
-     * The Property Sources priority, a fixed priority should be used.
-     */
-    private final Integer priority;
-
-    /**
      * The current properties.
      */
     private final Map<String, String> props = new HashMap<>();
@@ -49,42 +44,23 @@ public class MapPropertySource extends BasePropertySource {
      * @param props the properties
      */
     public MapPropertySource(String name, Map<String, String> props) {
-        this(name, props, null, null);
+        this(name, props, null);
     }
 
     /**
      * Creates a new instance, hereby using the default mechanism for evaluating the property source's
-     * priority, but applying a custom mapping {@code rootContext} to the entries provided.
+     * priority, but applying a custom mapping {@code prefix} to the entries provided.
      *
-     * @param name unique name of this source.
+     * @param name        unique name of this source.
      * @param props       the properties
-     * @param rootContext the root context mapping, or null (for no mapping).
+     * @param prefix      the prefix context mapping, or null (for no mapping).
      */
-    public MapPropertySource(String name, Map<String, String> props, String rootContext) {
-        this(name, props, rootContext, null);
-    }
-
-    /**
-     * Creates a new instance, hereby using the default mechanism for evaluating the property source's
-     * priority, but applying a custom mapping {@code rootContext} to the entries provided.
-     *
-     * @param name unique name of this source.
-     * @param props       the properties
-     * @param rootContext the root context mapping, or null (for no mapping).
-     * @param priority    the (optional) fixed priority. If null, the default priority
-     *                    evaluation is used.
-     */
-    public MapPropertySource(String name, Map<String, String> props, String rootContext, Integer priority) {
-        this.priority = priority;
+    public MapPropertySource(String name, Map<String, String> props, String prefix) {
         this.name = Objects.requireNonNull(name);
-        if (rootContext == null) {
+        if (prefix == null) {
             this.props.putAll(props);
         } else {
             for (Map.Entry<String, String> en : props.entrySet()) {
-                String prefix = rootContext;
-                if (!prefix.endsWith(".") && prefix.length() > 0) {
-                    prefix += ".";
-                }
                 this.props.put(prefix + en.getKey(), en.getValue());
             }
         }
@@ -96,12 +72,10 @@ public class MapPropertySource extends BasePropertySource {
      *
      * @param name unique name of this source.
      * @param props       the properties
-     * @param rootContext the root context mapping, or null (for no mapping).
-     * @param priority    the (optional) fixed priority. If null, the default priority
-     *                    evaluation is used.
+     * @param prefix      the prefix context mapping, or null (for no mapping).
      */
-    public MapPropertySource(String name, Properties props, String rootContext, Integer priority) {
-        this(name, getMap(props), rootContext, priority);
+    public MapPropertySource(String name, Properties props, String prefix) {
+        this(name, getMap(props), prefix);
     }
 
     /**
@@ -129,18 +103,10 @@ public class MapPropertySource extends BasePropertySource {
     }
 
     @Override
-    public int getOrdinal() {
-        if(priority!=null) {
-            return priority;
-        }
-        return super.getOrdinal();
-    }
-
-    @Override
     public String toString() {
-        return "SimplePropertiesPropertySource{" +
+        return "MapPropertySource{" +
                 "name=" + name + ", " +
-                "priority=" + priority +
+                "ordinal=" + getOrdinal() +
                 '}';
     }
 

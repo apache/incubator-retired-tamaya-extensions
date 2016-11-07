@@ -32,27 +32,53 @@ import java.util.logging.Logger;
 public class PropertiesResourcePropertySource extends MapPropertySource {
     /** The logger used. */
     private static final Logger LOGGER = Logger.getLogger(PropertiesResourcePropertySource.class.getName());
-    /** The resource loaded. */
-    private final URL url;
 
     /**
      * Creates a new instance.
      * @param url the resource URL, not null.
-     * @param priority the optional (fixed) priority ordinal.
      */
-    public PropertiesResourcePropertySource(URL url, Integer priority){
-        this(null, url, priority);
+    public PropertiesResourcePropertySource(URL url){
+        this(url, null);
     }
 
     /**
      * Creates a new instance.
-     * @param rootContext the (optional) root context for mapping (prefixing) the properties loaded.
+     * @param prefix the (optional) prefix context for mapping (prefixing) the properties loaded.
      * @param url the resource URL, not null.
-     * @param priority the optional (fixed) priority ordinal.
      */
-    public PropertiesResourcePropertySource(String rootContext, URL url, Integer priority){
-        super(url.toExternalForm(), loadProps(url), rootContext, priority);
-        this.url = url;
+    public PropertiesResourcePropertySource(URL url, String prefix){
+        super(url.toExternalForm(), loadProps(url), prefix);
+    }
+
+    /**
+     * Creates a new instance.
+     * @param prefix the (optional) prefix context for mapping (prefixing) the properties loaded.
+     * @param path the resource path, not null.
+     */
+    public PropertiesResourcePropertySource(String path, String prefix){
+        super(path, loadProps(path, null), prefix);
+    }
+
+    /**
+     * Creates a new instance.
+     * @param prefix the (optional) prefix context for mapping (prefixing) the properties loaded.
+     * @param path the resource path, not null.
+     */
+    public PropertiesResourcePropertySource(String path, String prefix, ClassLoader cl){
+        super(path, loadProps(path, cl), prefix);
+    }
+
+    /**
+     * Loads the properties using the JDK's Property loading mechanism.
+     * @param path the resource classpath, not null.
+     * @return the loaded properties.
+     */
+    private static Map<String, String> loadProps(String path, ClassLoader cl) {
+        if(cl==null){
+            cl = PropertiesResourcePropertySource.class.getClassLoader();
+        }
+        URL url = cl.getResource(path);
+        return loadProps(url);
     }
 
     /**
@@ -62,15 +88,18 @@ public class PropertiesResourcePropertySource extends MapPropertySource {
      */
     private static Map<String, String> loadProps(URL url) {
         Map<String,String> result = new HashMap<>();
-        try(InputStream is = url.openStream()){
-            Properties props = new Properties();
-            props.load(is);
-            for(Map.Entry en: props.entrySet()){
-                result.put(en.getKey().toString(), en.getValue().toString());
+        if(url!=null) {
+            try (InputStream is = url.openStream()) {
+                Properties props = new Properties();
+                props.load(is);
+                for (Map.Entry en : props.entrySet()) {
+                    result.put(en.getKey().toString(), en.getValue().toString());
+                }
+            } catch (Exception e) {
+                LOGGER.log(Level.WARNING, "Failed to read properties from " + url, e);
             }
-        }
-        catch(Exception e){
-            LOGGER.log(Level.WARNING, "Failed to read properties from " + url, e);
+        }else{
+            LOGGER.log(Level.WARNING, "No properties found at " + url);
         }
         return result;
     }

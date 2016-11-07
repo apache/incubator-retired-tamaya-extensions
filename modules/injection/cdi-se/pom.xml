@@ -118,6 +118,13 @@ under the License.
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-atinject_1.0_spec</artifactId>
+            <version>${geronimo-atinject-1.0-spec.version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
             <groupId>org.apache.deltaspike.modules</groupId>
             <artifactId>deltaspike-test-control-module-api</artifactId>
             <version>${ds.version}</version>
