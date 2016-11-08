@@ -48,7 +48,6 @@ under the License.
     </prerequisites>
 
     <properties>
-<additionalparam>-Xdoclint:none</additionalparam>
         <commons-io.version>2.5</commons-io.version>
         <findbugs.skip>false</findbugs.skip>
         <jdkVersion>1.7</jdkVersion>
@@ -853,6 +852,16 @@ under the License.
                 <maven.javadoc.skip>false</maven.javadoc.skip>
             </properties>
         </profile>
+
+        <profile>
+            <id>java8</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <properties>
+                <additionalparam>-Xdoclint:none</additionalparam>
+            </properties>
+        </profile>
     </profiles>
 
     <reporting>
@@ -865,7 +874,7 @@ under the License.
                 <reportSets>
                     <reportSet>
                         <reports>
-                            <report>index</report>
+                           <report>index</report>
                             <report>project-team</report>
                             <report>license</report>
                             <report>mailing-list</report>
