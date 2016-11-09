@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.filter;
 
-import org.apache.tamaya.spi.FilterContext;
 import org.apache.tamaya.spi.PropertyFilter;
 
 import java.util.ArrayList;
@@ -28,9 +27,10 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * A set of property filter and accessor methods.
+ * A set of property filter and accessor methods. This class is built for
+ * usage within a single threaded context, so it is NOT thread-safe.
  */
-public final class ProgrammableFilter implements PropertyFilter{
+public final class FilterContext implements PropertyFilter{
     /** The filters. */
     private List<PropertyFilter> filters = new ArrayList<>();
 
@@ -101,7 +101,7 @@ public final class ProgrammableFilter implements PropertyFilter{
     }
 
     @Override
-    public String filterProperty(String valueToBeFiltered, FilterContext context) {
+    public String filterProperty(String valueToBeFiltered, org.apache.tamaya.spi.FilterContext context) {
         for(PropertyFilter filter:filters){
             valueToBeFiltered = filter.filterProperty(valueToBeFiltered, context);
         }

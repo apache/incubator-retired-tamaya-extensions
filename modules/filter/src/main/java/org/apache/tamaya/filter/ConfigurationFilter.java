@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.filter;
 
-import org.apache.tamaya.spi.FilterContext;
 import org.apache.tamaya.spi.PropertyFilter;
 
 
@@ -47,17 +46,17 @@ public final class ConfigurationFilter implements PropertyFilter{
         }
     };
 
-    private static final ThreadLocal<ProgrammableFilter> THREADED_MAP_FILTERS = new ThreadLocal<ProgrammableFilter>(){
+    private static final ThreadLocal<FilterContext> THREADED_MAP_FILTERS = new ThreadLocal<FilterContext>(){
         @Override
-        protected ProgrammableFilter initialValue() {
-            return new ProgrammableFilter();
+        protected FilterContext initialValue() {
+            return new FilterContext();
         }
     };
 
-    private static final ThreadLocal<ProgrammableFilter> THREADED_SINGLE_FILTERS = new ThreadLocal<ProgrammableFilter>(){
+    private static final ThreadLocal<FilterContext> THREADED_VALUE_FILTERS = new ThreadLocal<FilterContext>(){
         @Override
-        protected ProgrammableFilter initialValue() {
-            return new ProgrammableFilter();
+        protected FilterContext initialValue() {
+            return new FilterContext();
         }
     };
 
@@ -72,7 +71,7 @@ public final class ConfigurationFilter implements PropertyFilter{
 
     /**
      * Seactivates metadata filtering also on global map access for this thread.
-     * @see #clearFilters()
+     * @see #cleanupFilterContext()
      * @param filtered true,to enable metadata filtering (default).
      */
     public static void setMetadataFiltered(boolean filtered){
@@ -80,35 +79,38 @@ public final class ConfigurationFilter implements PropertyFilter{
     }
 
     /**
-     * Access the filtering configuration that is used for filtering single property values accessed.
+     * Access the filtering configuration that is used on the current thread for
+     * filtering single property values accessed.
+     *
      * @return the filtering config, never null.
      */
-    public static ProgrammableFilter getSingleFilters(){
-        return THREADED_SINGLE_FILTERS.get();
+    public static FilterContext getSingleValueFilterContext(){
+        return THREADED_VALUE_FILTERS.get();
     }
 
     /**
-     * Access the filtering configuration that is used for filtering configuration properties accessed as full
+     * Access the filtering configuration that is used used on the current thread
+     * for filtering configuration properties accessed as full
      * map.
      * @return the filtering config, never null.
      */
-    public static ProgrammableFilter getMapFilters(){
+    public static FilterContext getMapFilterContext(){
         return THREADED_MAP_FILTERS.get();
     }
 
     /**
      * Removes all programmable filters active on the current thread.
      */
-    public static void clearFilters(){
+    public static void cleanupFilterContext(){
         THREADED_MAP_FILTERS.get().clearFilters();
-        THREADED_SINGLE_FILTERS.get().clearFilters();
+        THREADED_VALUE_FILTERS.get().clearFilters();
         THREADED_METADATA_FILTERED.set(true);
     }
 
     @Override
-    public String filterProperty(String valueToBeFiltered, FilterContext context) {
+    public String filterProperty(String valueToBeFiltered, org.apache.tamaya.spi.FilterContext context) {
         if(context.isSinglePropertyScoped()){
-            for(PropertyFilter pred: THREADED_SINGLE_FILTERS.get().getFilters()){
+            for(PropertyFilter pred: THREADED_VALUE_FILTERS.get().getFilters()){
                 valueToBeFiltered = pred.filterProperty(valueToBeFiltered, context);
             }
         }else{

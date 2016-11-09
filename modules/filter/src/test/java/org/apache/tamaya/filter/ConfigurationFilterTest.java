@@ -42,80 +42,80 @@ public class ConfigurationFilterTest {
     @Test
     public void testGetSingleFilters() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
-        assertNotNull(ConfigurationFilter.getSingleFilters());
+        assertNotNull(ConfigurationFilter.getSingleValueFilterContext());
         PropertyFilter testFilter = new PropertyFilter() {
             @Override
             public String filterProperty(String value, FilterContext context) {
                 return context.getKey() + ":testGetSingleFilters";
             }
         };
-        ConfigurationFilter.getSingleFilters().addFilter(testFilter);
+        ConfigurationFilter.getSingleValueFilterContext().addFilter(testFilter);
         assertEquals("user.home:testGetSingleFilters", config.get("user.home"));
-        ConfigurationFilter.getSingleFilters().removeFilter(testFilter);
+        ConfigurationFilter.getSingleValueFilterContext().removeFilter(testFilter);
         assertNotSame("user.home:testGetSingleFilters", config.get("user.home"));
     }
 
     @Test
     public void testRemoveSingleFiltersAt0() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
-        assertNotNull(ConfigurationFilter.getSingleFilters());
+        assertNotNull(ConfigurationFilter.getSingleValueFilterContext());
         PropertyFilter testFilter = new PropertyFilter() {
             @Override
             public String filterProperty(String value, FilterContext context) {
                 return context.getKey() + ":testGetSingleFilters";
             }
         };
-        ConfigurationFilter.getSingleFilters().addFilter(testFilter);
+        ConfigurationFilter.getSingleValueFilterContext().addFilter(testFilter);
         assertEquals("user.home:testGetSingleFilters", config.get("user.home"));
-        ConfigurationFilter.getSingleFilters().removeFilter(0);
+        ConfigurationFilter.getSingleValueFilterContext().removeFilter(0);
         assertNotSame("user.home:testGetSingleFilters", config.get("user.home"));
     }
 
     @Test
     public void testGetMapFilters() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
-        assertNotNull(ConfigurationFilter.getMapFilters());
+        assertNotNull(ConfigurationFilter.getMapFilterContext());
         PropertyFilter testFilter = new PropertyFilter() {
             @Override
             public String filterProperty(String value, FilterContext context) {
                 return context.getKey() + ":testGetMapFilters";
             }
         };
-        ConfigurationFilter.getMapFilters().addFilter(testFilter);
+        ConfigurationFilter.getMapFilterContext().addFilter(testFilter);
         assertEquals("user.home:testGetMapFilters", config.getProperties().get("user.home"));
-        ConfigurationFilter.getSingleFilters().removeFilter(testFilter);
+        ConfigurationFilter.getSingleValueFilterContext().removeFilter(testFilter);
         assertNotSame("user.home:testGetSingleFilters", config.getProperties().get("user.home"));
     }
 
     @Test
     public void testRemoveMapFilterAt0() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
-        assertNotNull(ConfigurationFilter.getMapFilters());
+        assertNotNull(ConfigurationFilter.getMapFilterContext());
         PropertyFilter testFilter = new PropertyFilter() {
             @Override
             public String filterProperty(String value, FilterContext context) {
                 return context.getKey() + ":testGetMapFilters";
             }
         };
-        ConfigurationFilter.getMapFilters().addFilter(testFilter);
+        ConfigurationFilter.getMapFilterContext().addFilter(testFilter);
         assertEquals("user.home:testGetMapFilters", config.getProperties().get("user.home"));
-        ConfigurationFilter.getMapFilters().removeFilter(0);
+        ConfigurationFilter.getMapFilterContext().removeFilter(0);
         assertNotSame("user.home:testGetSingleFilters", config.getProperties().get("user.home"));
     }
 
     @Test
     public void testClearFilters() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
-        assertNotNull(ConfigurationFilter.getSingleFilters());
+        assertNotNull(ConfigurationFilter.getSingleValueFilterContext());
         PropertyFilter testFilter = new PropertyFilter() {
             @Override
             public String filterProperty(String value, FilterContext context) {
                 return context.getKey() + ":testGetSingleFilters";
             }
         };
-        ConfigurationFilter.getSingleFilters().addFilter(testFilter);
+        ConfigurationFilter.getSingleValueFilterContext().addFilter(testFilter);
         assertEquals("user.home:testGetSingleFilters", config.get("user.home"));
-        ConfigurationFilter.clearFilters();
+        ConfigurationFilter.cleanupFilterContext();
         assertNotSame("user.home:testGetSingleFilters", config.get("user.home"));
     }
 
