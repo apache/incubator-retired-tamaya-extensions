@@ -27,7 +27,6 @@ under the License.
     </parent>
 
     <artifactId>tamaya-cdi-se</artifactId>
-    <groupId>tamaya-integration</groupId>
     <name>Apache Tamaya Modules - Injection CDI (Direct)</name>
     <packaging>bundle</packaging>
 
@@ -82,12 +81,6 @@ under the License.
             <groupId>org.hamcrest</groupId>
             <artifactId>java-hamcrest</artifactId>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
-            <artifactId>tamaya-classloader-support</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.tamaya.ext</groupId>

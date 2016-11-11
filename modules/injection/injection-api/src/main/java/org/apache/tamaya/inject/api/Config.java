@@ -26,63 +26,85 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/** todo The author of this should fix this invalid Javadoc. Oliver B. Fischer, 2015-12-27 */
-///**
-// * Annotation to enable injection current a configured property or define the returned data for
-// * a configuration template method. Hereby this annotation can be used in multiple ways and combined
-// * with other annotations such as {@link ConfigDefault}, {@link WithConfigOperator}, {@link WithPropertyConverter}.
-// *
-// * Below the most simple variant current a configured class is given:
-// * {@code
-// * pubic class ConfiguredItem{
-// *
-// *   @ConfiguredProperty
-// *   private String aValue;
-// * }
-// * When this class is configured, e.g. by passing it to {@link org.apache.tamaya.Configuration#configure(Object)},
-// * the following is happening:
-// * <ul>
-// *     <li>The current valid Configuration is evaluated by calling {@code Configuration cfg = ConfigurationProvider.getConfiguration();}</li>
-// *     <li>The current possible property keys are evaluated by calling {@code cfg.get("aValue");}</li>
-// *     <li>if not successful, and a @ConfigDefault annotation is present, the default value is used.
-// *     <li>If no value could be evaluated a ({@link org.apache.tamaya.ConfigException} is thrown.</li>
-// *     <li>On success, since no type conversion is involved, the value is injected.</li>
-// * </ul>
-// *
-// * In the next example we explicitly define the property keys:
-// * {@code
-// * @ConfigDefaultSections("section1")
-// * pubic class ConfiguredItem{
-// *
-// *   @ConfiguredProperty({"b", "[a.b.deprecated.keys]", "a"})
-// *   @ConfigDefault("myDefaultValue")
-// *   private String aValue;
-// * }
-// *
-// * Within this example we evaluate multiple possible keys (section1.b, a.b.deprecated.keys, section1.a). Evaluation is
-// * aborted if a key could be successfully resolved. Hereby the ordering current the annotations define the ordering
-// * current resolution, so in the example above
-// * resolution equals to {@code "section1.b", "a.b.deprecated.keys", "section1.a"}. If no value has bee found,
-// * the configured default {@code myDefaultValue} is returned.
-// */
+/**
+ * Annotation to define injection of a configured property or define the configuration data
+ * backing a configuration template method. Hereby this annotation can be used in multiple
+ * ways and combined with other annotations such as {@link WithConfigOperator}, {@link WithPropertyConverter}.
+ *
+ * <h3>Simplest variant</h3>
+ * Below the most simple variant of a configured class is given:
+ * {@code
+ * package a.b;
+ *
+ * pubic class ConfiguredItem{
+ *
+ *   @Config
+ *   private String aValue;
+ * }
+ * }
+ * Configuration resolution is implemented as follows:
+ * <ul>
+ *     <li>The current valid Configuration is evaluated by calling {@code Configuration cfg = ConfigurationProvider.getConfiguration();}</li>
+ *     <li>The current possible property keys are evaluated by calling {@code cfg.get("a.b.ConfigureItem.aValue");},
+ *     {@code cfg.get("ConfigureItem.aValue");}, {@code cfg.get("aValue");}</li>
+ *     <li>if not successful, and since no @ConfigDefault annotation is present, the configured default value is used.
+ *     <li>If no value could be evaluated a ({@link org.apache.tamaya.ConfigException} is thrown.</li>
+ *     <li>On success, since no type conversion is involved, the value is injected.</li>
+ * </ul>
+ *
+ * <h3>Explicit annotations</h3>
+ * In the next example we explicitly define the configuration keys to be used:
+ * {@code
+ * @ConfigDefaultSections("section1")
+ * pubic class ConfiguredItem{
+ *
+ *   @Config({"b", "[a.b.deprecated.keys]", "a"})
+ *   @ConfigDefault("myDefaultValue")
+ *   private String aValue;
+ * }
+ *
+ * Within this example we evaluate multiple possible keys: {@code section1.b, a.b.deprecated.keys, section1.a}.
+ * Evaluation is aborted if a key could be successfully resolved. Hereby the ordering of the annotation values
+ * define the ordering of resolution. If no value could be found, the configured default {@code myDefaultValue} is
+ * injected.
+ *
+ * <h3>Using explicit field annotation only</h3>
+ * In the last example we explicitly define the configuration keys but omit the section part, letting the default
+ * section names to be taken:
+ * {@code
+ * package a.b;
+ *
+ * pubic class ConfiguredItem{
+ *
+ *   @Config({"b", "[a.b.deprecated.keys]", "a"})
+ *   @ConfigDefault("myDefaultValue")
+ *   private String aValue;
+ * }
+ *
+ * Key resolution is similar to above, but now the default package names are used, resulting in
+ * {@code a.b.ConfiguredItem.b, ConfiguredItem.b, a.b.deprecated.keys, a.b.ConfiguredItem.a, ConfiguredItem.a}
+ * being evaluated.
+ */
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
 public @interface Config {
 
     /**
-     * Get the property names to be used. Hereby the first non null keys evaluated is injected as property keys.
+     * Defines the configuration property keys to be used. Hereby the first non null value evaluated is injected as
+     * property value.
      *
-     * @return the property names, not null. If missing the field or method name being injected is used by default.
+     * @return the property keys, not null. If empty, the field or property name (of a setter method) being injected
+     * is used by default.
      */
     @Nonbinding
     String[] value() default {};
 
     /**
      * The default value to be injected, if none of the configuration keys could be resolved. If no key has been
-     * resolved and no default value is defined, it is handled as a deployment error. Depending on the extension loaded
-     * default values can be fixed Strings or even themselves resolvable. For typed configuration of type T entries
-     * that are not Strings the default value must be a valid input to the corresponding
+     * resolved and no default value is defined, it is, by default, handled as a deployment error. Depending on the
+     * extension loaded default values can be fixed Strings or even themselves resolvable. For typed configuration of
+     * type T entries that are not Strings the default value must be a valid input to a corresponding
      * {@link org.apache.tamaya.spi.PropertyConverter}.
      * 
      * @return default value used in case resolution fails.
@@ -90,4 +112,12 @@ public @interface Config {
     @Nonbinding
     String defaultValue() default "";
 
+    /**
+     * FLag that defines if a configuration property is required. If a required
+     * property is missing, a {@link org.apache.tamaya.ConfigException} is raised.
+     * Default is {@code true}.
+     * @return the flag value.
+     */
+    @Nonbinding
+    boolean required() default true;
 }

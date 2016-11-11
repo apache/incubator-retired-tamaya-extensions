@@ -21,12 +21,12 @@ package org.apache.tamaya.inject.internal;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.inject.api.BaseDynamicValue;
 import org.apache.tamaya.inject.api.DynamicValue;
-import org.apache.tamaya.inject.api.InjectionUtils;
+import org.apache.tamaya.inject.spi.InjectionUtils;
 import org.apache.tamaya.inject.api.LoadPolicy;
 import org.apache.tamaya.inject.api.UpdatePolicy;
 import org.apache.tamaya.inject.api.WithPropertyConverter;
+import org.apache.tamaya.inject.spi.BaseDynamicValue;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 

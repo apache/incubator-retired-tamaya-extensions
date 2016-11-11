@@ -24,13 +24,28 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to control injection of a configured bean. The configuration keys
- * to be resolved are basically determined by the {@link Config}
- * annotation(s). When this annotation is added the injection systems tries to inject all
- * fields found, also including fields not annotated with {@code @ConfigProperty}.
- * Fields not to be injected ccan be annotated with {@code @NoConfig} to exclude them
- * being eleceted for injection.
+ * Adding this annotation tells the Tamaya injection system to inject all
+ * fields found, also including fields not annotated with {@code @Config}.
+ * The configuration keys to be used for resolution are basically determined
+ * by the {@link Config} annotation(s). If missing the key are evaluated in the
+ * following order:
+ * <ul>
+ *     <li>packagename.simpleClassname.fieldName</li>
+ *     <li>simpleClassname.fieldName</li>
+ *     <li>fieldName</li>
+ * </ul>
+ * Fields not to be injected can be annotated with {@code @NoConfig} to exclude
+ * them being eleceted for injection.
+ * @see Config
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.TYPE })
-public @interface ConfigAutoInject {}
+public @interface ConfigAutoInject {
+
+    /**
+     * Flag that tells the injection system if {@link org.apache.tamaya.ConfigException} should
+     * ne thrown when a property could not be resolved. Default is {@code false}.
+     * @return
+     */
+    boolean failIfMissing() default false;
+}

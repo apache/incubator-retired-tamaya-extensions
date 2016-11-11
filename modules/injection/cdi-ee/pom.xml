@@ -27,7 +27,6 @@ under the License.
     </parent>
 
     <artifactId>tamaya-cdi</artifactId>
-    <groupId>tamaya-integration</groupId>
     <name>Apache Tamaya Modules - Injection CDI</name>
     <packaging>bundle</packaging>
 

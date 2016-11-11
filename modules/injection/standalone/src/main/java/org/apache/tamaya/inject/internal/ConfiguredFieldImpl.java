@@ -23,7 +23,7 @@ import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.inject.api.DynamicValue;
-import org.apache.tamaya.inject.api.InjectionUtils;
+import org.apache.tamaya.inject.spi.InjectionUtils;
 import org.apache.tamaya.inject.spi.ConfiguredField;
 
 import java.lang.reflect.Field;

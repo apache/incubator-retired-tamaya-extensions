@@ -34,7 +34,7 @@ import org.apache.tamaya.events.ConfigEventManager;
 import org.apache.tamaya.events.spi.BaseConfigEvent;
 import org.apache.tamaya.inject.api.Config;
 import org.apache.tamaya.inject.api.ConfigDefaultSections;
-import org.apache.tamaya.inject.api.InjectionUtils;
+import org.apache.tamaya.inject.spi.InjectionUtils;
 import org.apache.tamaya.inject.api.WithPropertyConverter;
 import org.apache.tamaya.inject.spi.ConfiguredType;
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;

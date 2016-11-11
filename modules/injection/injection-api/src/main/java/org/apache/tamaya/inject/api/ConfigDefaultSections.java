@@ -23,14 +23,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/** todo The author of this should fix this invalid Javadoc. Oliver B. Fischer, 2015-12-27 */
-///**
-// * Annotation to control injection and resolution current a configured bean. The configuration keys
-// * to be resolved are basically determined by the {@link org.apache.tamaya.inject.ConfigProperty}
-// * annotation(s). Nevertheless these annotations can also have relative key names. This annotation allows
-// * to define a configuration area that is prefixed to all relative configuration keys within the
-// * corresponding class/template interface.
-// */
+/**
+ * This annotation allows to define the default section names used for evaluating the candidate
+ * keys used for evaluating configuration values. The configuration keys
+ * used are additionally determined by the {@link org.apache.tamaya.inject.api.Config}
+ * annotation(s). This annotation allows
+ * to define the configuration section that is prefixed to all <b>relative</b> configuration keys.
+ * @see Config
+ * @see ConfigAutoInject
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.TYPE })
 public @interface ConfigDefaultSections {
