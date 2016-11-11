@@ -47,6 +47,11 @@ under the License.
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-functions</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.tamaya</groupId>
             <artifactId>tamaya-core</artifactId>
             <version>${project.version}</version>
@@ -60,6 +65,13 @@ under the License.
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-events</artifactId>
+            <version>0.3-incubating-SNAPSHOT</version>
+            <optional>true</optional>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

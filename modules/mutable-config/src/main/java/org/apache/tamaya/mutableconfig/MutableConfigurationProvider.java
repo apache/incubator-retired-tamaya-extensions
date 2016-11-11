@@ -21,7 +21,6 @@ package org.apache.tamaya.mutableconfig;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.mutableconfig.spi.ConfigChangeRequest;
 import org.apache.tamaya.mutableconfig.spi.MutableConfigurationProviderSpi;
 import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
 import org.apache.tamaya.spi.PropertySource;

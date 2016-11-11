@@ -19,7 +19,6 @@
 package org.apache.tamaya.mutableconfig;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.mutableconfig.spi.ConfigChangeRequest;
 
 import java.util.Collection;
 import java.util.Map;

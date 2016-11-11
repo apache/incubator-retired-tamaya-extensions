@@ -24,7 +24,7 @@ import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.mutableconfig.ChangePropagationPolicy;
 import org.apache.tamaya.mutableconfig.MutableConfiguration;
-import org.apache.tamaya.mutableconfig.spi.ConfigChangeRequest;
+import org.apache.tamaya.mutableconfig.ConfigChangeRequest;
 import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.PropertySource;

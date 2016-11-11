@@ -19,7 +19,7 @@
 package org.apache.tamaya.mutableconfig.propertysources;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.mutableconfig.spi.ConfigChangeRequest;
+import org.apache.tamaya.mutableconfig.ConfigChangeRequest;
 import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spi.PropertyValueBuilder;
@@ -49,10 +49,6 @@ implements MutablePropertySource{
      * The logger.
      */
     private static final Logger LOG = Logger.getLogger(MutableXmlPropertiesPropertySource.class.getName());
-    /**
-     * Default update interval is 1 minute.
-     */
-    private static final long DEFAULT_UPDATE_INTERVAL = 60000L;
 
     /**
      * The property source name.
@@ -64,15 +60,6 @@ implements MutablePropertySource{
      */
     private File file;
 
-    /**
-     * Timestamp of last read.
-     */
-    private long lastRead;
-
-    /**
-     * Interval, when the resource should try to update its contents.
-     */
-    private long updateInterval = DEFAULT_UPDATE_INTERVAL;
     /**
      * The current properties.
      */
@@ -122,16 +109,9 @@ implements MutablePropertySource{
 
     @Override
     public Map<String, String> getProperties() {
-        checkLoad();
         return Collections.unmodifiableMap(this.properties);
     }
 
-
-    private void checkLoad() {
-        if(file!=null && (lastRead+updateInterval)<System.currentTimeMillis()){
-            load();
-        }
-    }
 
     /**
      * loads the Properties from the given URL
@@ -146,12 +126,11 @@ implements MutablePropertySource{
             for (String key : props.stringPropertyNames()) {
                 properties.put(key, props.getProperty(key));
             }
-            this.lastRead = System.currentTimeMillis();
             this.properties = properties;
             LOG.log(Level.FINEST, "Loaded properties from " + file);
             this.properties = properties;
         } catch (IOException e) {
-            LOG.log(Level.FINEST, "Cannot load properties from " + file, e);
+            LOG.log(Level.FINEST, "Cannot refresh properties from " + file, e);
         }
     }
 

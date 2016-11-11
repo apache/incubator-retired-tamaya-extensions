@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.mutableconfig;
 
-import org.apache.tamaya.mutableconfig.spi.ConfigChangeRequest;
 import org.apache.tamaya.spi.PropertySource;
 
 import java.util.Collection;

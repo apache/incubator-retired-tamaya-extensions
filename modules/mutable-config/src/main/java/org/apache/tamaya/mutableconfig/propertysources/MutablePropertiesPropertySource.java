@@ -19,7 +19,7 @@
 package org.apache.tamaya.mutableconfig.propertysources;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.mutableconfig.spi.ConfigChangeRequest;
+import org.apache.tamaya.mutableconfig.ConfigChangeRequest;
 import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spi.PropertyValueBuilder;
@@ -51,11 +51,6 @@ implements MutablePropertySource{
     private static final Logger LOG = Logger.getLogger(MutablePropertiesPropertySource.class.getName());
 
     /**
-     * Default update interval is 1 minute.
-     */
-    private static final long DEFAULT_UPDATE_INTERVAL = 60000L;
-
-    /**
      * The property source name.
      */
     private String name;
@@ -65,15 +60,6 @@ implements MutablePropertySource{
      */
     private File file;
 
-    /**
-     * Timestamp of last read.
-     */
-    private long lastRead;
-
-    /**
-     * Interval, when the resource should try to update its contents.
-     */
-    private long updateInterval = DEFAULT_UPDATE_INTERVAL;
     /**
      * The current properties.
      */
@@ -91,7 +77,7 @@ implements MutablePropertySource{
         this.name = propertiesLocation.toString();
         try {
             this.file = propertiesLocation;
-            load();
+            refresh();
         } catch (Exception e) {
             LOG.log(Level.SEVERE, "Cannot convert file to URL: " + propertiesLocation, e);
         }
@@ -121,23 +107,17 @@ implements MutablePropertySource{
 
     @Override
     public Map<String, String> getProperties() {
-        checkLoad();
         return Collections.unmodifiableMap(this.properties);
     }
 
 
-    private void checkLoad() {
-        if(file!=null && (lastRead+updateInterval)<System.currentTimeMillis()){
-            load();
-        }
-    }
 
     /**
      * loads the Properties from the given URL
      *
      * @throws IllegalStateException in case of an error while reading properties-file
      */
-    private void load() {
+    public void refresh() {
         try (InputStream stream = new FileInputStream(file)) {
             Map<String, String> properties = new HashMap<>();
             Properties props = new Properties();
@@ -145,7 +125,6 @@ implements MutablePropertySource{
             for (String key : props.stringPropertyNames()) {
                 properties.put(key, props.getProperty(key));
             }
-            this.lastRead = System.currentTimeMillis();
             LOG.log(Level.FINEST, "Loaded properties from " + file);
             this.properties = properties;
         } catch (IOException e) {
