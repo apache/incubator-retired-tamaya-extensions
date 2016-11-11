@@ -20,6 +20,7 @@ package org.apache.tamaya.functions;
 
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.spisupport.BasePropertySource;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,35 +31,21 @@ import java.util.logging.Logger;
 /**
 * Simple property source implementation using a map.
 */
-public class SimplePropertySource implements PropertySource {
+public class SimplePropertySource extends BasePropertySource {
     /** The properties. */
     private final Map<String, String> properties;
     /** The source's name. */
     private final String name;
-    /** The default ordinal. */
-    private int defaultOrdinal;
 
     public SimplePropertySource(String name, Map<String, String> properties){
         this.properties = new HashMap<>(properties);
         this.name = Objects.requireNonNull(name);
     }
 
-    @Override
-    public int getOrdinal(){
-        PropertyValue configuredOrdinal = get(TAMAYA_ORDINAL);
-        if(configuredOrdinal!=null){
-            try{
-                return Integer.parseInt(configuredOrdinal.getValue());
-            } catch(Exception e){
-                Logger.getLogger(getClass().getName()).log(Level.WARNING,
-                        "Configured Ordinal is not an int number: " + configuredOrdinal, e);
-            }
-        }
-        return getDefaultOrdinal();
-    }
-
-    public int getDefaultOrdinal(){
-        return defaultOrdinal;
+    public SimplePropertySource(String name, Map<String, String> properties, int defaultOrdinal){
+        super(defaultOrdinal);
+        this.properties = new HashMap<>(properties);
+        this.name = Objects.requireNonNull(name);
     }
 
     @Override
@@ -75,11 +62,6 @@ public class SimplePropertySource implements PropertySource {
     @Override
     public Map<String, String> getProperties() {
         return this.properties;
-    }
-
-    @Override
-    public boolean isScannable() {
-        return false;
     }
 
     @Override
