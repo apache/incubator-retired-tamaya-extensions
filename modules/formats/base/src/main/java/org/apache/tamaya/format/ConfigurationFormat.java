@@ -97,7 +97,4 @@ public interface ConfigurationFormat {
      */
     ConfigurationData readConfiguration(String resource, InputStream inputStream);
 
-    //X TODO Add support to access a default format to see a correct formatting
-    //X String getFormatExample();
-
 }

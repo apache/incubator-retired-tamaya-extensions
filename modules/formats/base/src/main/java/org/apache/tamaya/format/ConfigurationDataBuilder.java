@@ -18,7 +18,10 @@
  */
 package org.apache.tamaya.format;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 
 /**
@@ -31,17 +34,9 @@ public final class ConfigurationDataBuilder {
     /** The resource read. */
     final String resource;
     /**
-     * The properties of the default section (no name).
-     */
-    Map<String, String> defaultProperties;
-    /**
-     * A normalized flattened set of this configuration data.
-     */
-    Map<String, String> combinedProperties;
-    /**
      * The sections read.
      */
-    Map<String, Map<String, String>> namedSections;
+    Map<String, Map<String, String>> namedSections = new HashMap<>();
 
     /**
      * Private constructor.
@@ -70,14 +65,10 @@ public final class ConfigurationDataBuilder {
      */
     public static ConfigurationDataBuilder of(ConfigurationData data){
         ConfigurationDataBuilder b = new ConfigurationDataBuilder(data.getResource(), data.getFormat());
-        if (data.hasDefaultProperties()) {
-            b.getDefaultProperties().putAll(data.getDefaultProperties());
-        }
-        if (data.hasCombinedProperties()) {
-            b.getCombinedProperties().putAll(data.getCombinedProperties());
-        }
-        if (!data.getSections().isEmpty()) {
-            b.getSections().putAll(data.getSections());
+        if (!data.isEmpty()) {
+            for(String section:data.getSectionNames()) {
+                b.addSectionProperties(section, data.getSection(section));
+            }
         }
         return b;
     }
@@ -89,8 +80,8 @@ public final class ConfigurationDataBuilder {
      */
     public ConfigurationDataBuilder addSections(String... sections){
         for (String section : sections) {
-            if (!getSections().containsKey(section)) {
-                getSections().put(section, new HashMap<String, String>());
+            if (!namedSections.containsKey(section)) {
+                namedSections.put(section, new HashMap<String, String>());
             }
         }
         return this;
@@ -104,10 +95,10 @@ public final class ConfigurationDataBuilder {
      * @return the builder for chaining.
      */
     public ConfigurationDataBuilder addSectionProperty(String section, String key, String value) {
-        Map<String, String> map = getSections().get(section);
+        Map<String, String> map = namedSections.get(section);
         if (map == null) {
             map = new HashMap<>();
-            getSections().put(section, map);
+            namedSections.put(section, map);
         }
         map.put(key, value);
         return this;
@@ -119,9 +110,20 @@ public final class ConfigurationDataBuilder {
      * @param value the entry's value
      * @return the builder for chaining.
      */
+    public ConfigurationDataBuilder addDefaultProperty(String key, String value) {
+        return addSectionProperty("default", key, value);
+    }
+
+    /**
+     * Adds a single entry to the <i>default</i> section.
+     * @param key the entry's key
+     * @param value the entry's value
+     * @return the builder for chaining.
+     * @deprecated Use {@link #addDefaultProperty(String, String)} instead of.
+     */
+    @Deprecated
     public ConfigurationDataBuilder addProperty(String key, String value) {
-        getDefaultProperties().put(key, value);
-        return this;
+        return addDefaultProperty(key, value);
     }
 
     /**
@@ -131,10 +133,10 @@ public final class ConfigurationDataBuilder {
      * @return the builder for chaining.
      */
     public ConfigurationDataBuilder addSectionProperties(String section, Map<String, String> properties) {
-        Map<String, String> map = getSections().get(section);
+        Map<String, String> map = namedSections.get(section);
         if (map == null) {
             map = new HashMap<>();
-            getSections().put(section, map);
+            namedSections.put(section, map);
         }
         map.putAll(properties);
         return this;
@@ -144,58 +146,37 @@ public final class ConfigurationDataBuilder {
      * Adds the given entries to the <i>default</i> section, all existing values will be overridden.
      * @param properties the entry's data
      * @return the builder for chaining.
+     * @deprecated Use {@link #addDefaultProperties(Map)} instead of.
      */
+    @Deprecated
     public ConfigurationDataBuilder addProperties(Map<String, String> properties) {
-        getDefaultProperties().putAll(properties);
+        return addDefaultProperties(properties);
+    }
+
+
+        /**
+         * Adds the given entries to the <i>default</i> section, all existing values will be overridden.
+         * @param properties the entry's data
+         * @return the builder for chaining.
+         */
+    public ConfigurationDataBuilder addDefaultProperties(Map<String, String> properties) {
+        Map<String,String> defaultProps = this.namedSections.get("default");
+        if(defaultProps==null){
+            defaultProps = new HashMap<>();
+            this.namedSections.put("default", defaultProps);
+        }
+        defaultProps.putAll(properties);
         return this;
     }
 
-    /**
-     * Sets the given entries as the <i>combined</i> properties map, all existing properties of the
-     * combined map will be overridden.
-     *
-     * @param properties the entry's data
-     * @return the builder for chaining.
-     */
-    public ConfigurationDataBuilder setCombinedProperties(Map<String, String> properties) {
-        this.combinedProperties = new HashMap<>(properties);
-        return this;
-    }
-
-    /**
-     * Access the current default section, if not present a new instance is initialized.
-     *
-     * @return the current default section, never null.
-     */
-    public Map<String, String> getDefaultProperties() {
-        if (defaultProperties == null) {
-            defaultProperties = new HashMap<>();
-        }
-        return defaultProperties;
-    }
-
-    /**
-     * Access the current combined properties, if not present a new instance is initialized.
-     *
-     * @return the current combined properties, never null.
-     */
-    public Map<String, String> getCombinedProperties() {
-        if (combinedProperties == null) {
-            combinedProperties = new HashMap<>();
-        }
-        return combinedProperties;
-    }
 
     /**
      * Access the current named sections, if not present a new instance is initialized.
      *
      * @return the current named sections, never null.
      */
-    public Map<String, Map<String, String>> getSections() {
-        if (namedSections == null) {
-            namedSections = new HashMap<>();
-        }
-        return namedSections;
+    public Set<String> getSectionNames() {
+        return namedSections.keySet();
     }
 
     /**
@@ -209,11 +190,9 @@ public final class ConfigurationDataBuilder {
     @Override
     public String toString() {
         return "ConfigurationDataBuilder{" +
-                "format=" + format +
-                ", default properties=" + defaultProperties +
-                ", sections=" + namedSections +
-                ", combined properties=" + combinedProperties +
-                ", resource=" + resource +
-                '}';
+                "\n  format=" + format +
+                "\n  sections=" + namedSections.keySet() +
+                "\n  resource=" + resource +
+                "\n}";
     }
 }

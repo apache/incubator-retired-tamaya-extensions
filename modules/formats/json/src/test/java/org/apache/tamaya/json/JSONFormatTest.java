@@ -20,7 +20,7 @@ package org.apache.tamaya.json;
 
 
 import org.apache.tamaya.format.ConfigurationData;
-import org.apache.tamaya.format.FlattenedDefaultPropertySource;
+import org.apache.tamaya.format.MappedConfigurationDataPropertySource;
 import org.apache.tamaya.spi.PropertySource;
 import org.junit.Test;
 
@@ -69,7 +69,7 @@ public class JSONFormatTest extends CommonJSONTestCaseCollection {
     PropertySource getPropertiesFrom(URL source) throws Exception {
         try (InputStream is = source.openStream()) {
             ConfigurationData data = format.readConfiguration(source.toString(), is);
-            return new FlattenedDefaultPropertySource(data);
+            return new MappedConfigurationDataPropertySource(data);
         }
     }
 }

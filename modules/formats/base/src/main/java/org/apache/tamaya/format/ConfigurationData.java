@@ -18,7 +18,10 @@
  */
 package org.apache.tamaya.format;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * <p>Data that abstracts the data read from a configuration resources using a certain format. The data can be divided
@@ -33,18 +36,11 @@ import java.util.*;
  * </ul>
  */
 public final class ConfigurationData {
-    /**
-     * The properties of the default section (no name).
-     */
-    private Map<String, String> defaultProperties;
-    /**
-     * A normalized flattened set of this configuration data.
-     */
-    private Map<String, String> combinedProperties;
+    public static final String DEFAULT_SECTION_NAME = "default";
     /**
      * The sections read.
      */
-    private Map<String, Map<String, String>> namedSections;
+    private Map<String, Map<String, String>> namedSections = new HashMap<>();
     /** The format instance used to read this instance. */
     private final ConfigurationFormat format;
     /** The resource read. */
@@ -58,30 +54,7 @@ public final class ConfigurationData {
     ConfigurationData(ConfigurationDataBuilder builder){
         this.format = builder.format;
         this.resource = builder.resource;
-        if (builder.defaultProperties != null) {
-            this.defaultProperties = new HashMap<>();
-            this.defaultProperties.putAll(builder.defaultProperties);
-        }
-        if (builder.combinedProperties != null) {
-            this.combinedProperties = new HashMap<>();
-            this.combinedProperties.putAll(builder.combinedProperties);
-        }
-        if (builder.namedSections != null) {
-            this.namedSections = new HashMap<>();
-            this.namedSections.putAll(builder.namedSections);
-        }
-        if (this.combinedProperties == null || this.combinedProperties.isEmpty()) {
-            this.combinedProperties = new HashMap<>();
-            this.combinedProperties.putAll(getDefaultProperties());
-            // popuilate it with sections...
-            for (String sectionName : getSectionNames()) {
-                Map<String, String> section = getSection(sectionName);
-                for (Map.Entry<String, String> en : section.entrySet()) {
-                    String key = sectionName + '.' + en.getKey();
-                    combinedProperties.put(key, en.getValue());
-                }
-            }
-        }
+        this.namedSections.putAll(builder.namedSections);
     }
 
     /**
@@ -114,45 +87,51 @@ public final class ConfigurationData {
     /**
      * Get a section's data.
      * @param name the section name, not null.
-     * @return the data of this section, or null, if no such section exists.
+     * @return the unmodifiable data of this section, or null,
+     *         if no such section exists.
      */
     public Map<String, String> getSection(String name) {
         return this.namedSections.get(name);
     }
 
     /**
-     * Convenience accessor for accessing the default section.
+     * Convenience accessor for accessing the 'default' section.
      * @return the default section's data, or null, if no such section exists.
      */
     public Map<String, String> getDefaultProperties() {
-        if (defaultProperties == null) {
-            return Collections.emptyMap();
+        Map<String,String> props = getSection(DEFAULT_SECTION_NAME);
+        if(props!=null){
+            return Collections.unmodifiableMap(props);
         }
-        return defaultProperties;
+        return Collections.emptyMap();
     }
 
     /**
-     * Get combined properties for this config data instance. If
+     * Get combined properties for this config data instance, which contains all
+     * properties of all sections in the form {@code Entry<section::property,value>}.
      *
      * @return the normalized properties.
      */
     public Map<String, String> getCombinedProperties() {
-        if (combinedProperties == null) {
-            return Collections.emptyMap();
+        Map<String, String> combinedProperties = new HashMap<>();
+        // populate it with sections...
+        for (String sectionName : getSectionNames()) {
+            Map<String, String> section = getSection(sectionName);
+            for (Map.Entry<String, String> en : section.entrySet()) {
+                String key = sectionName + "::" + en.getKey();
+                combinedProperties.put(key, en.getValue());
+            }
         }
         return combinedProperties;
     }
 
     /**
-     * Accessor used for easily creating a new builder based on a given data instance.
-     *
-     * @return the data contained, never null.
+     * Immutable accessor to ckeck, if there are default properties present.
+     * @param section the section, not null.
+     * @return true, if default properties are present.
      */
-    public Map<String, Map<String, String>> getSections() {
-        if (namedSections == null) {
-            return Collections.emptyMap();
-        }
-        return namedSections;
+    public boolean containsSection(String section) {
+        return this.namedSections.containsKey(section);
     }
 
     /**
@@ -161,25 +140,7 @@ public final class ConfigurationData {
      * @return true, if default properties are present.
      */
     public boolean hasDefaultProperties() {
-        return this.defaultProperties != null && !this.defaultProperties.isEmpty();
-    }
-
-    /**
-     * Immutable accessor to ckeck, if there are combined properties set.
-     *
-     * @return true, if combined properties are set.
-     */
-    public boolean hasCombinedProperties() {
-        return this.combinedProperties != null && !this.combinedProperties.isEmpty();
-    }
-
-    /**
-     * Immutable accessor to ckeck, if there are named sections present.
-     *
-     * @return true, if at least one named section is present.
-     */
-    private boolean hasSections() {
-        return this.namedSections != null && !this.namedSections.isEmpty();
+        return containsSection(DEFAULT_SECTION_NAME);
     }
 
     /**
@@ -188,19 +149,17 @@ public final class ConfigurationData {
      * @return true, if no properties are contained in this data item.
      */
     public boolean isEmpty() {
-        return !hasCombinedProperties() && !hasDefaultProperties() && !hasSections();
+        return !namedSections.isEmpty();
     }
 
     @Override
     public String toString() {
         return "ConfigurationData{" +
-                "format=" + format +
-                ", default properties=" + defaultProperties +
-                ", combined properties=" + combinedProperties +
-                ", sections=" + namedSections +
-                ", resource=" + resource +
+                "\n  format        = " + format +
+                "\n, resource      = " + resource +
+                "\n, sections      = " + namedSections.keySet() +
+                "\n  default count = " + getDefaultProperties().size() +
                 '}';
     }
-
 
 }

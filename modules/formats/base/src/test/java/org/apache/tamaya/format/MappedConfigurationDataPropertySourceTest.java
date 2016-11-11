@@ -27,27 +27,27 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 /**
- * Tests for {@link org.apache.tamaya.format.FlattenedDefaultPropertySource}.
+ * Tests for {@link MappedConfigurationDataPropertySource}.
  */
-public class FlattenedDefaultPropertySourceTest {
+public class MappedConfigurationDataPropertySourceTest {
 
     @Test
     public void testGetName() throws Exception {
-        FlattenedDefaultPropertySource ps = new FlattenedDefaultPropertySource(createConfigurationData("test1"));
+        MappedConfigurationDataPropertySource ps = new MappedConfigurationDataPropertySource(createConfigurationData("test1"));
         assertEquals("test1", ps.getName());
     }
 
     private ConfigurationData createConfigurationData(String sourceName) {
         return ConfigurationDataBuilder.of(sourceName, new PropertiesFormat())
-                .addProperty("a", "aValue").addSectionProperty("section1", "sectionKey1", "sectionValue11")
+                .addDefaultProperty("a", "aValue").addSectionProperty("section1", "sectionKey1", "sectionValue11")
                 .addSections("section1", "section12")
                 .addSectionProperty("section2", "sectionKey1", "sectionValue21").build();
     }
 
     private ConfigurationData createConfigurationData(String sourceName, int ordinal) {
         return ConfigurationDataBuilder.of(sourceName, new PropertiesFormat())
-                .addProperty("a", "aValue").addSectionProperty("section1", "sectionKey1", "sectionValue11")
-                .addSections("section1", "section12").addProperty(PropertySource.TAMAYA_ORDINAL, String.valueOf(ordinal))
+                .addDefaultProperty("a", "aValue").addSectionProperty("section1", "sectionKey1", "sectionValue11")
+                .addSections("section1", "section12").addDefaultProperty(PropertySource.TAMAYA_ORDINAL, String.valueOf(ordinal))
                 .addSectionProperty("section2", "sectionKey1", "sectionValue21").build();
     }
 
@@ -60,18 +60,18 @@ public class FlattenedDefaultPropertySourceTest {
 
     @Test
     public void testGetOrdinal() throws Exception {
-        FlattenedDefaultPropertySource ps = new FlattenedDefaultPropertySource(createConfigurationData("test1", 11));
+        MappedConfigurationDataPropertySource ps = new MappedConfigurationDataPropertySource(createConfigurationData("test1", 11));
         assertEquals(11, ps.getOrdinal());
     }
 
     @Test
     public void testGet() throws Exception {
-        FlattenedDefaultPropertySource ps = new FlattenedDefaultPropertySource(createConfigurationData("test2"));
+        MappedConfigurationDataPropertySource ps = new MappedConfigurationDataPropertySource(createConfigurationData("test2"));
         assertEquals("aValue", ps.get("a").get("a"));
         assertNotNull(ps.get("section1.sectionKey1").get("section1.sectionKey1"));
         assertNotNull(ps.get("section2.sectionKey1").get("section2.sectionKey1"));
         assertNull(ps.get("sectionKey1"));
-        ps = new FlattenedDefaultPropertySource(createConfigurationDataNoDefault("test2"));
+        ps = new MappedConfigurationDataPropertySource(createConfigurationDataNoDefault("test2"));
         assertEquals("sectionValue11", ps.get("section1.sectionKey1").get("section1.sectionKey1"));
         assertEquals("sectionValue21", ps.get("section2.sectionKey1").get("section2.sectionKey1"));
         assertNull(ps.get("a"));
@@ -80,7 +80,7 @@ public class FlattenedDefaultPropertySourceTest {
 
     @Test
     public void testGetProperties() throws Exception {
-        FlattenedDefaultPropertySource ps = new FlattenedDefaultPropertySource(createConfigurationData("test3"));
+        MappedConfigurationDataPropertySource ps = new MappedConfigurationDataPropertySource(createConfigurationData("test3"));
         assertNotNull(ps.getProperties());
         assertEquals("aValue", ps.getProperties().get("a"));
         assertNotNull(ps.getProperties().get("section1.sectionKey1"));
@@ -89,7 +89,7 @@ public class FlattenedDefaultPropertySourceTest {
         assertNull(ps.getProperties().get("section2.sectionKey2"));
         assertNull(ps.getProperties().get("sectionKey1"));
         assertNull(ps.getProperties().get("sectionKey2"));
-        ps = new FlattenedDefaultPropertySource(createConfigurationDataNoDefault("test3"));
+        ps = new MappedConfigurationDataPropertySource(createConfigurationDataNoDefault("test3"));
         assertNotNull(ps.getProperties());
         assertEquals("sectionValue11", ps.getProperties().get("section1.sectionKey1"));
         assertEquals("sectionValue21", ps.getProperties().get("section2.sectionKey1"));

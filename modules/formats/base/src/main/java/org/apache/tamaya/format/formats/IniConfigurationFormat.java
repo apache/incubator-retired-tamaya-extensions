@@ -81,7 +81,7 @@ public class IniConfigurationFormat implements ConfigurationFormat {
                     if (section != null) {
                         builder.addSectionProperty(section, key, value);
                     } else {
-                        builder.addProperty(key, value);
+                        builder.addDefaultProperty(key, value);
                     }
                 }
                 line = reader.readLine();

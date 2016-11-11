@@ -57,7 +57,7 @@ public abstract class CommonJSONTestCaseCollection {
     }
 
     @Test
-    public void canReadNestedStringOnlyJSONConfigFile() throws Exception {
+    public void canReadNestedStringOnlyJSONConfigFile2() throws Exception {
         URL configURL = JSONPropertySourceTest.class
                 .getResource("/configs/valid/simple-nested-string-only-config-1.json");
 

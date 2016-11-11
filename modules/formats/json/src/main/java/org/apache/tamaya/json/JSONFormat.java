@@ -76,7 +76,7 @@ public class JSONFormat implements ConfigurationFormat {
             HashMap<String, String> values = new HashMap<>();
             JSONVisitor visitor = new JSONVisitor(root, values);
             visitor.run();
-            return ConfigurationDataBuilder.of(resource, this).addProperties(values)
+            return ConfigurationDataBuilder.of(resource, this).addDefaultProperties(values)
                                            .build();
         } catch (JsonException e) {
             throw new ConfigException("Failed to read data from " + resource, e);
