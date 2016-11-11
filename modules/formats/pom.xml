@@ -30,7 +30,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>common</module>
+        <module>base</module>
         <module>json</module>
         <module>yaml</module>
     </modules>
