@@ -33,16 +33,17 @@ public class RegexPropertyFilterTest {
     @org.junit.Test
     public void testFilterProperty() throws Exception {
         RegexPropertyFilter filter = new RegexPropertyFilter();
-        filter.setIncludes("test\\..*");
+        filter.setIncludes("test1.*");
         Map<String,String> map = new HashMap<>();
         map.put("test1", "test1");
         map.put("test2", "test2");
-        map.put("test.test3", "test.test3");
-        assertEquals(filter.filterProperty("test1", new FilterContext("test1", map, true)), "test1");
-        assertEquals(filter.filterProperty("test2", new FilterContext("test2", map, true)), "test2");
-        assertNull(filter.filterProperty("test.test3", new FilterContext("test.test3", map, true)));
+        map.put("test1.test3", "test.test3");
+        assertEquals(filter.filterProperty("test1.", new FilterContext("test1.", map, true)), "test1.");
+        assertNull(filter.filterProperty("test2", new FilterContext("test2.", map, true)));
+        assertEquals(filter.filterProperty("test1.test3", new FilterContext("test1.test3", map, true)), "test1.test3");
         filter = new RegexPropertyFilter();
-        assertNull(filter.filterProperty("test1", new FilterContext("test1", map, true)));
+        filter.setIncludes("test1.*");
+        assertNotNull(filter.filterProperty("test1", new FilterContext("test1", map, true)));
         assertNull(filter.filterProperty("test2", new FilterContext("test2", map, true)));
         assertNull(filter.filterProperty("test.test3", new FilterContext("test.test3", map, true)));
     }

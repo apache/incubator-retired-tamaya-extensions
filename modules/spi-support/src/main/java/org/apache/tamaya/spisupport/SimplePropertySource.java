@@ -75,6 +75,19 @@ public class SimplePropertySource extends BasePropertySource {
     }
 
     /**
+     * Creates a new Properties based PropertySource.
+     *
+     * @param name the property source name, not null.
+     * @param properties the properties, not null
+     * @param defaultOrdinal the default ordinal
+     */
+    public SimplePropertySource(String name, Map<String, String> properties, int defaultOrdinal){
+        super(defaultOrdinal);
+        this.properties = new HashMap<>(properties);
+        this.name = Objects.requireNonNull(name);
+    }
+
+    /**
      * Creates a new Properties based PropertySource based on the given properties map.
      *
      * @param name       the name, not null.

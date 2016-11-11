@@ -40,7 +40,7 @@ public final class RegexPropertyFilter implements PropertyFilter{
      * @param expressions the regular expression for inclusion, not null.
      */
     public void setIncludes(String... expressions){
-        this.includes= Arrays.asList(expressions);
+        this.includes = Arrays.asList(expressions);
     }
 
     /**
@@ -56,10 +56,11 @@ public final class RegexPropertyFilter implements PropertyFilter{
     public String filterProperty(String valueToBeFiltered, FilterContext context) {
         if(includes!=null){
             for(String expression:includes){
-                if(!context.getKey().matches(expression)){
-                    return null;
+                if(context.getKey().matches(expression)){
+                    return valueToBeFiltered;
                 }
             }
+            return null;
         }
         if(excludes!=null){
             for(String expression:excludes){
