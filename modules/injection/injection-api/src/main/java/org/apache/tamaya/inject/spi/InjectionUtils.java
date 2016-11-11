@@ -78,6 +78,7 @@ public final class InjectionUtils {
         for(String areaKey:areaKeys) {
             keys.add(areaKey + '.' + key);
         }
+        keys.add(key);
         return keys;
     }
 
