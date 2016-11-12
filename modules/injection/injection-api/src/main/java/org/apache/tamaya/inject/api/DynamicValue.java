@@ -128,34 +128,35 @@ public interface DynamicValue<T> {
      */
     T orElse(T other);
 
-    /**
-     * Return the value if present, otherwise invoke {@code other} and return
-     * the result of that invocation.
-     *
-     * @param other a {@code ConfiguredItemSupplier} whose result is returned if no value
-     * is present
-     * @return the value if present otherwise the result of {@code other.get()}
-     * @throws NullPointerException if value is not present and {@code other} is
-     * null
-     */
-    T orElseGet(ConfiguredItemSupplier<? extends T> other);
-
-    /**
-     * Return the contained value, if present, otherwise throw an exception
-     * to be created by the provided supplier.
-     *
-     * NOTE A method reference to the exception constructor with an empty
-     * argument list can be used as the supplier. For example,
-     * {@code IllegalStateException::new}
-     *
-     * @param <X> Type of the exception to be thrown
-     * @param exceptionSupplier The supplier which will return the exception to
-     * be thrown
-     * @return the present value
-     * @throws X if there is no value present
-     * @throws NullPointerException if no value is present and
-     * {@code exceptionSupplier} is null
-     */
-    <X extends Throwable> T orElseThrow(ConfiguredItemSupplier<? extends X> exceptionSupplier) throws X;
+    // TODO enable with Java 8
+//    /**
+//     * Return the value if present, otherwise invoke {@code other} and return
+//     * the result of that invocation.
+//     *
+//     * @param other a {@code ConfiguredItemSupplier} whose result is returned if no value
+//     * is present
+//     * @return the value if present otherwise the result of {@code other.get()}
+//     * @throws NullPointerException if value is not present and {@code other} is
+//     * null
+//     */
+//    T orElseGet(ConfiguredItemSupplier<? extends T> other);
+//
+//    /**
+//     * Return the contained value, if present, otherwise throw an exception
+//     * to be created by the provided supplier.
+//     *
+//     * NOTE A method reference to the exception constructor with an empty
+//     * argument list can be used as the supplier. For example,
+//     * {@code IllegalStateException::new}
+//     *
+//     * @param <X> Type of the exception to be thrown
+//     * @param exceptionSupplier The supplier which will return the exception to
+//     * be thrown
+//     * @return the present value
+//     * @throws X if there is no value present
+//     * @throws NullPointerException if no value is present and
+//     * {@code exceptionSupplier} is null
+//     */
+//    <X extends Throwable> T orElseThrow(ConfiguredItemSupplier<? extends X> exceptionSupplier) throws X;
 
 }

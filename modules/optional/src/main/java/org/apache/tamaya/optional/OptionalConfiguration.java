@@ -54,6 +54,14 @@ public final class OptionalConfiguration {
     }
 
     /**
+     * Allows to check if Tamaya is on the classpath.
+     * @return true, if Tamaya is available.
+     */
+    public static boolean isTamayaLoaded(){
+        return TAMAYA_LOADED;
+    }
+
+    /**
      * Default value provider returning Strings from system properties and the system environment.
      * In all other cases {@code null} is returned.
      */
@@ -204,11 +212,13 @@ public final class OptionalConfiguration {
      * @param type the target type, not null.
      * @param <T>  The type param
      * @return the corresponding value from Tamaya, or null.
+     * @throws IllegalStateException if Tamaya is not loaded.
+     * @see #isTamayaLoaded()
      */
     private <T> T getTamaya(String key, Class<T> type) {
         if (TAMAYA_LOADED) {
             return ConfigurationProvider.getConfiguration().get(key, type);
         }
-        return null;
+        throw new IllegalStateException("Tamaya is not loaded.");
     }
 }

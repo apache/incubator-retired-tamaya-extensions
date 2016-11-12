@@ -20,6 +20,7 @@ package org.apache.tamaya.inject.internal;
 
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.functions.Supplier;
 import org.apache.tamaya.inject.ConfigurationInjector;
 
 import javax.annotation.Priority;
@@ -31,7 +32,6 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
-import org.apache.tamaya.inject.api.ConfiguredItemSupplier;
 import org.apache.tamaya.inject.api.NoConfig;
 import org.apache.tamaya.inject.api.Config;
 import org.apache.tamaya.inject.api.ConfigDefaultSections;
@@ -159,18 +159,18 @@ public final class DefaultConfigurationInjector implements ConfigurationInjector
         if(cl==null){
             cl = this.getClass().getClassLoader();
         }
-        return templateType.cast(Proxy.newProxyInstance(cl, new Class[]{ConfiguredItemSupplier.class, Objects.requireNonNull(templateType)},
+        return templateType.cast(Proxy.newProxyInstance(cl, new Class[]{Supplier.class, Objects.requireNonNull(templateType)},
                 new ConfigTemplateInvocationHandler(templateType)));
     }
 
     @Override
-    public <T> ConfiguredItemSupplier<T> getConfiguredSupplier(final ConfiguredItemSupplier<T> supplier) {
+    public <T> Supplier<T> getConfiguredSupplier(final Supplier<T> supplier) {
         return getConfiguredSupplier(supplier, ConfigurationProvider.getConfiguration());
     }
 
     @Override
-    public <T> ConfiguredItemSupplier<T> getConfiguredSupplier(final ConfiguredItemSupplier<T> supplier, final Configuration config) {
-        return new ConfiguredItemSupplier<T>() {
+    public <T> Supplier<T> getConfiguredSupplier(final Supplier<T> supplier, final Configuration config) {
+        return new Supplier<T>() {
             public T get() {
                 return configure(supplier.get(), config);
             }

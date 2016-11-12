@@ -20,7 +20,7 @@ package org.apache.tamaya.inject;
 
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.inject.api.ConfiguredItemSupplier;
+import org.apache.tamaya.functions.Supplier;
 
 /**
  * Accessor interface for injection of configuration and configuration templates.
@@ -79,7 +79,7 @@ public interface ConfigurationInjector {
      * @param <T> the target type.
      * @return a supplier creating configured instances of {@code T}.
      */
-    <T> ConfiguredItemSupplier<T> getConfiguredSupplier(ConfiguredItemSupplier<T> supplier);
+    <T> Supplier<T> getConfiguredSupplier(Supplier<T> supplier);
 
     /**
      * Creates a supplier for configured instances of the given type {@code T}.
@@ -89,6 +89,6 @@ public interface ConfigurationInjector {
      * @param <T> the target type.
      * @return a supplier creating configured instances of {@code T}.
      */
-    <T> ConfiguredItemSupplier<T> getConfiguredSupplier(ConfiguredItemSupplier<T> supplier, Configuration config);
+    <T> Supplier<T> getConfiguredSupplier(Supplier<T> supplier, Configuration config);
 
 }
