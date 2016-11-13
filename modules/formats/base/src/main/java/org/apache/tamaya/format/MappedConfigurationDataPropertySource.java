@@ -44,8 +44,7 @@ public class MappedConfigurationDataPropertySource extends BasePropertySource {
      * @see ConfigurationData#getCombinedProperties()
      */
     public MappedConfigurationDataPropertySource(ConfigurationData data) {
-        this.properties = Collections.unmodifiableMap(populateData(data));
-        this.data = data;
+        this(0, data);
     }
 
     /*
@@ -59,6 +58,14 @@ public class MappedConfigurationDataPropertySource extends BasePropertySource {
         super(defaultOrdinal);
         this.properties = Collections.unmodifiableMap(populateData(data));
         this.data = data;
+        String name = this.properties.get("_name");
+        if (name == null) {
+            name = this.data.getResource();
+        }
+        if (name == null) {
+            name = getClass().getSimpleName();
+        }
+        setName(name);
     }
 
     /**
@@ -79,18 +86,6 @@ public class MappedConfigurationDataPropertySource extends BasePropertySource {
             }
         }
         return result;
-    }
-
-    @Override
-    public String getName() {
-        String name = this.properties.get("_name");
-        if (name == null) {
-            name = this.data.getResource();
-        }
-        if (name == null) {
-            name = getClass().getSimpleName();
-        }
-        return name;
     }
 
     @Override

@@ -113,7 +113,7 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
      * @return property sources from the given file.
      */
     protected Collection<PropertySource> getPropertySources(final Path file) {
-        return Arrays.asList(new PropertySource[]{new BasePropertySource() {
+        return Arrays.asList(new PropertySource[]{new BasePropertySource(file.toString()) {
             private final Map<String,String> props = readProperties(file);
 
             @Override

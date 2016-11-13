@@ -51,11 +51,6 @@ implements MutablePropertySource{
     private static final Logger LOG = Logger.getLogger(MutablePropertiesPropertySource.class.getName());
 
     /**
-     * The property source name.
-     */
-    private String name;
-
-    /**
      * The configuration resource's URL.
      */
     private File file;
@@ -69,12 +64,20 @@ implements MutablePropertySource{
      * Creates a new Properties based PropertySource based on the given URL.
      *
      * @param propertiesLocation the URL encoded location, not null.
+     */
+    public MutablePropertiesPropertySource(File propertiesLocation) {
+        this(propertiesLocation, 0);
+    }
+
+    /**
+     * Creates a new Properties based PropertySource based on the given URL.
+     *
+     * @param propertiesLocation the URL encoded location, not null.
      * @param defaultOrdinal the default ordinal to be used, when no ordinal is provided with the property
      *                       source's properties.
      */
     public MutablePropertiesPropertySource(File propertiesLocation, int defaultOrdinal) {
-        super(defaultOrdinal);
-        this.name = propertiesLocation.toString();
+        super(propertiesLocation.toString(), defaultOrdinal);
         try {
             this.file = propertiesLocation;
             refresh();
@@ -82,6 +85,7 @@ implements MutablePropertySource{
             LOG.log(Level.SEVERE, "Cannot convert file to URL: " + propertiesLocation, e);
         }
     }
+
 
     @Override
     public PropertyValue get(String key) {
@@ -101,16 +105,9 @@ implements MutablePropertySource{
     }
 
     @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
     public Map<String, String> getProperties() {
         return Collections.unmodifiableMap(this.properties);
     }
-
-
 
     /**
      * loads the Properties from the given URL

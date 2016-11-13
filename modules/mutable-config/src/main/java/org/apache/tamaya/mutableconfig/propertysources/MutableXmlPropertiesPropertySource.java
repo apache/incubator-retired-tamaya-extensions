@@ -51,11 +51,6 @@ implements MutablePropertySource{
     private static final Logger LOG = Logger.getLogger(MutableXmlPropertiesPropertySource.class.getName());
 
     /**
-     * The property source name.
-     */
-    private String name;
-
-    /**
      * The configuration resource's URL.
      */
     private File file;
@@ -65,6 +60,16 @@ implements MutablePropertySource{
      */
     private Map<String, String> properties = new HashMap<>();
 
+
+    /**
+     * Creates a new Properties based PropertySource based on the given URL.
+     *
+     * @param propertiesLocation the URL encoded location, not null.
+     */
+    public MutableXmlPropertiesPropertySource(File propertiesLocation) {
+        this(propertiesLocation, 0);
+    }
+
     /**
      * Creates a new Properties based PropertySource based on the given URL.
      *
@@ -73,8 +78,7 @@ implements MutablePropertySource{
      *                       source's properties.
      */
     public MutableXmlPropertiesPropertySource(File propertiesLocation, int defaultOrdinal) {
-        super(defaultOrdinal);
-        this.name = propertiesLocation.toString();
+        super(propertiesLocation.toString(), defaultOrdinal);
         try {
             this.file = propertiesLocation;
             load();
@@ -103,15 +107,9 @@ implements MutablePropertySource{
     }
 
     @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
     public Map<String, String> getProperties() {
         return Collections.unmodifiableMap(this.properties);
     }
-
 
     /**
      * loads the Properties from the given URL
