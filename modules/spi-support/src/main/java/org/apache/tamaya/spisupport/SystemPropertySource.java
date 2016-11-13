@@ -32,7 +32,7 @@ import java.util.Properties;
 public class SystemPropertySource extends BasePropertySource {
 
     /**
-     * default ordinal for {@link org.apache.tamaya.core.propertysource.SystemPropertySource}
+     * default ordinal used.
      */
     public static final int DEFAULT_ORDINAL = 1000;
 
@@ -65,6 +65,7 @@ public class SystemPropertySource extends BasePropertySource {
      * </pre>
      */
     public SystemPropertySource(){
+        super("system-properties", DEFAULT_ORDINAL);
         initFromSystemProperties();
         if(!disabled){
             cachedProperties = Collections.unmodifiableMap(loadProperties());
@@ -125,11 +126,6 @@ public class SystemPropertySource extends BasePropertySource {
         this.prefix = prefix;
     }
 
-    @Override
-    public int getDefaultOrdinal() {
-        return DEFAULT_ORDINAL;
-    }
-
 
     private Map<String, String> loadProperties() {
         Properties sysProps = System.getProperties();
@@ -151,9 +147,9 @@ public class SystemPropertySource extends BasePropertySource {
     @Override
     public String getName() {
         if(disabled){
-            return "system-properties(disabled)";
+            return super.getName() + "(disabled)";
         }
-        return "system-properties";
+        return super.getName();
     }
 
     @Override

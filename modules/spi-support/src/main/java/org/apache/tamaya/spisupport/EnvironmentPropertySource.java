@@ -37,7 +37,7 @@ public class EnvironmentPropertySource extends BasePropertySource {
     private static final Logger LOG = Logger.getLogger(EnvironmentPropertySource.class.getName());
 
     /**
-     * default ordinal for {@link org.apache.tamaya.core.propertysource.EnvironmentPropertySource}
+     * Default ordinal used.
      */
     public static final int DEFAULT_ORDINAL = 300;
 
@@ -108,6 +108,7 @@ public class EnvironmentPropertySource extends BasePropertySource {
      * @param ordinal the ordinal to be used.
      */
     public EnvironmentPropertySource(String prefix, int ordinal){
+        super("environment-properties");
         this.prefix = prefix;
         setOrdinal(ordinal);
     }
@@ -128,9 +129,9 @@ public class EnvironmentPropertySource extends BasePropertySource {
     @Override
     public String getName() {
         if(disabled){
-            return "environment-properties(disabled)";
+            return super.getName() + "(disabled)";
         }
-        return "environment-properties";
+        return super.getName();
     }
 
     @Override

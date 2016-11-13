@@ -52,6 +52,7 @@ public class CLIPropertySource extends BasePropertySource{
      * @param args the args, or null.
      */
     public CLIPropertySource(String... args){
+        super("CLI");
         if(args!=null){
             initMainArgs(args);
         }

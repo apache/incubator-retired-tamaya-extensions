@@ -34,12 +34,7 @@ public class BasePropertySourceTest {
     @Test
     public void testGetOrdinal() {
 
-        PropertySource defaultPropertySource = new BasePropertySource(56) {
-
-            @Override
-            public String getName() {
-                return "testWithDefault";
-            }
+        PropertySource defaultPropertySource = new BasePropertySource("testWithDefault", 56) {
 
             @Override
             public PropertyValue get(String key) {
@@ -67,12 +62,7 @@ public class BasePropertySourceTest {
     private static class OverriddenOrdinalPropertySource extends BasePropertySource {
 
         private OverriddenOrdinalPropertySource() {
-            super(250);
-        }
-
-        @Override
-        public String getName() {
-            return "overriddenOrdinal";
+            super("overriddenOrdinal", 250);
         }
 
         @Override
@@ -86,12 +76,7 @@ public class BasePropertySourceTest {
     private static class OverriddenInvalidOrdinalPropertySource extends BasePropertySource {
 
         private OverriddenInvalidOrdinalPropertySource() {
-            super(1);
-        }
-
-        @Override
-        public String getName() {
-            return "overriddenInvalidOrdinal";
+            super("overriddenInvalidOrdinal", 1);
         }
 
         @Override

@@ -23,11 +23,13 @@ import org.apache.tamaya.ConfigException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 /**
@@ -37,11 +39,6 @@ import java.util.logging.Logger;
 public class SimplePropertySource extends BasePropertySource {
 
     private static final Logger LOG = Logger.getLogger(SimplePropertySource.class.getName());
-
-    /**
-     * The property source name.
-     */
-    private String name;
 
     /**
      * The current properties.
@@ -54,9 +51,8 @@ public class SimplePropertySource extends BasePropertySource {
      * @param propertiesLocation the URL encoded location, not null.
      */
     public SimplePropertySource(File propertiesLocation) {
-        super(0);
+        super(propertiesLocation.toString(), 0);
         try {
-            this.name = propertiesLocation.toString();
             this.properties = load(propertiesLocation.toURI().toURL());
         } catch (IOException e) {
             throw new ConfigException("Failed to load properties from " + propertiesLocation, e);
@@ -69,9 +65,8 @@ public class SimplePropertySource extends BasePropertySource {
      * @param propertiesLocation the URL encoded location, not null.
      */
     public SimplePropertySource(URL propertiesLocation) {
-        super(0);
+        super(propertiesLocation.toString(), 0);
         this.properties = load(Objects.requireNonNull(propertiesLocation));
-        this.name = propertiesLocation.toString();
     }
 
     /**
@@ -82,9 +77,8 @@ public class SimplePropertySource extends BasePropertySource {
      * @param defaultOrdinal the default ordinal
      */
     public SimplePropertySource(String name, Map<String, String> properties, int defaultOrdinal){
-        super(defaultOrdinal);
+        super(name, defaultOrdinal);
         this.properties = new HashMap<>(properties);
-        this.name = Objects.requireNonNull(name);
     }
 
     /**
@@ -94,9 +88,8 @@ public class SimplePropertySource extends BasePropertySource {
      * @param properties the properties, not null.
      */
     public SimplePropertySource(String name, Map<String, String> properties) {
-        super(0);
+        super(name, 0);
         this.properties = new HashMap<>(properties);
-        this.name = Objects.requireNonNull(name);
     }
 
     /**
@@ -106,14 +99,23 @@ public class SimplePropertySource extends BasePropertySource {
      * @param propertiesLocation the URL encoded location, not null.
      */
     public SimplePropertySource(String name, URL propertiesLocation) {
-        super(0);
+        super(name, 0);
         this.properties = load(propertiesLocation);
-        this.name = Objects.requireNonNull(name);
     }
 
-    @Override
-    public String getName() {
-        return name;
+    private SimplePropertySource(Builder builder) {
+        properties = builder.properties;
+        if(builder.defaultOrdinal!=null){
+            setDefaultOrdinal(builder.defaultOrdinal);
+        }
+        if(builder.ordinal!=null){
+            setOrdinal(builder.ordinal);
+        }
+        setName(builder.name);
+    }
+
+    public static Builder newBuilder() {
+        return new Builder();
     }
 
     @Override
@@ -124,11 +126,11 @@ public class SimplePropertySource extends BasePropertySource {
     /**
      * loads the Properties from the given URL
      *
-     * @param propertiesFile {@link java.net.URL} to load Properties from
-     * @return loaded {@link java.util.Properties}
+     * @param propertiesFile {@link URL} to load Properties from
+     * @return loaded {@link Properties}
      * @throws IllegalStateException in case of an error while reading properties-file
      */
-    private Map<String, String> load(URL propertiesFile) {
+    private static Map<String, String> load(URL propertiesFile) {
         boolean isXML = isXMLPropertieFiles(propertiesFile);
 
         Map<String, String> properties = new HashMap<>();
@@ -141,14 +143,10 @@ public class SimplePropertySource extends BasePropertySource {
                     props.load(stream);
                 }
             }
-
+            String source = propertiesFile.toString();
             for (String key : props.stringPropertyNames()) {
                 properties.put(key, props.getProperty(key));
-                if (getName() == null){
-                    LOG.warning("No property source name found for " + this +", ommitting source meta-entries.");
-                } else {
-                    properties.put("_" + key + ".source", getName());
-                }
+                properties.put("_" + key + ".source", source);
             }
         } catch (IOException e) {
             throw new ConfigException("Error loading properties from " + propertiesFile, e);
@@ -157,8 +155,139 @@ public class SimplePropertySource extends BasePropertySource {
         return properties;
     }
 
-    private boolean isXMLPropertieFiles(URL url) {
+    private static boolean isXMLPropertieFiles(URL url) {
         return url.getFile().endsWith(".xml");
     }
 
+
+    /**
+     * {@code SimplePropertySource} builder static inner class.
+     */
+    public static final class Builder {
+        private String name;
+        private Integer defaultOrdinal;
+        private Integer ordinal;
+        private Map<String, String> properties = new HashMap<>();
+
+        private Builder() {
+        }
+
+        /**
+         * Sets the {@code name} to a new UUID and returns a reference to this Builder so that the methods
+         * can be chained together.
+         *
+         * @return a reference to this Builder
+         */
+        public Builder withUuidName() {
+            this.name = UUID.randomUUID().toString();
+            return this;
+        }
+
+        /**
+         * Sets the {@code name} and returns a reference to this Builder so that the methods
+         * can be chained together.
+         *
+         * @param val the {@code name} to set, not null.
+         * @return a reference to this Builder
+         */
+        public Builder withName(String val) {
+            this.name = Objects.requireNonNull(name);
+            return this;
+        }
+
+        /**
+         * Sets the {@code ordinal} and returns a reference to this Builder so that the methods
+         * can be chained together.
+         *
+         * @param val the {@code ordinal} to set
+         * @return a reference to this Builder
+         */
+        public Builder withOrdinal(int val) {
+            this.ordinal = val;
+            return this;
+        }
+
+        /**
+         * Sets the {@code defaultOrdinal} and returns a reference to this Builder so that the methods
+         * can be chained together.
+         *
+         * @param val the {@code defaultOrdinal} to set
+         * @return a reference to this Builder
+         */
+        public Builder withDefaultOrdinal(int val) {
+            this.defaultOrdinal = val;
+            return this;
+        }
+
+        /**
+         * Reads the {@code properties} from the given resource and returns a reference
+         * to this Builder so that the methods can be chained together.
+         *
+         * @param resource the {@code resource} to read
+         * @return a reference to this Builder
+         */
+        public Builder withProperties(URL resource) {
+            this.properties.putAll(load(resource));
+            return this;
+        }
+
+        /**
+         * Reads the {@code properties} from the given resource and returns a reference
+         * to this Builder so that the methods can be chained together.
+         *
+         * @param file the {@code file} to read from (xml or properties format).
+         * @return a reference to this Builder
+         */
+        public Builder withProperties(File file) {
+            try {
+                this.properties.putAll(load(file.toURI().toURL()));
+            } catch (MalformedURLException e) {
+                throw new IllegalArgumentException("Failed to read file: " + file, e);
+            }
+            return this;
+        }
+
+        /**
+         * Sets the {@code properties} and returns a reference to this Builder so that the methods can be chained together.
+         *
+         * @param val the {@code properties} to set
+         * @return a reference to this Builder
+         */
+        public Builder withProperties(Map<String, String> val) {
+            this.properties.putAll(val);
+            return this;
+        }
+
+        /**
+         * Sets the {@code properties} and returns a reference to this Builder so that the methods can be chained together.
+         *
+         * @param val the {@code properties} to set
+         * @return a reference to this Builder
+         */
+        public Builder withProperty(String key, String val) {
+            this.properties.put(key, val);
+            return this;
+        }
+
+        /**
+         * Sets the {@code properties} and returns a reference to this Builder so that the methods can be chained together.
+         *
+         * @param val the {@code properties} to set
+         * @return a reference to this Builder
+         */
+        public Builder withSource(String val) {
+            this.properties.put("_source", val);
+            return this;
+        }
+
+        /**
+         * Returns a {@code SimplePropertySource} built from the parameters previously set.
+         *
+         * @return a {@code SimplePropertySource} built with parameters of this {@code SimplePropertySource.Builder}
+         */
+        public SimplePropertySource build() {
+            this.properties.put("_builtAt", String.valueOf(System.currentTimeMillis()));
+            return new SimplePropertySource(this);
+        }
+    }
 }

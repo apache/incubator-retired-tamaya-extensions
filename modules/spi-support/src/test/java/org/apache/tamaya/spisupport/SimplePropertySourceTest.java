@@ -36,7 +36,7 @@ public class SimplePropertySourceTest {
         SimplePropertySource source = new SimplePropertySource(resource);
 
         assertThat(source, notNullValue());
-        assertThat(source.getProperties(), aMapWithSize(2));
+        assertThat(source.getProperties(), aMapWithSize(4));
         assertThat(source.getProperties(), hasEntry("a", "b"));
         assertThat(source.getProperties(), hasEntry("b", "1"));
 
@@ -80,6 +80,6 @@ public class SimplePropertySourceTest {
         SimplePropertySource source = new SimplePropertySource(resource);
 
         assertThat(source, notNullValue());
-        assertThat(source.getProperties(), aMapWithSize(5));
+        assertThat(source.getProperties(), aMapWithSize(10)); // 5 * 2 meta entries.
     }
 }

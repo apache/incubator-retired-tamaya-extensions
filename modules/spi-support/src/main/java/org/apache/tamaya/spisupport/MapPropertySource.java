@@ -19,7 +19,6 @@ package org.apache.tamaya.spisupport;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Properties;
 
 /**
@@ -27,9 +26,6 @@ import java.util.Properties;
  * Optionally the entries passed can be mapped to a different rootContext.
  */
 public class MapPropertySource extends BasePropertySource {
-
-    /** The unique name of the PropertySource. */
-    private final String name;
 
     /**
      * The current properties.
@@ -56,7 +52,7 @@ public class MapPropertySource extends BasePropertySource {
      * @param prefix      the prefix context mapping, or null (for no mapping).
      */
     public MapPropertySource(String name, Map<String, String> props, String prefix) {
-        this.name = Objects.requireNonNull(name);
+        super(name);
         if (prefix == null) {
             this.props.putAll(props);
         } else {
@@ -93,11 +89,6 @@ public class MapPropertySource extends BasePropertySource {
 
 
     @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
     public Map<String, String> getProperties() {
         return Collections.unmodifiableMap(this.props);
     }
@@ -105,7 +96,7 @@ public class MapPropertySource extends BasePropertySource {
     @Override
     public String toString() {
         return "MapPropertySource{" +
-                "name=" + name + ", " +
+                "name=" + getName() + ", " +
                 "ordinal=" + getOrdinal() +
                 '}';
     }
