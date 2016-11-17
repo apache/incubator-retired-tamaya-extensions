@@ -128,7 +128,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         return this;
     }
 
-    protected DefaultConfigurationContextBuilder loadDefaultPropertyFilters() {
+    public DefaultConfigurationContextBuilder addDefaultPropertyFilters() {
         checkBuilderState();
         for(PropertyFilter pf:ServiceContextManager.getServiceContext().getServices(PropertyFilter.class)){
             addPropertyFilters(pf);
@@ -136,7 +136,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         return this;
     }
 
-    protected DefaultConfigurationContextBuilder loadDefaultPropertySources() {
+    public DefaultConfigurationContextBuilder addDefaultPropertySources() {
         checkBuilderState();
         for(PropertySource ps:ServiceContextManager.getServiceContext().getServices(PropertySource.class)){
             addPropertySources(ps);
@@ -149,7 +149,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
         return this;
     }
 
-    protected DefaultConfigurationContextBuilder loadDefaultPropertyConverters() {
+    public DefaultConfigurationContextBuilder addDefaultPropertyConverters() {
         checkBuilderState();
         for(Map.Entry<TypeLiteral, Collection<PropertyConverter>> en:getDefaultPropertyConverters().entrySet()){
             for(PropertyConverter pc: en.getValue()) {
@@ -344,9 +344,9 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
     protected ConfigurationContextBuilder loadDefaults() {
         checkBuilderState();
         this.combinationPolicy = PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;
-        loadDefaultPropertySources();
-        loadDefaultPropertyFilters();
-        loadDefaultPropertyConverters();
+        addDefaultPropertySources();
+        addDefaultPropertyFilters();
+        addDefaultPropertyConverters();
         return this;
     }
 
@@ -370,7 +370,7 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
     /**
      * Builds a new configuration based on the configuration of this builder instance.
      *
-     * @return a new {@link Configuration configuration instance},
+     * @return a new {@link org.apache.tamaya.Configuration configuration instance},
      *         never {@code null}.
      */
     @Override
