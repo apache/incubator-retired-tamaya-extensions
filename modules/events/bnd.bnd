@@ -1,0 +1,3 @@
+Export-Package: \
+	org.apache.tamaya.events,\
+	org.apache.tamaya.events.spi

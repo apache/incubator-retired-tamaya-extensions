@@ -16,4 +16,4 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-org.apache.tamaya.json.YAMLFormat
+org.apache.tamaya.yaml.YAMLFormat

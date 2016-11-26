@@ -505,32 +505,14 @@ under the License.
                     </configuration>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.felix</groupId>
-                    <artifactId>maven-bundle-plugin</artifactId>
-                    <version>3.2.0</version>
-                    <inherited>true</inherited>
-                    <extensions>true</extensions>
-                    <configuration>
-                        <instructions>
-                            <Bundle-DocURL>http://tamaya.incubator.apache.org</Bundle-DocURL>
-                            <Bundle-SymbolicName>
-                                ${project.groupId}.${project.artifactId}
-                            </Bundle-SymbolicName>
-                            <Bundle-Vendor>The Apache Software Foundation</Bundle-Vendor>
-                        </instructions>
-                    </configuration>
+                    <groupId>biz.aQute.bnd</groupId>
+                    <artifactId>bnd-maven-plugin</artifactId>
+                    <version>3.3.0</version>
                     <executions>
                         <execution>
-                            <id>cleanVersions</id>
-                            <phase>generate-sources</phase>
                             <goals>
-                                <goal>cleanVersions</goal>
+                                <goal>bnd-process</goal>
                             </goals>
-                            <configuration>
-                                <versions>
-                                    <karaf.osgi.version>${osgi.version}</karaf.osgi.version>
-                                </versions>
-                            </configuration>
                         </execution>
                     </executions>
                 </plugin>
@@ -766,6 +748,18 @@ under the License.
                     <source>1.7</source>
                     <target>1.7</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>biz.aQute.bnd</groupId>
+                <artifactId>bnd-maven-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>bnd-process</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

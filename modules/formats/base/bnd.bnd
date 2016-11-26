@@ -1,0 +1,3 @@
+Export-Package: \
+	org.apache.tamaya.format,\
+	org.apache.tamaya.format.formats
