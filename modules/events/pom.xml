@@ -30,7 +30,7 @@ under the License.
 
     <artifactId>tamaya-events</artifactId>
     <name>Apache Tamaya Event and dynamic Update Extensions</name>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
 
     <properties>
         <jdkVersion>1.7</jdkVersion>
@@ -74,28 +74,4 @@ under the License.
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Export-Package>
-                            org.apache.tamaya.events,
-                            org.apache.tamaya.events.delta,
-                            org.apache.tamaya.events.folderobserver,
-                            org.apache.tamaya.events.spi
-                        </Export-Package>
-                        <Private-Package>
-                            org.apache.tamaya.events.internal
-                        </Private-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
-    
 </project>

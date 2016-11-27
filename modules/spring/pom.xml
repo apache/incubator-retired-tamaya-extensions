@@ -29,7 +29,7 @@ under the License.
 
     <artifactId>tamaya-spring</artifactId>
     <name>Apache Tamaya Spring Integration</name>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
 
     <properties>
         <spring.version>4.2.1.RELEASE</spring.version>

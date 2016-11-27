@@ -29,7 +29,7 @@ under the License.
     </parent>
     <artifactId>tamaya-injection</artifactId>
     <name>Apache Tamaya Modules - Injection Standalone</name>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
 
     <properties>
         <jdkVersion>1.7</jdkVersion>
@@ -73,25 +73,5 @@ under the License.
             <artifactId>junit</artifactId>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Export-Package>
-                            org.apache.tamaya.inject
-                        </Export-Package>
-                        <Private-Package>
-                            org.apache.tamaya.inject.internal
-                        </Private-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

@@ -32,7 +32,7 @@ under the License.
     <name> Apache Tamaya Common Support Classes</name>
     <description>Apache Tamaya Support Classes useful when implementing the Tamaya SPI or code independent of the core RI
         implementation.</description>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
 
     <properties>
         <jdkVersion>1.7</jdkVersion>
@@ -62,20 +62,4 @@ under the License.
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Export-Package>
-                            org.apache.tamaya.spisupport
-                        </Export-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>
