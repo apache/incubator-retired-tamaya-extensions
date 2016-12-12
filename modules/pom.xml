@@ -33,16 +33,16 @@ under the License.
     <packaging>pom</packaging>
 
     <modules>
+        <module>functions</module>
+        <module>spi-support</module>
+        <module>optional</module>
         <module>events</module>
         <module>filter</module>
         <module>formats</module>
-        <module>functions</module>
         <module>injection</module>
         <module>mutable-config</module>
-        <module>optional</module>
         <module>resolver</module>
         <module>resources</module>
-        <module>spi-support</module>
         <module>spring</module>
     </modules>
 

@@ -44,7 +44,7 @@ public class CLIPropertySource extends BasePropertySource{
      * Creates a new instance.
      */
     public CLIPropertySource(){
-        this(null);
+        this((String[])null);
     }
 
     /**

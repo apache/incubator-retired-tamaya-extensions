@@ -124,6 +124,18 @@ public final class ConfigurationFormats {
      * @throws IOException if the resource cannot be read.
      */
     public static ConfigurationData readConfigurationData(URL url, ConfigurationFormat... formats) throws IOException {
+        return readConfigurationData(url, Arrays.asList(formats));
+    }
+
+    /**
+     * Tries to read configuration data from a given URL, hereby explicitly trying all given formats in order.
+     *
+     * @param url     the url from where to read, not null.
+     * @param formats the formats to try.
+     * @return the ConfigurationData read, or null.
+     * @throws IOException if the resource cannot be read.
+     */
+    public static ConfigurationData readConfigurationData(URL url, Collection<ConfigurationFormat> formats) throws IOException {
         return readConfigurationData(url.toString(), url.openStream(), formats);
     }
 
@@ -133,7 +145,17 @@ public final class ConfigurationFormats {
      * @return the {@link org.apache.tamaya.format.ConfigurationData} of the files successfully decoded by the
      * given formats.
      */
-    public static Collection<ConfigurationData> getPropertySources(Collection<URL> urls, ConfigurationFormat... formats) {
+    public static Collection<ConfigurationData> readConfigurationData(Collection<URL> urls, ConfigurationFormat... formats) {
+        return readConfigurationData(urls, formats);
+    }
+
+    /**
+     * @param urls    the urls from where to read, not null.
+     * @param formats the formats to try.
+     * @return the {@link org.apache.tamaya.format.ConfigurationData} of the files successfully decoded by the
+     * given formats.
+     */
+    public static Collection<ConfigurationData> readConfigurationData(Collection<URL> urls, Collection<ConfigurationFormat> formats) {
         final List<ConfigurationData> dataRead = new ArrayList<>();
         for (final URL url : urls) {
             try {
@@ -159,6 +181,20 @@ public final class ConfigurationFormats {
      */
     public static ConfigurationData readConfigurationData(String resource, InputStream inputStream,
                                                           ConfigurationFormat... formats) throws IOException {
+        return readConfigurationData(resource, inputStream, Arrays.asList(formats));
+    }
+
+    /**
+     * Tries to read configuration data from a given URL, hereby explicitly trying all given formats in order.
+     *
+     * @param resource    a descriptive name for the resource, since an InputStream does not have any
+     * @param inputStream the inputStream from where to read, not null.
+     * @param formats     the formats to try.
+     * @return the ConfigurationData read, or null.
+     * @throws IOException if the resource cannot be read.
+     */
+    public static ConfigurationData readConfigurationData(String resource, InputStream inputStream,
+                                                          Collection<ConfigurationFormat> formats) throws IOException {
         Objects.requireNonNull(inputStream);
         Objects.requireNonNull(resource);
         try(InputStreamFactory isFactory = new InputStreamFactory(inputStream)) {

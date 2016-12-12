@@ -52,6 +52,11 @@ under the License.
             <artifactId>tamaya-spisupport</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-functions</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <!-- Test scope only, do not create a code dependency! -->
         <dependency>
             <groupId>org.apache.tamaya</groupId>

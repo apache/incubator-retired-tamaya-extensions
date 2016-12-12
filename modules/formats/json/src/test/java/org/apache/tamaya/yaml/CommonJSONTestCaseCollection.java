@@ -32,6 +32,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Class with a collection of common test cases each JSON processing
@@ -65,7 +66,7 @@ public abstract class CommonJSONTestCaseCollection {
 
         PropertySource properties = getPropertiesFrom(configURL);
 
-        assertThat(properties.getProperties().keySet(), hasSize(5));
+        assertTrue(properties.getProperties().keySet().size()>=5);
 
         PropertyValue keyB = properties.get("b");
         PropertyValue keyDO = properties.get("d.o");
@@ -89,7 +90,7 @@ public abstract class CommonJSONTestCaseCollection {
 
         PropertySource properties = getPropertiesFrom(configURL);
 
-        assertThat(properties.getProperties().keySet(), hasSize(4));
+        assertTrue(properties.getProperties().keySet().size()>=4);
 
         PropertyValue keyA = properties.get("a");
         PropertyValue keyDO = properties.get("b.o");
@@ -152,7 +153,7 @@ public abstract class CommonJSONTestCaseCollection {
 
         PropertySource properties = getPropertiesFrom(configURL);
 
-        assertThat(properties.getProperties().keySet(), hasSize(3));
+        assertTrue(properties.getProperties().keySet().size()>=3);
 
         PropertyValue keyA = properties.get("a");
         PropertyValue keyB = properties.get("b");
@@ -185,6 +186,6 @@ public abstract class CommonJSONTestCaseCollection {
 
         PropertySource properties = getPropertiesFrom(configURL);
 
-        assertThat(properties.getProperties().keySet(), hasSize(0));
+        assertTrue(properties.getProperties().keySet().size()>=0);
     }
 }

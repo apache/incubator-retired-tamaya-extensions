@@ -18,23 +18,26 @@
  */
 package org.apache.tamaya.format;
 
+import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.functions.Supplier;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spisupport.BasePropertySource;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * Mapped PropertySource that uses the flattened config data read from an URL by a
- * {@link org.apache.tamaya.format.ConfigurationFormat}.
+ * {@link org.apache.tamaya.format.ConfigurationFormat}. Use of a {@link Supplier}
+ * allows deferring the load until a resource is available.
  */
 public class MappedConfigurationDataPropertySource extends BasePropertySource {
     private static final Logger LOG = Logger.getLogger(MappedConfigurationDataPropertySource.class.getName());
-    private final Map<String, String> properties;
-    private final ConfigurationData data;
-
+    private Map<String, String> properties;
+    private final Supplier<ConfigurationData> dataSupplier;
 
     /*
      * Constructor, uses hereby the flattened config data read from an URL by a
@@ -43,8 +46,8 @@ public class MappedConfigurationDataPropertySource extends BasePropertySource {
      * contained in a section as {@code Entry<section.propertyName,value>}.
      * @see ConfigurationData#getCombinedProperties()
      */
-    public MappedConfigurationDataPropertySource(ConfigurationData data) {
-        this(0, data);
+    public MappedConfigurationDataPropertySource(String name, final Supplier<ConfigurationData> dataSupplier) {
+        this(name, 0, dataSupplier);
     }
 
     /*
@@ -54,18 +57,58 @@ public class MappedConfigurationDataPropertySource extends BasePropertySource {
      * contained in a section as {@code Entry<section.propertyName,value>}.
      * @see ConfigurationData#getCombinedProperties()
      */
-    public MappedConfigurationDataPropertySource(int defaultOrdinal, ConfigurationData data) {
+    public MappedConfigurationDataPropertySource(final ConfigurationData data) {
+        this(data.getResource(), 0, new Supplier<ConfigurationData>(){
+            @Override
+            public ConfigurationData get() {
+                return data;
+            }
+        });
+    }
+
+    /*
+     * Constructor, uses hereby the flattened config data read from an URL by a
+     * ${@link org.apache.tamaya.format.ConfigurationFormat}.
+     * Hereby it reads the <i>default</i> properties as is and adds properties
+     * contained in a section as {@code Entry<section.propertyName,value>}.
+     * @see ConfigurationData#getCombinedProperties()
+     */
+    public MappedConfigurationDataPropertySource(int defaultOrdinal, final ConfigurationData data) {
+        this(data.getResource(), defaultOrdinal, new Supplier<ConfigurationData>() {
+            @Override
+            public ConfigurationData get() {
+                return data;
+            }
+        });
+    }
+
+    /*
+     * Constructor, uses hereby the flattened config data read from an URL by a
+     * ${@link org.apache.tamaya.format.ConfigurationFormat}.
+     * Hereby it reads the <i>default</i> properties as is and adds properties
+     * contained in a section as {@code Entry<section.propertyName,value>}.
+     * @see ConfigurationData#getCombinedProperties()
+     */
+    public MappedConfigurationDataPropertySource(String name, int defaultOrdinal, Supplier<ConfigurationData> dataSupplier) {
         super(defaultOrdinal);
-        this.properties = Collections.unmodifiableMap(populateData(data));
-        this.data = data;
-        String name = this.properties.get("_name");
-        if (name == null) {
-            name = this.data.getResource();
-        }
-        if (name == null) {
-            name = getClass().getSimpleName();
-        }
         setName(name);
+        this.dataSupplier = dataSupplier;
+        load();
+    }
+
+    public void load(){
+        try{
+            this.properties = populateData(dataSupplier.get());
+        }catch(Exception e){
+            LOG.log(Level.INFO, "Failed to load property source: " + getName(), e);
+            if(this.properties==null) {
+                this.properties = new HashMap<>();
+            }
+            this.properties.put("_exception", e.getLocalizedMessage());
+            this.properties.put("_state", "ERROR");
+        }finally{
+            this.properties.put("_timestamp", String.valueOf(System.currentTimeMillis()));
+        }
     }
 
     /**
@@ -76,14 +119,18 @@ public class MappedConfigurationDataPropertySource extends BasePropertySource {
      */
     protected Map<String, String> populateData(ConfigurationData data) {
         Map<String, String> result = new HashMap<>();
-        for(String section:data.getSectionNames()){
-            for(Map.Entry<String,String> en:data.getSection(section).entrySet()){
-                if("default".equals(section)){
-                    result.put(en.getKey(), en.getValue());
-                }else {
-                    result.put(section + '.' + en.getKey(), en.getValue());
+        if(data!=null) {
+            for (String section : data.getSectionNames()) {
+                for (Map.Entry<String, String> en : data.getSection(section).entrySet()) {
+                    if ("default".equals(section)) {
+                        result.put(en.getKey(), en.getValue());
+                    } else {
+                        result.put(section + '.' + en.getKey(), en.getValue());
+                    }
                 }
             }
+            result.put("_propertySource", getName());
+            result.put("_source", data.getResource());
         }
         return result;
     }
@@ -96,7 +143,7 @@ public class MappedConfigurationDataPropertySource extends BasePropertySource {
 
     @Override
     public Map<String, String> getProperties() {
-        return properties;
+        return Collections.unmodifiableMap(properties);
     }
 
 }
