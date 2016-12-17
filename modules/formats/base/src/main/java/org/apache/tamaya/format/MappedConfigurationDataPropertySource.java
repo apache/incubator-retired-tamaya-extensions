@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.format;
 
-import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.functions.Supplier;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spisupport.BasePropertySource;

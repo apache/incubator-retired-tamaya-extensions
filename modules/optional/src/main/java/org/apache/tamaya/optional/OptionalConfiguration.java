@@ -183,6 +183,7 @@ public final class OptionalConfiguration {
                                 "=" + value + "(provider)/" + tamayaValue + "(Tamaya");
                     }
                 }
+                break;
             default:
         }
         return value;
