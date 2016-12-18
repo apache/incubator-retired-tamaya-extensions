@@ -500,6 +500,7 @@ under the License.
                     <artifactId>maven-jar-plugin</artifactId>
                     <configuration>
                         <archive>
+                            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
                             <addMavenDescriptor>false</addMavenDescriptor>
                             <manifestEntries>
                                 <Specification-Title>Apache ${project.name}</Specification-Title>
@@ -614,7 +615,6 @@ under the License.
             </plugins>
         </pluginManagement>
 
-
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -653,6 +653,7 @@ under the License.
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
@@ -691,6 +692,9 @@ under the License.
                                 <requireMavenVersion>
                                     <version>3.0.5</version>
                                 </requireMavenVersion>
+                                <requireJavaVersion>
+                                    <version>[1.7,)</version>
+                                </requireJavaVersion>
                             </rules>
                         </configuration>
                     </execution>
@@ -942,6 +946,7 @@ under the License.
             <plugin>
                 <groupId>org.apache.rat</groupId>
                 <artifactId>apache-rat-plugin</artifactId>
+                <version>${rat.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

@@ -28,7 +28,7 @@ under the License.
 
     <artifactId>tamaya-cdi-se</artifactId>
     <name>Apache Tamaya Modules - Injection CDI (Direct)</name>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
 
     <properties>
         <owb.version>1.6.2</owb.version>
@@ -40,37 +40,6 @@ under the License.
         <ds.version>1.1.0</ds.version>
     </properties>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>prepare-agent</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Export-Package>
-                            org.apache.tamaya.integration.cdi.config
-                        </Export-Package>
-                        <Private-Package>
-                            org.apache.tamaya.integration.cdi.internal
-                        </Private-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
