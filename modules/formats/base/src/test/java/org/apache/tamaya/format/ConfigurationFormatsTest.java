@@ -18,10 +18,14 @@
  */
 package org.apache.tamaya.format;
 
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests for {@link org.apache.tamaya.format.ConfigurationFormats}.
@@ -43,24 +47,85 @@ public class ConfigurationFormatsTest {
         formats = ConfigurationFormats.getFormats(getClass().getResource("/Test.properties"));
         assertNotNull(formats);
         assertEquals(formats.size(), 1);
-//        formats = ConfigurationFormats.getFormats(getClass().getResource("/Test.xml"));
-//        assertNotNull(formats);
-//        assertEquals(formats.size(), 1);
 
     }
 
     @org.junit.Test
     public void testReadConfigurationData_URL() throws Exception {
-        ConfigurationData data = ConfigurationFormats.readConfigurationData(getClass().getResource("/Test.ini"));
+        ConfigurationData data = ConfigurationFormats.readConfigurationData(
+                getClass().getResource("/Test.ini"));
         assertNotNull(data);
         data = ConfigurationFormats.readConfigurationData(getClass().getResource("/Test.properties"));
         assertNotNull(data);
     }
 
     @org.junit.Test
+    public void testReadConfigurationData_URL_ConfiguratonFormat() throws Exception {
+        ConfigurationData data = ConfigurationFormats.readConfigurationData(
+                getClass().getResource("/Test.ini"),
+                ConfigurationFormats.getFormats("ini"));
+        assertNotNull(data);
+    }
+
+    @org.junit.Test
+    public void testReadConfigurationData_URL_CollectionOfConfiguratonFormat() throws Exception {
+        List<ConfigurationFormat> formats = new ArrayList<>();
+        formats.add(ConfigurationFormats.getFormats("ini").get(0));
+        ConfigurationData data = ConfigurationFormats.readConfigurationData(
+                getClass().getResource("/Test.ini"),
+                formats);
+        assertNotNull(data);
+    }
+
+    @org.junit.Test
+    public void testReadConfigurationData_CollectionOfURL_CollectionOfConfiguratonFormat() throws Exception {
+        List<URL> urls = new ArrayList<>();
+        urls.add(getClass().getResource("/Test.ini"));
+        List<ConfigurationFormat> formats = new ArrayList<>();
+        formats.add(ConfigurationFormats.getFormats("ini").get(0));
+        Collection<ConfigurationData> data = ConfigurationFormats.readConfigurationData(
+                urls,
+                formats);
+        assertNotNull(data);
+        assertTrue(data.size()==1);
+    }
+
+    @org.junit.Test
+    public void testReadConfigurationData_CollectionOfURL_ConfiguratonFormat() throws Exception {
+        List<URL> urls = new ArrayList<>();
+        urls.add(getClass().getResource("/Test.ini"));
+        Collection<ConfigurationData> data = ConfigurationFormats.readConfigurationData(
+                urls,
+                ConfigurationFormats.getFormats("ini").get(0));
+        assertNotNull(data);
+        assertTrue(data.size()==1);
+    }
+
+    @org.junit.Test
+    public void testReadConfigurationData_String_InputStream_ConfiguratonFormat() throws Exception {
+        ConfigurationData data = ConfigurationFormats.readConfigurationData(
+                "Test.ini",
+                getClass().getResource("/Test.ini").openStream(),
+                ConfigurationFormats.getFormats("ini"));
+        assertNotNull(data);
+    }
+
+    @org.junit.Test
+    public void testReadConfigurationData_String_InputStream_CollectionOfConfiguratonFormat() throws Exception {
+        List<ConfigurationFormat> formats = new ArrayList<>();
+        formats.add(ConfigurationFormats.getFormats("ini").get(0));
+        ConfigurationData data = ConfigurationFormats.readConfigurationData(
+                "Test.ini",
+                getClass().getResource("/Test.ini").openStream(),
+                formats);
+        assertNotNull(data);
+    }
+
+    @org.junit.Test
     public void testReadConfigurationData2() throws Exception {
         List<ConfigurationFormat> formats = ConfigurationFormats.getFormats();
-        ConfigurationData data = ConfigurationFormats.readConfigurationData(getClass().getResource("/Test.ini"),
+        ConfigurationData data = ConfigurationFormats.readConfigurationData(
+                getClass().getResource("/Test.ini"),
                 formats.toArray(new ConfigurationFormat[formats.size()]));
         assertNotNull(data);
         System.out.println(data);

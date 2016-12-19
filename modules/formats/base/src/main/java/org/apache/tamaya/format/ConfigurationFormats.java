@@ -146,7 +146,7 @@ public final class ConfigurationFormats {
      * given formats.
      */
     public static Collection<ConfigurationData> readConfigurationData(Collection<URL> urls, ConfigurationFormat... formats) {
-        return readConfigurationData(urls, formats);
+        return readConfigurationData(urls, Arrays.asList(formats));
     }
 
     /**
