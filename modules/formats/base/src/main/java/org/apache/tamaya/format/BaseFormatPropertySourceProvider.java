@@ -21,6 +21,8 @@ package org.apache.tamaya.format;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -138,12 +140,35 @@ public abstract class BaseFormatPropertySourceProvider implements PropertySource
     @Override
     public Collection<PropertySource> getPropertySources() {
         List<PropertySource> propertySources = new ArrayList<>();
+        byte[] buff = new byte[512];
         for (URL res : this.paths) {
-            for (ConfigurationFormat format : configFormats) {
-                try(InputStream is = res.openStream()) {
-                    if (format.accepts(res)) {
-                        ConfigurationData data = format.readConfiguration(res.toString(), is);
-                        propertySources.addAll(getPropertySources(data));
+            byte[] dataBytes = null;
+            int read = 0;
+            try(InputStream is = res.openStream();
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();) {
+                read = is.read(buff);
+                while (read > 0) {
+                    bos.write(buff, 0, read);
+                    read = is.read(buff);
+                }
+                bos.flush();
+                dataBytes = bos.toByteArray();
+            } catch (Exception e) {
+                LOG.log(Level.WARNING, "Failed to read resource based config: " + res, e);
+            }
+            if(dataBytes!=null) {
+                try (InputStream is = new ByteArrayInputStream(dataBytes);) {
+                    for (ConfigurationFormat format : configFormats) {
+                        try {
+                            if (format.accepts(res)) {
+                                ConfigurationData data = format.readConfiguration(res.toString(), is);
+                                propertySources.addAll(getPropertySources(data));
+                            }
+                        } catch (Exception e) {
+                            LOG.log(Level.WARNING, "Failed to put resource based config: " + res, e);
+                        } finally {
+                            is.reset();
+                        }
                     }
                 } catch (Exception e) {
                     LOG.log(Level.WARNING, "Failed to put resource based config: " + res, e);
