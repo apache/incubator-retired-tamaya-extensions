@@ -139,13 +139,15 @@ public abstract class BaseFormatPropertySourceProvider implements PropertySource
     public Collection<PropertySource> getPropertySources() {
         List<PropertySource> propertySources = new ArrayList<>();
         for (URL res : this.paths) {
-            try(InputStream is = res.openStream()) {
-                for (ConfigurationFormat format : configFormats) {
-                    ConfigurationData data = format.readConfiguration(res.toString(), is);
-                    propertySources.addAll(getPropertySources(data));
+            for (ConfigurationFormat format : configFormats) {
+                try(InputStream is = res.openStream()) {
+                    if (format.accepts(res)) {
+                        ConfigurationData data = format.readConfiguration(res.toString(), is);
+                        propertySources.addAll(getPropertySources(data));
+                    }
+                } catch (Exception e) {
+                    LOG.log(Level.WARNING, "Failed to put resource based config: " + res, e);
                 }
-            } catch (Exception e) {
-                LOG.log(Level.WARNING, "Failed to put resource based config: " + res, e);
             }
         }
         return propertySources;
