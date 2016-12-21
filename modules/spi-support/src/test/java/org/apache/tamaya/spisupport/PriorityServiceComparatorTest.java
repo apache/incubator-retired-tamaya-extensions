@@ -29,14 +29,12 @@ import static org.junit.Assert.*;
  */
 public class PriorityServiceComparatorTest {
 
-    private PriorityServiceComparator comp = new PriorityServiceComparator();
-
     @Test
     public void compare() throws Exception {
-        assertTrue(comp.compare("a", "b")==0);
-        assertTrue(comp.compare(getClass(), getClass())==0);
-        assertTrue(comp.compare(new A(), new SystemPropertySource())==-1);
-        assertTrue(comp.compare(new SystemPropertySource(), new A())==1);
+        assertTrue(PriorityServiceComparator.getInstance().compare("a", "b")==0);
+        assertTrue(PriorityServiceComparator.getInstance().compare(getClass(), getClass())==0);
+        assertTrue(PriorityServiceComparator.getInstance().compare(new A(), new SystemPropertySource())==-1);
+        assertTrue(PriorityServiceComparator.getInstance().compare(new SystemPropertySource(), new A())==1);
     }
 
     @Priority(100)

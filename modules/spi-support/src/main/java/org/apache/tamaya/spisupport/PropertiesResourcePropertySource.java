@@ -18,6 +18,8 @@
  */
 package org.apache.tamaya.spisupport;
 
+import org.apache.tamaya.spi.ServiceContextManager;
+
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
@@ -77,7 +79,7 @@ public class PropertiesResourcePropertySource extends MapPropertySource {
         if(cl==null){
             cl = PropertiesResourcePropertySource.class.getClassLoader();
         }
-        URL url = cl.getResource(path);
+        URL url = ServiceContextManager.getServiceContext().getResource(path, cl);
         return loadProps(url);
     }
 

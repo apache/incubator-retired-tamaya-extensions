@@ -29,6 +29,18 @@ public class PriorityServiceComparator implements Comparator<Object>, Serializab
 
     private static final long serialVersionUID = 1L;
 
+    private static final PriorityServiceComparator INSTANCE = new PriorityServiceComparator();
+
+    private PriorityServiceComparator(){}
+
+    /**
+     * Get the shared instance of the comparator.
+     * @return the shared instance, never null.
+     */
+    public static PriorityServiceComparator getInstance(){
+        return INSTANCE;
+    }
+
     @Override
     public int compare(Object o1, Object o2) {
         int prio = getPriority(o1) - getPriority(o2);

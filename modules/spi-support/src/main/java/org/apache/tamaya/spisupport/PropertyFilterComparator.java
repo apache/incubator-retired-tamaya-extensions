@@ -27,9 +27,21 @@ import java.util.Comparator;
 /**
  * Comparator for PropertyFilters based on their priority annotations.
  */
-public class PropertyFilterComparator implements Comparator<PropertyFilter>, Serializable {
+public final class PropertyFilterComparator implements Comparator<PropertyFilter>, Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    private static final PropertyFilterComparator INSTANCE = new PropertyFilterComparator();
+
+    /**
+     * Get the shared instance of the comparator.
+     * @return the shared instance, never null.
+     */
+    public static PropertyFilterComparator getInstance(){
+        return INSTANCE;
+    }
+
+    private PropertyFilterComparator(){}
 
     /**
      * Compare 2 filters for ordering the filter chain.

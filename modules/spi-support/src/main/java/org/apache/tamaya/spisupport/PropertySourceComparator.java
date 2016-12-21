@@ -30,6 +30,19 @@ public class PropertySourceComparator implements Comparator<PropertySource>, Ser
     /** serial version UID. */
     private static final long serialVersionUID = 1L;
 
+    private static final PropertySourceComparator INSTANCE = new PropertySourceComparator();
+
+    private PropertySourceComparator(){}
+
+    /**
+     * Get the shared instance of the comparator.
+     * @return the shared instance, never null.
+     */
+    public static PropertySourceComparator getInstance(){
+        return INSTANCE;
+    }
+
+
     /**
      * Order property source reversely, the most important come first.
      *
