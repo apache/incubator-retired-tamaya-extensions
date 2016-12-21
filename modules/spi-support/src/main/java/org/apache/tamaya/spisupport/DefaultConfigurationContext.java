@@ -124,7 +124,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
             writeLock.lock();
             List<PropertySource> newPropertySources = new ArrayList<>(this.immutablePropertySources);
             newPropertySources.addAll(Arrays.asList(propertySourcesToAdd));
-            Collections.sort(newPropertySources, new PropertySourceComparator());
+            Collections.sort(newPropertySources, PropertySourceComparator.getInstance());
 
             this.immutablePropertySources = Collections.unmodifiableList(newPropertySources);
         } finally {

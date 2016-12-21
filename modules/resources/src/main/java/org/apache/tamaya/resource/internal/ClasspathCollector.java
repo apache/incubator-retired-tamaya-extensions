@@ -18,6 +18,8 @@
  */
 package org.apache.tamaya.resource.internal;
 
+import org.apache.tamaya.spi.ServiceContextManager;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
@@ -113,7 +115,8 @@ public class ClasspathCollector {
         Locator locator = Locator.of(expression);
         List<URL> result = new ArrayList<>();
         try {
-            Enumeration<URL> rootResources = this.classLoader.getResources(locator.getRootPath());
+            Enumeration<URL> rootResources = ServiceContextManager.getServiceContext()
+                            .getResources(locator.getRootPath(), this.classLoader);
             while (rootResources.hasMoreElements()) {
                 URL resource = rootResources.nextElement();
                 try {

@@ -20,10 +20,20 @@ package org.apache.tamaya.integration.cdi;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.ServiceContext;
+import org.apache.tamaya.spisupport.PriorityServiceComparator;
 
 import javax.annotation.Priority;
+import java.io.IOException;
+import java.net.URL;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
+import java.util.ServiceConfigurationError;
+import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,6 +43,7 @@ import java.util.logging.Logger;
  * {@link ServiceLoader} to load the services required.
  */
 final class ServiceLoaderServiceContext implements ServiceContext {
+    private static final Logger LOG = Logger.getLogger(ServiceLoaderServiceContext.class.getName());
     /**
      * List current services loaded, per class.
      */
@@ -41,22 +52,37 @@ final class ServiceLoaderServiceContext implements ServiceContext {
      * Singletons.
      */
     private final Map<Class<?>, Object> singletons = new ConcurrentHashMap<>();
+    private Map<Class, Class> factoryTypes = new ConcurrentHashMap<>();
 
     @Override
     public <T> T getService(Class<T> serviceType) {
         Object cached = singletons.get(serviceType);
         if (cached == null) {
-            Collection<T> services = getServices(serviceType);
-            if (services.isEmpty()) {
-                cached = null;
-            } else {
-                cached = getServiceWithHighestPriority(services, serviceType);
-            }
+            cached = create(serviceType);
             if(cached!=null) {
                 singletons.put(serviceType, cached);
             }
         }
         return serviceType.cast(cached);
+    }
+
+    @Override
+    public <T> T create(Class<T> serviceType) {
+        Class<? extends T> implType = factoryTypes.get(serviceType);
+        if(implType==null) {
+            Collection<T> services = getServices(serviceType);
+            if (services.isEmpty()) {
+                return null;
+            } else {
+                return getServiceWithHighestPriority(services, serviceType);
+            }
+        }
+        try {
+            return implType.newInstance();
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "Failed to create instabce of " + implType.getName(), e);
+            return  null;
+        }
     }
 
     /**
@@ -77,10 +103,14 @@ final class ServiceLoaderServiceContext implements ServiceContext {
             for (T t : ServiceLoader.load(serviceType)) {
                 services.add(t);
             }
+            Collections.sort(services, PriorityServiceComparator.getInstance());
             services = Collections.unmodifiableList(services);
-        } catch (Exception e) {
-            Logger.getLogger(ServiceLoaderServiceContext.class.getName()).log(Level.WARNING,
+        } catch (ServiceConfigurationError e) {
+            LOG.log(Level.WARNING,
                     "Error loading services current type " + serviceType, e);
+            if(services==null){
+                services = Collections.emptyList();
+            }
         }
         final List<T> previousServices = List.class.cast(servicesLoaded.putIfAbsent(serviceType, (List<Object>) services));
         return previousServices != null ? previousServices : services;
@@ -105,20 +135,21 @@ final class ServiceLoaderServiceContext implements ServiceContext {
      * @param services to scan
      * @param <T>      type of the service
      *
-     * @return the service with the highest {@link Priority#value()}
+     * @return the service with the highest {@link javax.annotation.Priority#value()}
      *
      * @throws ConfigException if there are multiple service implementations with the maximum priority
      */
     private <T> T getServiceWithHighestPriority(Collection<T> services, Class<T> serviceType) {
-
+        T highestService = null;
         // we do not need the priority stuff if the list contains only one element
         if (services.size() == 1) {
-            return services.iterator().next();
+            highestService = services.iterator().next();
+            this.factoryTypes.put(serviceType, highestService.getClass());
+            return highestService;
         }
 
         Integer highestPriority = null;
         int highestPriorityServiceCount = 0;
-        T highestService = null;
 
         for (T service : services) {
             int prio = getPriority(service);
@@ -133,12 +164,12 @@ final class ServiceLoaderServiceContext implements ServiceContext {
 
         if (highestPriorityServiceCount > 1) {
             throw new ConfigException(MessageFormat.format("Found {0} implementations for Service {1} with Priority {2}: {3}",
-                                                           highestPriorityServiceCount,
-                                                           serviceType.getName(),
-                                                           highestPriority,
-                                                           services));
+                    highestPriorityServiceCount,
+                    serviceType.getName(),
+                    highestPriority,
+                    services));
         }
-
+        this.factoryTypes.put(serviceType, highestService.getClass());
         return highestService;
     }
 
@@ -147,5 +178,20 @@ final class ServiceLoaderServiceContext implements ServiceContext {
         return 1;
     }
 
+    @Override
+    public Enumeration<URL> getResources(String resource, ClassLoader cl) throws IOException{
+        if(cl==null){
+            cl = Thread.currentThread().getContextClassLoader();
+        }
+        return cl.getResources(resource);
+    }
+
+    @Override
+    public URL getResource(String resource, ClassLoader cl){
+        if(cl==null){
+            cl = Thread.currentThread().getContextClassLoader();
+        }
+        return cl.getResource(resource);
+    }
 
 }

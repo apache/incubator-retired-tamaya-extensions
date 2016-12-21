@@ -124,7 +124,8 @@ public final class ResourceResolver implements ExpressionResolver {
                 List<URL> resources = new ArrayList<>();
                 Enumeration<URL> found;
                 try {
-                    found = cl.getResources(expression);
+                    found = ServiceContextManager.getServiceContext()
+                            .getResources(expression, cl);
                 } catch (Exception e) {
                     LOG.log(Level.SEVERE, "Error resolving expression: " + expression, e);
                     continue;

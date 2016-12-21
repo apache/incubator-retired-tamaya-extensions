@@ -25,12 +25,13 @@ import javax.annotation.Priority;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
+import java.io.IOException;
+import java.net.URL;
 import java.text.MessageFormat;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -74,6 +75,20 @@ public class CDIAwareServiceContext implements ServiceContext {
         return serviceType.cast(cached);
     }
 
+    @Override
+    public <T> T create(Class<T> serviceType) {
+        T serv = getService(serviceType);
+        if(serv!=null){
+            try {
+                return (T)serv.getClass().newInstance();
+            } catch (Exception e) {
+                Logger.getLogger(getClass().getName())
+                        .log(Level.SEVERE, "Failed to create new instance of: " +serviceType.getName(), e);
+            }
+        }
+        return null;
+    }
+
     /**
      * Loads and registers services.
      *
@@ -98,6 +113,28 @@ public class CDIAwareServiceContext implements ServiceContext {
             }
         }
         return found;
+    }
+
+    @Override
+    public Enumeration<URL> getResources(String resource, ClassLoader cl) throws IOException {
+        if(cl==null){
+            cl = Thread.currentThread().getContextClassLoader();
+        }
+        if(cl==null){
+            cl = getClass().getClassLoader();
+        }
+        return cl.getResources(resource);
+    }
+
+    @Override
+    public URL getResource(String resource, ClassLoader cl) {
+        if(cl==null){
+            cl = Thread.currentThread().getContextClassLoader();
+        }
+        if(cl==null){
+            cl = getClass().getClassLoader();
+        }
+        return cl.getResource(resource);
     }
 
     /**

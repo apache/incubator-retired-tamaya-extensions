@@ -19,6 +19,7 @@
 package org.apache.tamaya.resource.internal;
 
 import org.apache.tamaya.resource.ResourceLocator;
+import org.apache.tamaya.spi.ServiceContextManager;
 
 import javax.annotation.Priority;
 import java.io.IOException;
@@ -50,7 +51,8 @@ public class ClassPathResourceLocator implements ResourceLocator{
     public Collection<URL> lookup(ClassLoader classLoader, String expression) {
         List<URL> resources = new ArrayList<>();
         try {
-            Enumeration<URL> urls = classLoader.getResources(expression);
+            Enumeration<URL> urls = ServiceContextManager.getServiceContext()
+                            .getResources(expression, classLoader);
             while (urls.hasMoreElements()) {
                 URL url = urls.nextElement();
                 resources.add(url);
