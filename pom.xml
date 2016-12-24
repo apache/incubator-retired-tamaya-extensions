@@ -871,6 +871,27 @@ under the License.
                 <additionalparam>-Xdoclint:none</additionalparam>
             </properties>
         </profile>
+
+        <profile>
+            <!--
+             ! This profiles enables the Apache Maven Snapshot repository.
+             ! It is required since this project depends von the Tamaya main
+             ! project and its snapshot releases.
+             ! Oliver B. Fischer, 2016-12-24
+             !-->
+            <id>activate-asf-snapshots</id>
+
+            <repositories>
+                <repository>
+                    <id>activate-asf-snapshots</id>
+                    <name>Apache Maven Snapshot Repository</name>
+                    <url>https://repository.apache.org/content/repositories/snapshots/</url>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
+        </profile>
     </profiles>
 
     <reporting>
