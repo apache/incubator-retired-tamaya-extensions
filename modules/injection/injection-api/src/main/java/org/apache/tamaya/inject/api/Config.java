@@ -33,15 +33,17 @@ import java.lang.annotation.Target;
  *
  * <h3>Simplest variant</h3>
  * Below the most simple variant of a configured class is given:
+ * <pre>
  * {@code
  * package a.b;
  *
- * pubic class ConfiguredItem{
+ * public class ConfiguredItem {
  *
  *   @Config
  *   private String aValue;
  * }
  * }
+ * </pre>
  * Configuration resolution is implemented as follows:
  * <ul>
  *     <li>The current valid Configuration is evaluated by calling {@code Configuration cfg = ConfigurationProvider.getConfiguration();}</li>
@@ -54,32 +56,38 @@ import java.lang.annotation.Target;
  *
  * <h3>Explicit annotations</h3>
  * In the next example we explicitly define the configuration keys to be used:
+ * <pre>
  * {@code
  * @ConfigDefaultSections("section1")
- * pubic class ConfiguredItem{
+ * public class ConfiguredItem {
  *
- *   @Config({"b", "[a.b.deprecated.keys]", "a"})
+ *   @Config(value = {"b", "[a.b.deprecated.keys]", "a"})
  *   @ConfigDefault("myDefaultValue")
  *   private String aValue;
  * }
+ * }
+ * </pre>
  *
  * Within this example we evaluate multiple possible keys: {@code section1.b, a.b.deprecated.keys, section1.a}.
- * Evaluation is aborted if a key could be successfully resolved. Hereby the ordering of the annotation values
- * define the ordering of resolution. If no value could be found, the configured default {@code myDefaultValue} is
+ * Evaluation is aborted if a key is resolved successfully. Hereby the ordering of the annotation values
+ * define the ordering of resolution. If no value can be found, the configured default {@code myDefaultValue} is
  * injected.
  *
  * <h3>Using explicit field annotation only</h3>
  * In the last example we explicitly define the configuration keys but omit the section part, letting the default
  * section names to be taken:
+ * <pre>
  * {@code
  * package a.b;
  *
- * pubic class ConfiguredItem{
+ * public class ConfiguredItem {
  *
- *   @Config({"b", "[a.b.deprecated.keys]", "a"})
+ *   @Config(value = {"b", "[a.b.deprecated.keys]", "a"})
  *   @ConfigDefault("myDefaultValue")
  *   private String aValue;
  * }
+ * }
+ * </pre>
  *
  * Key resolution is similar to above, but now the default package names are used, resulting in
  * {@code a.b.ConfiguredItem.b, ConfiguredItem.b, a.b.deprecated.keys, a.b.ConfiguredItem.a, ConfiguredItem.a}
@@ -113,7 +121,7 @@ public @interface Config {
     String defaultValue() default "";
 
     /**
-     * FLag that defines if a configuration property is required. If a required
+     * Flag that defines if a configuration property is required. If a required
      * property is missing, a {@link org.apache.tamaya.ConfigException} is raised.
      * Default is {@code true}.
      * @return the flag value.

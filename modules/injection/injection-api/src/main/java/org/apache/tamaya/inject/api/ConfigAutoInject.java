@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
  * Adding this annotation tells the Tamaya injection system to inject all
  * fields found, also including fields not annotated with {@code @Config}.
  * The configuration keys to be used for resolution are basically determined
- * by the {@link Config} annotation(s). If missing the key are evaluated in the
+ * by the {@link Config} annotation(s). If missing the keys are evaluated in the
  * following order:
  * <ul>
  *     <li>packagename.simpleClassname.fieldName</li>
@@ -35,7 +35,7 @@ import java.lang.annotation.Target;
  *     <li>fieldName</li>
  * </ul>
  * Fields not to be injected can be annotated with {@code @NoConfig} to exclude
- * them being eleceted for injection.
+ * them being elected for injection.
  * @see Config
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -43,9 +43,9 @@ import java.lang.annotation.Target;
 public @interface ConfigAutoInject {
 
     /**
-     * Flag that tells the injection system if {@link org.apache.tamaya.ConfigException} should
-     * ne thrown when a property could not be resolved. Default is {@code false}.
-     * @return
+     * Flag that tells the injection system if a {@link org.apache.tamaya.ConfigException} should
+     * be thrown when a property cannot be resolved. Default is {@code false}.
+     * @return {@code false} if no exception is thrown on unresolvable properties, {@code true} otherwise.
      */
     boolean failIfMissing() default false;
 }
