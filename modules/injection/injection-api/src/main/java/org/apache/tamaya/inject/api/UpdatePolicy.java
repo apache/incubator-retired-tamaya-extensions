@@ -23,11 +23,13 @@ package org.apache.tamaya.inject.api;
  */
 public enum UpdatePolicy {
     /** New values are applied immedately and registered listeners are informed about the change. */
+    // REVIEW: typo IMMEDIATE
     IMMEDEATE,
-    /** New values or not applied, but stored in the newValue property. Explcit call to DynamicValue#commit
+    /** New values or not applied, but stored in the newValue property. Explicit call to DynamicValue#commit
      of DynamicValue#commitAndGet are required to accept the change and inform the listeners about the change.
      * Registered listeners will be informed, when the commit was performed explicitly.
      */
+    // REVIEW: typo EXPLICIT
     EXPLCIT,
     /**
      * New values are always immedately discarded, listeners are not triggered.

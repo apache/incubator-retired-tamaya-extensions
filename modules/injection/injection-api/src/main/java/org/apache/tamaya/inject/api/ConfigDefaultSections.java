@@ -38,7 +38,7 @@ public @interface ConfigDefaultSections {
 
     /**
      * Allows to declare an section names that are prepended to resolve relative configuration keys.
-     * @return the section names to used for key resolution.
+     * @return the section names to be used for key resolution.
      */
     String[] value() default {};
 
