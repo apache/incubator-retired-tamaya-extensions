@@ -61,8 +61,7 @@ import java.lang.annotation.Target;
  * @ConfigDefaultSections("section1")
  * public class ConfiguredItem {
  *
- *   @Config(value = {"b", "[a.b.deprecated.keys]", "a"})
- *   @ConfigDefault("myDefaultValue")
+ *   @Config(value = {"b", "[a.b.deprecated.keys]", "a"}, defaultValue = "myDefaultValue")
  *   private String aValue;
  * }
  * }
@@ -82,8 +81,7 @@ import java.lang.annotation.Target;
  *
  * public class ConfiguredItem {
  *
- *   @Config(value = {"b", "[a.b.deprecated.keys]", "a"})
- *   @ConfigDefault("myDefaultValue")
+ *   @Config(value = {"b", "[a.b.deprecated.keys]", "a"}, defaultValue = "myDefaultValue")
  *   private String aValue;
  * }
  * }
