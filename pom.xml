@@ -861,7 +861,7 @@ under the License.
         <profile>
             <!--
              ! This profiles enables the Apache Maven Snapshot repository.
-             ! It is required since this project depends von the Tamaya main
+             ! It is required since this project depends on the Tamaya main
              ! project and its snapshot releases.
              ! Oliver B. Fischer, 2016-12-24
              !-->
