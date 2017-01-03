@@ -204,6 +204,7 @@ under the License.
     </developers>
 
     <modules>
+        <module>examples</module>
         <module>modules</module>
         <module>distribution</module>
     </modules>
