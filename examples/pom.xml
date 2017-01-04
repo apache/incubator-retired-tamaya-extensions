@@ -39,6 +39,7 @@ under the License.
     <modules>
         <module>01-resources-example</module>
         <module>02-resolver-example</module>
+        <module>03-injection-example</module>
     </modules>
 
     
