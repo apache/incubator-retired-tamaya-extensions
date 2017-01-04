@@ -576,6 +576,7 @@ under the License.
                             <exclude>banner.txt</exclude>
                             <exclude>.git</exclude>
                             <exclude>derby.log</exclude>
+                            <exclude>**/build.data</exclude>
                             <exclude>**/bootstrap-*</exclude>
                             <exclude>**/js/jquery-*</exclude>
                             <!-- json can't get comments -->

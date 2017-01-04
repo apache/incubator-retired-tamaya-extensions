@@ -23,23 +23,38 @@ under the License.
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.apache.tamaya.ext</groupId>
-        <artifactId>tamaya-extensions-all</artifactId>
+        <groupId>org.apache.tamaya.ext.examples</groupId>
+        <artifactId>examples</artifactId>
         <version>0.3-incubating-SNAPSHOT</version>
     </parent>
 
     <groupId>org.apache.tamaya.ext.examples</groupId>
-    <artifactId>examples</artifactId>
-    <version>0.3-incubating-SNAPSHOT</version>
+    <artifactId>02-resolver-example</artifactId>
+    <name>Apache Tamaya Value Resolution Example</name>
+    <description>This project contains a simple example using the resolver module.</description>
 
-    <name>Apache Tamaya Extensions Examples</name>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.tamaya</groupId>
+            <artifactId>tamaya-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya.ext</groupId>
+            <artifactId>tamaya-resolver</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>java-hamcrest</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
-    <packaging>pom</packaging>
 
-    <modules>
-        <module>01-resources-example</module>
-        <module>02-resolver-example</module>
-    </modules>
 
-    
 </project>
