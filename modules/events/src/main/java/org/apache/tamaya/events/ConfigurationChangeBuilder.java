@@ -32,12 +32,12 @@ import java.util.TreeMap;
 
 /**
  * Models a set current changes applied to a {@link org.apache.tamaya.spi.PropertySource}. Consumers of these events
- * can observing changes to property sources and
+ * can observe changes to property sources and
  * <ol>
  * <li>Check if their current configuration instance ({@link org.apache.tamaya.spi.ConfigurationContext}
- * contains the changed {@link org.apache.tamaya.spi.PropertySource} (Note: the reference tova property source is never affected by a
+ * contains the changed {@link org.apache.tamaya.spi.PropertySource} (Note: the reference to a property source is never affected by a
  * change, its only the data of the property source).</li>
- * <li>If so corresponding action may be taken, such as reevaluating the configuration values (depending on
+ * <li>If so corresponding actions might be taken, such as reevaluating the configuration values (depending on
  * the update policy) or reevaluating the complete {@link org.apache.tamaya.Configuration} to create a change
  * event on configuration level.
  * </ol>
@@ -89,8 +89,8 @@ public final class ConfigurationChangeBuilder {
     }
 
     /**
-     * Compares the two property config/configurations and creates a collection current all changes
-     * that must be appied to render {@code map1} into {@code map2}.
+     * Compares the two property config/configurations and creates a collection with all changes
+     * that must be applied to render {@code map1} into {@code map2}.
      *
      * @param map1 the source map, not null.
      * @param map2 the target map, not null.

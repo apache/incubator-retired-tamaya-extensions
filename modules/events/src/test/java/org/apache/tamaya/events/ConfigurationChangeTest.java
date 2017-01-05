@@ -63,7 +63,6 @@ public class ConfigurationChangeTest {
         ConfigurationChange change = ConfigurationChangeBuilder.of(config).build();
         assertNotNull(change.getVersion());
         change = ConfigurationChangeBuilder.of(config).setVersion("version2").build();
-        assertNotNull(change.getVersion());
         assertEquals("version2", change.getVersion());
     }
 
@@ -71,7 +70,7 @@ public class ConfigurationChangeTest {
     public void testGetTimestamp() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
         ConfigurationChange change = ConfigurationChangeBuilder.of(config).build();
-        assertTrue((System.currentTimeMillis() - change.getTimestamp()) <= 10L);
+        assertTrue((System.currentTimeMillis() - change.getTimestamp()) > 0L);
         change = ConfigurationChangeBuilder.of(config).setTimestamp(10L).build();
         assertEquals(10L, change.getTimestamp());
     }
@@ -150,12 +149,13 @@ public class ConfigurationChangeTest {
     @Test
     public void testToString() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
-        ConfigurationChange change = ConfigurationChangeBuilder.of(config).addChange("key1", "key2").build();
-        change = ConfigurationChangeBuilder.of(config).removeKey("java.version").build();
-        assertTrue(change.toString().contains("timestamp"));
-        assertTrue(change.toString().contains("change-id"));
-        assertTrue(change.toString().contains("configuration-id"));
-        assertFalse(change.toString().contains("key1"));
-        assertFalse(change.toString().contains("key2"));
+        ConfigurationChange change = ConfigurationChangeBuilder.of(config).removeKey("java.version").build();
+        String toString =
+                change.toString();
+        assertTrue(toString.contains("timestamp"));
+        assertTrue(toString.contains("change-id"));
+        assertTrue(toString.contains("configuration-id"));
+        assertFalse(toString.contains("key1"));
+        assertFalse(toString.contains("key2"));
     }
 }
