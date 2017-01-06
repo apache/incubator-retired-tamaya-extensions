@@ -27,7 +27,6 @@ under the License.
     </parent>
 
     <artifactId>tamaya-extensions</artifactId>
-    <groupId>org.apache.tamaya.ext</groupId>
     <name>Apache Tamaya Extension Modules</name>
     <description>This project contains the several extensions that can be used with Tamaya.</description>
     <packaging>pom</packaging>
