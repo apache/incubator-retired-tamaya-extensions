@@ -25,7 +25,7 @@ import org.junit.Test;
 import java.util.Map;
 
 import static org.junit.Assert.*;
-
+import static org.assertj.core.api.Assertions.*;
 /**
  * Test class for {@link ConfigurationChange}.
  */
@@ -34,8 +34,8 @@ public class ConfigurationChangeTest {
     @Test
     public void testEmptyChangeSet() throws Exception {
         ConfigurationChange change = ConfigurationChange.emptyChangeSet(ConfigurationProvider.getConfiguration());
-        assertNotNull(change);
-        assertTrue(change.isEmpty());
+        assertThat(change).isNotNull();
+        assertThat(change.getChanges()).isEmpty();
     }
 
     @Test

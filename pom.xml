@@ -61,6 +61,7 @@ under the License.
         <json.spec.version>1.0-alpha-1</json.spec.version>
         <johnzon.version>0.9-incubating</johnzon.version>
         <junit.version>4.12</junit.version>
+        <assertj.version>3.6.1</assertj.version>
 
         <!-- Dependency and plugin relate version properties go here -->
         <arquillian.version>1.1.7.Final</arquillian.version>
@@ -230,6 +231,13 @@ under the License.
                 <scope>test</scope>
             </dependency>
 
+            <!-- with mvn 3.3.9 this definition is not inherited among multiple parent-pom relationships -->
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${assertj.version}</version>
+                <scope>test</scope>
+            </dependency>
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
@@ -967,4 +975,15 @@ under the License.
             </plugin>
         </plugins>
     </reporting>
+    <repositories>
+     <repository>
+        <snapshots>
+          <enabled>false</enabled>
+        </snapshots>
+        <id>maven-central</id>
+        <name>Maven Central Repository</name>
+        <url>https://repo1.maven.org/maven2</url>
+      </repository>
+    </repositories>
+
 </project>
