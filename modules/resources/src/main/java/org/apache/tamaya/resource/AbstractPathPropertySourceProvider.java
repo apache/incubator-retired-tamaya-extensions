@@ -55,13 +55,14 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
         if(resourcePaths.length==0){
             throw new IllegalArgumentException("At least one resource path should be configured.");
         }
-        this.resourcePaths = resourcePaths.clone();
+
+        setResourcePaths(resourcePaths);
     }
 
     @Override
     public Collection<PropertySource> getPropertySources() {
         List<PropertySource> propertySources = new ArrayList<>();
-        for(String resource:resourcePaths) {
+        for (String resource : getResourcePaths()) {
             try {
                 Collection<URL> resources = ConfigResources.getResourceResolver().getResources(resource);
                 for (URL url : resources) {
@@ -79,6 +80,14 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
             }
         }
         return propertySources;
+    }
+
+    protected String[] getResourcePaths() {
+        return resourcePaths;
+    }
+
+    protected void setResourcePaths(String[] paths) {
+        resourcePaths = paths.clone();
     }
 
     /**
@@ -99,11 +108,11 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
      */
     public static PropertySource createPropertiesPropertySource(URL url) {
         Properties props = new Properties();
-        try(InputStream is = url.openStream()){
+        try (InputStream is = url.openStream()){
             props.load(is);
             return new PropertiesBasedPropertySource(url.toString(), props);
         }
-        catch(Exception e){
+        catch (Exception e){
             LOG.log(Level.WARNING, "Failed to read properties from " + url, e);
             return null;
         }
