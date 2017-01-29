@@ -87,7 +87,7 @@ public class DefaultConfigChangeObserver {
     }
 
     public void enableMonitoring(boolean enable){
-        this.running = true;
+        this.running = enable;
     }
 
     /**
