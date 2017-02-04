@@ -50,7 +50,8 @@ under the License.
         <commons-io.version>2.5</commons-io.version>
         <findbugs.skip>false</findbugs.skip>
         <jdkVersion>1.7</jdkVersion>
-        <osgi.version>6.0.0</osgi.version>
+        <osgi.version>4.3.1</osgi.version>
+        <osgi.compendium.version>${osgi.version}</osgi.compendium.version>
         <maven.compile.targetLevel>${jdkVersion}</maven.compile.targetLevel>
         <maven.compile.sourceLevel>${jdkVersion}</maven.compile.sourceLevel>
         <maven.compile.optimize>false</maven.compile.optimize>
@@ -61,7 +62,8 @@ under the License.
         <json.spec.version>1.0-alpha-1</json.spec.version>
         <johnzon.version>0.9-incubating</johnzon.version>
         <junit.version>4.12</junit.version>
-        <assertj.version>3.6.1</assertj.version>
+        <!-- last version compatible with Java 7 -->
+        <assertj.version>2.5.0</assertj.version>
 
         <!-- Dependency and plugin relate version properties go here -->
         <arquillian.version>1.1.7.Final</arquillian.version>
