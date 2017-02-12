@@ -90,20 +90,20 @@ public final class ConfigurationChangeBuilder {
 
     /**
      * Compares the two property config/configurations and creates a collection with all changes
-     * that must be applied to render {@code map1} into {@code map2}.
+     * that must be applied to render {@code original} into {@code target}.
      *
-     * @param map1 the source map, not null.
-     * @param map2 the target map, not null.
-     * @return a collection current change events, never null.
+     * @param original the original map, not null.
+     * @param target the target map, not null.
+     * @return a collection current change events, never {@code null}.
      */
-    public static Collection<PropertyChangeEvent> compare(Configuration map1, Configuration map2) {
+    public static Collection<PropertyChangeEvent> compare(Configuration original, Configuration target) {
         List<PropertyChangeEvent> changes = new ArrayList<>();
-        for (Map.Entry<String, String> en : map1.getProperties().entrySet()) {
-            String val = map2.get(en.getKey());
+        for (Map.Entry<String, String> en : original.getProperties().entrySet()) {
+            String val = target.get(en.getKey());
             if (val == null) {
-                changes.add(new PropertyChangeEvent(map1, en.getKey(), null, en.getValue()));
+                changes.add(new PropertyChangeEvent(original, en.getKey(), null, en.getValue()));
             } else if (!val.equals(en.getValue())) {
-                changes.add(new PropertyChangeEvent(map1, en.getKey(), val, en.getValue()));
+                changes.add(new PropertyChangeEvent(original, en.getKey(), val, en.getValue()));
             }
         }
         for (Map.Entry<String, String> en : map2.getProperties().entrySet()) {

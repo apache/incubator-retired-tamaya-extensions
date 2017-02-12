@@ -184,7 +184,7 @@ public class DefaultConfigEventManagerSpi implements ConfigEventManagerSpi {
     /**
      * Tasks to inform observers on detected configuration changes.
      */
-    private static final class PublishConfigChangeTask implements Runnable{
+    private static final class PublishConfigChangeTask implements Runnable {
 
         private final ConfigEventListener l;
         private final ConfigEvent<?> changes;

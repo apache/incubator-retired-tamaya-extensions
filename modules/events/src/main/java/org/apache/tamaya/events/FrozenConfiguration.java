@@ -41,10 +41,13 @@ import java.util.logging.Logger;
  */
 public final class FrozenConfiguration implements Configuration, Serializable {
     private static final long serialVersionUID = -6373137316556444171L;
+
     /**
      * The properties frozen.
      */
     private Map<String, String> properties = new HashMap<>();
+    private long frozenAt = System.nanoTime();
+    private UUID id = UUID.randomUUID();
 
     /**
      * Constructor.
@@ -53,10 +56,6 @@ public final class FrozenConfiguration implements Configuration, Serializable {
      */
     private FrozenConfiguration(Configuration config) {
         this.properties.putAll(config.getProperties());
-        this.properties.put("_frozenAt", String.valueOf(System.currentTimeMillis()));
-        if(!this.properties.containsKey("_id")) {
-            this.properties.put("_id", UUID.randomUUID().toString());
-        }
         this.properties = Collections.unmodifiableMap(this.properties);
     }
 
@@ -176,19 +175,53 @@ public final class FrozenConfiguration implements Configuration, Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
+
         FrozenConfiguration that = (FrozenConfiguration) o;
-        return properties.equals(that.properties);
+
+        if (frozenAt != that.frozenAt) {
+            return false;
+        }
+        if (properties != null ? !properties.equals(that.properties) : that.properties != null) {
+            return false;
+        }
+        return id != null ? id.equals(that.id) : that.id == null;
     }
 
     @Override
     public int hashCode() {
-        return properties.hashCode();
+        int result = properties != null ? properties.hashCode() : 0;
+        result = 31 * result + (int) (frozenAt ^ (frozenAt >>> 32));
+        result = 31 * result + (id != null ? id.hashCode() : 0);
+        return result;
     }
 
     @Override
     public String toString() {
         return "FrozenConfiguration{" +
+                "id=" + getId() + "," +
+                "frozenAt=" + getFrozenAt() + "," +
                 "properties=" + properties +
                 '}';
+    }
+
+    /**
+     * <p>Returns the moment in time when this frozen configuration has been created.</p>
+     *
+     * <p>The time is taken from {@linkplain System#currentTimeMillis()}</p>
+     *
+     * @see {@linkplain System#currentTimeMillis()}
+     * @return the moment in time when this configruration has been created
+     */
+    public long getFrozenAt() {
+        return frozenAt;
+    }
+
+    /**
+     * <p>Returns the unique id of this frozen configuration.</p>
+     *
+     * @return the unique id of this frozen configuration, never {@code null}
+     */
+    public UUID getId() {
+        return id;
     }
 }
