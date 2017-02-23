@@ -23,7 +23,9 @@ package org.apache.tamaya.inject.api;
  * for a {@link DynamicValue}.
  * The policy also affects the cases were any configured listeners/listener methods are called for
  * propagation current configuration changes.
+ * @deprecated Currently only used internally. Future usage unclear.
  */
+@Deprecated
 public enum LoadPolicy {
     /**
      * The configuration keys is evaluated once, when the owning component is loaded/configured, but never updated later.
