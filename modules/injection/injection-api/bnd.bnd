@@ -1,3 +1,6 @@
 Export-Package: \
 	org.apache.tamaya.inject.api,\
 	org.apache.tamaya.inject.spi
+Bundle-SymbolicName: org.apache.tamaya.inject.api
+Import-Package: org.apache.tamaya;version="[0.3,1)",\
+ org.apache.tamaya.inject.api,org.apache.tamaya.spi;version="[0.3,1)"

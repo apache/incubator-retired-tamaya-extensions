@@ -32,8 +32,15 @@ public final class ConfigEventManager {
     /**
      * The backing SPI.
      */
-    private static final ConfigEventManagerSpi SPI = ServiceContextManager.getServiceContext()
-            .getService(ConfigEventManagerSpi.class);
+    private static final ConfigEventManagerSpi spi(){
+        ConfigEventManagerSpi spi = ServiceContextManager.getServiceContext()
+                .getService(ConfigEventManagerSpi.class);
+        if(spi==null){
+            throw new ConfigException("No SPI registered for " +
+                    ConfigEventManager.class.getName());
+        }
+        return spi;
+    }
 
     /**
      * Private singleton constructor.
@@ -46,11 +53,7 @@ public final class ConfigEventManager {
      * @param l the listener not null.
      */
     public static void addListener(ConfigEventListener l) {
-        if (SPI == null) {
-            throw new ConfigException("No SPI registered for " +
-                    ConfigEventManager.class.getName());
-        }
-        SPI.addListener(l);
+        spi().addListener(l);
     }
 
     /**
@@ -60,11 +63,7 @@ public final class ConfigEventManager {
      * @param eventType the event type to which this listener listens to.
      */
     public static <T extends ConfigEvent> void addListener(ConfigEventListener l, Class<T> eventType) {
-        if (SPI == null) {
-            throw new ConfigException("No SPI registered for " +
-                    ConfigEventManager.class.getName());
-        }
-        SPI.addListener(l);
+        spi().addListener(l);
     }
 
     /**
@@ -73,11 +72,7 @@ public final class ConfigEventManager {
      * @param l the listener not null.
      */
     public static void removeListener(ConfigEventListener l) {
-        if (SPI == null) {
-            throw new ConfigException("No SPI registered for " +
-                    ConfigEventManager.class.getName());
-        }
-        SPI.removeListener(l);
+        spi().removeListener(l);
     }
 
     /**
@@ -88,11 +83,7 @@ public final class ConfigEventManager {
      * @param eventType the event type to which this listener listens to.
      */
     public static <T extends ConfigEvent> void removeListener(ConfigEventListener l, Class<T> eventType) {
-        if (SPI == null) {
-            throw new ConfigException("No SPI registered for " +
-                    ConfigEventManager.class.getName());
-        }
-        SPI.removeListener(l);
+        spi().removeListener(l);
     }
 
     /**
@@ -103,7 +94,7 @@ public final class ConfigEventManager {
      */
     public static <T extends ConfigEvent>
         Collection<? extends ConfigEventListener> getListeners(Class<T> type) {
-        return SPI.getListeners(type);
+        return spi().getListeners(type);
     }
 
     /**
@@ -114,7 +105,7 @@ public final class ConfigEventManager {
      */
     public static <T extends ConfigEvent>
     Collection<? extends ConfigEventListener> getListeners() {
-        return SPI.getListeners();
+        return spi().getListeners();
     }
 
     /**
@@ -124,7 +115,7 @@ public final class ConfigEventManager {
      * @param event the event, not null.
      */
     public static <T> void fireEvent(ConfigEvent<?> event) {
-        SPI.fireEvent(event);
+        spi().fireEvent(event);
     }
 
     /**
@@ -134,7 +125,7 @@ public final class ConfigEventManager {
      * @param event the event, not null.
      */
     public static <T> void fireEventAsynch(ConfigEvent<?> event) {
-        SPI.fireEventAsynch(event);
+        spi().fireEventAsynch(event);
     }
 
     /**
@@ -150,7 +141,7 @@ public final class ConfigEventManager {
      * @see #getChangeMonitoringPeriod()
      */
     public static void enableChangeMonitoring(boolean enable) {
-        SPI.enableChangeMonitor(enable);
+        spi().enableChangeMonitor(enable);
     }
 
     /**
@@ -160,7 +151,7 @@ public final class ConfigEventManager {
      * @see #enableChangeMonitoring(boolean)
      */
     public static boolean isChangeMonitoring() {
-        return SPI.isChangeMonitorActive();
+        return spi().isChangeMonitorActive();
     }
 
     /**
@@ -169,7 +160,7 @@ public final class ConfigEventManager {
      * @return the check period in ms.
      */
     public static long getChangeMonitoringPeriod(){
-        return SPI.getChangeMonitoringPeriod();
+        return spi().getChangeMonitoringPeriod();
     }
 
     /**
@@ -180,7 +171,7 @@ public final class ConfigEventManager {
      * @see #isChangeMonitoring()
      */
     public static void setChangeMonitoringPeriod(long millis){
-        SPI.setChangeMonitoringPeriod(millis);
+        spi().setChangeMonitoringPeriod(millis);
     }
 
 }

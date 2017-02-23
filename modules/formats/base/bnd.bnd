@@ -1,3 +1,5 @@
 Export-Package: \
 	org.apache.tamaya.format,\
 	org.apache.tamaya.format.formats
+Bundle-SymbolicName: org.apache.tamaya.formats
+Bundle-Version: 0.3-INCUBATING-SNAPSHOT

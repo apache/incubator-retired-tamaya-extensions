@@ -1,2 +1,4 @@
 Export-Package: \
 	org.apache.tamaya.resource
+Bundle-SymbolicName: org.apache.tamaya.resources
+Bundle-Version: 0.3-INCUBATING-SNAPSHOT

@@ -1,2 +1,4 @@
 Export-Package: \
 	org.apache.tamaya.optional
+Bundle-SymbolicName: org.apache.tamaya.optional
+Bundle-Version: 0.3-INCUBATING-SNAPSHOT

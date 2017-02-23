@@ -1,2 +1,4 @@
 Export-Package: \
 	org.apache.tamaya.yaml
+Bundle-SymbolicName: org.apache.tamaya.formats.yaml
+Bundle-Version: 0.3-INCUBATING-SNAPSHOT
