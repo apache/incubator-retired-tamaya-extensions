@@ -117,7 +117,7 @@ public class DefaultDynamicValueTest {
         properties.put("a","aValue");
         DynamicValue val = DefaultDynamicValue.of(getClass().getDeclaredField("myValue"),
                 config);
-        val.setUpdatePolicy(UpdatePolicy.EXPLCIT);
+        val.setUpdatePolicy(UpdatePolicy.EXPLICIT);
         assertNotNull(val);
         assertEquals("aValue",val.evaluateValue());
         // change config
@@ -132,7 +132,7 @@ public class DefaultDynamicValueTest {
         properties.put("a", "aValue");
         DynamicValue val = DefaultDynamicValue.of(getClass().getDeclaredField("myValue"),
                 config);
-        val.setUpdatePolicy(UpdatePolicy.EXPLCIT);
+        val.setUpdatePolicy(UpdatePolicy.EXPLICIT);
         assertNotNull(val);
         assertEquals("aValue", val.evaluateValue());
         // change config
@@ -159,7 +159,7 @@ public class DefaultDynamicValueTest {
         properties.put("a","aValue");
         DynamicValue val = DefaultDynamicValue.of(getClass().getDeclaredField("myValue"),
                 config);
-        val.setUpdatePolicy(UpdatePolicy.IMMEDEATE);
+        val.setUpdatePolicy(UpdatePolicy.IMMEDIATE);
         val.addListener(consumer);
         // change config
         val.get();
@@ -178,7 +178,7 @@ public class DefaultDynamicValueTest {
         properties.put("a", "aValue");
         DynamicValue val = DefaultDynamicValue.of(getClass().getDeclaredField("myValue"),
                 config);
-        val.setUpdatePolicy(UpdatePolicy.IMMEDEATE);
+        val.setUpdatePolicy(UpdatePolicy.IMMEDIATE);
         properties.put("a", "aValue2");
         val.updateValue();
         assertEquals("aValue2", val.get());
@@ -189,12 +189,12 @@ public class DefaultDynamicValueTest {
         properties.put("a","aValue");
         DynamicValue val = DefaultDynamicValue.of(getClass().getDeclaredField("myValue"),
                 config);
-        val.setUpdatePolicy(UpdatePolicy.EXPLCIT);
+        val.setUpdatePolicy(UpdatePolicy.EXPLICIT);
         assertNotNull(val.get());
         assertEquals("aValue", val.get());
         val.updateValue();
         assertEquals("aValue", val.get());
-        val.setUpdatePolicy(UpdatePolicy.IMMEDEATE);
+        val.setUpdatePolicy(UpdatePolicy.IMMEDIATE);
         val.updateValue();
         assertEquals("aValue",val.get());
     }
@@ -204,7 +204,7 @@ public class DefaultDynamicValueTest {
         properties.put("a","aValue");
         DynamicValue val = DefaultDynamicValue.of(getClass().getDeclaredField("myValue"),
                 config);
-        val.setUpdatePolicy(UpdatePolicy.EXPLCIT);
+        val.setUpdatePolicy(UpdatePolicy.EXPLICIT);
         assertNotNull(val.get());
         assertEquals("aValue",val.evaluateValue());
         properties.put("a", "aValue2");
@@ -216,7 +216,7 @@ public class DefaultDynamicValueTest {
         properties.put("a","aValue");
         DynamicValue val = DefaultDynamicValue.of(getClass().getDeclaredField("myValue"),
                 config);
-        val.setUpdatePolicy(UpdatePolicy.EXPLCIT);
+        val.setUpdatePolicy(UpdatePolicy.EXPLICIT);
         val.get();
         assertNull(val.getNewValue());
         properties.put("a", "aValue2");
@@ -237,7 +237,7 @@ public class DefaultDynamicValueTest {
         properties.put("a","aValue");
         DynamicValue val = DefaultDynamicValue.of(getClass().getDeclaredField("myValue"),
                 config);
-        val.setUpdatePolicy(UpdatePolicy.IMMEDEATE);
+        val.setUpdatePolicy(UpdatePolicy.IMMEDIATE);
         assertTrue(val.isPresent());
         properties.remove("a");
         val.updateValue();
@@ -248,7 +248,7 @@ public class DefaultDynamicValueTest {
     public void testOrElse() throws Exception {
         DynamicValue val = DefaultDynamicValue.of(getClass().getDeclaredField("myValue"),
                 config);
-        val.setUpdatePolicy(UpdatePolicy.IMMEDEATE);
+        val.setUpdatePolicy(UpdatePolicy.IMMEDIATE);
         assertEquals("bla", val.orElse("bla"));
         properties.put("a","aValue");
         val.updateValue();

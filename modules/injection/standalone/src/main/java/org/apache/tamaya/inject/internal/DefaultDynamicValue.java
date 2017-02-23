@@ -135,11 +135,11 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
     }
 
     public static DynamicValue of(Field annotatedField, Configuration configuration) {
-        return of(annotatedField, configuration, LoadPolicy.ALWAYS, UpdatePolicy.IMMEDEATE);
+        return of(annotatedField, configuration, LoadPolicy.ALWAYS, UpdatePolicy.IMMEDIATE);
     }
 
     public static DynamicValue of(Field annotatedField, Configuration configuration, LoadPolicy loadPolicy) {
-        return of(annotatedField, configuration, loadPolicy, UpdatePolicy.IMMEDEATE);
+        return of(annotatedField, configuration, loadPolicy, UpdatePolicy.IMMEDIATE);
     }
 
     public static DynamicValue of(Field annotatedField, Configuration configuration, UpdatePolicy updatePolicy) {
@@ -179,7 +179,7 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
     }
 
     public static DynamicValue of(Method method, Configuration configuration) {
-        return of(method, configuration, LoadPolicy.ALWAYS, UpdatePolicy.IMMEDEATE);
+        return of(method, configuration, LoadPolicy.ALWAYS, UpdatePolicy.IMMEDIATE);
     }
 
     public static DynamicValue of(Method method, Configuration configuration, UpdatePolicy updatePolicy) {
@@ -187,7 +187,7 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
     }
 
     public static DynamicValue of(Method method, Configuration configuration, LoadPolicy loadPolicy) {
-        return of(method, configuration, loadPolicy, UpdatePolicy.IMMEDEATE);
+        return of(method, configuration, loadPolicy, UpdatePolicy.IMMEDIATE);
     }
 
     public static DynamicValue of(Method method, Configuration configuration, LoadPolicy loadPolicy, UpdatePolicy updatePolicy) {
@@ -313,9 +313,11 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
             if(!Objects.equals(this.value, newLocalValue)){
                 switch (updatePolicy){
                     case IMMEDEATE:
+                    case IMMEDIATE:
                         commit();
                         break;
                     case EXPLCIT:
+                    case EXPLICIT:
                         this.newValue = new Object[]{newLocalValue};
                         break;
                     case LOG_ONLY:
