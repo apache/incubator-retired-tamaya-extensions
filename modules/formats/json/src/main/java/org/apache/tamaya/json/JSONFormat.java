@@ -18,11 +18,11 @@
  */
 package org.apache.tamaya.json;
 
-import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.format.ConfigurationData;
 import org.apache.tamaya.format.ConfigurationDataBuilder;
 import org.apache.tamaya.format.ConfigurationFormat;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import javax.json.Json;
-import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonReaderFactory;
@@ -68,9 +67,9 @@ public class JSONFormat implements ConfigurationFormat {
     }
 
     @Override
-    public ConfigurationData readConfiguration(String resource, InputStream inputStream) {
-
-        try {
+    public ConfigurationData readConfiguration(String resource, InputStream inputStream)
+    throws IOException{
+        try{
             final JsonReader reader = this.readerFactory.createReader(inputStream, Charset.forName("UTF-8"));
             JsonObject root = reader.readObject();
             HashMap<String, String> values = new HashMap<>();
@@ -78,8 +77,8 @@ public class JSONFormat implements ConfigurationFormat {
             visitor.run();
             return ConfigurationDataBuilder.of(resource, this).addDefaultProperties(values)
                                            .build();
-        } catch (JsonException e) {
-            throw new ConfigException("Failed to read data from " + resource, e);
+        } catch(Exception e) {
+            throw new IOException("Failed to read data from " + resource, e);
         }
     }
 }

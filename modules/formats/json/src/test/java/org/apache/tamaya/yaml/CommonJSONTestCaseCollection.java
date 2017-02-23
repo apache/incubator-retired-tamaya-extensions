@@ -21,10 +21,12 @@ package org.apache.tamaya.yaml;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.spisupport.PropertySourceComparator;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.net.URL;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -107,7 +109,7 @@ public abstract class CommonJSONTestCaseCollection {
         assertThat(keyDP.getValue(), is("P"));
     }
 
-    @Test(expected = ConfigException.class)
+    @Test(expected = IOException.class)
     public void canHandleIllegalJSONFileWhichContainsAnArray() throws Exception {
         URL configURL = JSONPropertySourceTest.class.getResource("/configs/invalid/with-array.json");
 
@@ -116,7 +118,7 @@ public abstract class CommonJSONTestCaseCollection {
         getPropertiesFrom(configURL).getProperties();
     }
 
-    @Test(expected = ConfigException.class)
+    @Test(expected = IOException.class)
     public void canHandleIllegalJSONFileConsistingOfOneOpeningBracket() throws Exception {
         URL configURL = JSONPropertySourceTest.class.getResource("/configs/invalid/only-opening-bracket.json");
 
@@ -125,7 +127,7 @@ public abstract class CommonJSONTestCaseCollection {
         getPropertiesFrom(configURL).getProperties();
     }
 
-    @Test(expected = ConfigException.class)
+    @Test(expected = IOException.class)
     public void canHandleIllegalJSONFileWhichIsEmpty() throws Exception {
         URL configURL = JSONPropertySourceTest.class.getResource("/configs/invalid/empty-file.json");
 
@@ -142,7 +144,7 @@ public abstract class CommonJSONTestCaseCollection {
 
         PropertySource properties = getPropertiesFrom(configURL);
 
-        assertThat(properties.getOrdinal(), is(16784));
+        assertThat(PropertySourceComparator.getOrdinal(properties), is(16784));
     }
 
     @Test
@@ -167,7 +169,7 @@ public abstract class CommonJSONTestCaseCollection {
         assertThat(keyC.getValue(), is("C"));
     }
 
-    @Test(expected = ConfigException.class)
+    @Test(expected = IOException.class)
     public void emptyJSONFileResultsInConfigException() throws Exception {
         URL configURL = JSONPropertySourceTest.class.getResource("/configs/invalid/empty-file.json");
 

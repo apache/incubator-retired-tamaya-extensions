@@ -22,7 +22,9 @@ import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 
 import java.net.URL;
-import java.util.*;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -63,7 +65,6 @@ public class YAMLPropertySource implements PropertySource {
         }
     }
 
-    @Override
     public int getOrdinal() {
         PropertyValue configuredOrdinal = get(TAMAYA_ORDINAL);
         if(configuredOrdinal!=null){

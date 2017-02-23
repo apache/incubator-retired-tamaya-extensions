@@ -24,6 +24,7 @@ import org.apache.tamaya.spi.PropertySource;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.net.URL;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -41,7 +42,7 @@ public class JSONPropertySourceTest extends CommonJSONTestCaseCollection {
         assertEquals(source.get(PropertySource.TAMAYA_ORDINAL).getValue(), "16784");
     }
     
-    @Test(expected=ConfigException.class)
+    @Test(expected=IOException.class)
     public void testDoNotAcceptJsonArrays() throws Exception {
         URL configURL = JSONPropertySourceTest.class.getResource("/configs/invalid/array.json");
 

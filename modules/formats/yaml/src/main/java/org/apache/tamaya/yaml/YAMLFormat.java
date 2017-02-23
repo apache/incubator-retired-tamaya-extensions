@@ -48,12 +48,6 @@ public class YAMLFormat implements ConfigurationFormat {
      */
     private static final Logger LOG = Logger.getLogger(YAMLFormat.class.getName());
 
-    /**
-     * Constructor, itniaitlizing zhe JSON reader factory.
-     */
-    public YAMLFormat(){
-    }
-
     @Override
     public String getName() {
         return "yaml";
@@ -66,13 +60,9 @@ public class YAMLFormat implements ConfigurationFormat {
 
     @Override
     public ConfigurationData readConfiguration(String resource, InputStream inputStream) {
-        try( InputStream in = inputStream;) {
-            Map<String, String> values = readConfig(resource, inputStream);
-            return ConfigurationDataBuilder.of(resource, this).addProperties(values)
-                .build();
-        } catch (Exception e) {
-            throw new ConfigException("Failed to read data from " + resource, e);
-        }
+        Map<String, String> values = readConfig(resource, inputStream);
+        return ConfigurationDataBuilder.of(resource, this).addProperties(values)
+            .build();
     }
 
     /**
@@ -83,19 +73,16 @@ public class YAMLFormat implements ConfigurationFormat {
      * @throws ConfigException if resource URI cannot be read.
      */
     protected Map<String, String> readConfig(String resource, InputStream inputStream) {
-        try{
-            Yaml yaml = new Yaml();
-            HashMap<String, String> values = new HashMap<>();
-            Object config = yaml.load(inputStream);
-            mapYamlIntoProperties(config, values);
-            if(LOG.isLoggable(Level.FINEST)){
-                LOG.finest("Read data from " + resource + " : " + values);
-            }
-            return values;
-        }catch (Throwable t) {
-            throw new ConfigException(format("Failed to read properties from %s", resource), t);
+        Yaml yaml = new Yaml();
+        HashMap<String, String> values = new HashMap<>();
+        Object config = yaml.load(inputStream);
+        mapYamlIntoProperties(config, values);
+        if(LOG.isLoggable(Level.FINEST)){
+            LOG.finest("Read data from " + resource + " : " + values);
         }
+        return values;
     }
+
     /**
      * Reads the configuration.
      * @param urlResource soure of the configuration.

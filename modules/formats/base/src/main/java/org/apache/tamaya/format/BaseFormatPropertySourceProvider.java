@@ -140,39 +140,20 @@ public abstract class BaseFormatPropertySourceProvider implements PropertySource
     @Override
     public Collection<PropertySource> getPropertySources() {
         List<PropertySource> propertySources = new ArrayList<>();
-        byte[] buff = new byte[512];
         for (URL res : this.paths) {
-            byte[] dataBytes = null;
-            int read = 0;
-            try(InputStream is = res.openStream();
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();) {
-                read = is.read(buff);
-                while (read > 0) {
-                    bos.write(buff, 0, read);
-                    read = is.read(buff);
-                }
-                bos.flush();
-                dataBytes = bos.toByteArray();
-            } catch (Exception e) {
-                LOG.log(Level.WARNING, "Failed to read resource based config: " + res, e);
-            }
-            if(dataBytes!=null) {
-                try (InputStream is = new ByteArrayInputStream(dataBytes);) {
-                    for (ConfigurationFormat format : configFormats) {
-                        try {
-                            if (format.accepts(res)) {
-                                ConfigurationData data = format.readConfiguration(res.toString(), is);
-                                propertySources.addAll(getPropertySources(data));
-                            }
-                        } catch (Exception e) {
-                            LOG.log(Level.WARNING, "Failed to put resource based config: " + res, e);
-                        } finally {
-                            is.reset();
+            try{
+                for (ConfigurationFormat format : configFormats) {
+                    try (InputStream inputStream = res.openStream()){
+                        if (format.accepts(res)) {
+                            ConfigurationData data = format.readConfiguration(res.toString(), inputStream);
+                            propertySources.addAll(getPropertySources(data));
                         }
+                    } catch (Exception e) {
+                        LOG.log(Level.WARNING, "Failed to put resource based config: " + res, e);
                     }
-                } catch (Exception e) {
-                    LOG.log(Level.WARNING, "Failed to put resource based config: " + res, e);
                 }
+            } catch (Exception e) {
+                LOG.log(Level.WARNING, "Failed to put resource based config: " + res, e);
             }
         }
         return propertySources;

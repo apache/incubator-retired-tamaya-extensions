@@ -22,6 +22,7 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -66,7 +67,7 @@ public class JSONPropertySource implements PropertySource {
      * Constructor, hereby using 0 as the default ordinal.
      * @param resource the resource modelled as URL, not null.
      */
-    public JSONPropertySource(URL resource) {
+    public JSONPropertySource(URL resource)throws IOException {
         this(resource, 0);
     }
 
@@ -75,7 +76,7 @@ public class JSONPropertySource implements PropertySource {
      * @param resource the resource modelled as URL, not null.
      * @param defaultOrdinal the defaultOrdinal to be used.
      */
-    public JSONPropertySource(URL resource, int defaultOrdinal) {
+    public JSONPropertySource(URL resource, int defaultOrdinal)throws IOException {
         urlResource = Objects.requireNonNull(resource);
         this.ordinal = defaultOrdinal; // may be overriden by read...
         this.values = readConfig(urlResource);
@@ -88,7 +89,6 @@ public class JSONPropertySource implements PropertySource {
     }
 
 
-    @Override
     public int getOrdinal() {
         PropertyValue configuredOrdinal = get(TAMAYA_ORDINAL);
         if(configuredOrdinal!=null){
@@ -123,7 +123,7 @@ public class JSONPropertySource implements PropertySource {
      * @return the configuration read from the given resource URL.
      * @throws ConfigException if resource URL cannot be read.
      */
-    protected Map<String, String> readConfig(URL urlResource) {
+    protected Map<String, String> readConfig(URL urlResource) throws IOException{
         try (InputStream is = urlResource.openStream()) {
             JsonStructure root = this.readerFactory.createReader(is, Charset.forName("UTF-8")).read();
 
@@ -136,9 +136,10 @@ public class JSONPropertySource implements PropertySource {
             JSONVisitor visitor = new JSONVisitor((JsonObject)root, values);
             visitor.run();
             return values;
-        }
-        catch (Throwable t) {
-            throw new ConfigException(format("Failed to read properties from %s", urlResource.toExternalForm()), t);
+        }catch(IOException ioe){
+            throw ioe;
+        }catch (Exception t) {
+            throw new IOException(format("Failed to read properties from %s", urlResource.toExternalForm()), t);
         }
     }
 

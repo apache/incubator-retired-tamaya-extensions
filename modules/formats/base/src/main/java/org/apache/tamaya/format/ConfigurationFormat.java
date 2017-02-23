@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.format;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
@@ -52,6 +53,7 @@ public interface ConfigurationFormat {
      * @return true, if this format accepts the given URL for reading.
      */
     boolean accepts(URL url);
+
 
     /**
      * Reads a configuration from an URL, hereby parsing the given {@link java.io.InputStream}. Dependening on
@@ -89,12 +91,11 @@ public interface ConfigurationFormat {
      * ladder case multiple PropertySources can be returned, each one with its own ordinal and the corresponding
      * entries.
      * @see org.apache.tamaya.spi.PropertySource
-     * @param resource a descriptive name for the resource, since an InputStream does not have any)
-     * @param inputStream the inputStream to read the configuration data from (could be a file, a server location, a classpath
-     *            resource or something else.
+     * @param inputStream the inputStream to read from, not null.
+     * @param resource the resource id, not null.
      * @return the corresponding {@link ConfigurationData} containing sections/properties read, never {@code null}.
      * @throws org.apache.tamaya.ConfigException if parsing of the input fails.
      */
-    ConfigurationData readConfiguration(String resource, InputStream inputStream);
+    ConfigurationData readConfiguration(String resource, InputStream inputStream) throws IOException;
 
 }

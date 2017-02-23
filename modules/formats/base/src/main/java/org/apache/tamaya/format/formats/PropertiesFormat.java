@@ -22,12 +22,11 @@ import org.apache.tamaya.format.ConfigurationData;
 import org.apache.tamaya.format.ConfigurationDataBuilder;
 import org.apache.tamaya.format.ConfigurationFormat;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Properties;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -56,16 +55,9 @@ public class PropertiesFormat implements ConfigurationFormat {
 
     @SuppressWarnings("unchecked")
     @Override
-    public ConfigurationData readConfiguration(String resource, InputStream inputStream) {
-        Objects.requireNonNull(inputStream);
-        Objects.requireNonNull(resource);
-        try {
+    public ConfigurationData readConfiguration(String resource, InputStream inputStream)throws IOException {
             final Properties p = new Properties();
             p.load(inputStream);
             return ConfigurationDataBuilder.of(resource, this).addDefaultProperties(Map.class.cast(p)).build();
-        } catch (Exception e) {
-            LOG.log(Level.FINEST, "Failed to read config from resource: " + resource, e);
-        }
-        return null;
     }
 }

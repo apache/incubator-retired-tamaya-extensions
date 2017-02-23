@@ -24,10 +24,10 @@ import org.apache.tamaya.format.ConfigurationDataBuilder;
 import org.apache.tamaya.format.ConfigurationFormat;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -52,7 +52,8 @@ public class IniConfigurationFormat implements ConfigurationFormat {
     }
 
     @Override
-    public ConfigurationData readConfiguration(String resource, InputStream inputStream) {
+    public ConfigurationData readConfiguration(String resource, InputStream inputStream)
+    throws IOException{
         ConfigurationDataBuilder builder = ConfigurationDataBuilder.of(resource, this);
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"))) {
             String line = reader.readLine();
@@ -88,8 +89,11 @@ public class IniConfigurationFormat implements ConfigurationFormat {
             }
             return builder.build();
         } catch (Exception e) {
-            LOG.log(Level.SEVERE, "Could not read configuration: " + resource, e);
+            if(e instanceof IOException){
+                throw (IOException)e;
+            }else{
+                throw new IOException("Could not read configuration: " + resource, e);
+            }
         }
-        return null;
     }
 }

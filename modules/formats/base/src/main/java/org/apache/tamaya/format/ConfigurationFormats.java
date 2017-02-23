@@ -21,10 +21,18 @@ package org.apache.tamaya.format;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.ServiceContextManager;
 
 /**
@@ -191,13 +199,12 @@ public final class ConfigurationFormats {
      * @param inputStream the inputStream from where to read, not null.
      * @param formats     the formats to try.
      * @return the ConfigurationData read, or null.
-     * @throws IOException if the resource cannot be read.
+     * @throws ConfigException if the resource cannot be read.
      */
     public static ConfigurationData readConfigurationData(String resource, InputStream inputStream,
                                                           Collection<ConfigurationFormat> formats) throws IOException {
-        Objects.requireNonNull(inputStream);
-        Objects.requireNonNull(resource);
-        try(InputStreamFactory isFactory = new InputStreamFactory(inputStream)) {
+        Objects.requireNonNull(resource, "Config resource required for traceability.");
+        try(InputStreamFactory isFactory = new InputStreamFactory(Objects.requireNonNull(inputStream))) {
             for (final ConfigurationFormat format : formats) {
                 try (InputStream is = isFactory.createInputStream()) {
                     final ConfigurationData data = format.readConfiguration(resource, is);
@@ -211,6 +218,88 @@ public final class ConfigurationFormats {
             }
         }
         return null;
+    }
+
+    /**
+     * Tries to read configuration data from a given URL, hereby explicitly trying all given formats
+     * in order and transforms it into a {@link PropertySource} using a default mapping.
+     *
+     * @param url    the URL to read, not null.
+     * @param formats     the formats to try. If not formats are passed explicitly, all known formats
+     *                    are tried.
+     * @return a corresponding property source, or null.
+     * @throws ConfigException if the resource cannot be read.
+     * @throws IOException if the URL's stream can not be opened.
+     */
+    public static PropertySource createPropertySource(URL url, ConfigurationFormat... formats)throws IOException{
+        return createPropertySource(url.toString(), url.openStream(), formats);
+    }
+
+    /**
+     * Tries to read configuration data from a given URL, hereby explicitly trying all given formats
+     * in order and transforms it into a {@link PropertySource} using a default mapping.
+     *
+     * @param url    the URL to read, not null.
+     * @param formats     the formats to try. If not formats are passed explicitly, all known formats
+     *                    are tried.
+     * @return a corresponding property source, or null.
+     * @throws ConfigException if the resource cannot be read.
+     * @throws IOException if the URL's stream can not be opened.
+     */
+    public static PropertySource createPropertySource(URL url, Collection<ConfigurationFormat> formats)throws IOException{
+        return createPropertySource(url.toString(), url.openStream(), formats);
+    }
+
+    /**
+     * Tries to read configuration data from a given URL, hereby explicitly trying all given formats
+     * in order and transforms it into a {@link PropertySource} using a default mapping.
+     *
+     * @param resource    a descriptive name for the resource, since an InputStream does not have any
+     * @param inputStream the inputStream from where to read, not null.
+     * @param formats     the formats to try. If not formats are passed explicitly, all known formats
+     *                    are tried.
+     * @return a corresponding property source, or null.
+     * @throws ConfigException if the resource cannot be read.
+     */
+    public static PropertySource createPropertySource(String resource, InputStream inputStream,
+                                                      ConfigurationFormat... formats){
+        return createPropertySource(resource, inputStream, Arrays.asList(formats));
+    }
+
+
+    /**
+     * Tries to read configuration data from a given URL, hereby explicitly trying all given formats
+     * in order and transforms it into a {@link PropertySource} using a default mapping.
+     *
+     * @param resource    a descriptive name for the resource, since an InputStream does not have any
+     * @param inputStream the inputStream from where to read, not null.
+     * @param formats     the formats to try. If not formats are passed explicitly, all known formats
+     *                    are tried.
+     * @return a corresponding property source, or null.
+     * @throws ConfigException if the resource cannot be read.
+     */
+    public static PropertySource createPropertySource(String resource, InputStream inputStream,
+                                                       Collection<ConfigurationFormat> formats) {
+        Objects.requireNonNull(resource, "Config resource required for traceability.");
+        try(InputStreamFactory isFactory = new InputStreamFactory(Objects.requireNonNull(inputStream))) {
+            if(formats.isEmpty()){
+                formats = getFormats();
+            }
+            for (final ConfigurationFormat format : formats) {
+                try (InputStream is = isFactory.createInputStream()) {
+                    final ConfigurationData data = format.readConfiguration(resource, is);
+                    if (data != null) {
+                        return new MappedConfigurationDataPropertySource(data);
+                    }
+                } catch (final Exception e) {
+                    LOG.log(Level.INFO,
+                            "Format " + format.getClass().getName() + " failed to read resource " + resource, e);
+                }
+            }
+        }catch(IOException ioe){
+            throw new ConfigException("Failed to read from input stream for "+resource, ioe);
+        }
+        throw new ConfigException("No matching format found for "+resource+", tried: "+ formats);
     }
 
 
