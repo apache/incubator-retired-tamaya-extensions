@@ -178,7 +178,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
                 b.append("  ");
                 appendFormatted(b, ps.getClass().getSimpleName(), 30);
                 appendFormatted(b, ps.getName(), 70);
-                appendFormatted(b, String.valueOf(ps.getOrdinal()), 8);
+                appendFormatted(b, String.valueOf(PropertySourceComparator.getOrdinal(ps)), 8);
                 appendFormatted(b, String.valueOf(ps.isScannable()), 10);
                 if (ps.isScannable()) {
                     appendFormatted(b, String.valueOf(ps.getProperties().size()), 8);

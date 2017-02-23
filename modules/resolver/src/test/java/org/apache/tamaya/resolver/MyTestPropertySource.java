@@ -76,11 +76,6 @@ public class MyTestPropertySource implements PropertySource{
     }
 
     @Override
-    public int getOrdinal() {
-        return 0;
-    }
-
-    @Override
     public String getName() {
         return "test";
     }

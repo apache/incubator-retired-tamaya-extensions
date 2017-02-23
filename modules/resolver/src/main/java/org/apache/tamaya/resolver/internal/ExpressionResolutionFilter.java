@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.resolver.internal;
 
+import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
 import org.apache.tamaya.spi.FilterContext;
 import org.apache.tamaya.spi.PropertyFilter;
@@ -36,7 +37,13 @@ public class ExpressionResolutionFilter implements PropertyFilter {
 
     private static final Logger LOG = Logger.getLogger(ExpressionResolutionFilter.class.getName());
 
-    private final ExpressionEvaluator evaluator = ServiceContextManager.getServiceContext().getService(ExpressionEvaluator.class);
+    private final ExpressionEvaluator evaluator(){
+        ExpressionEvaluator evaluator = ServiceContextManager.getServiceContext().getService(ExpressionEvaluator.class);
+        if(evaluator==null){
+            throw new ConfigException("No ExpressionEvaluator registered.");
+        }
+        return evaluator;
+    }
 
     /**
      * Resolves an expression in the form current <code>${resolverId:expression}</code> or
@@ -79,7 +86,7 @@ public class ExpressionResolutionFilter implements PropertyFilter {
     @Override
     public String filterProperty(String valueToBeFiltered, FilterContext context){
         LOG.finest("Resolving " + valueToBeFiltered + "(key=" + context.getKey() + ")");
-        return evaluator.evaluateExpression(context.getKey(), valueToBeFiltered, true);
+        return evaluator().evaluateExpression(context.getKey(), valueToBeFiltered, true);
     }
 
 

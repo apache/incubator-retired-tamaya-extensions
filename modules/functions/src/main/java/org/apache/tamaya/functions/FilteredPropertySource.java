@@ -20,6 +20,7 @@ package org.apache.tamaya.functions;
 
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.spisupport.PropertySourceComparator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,9 +44,8 @@ class FilteredPropertySource implements PropertySource {
         this.filter = Objects.requireNonNull(filter);
     }
 
-    @Override
     public int getOrdinal(){
-        return baseSource.getOrdinal();
+        return PropertySourceComparator.getOrdinal(baseSource);
     }
 
     @Override

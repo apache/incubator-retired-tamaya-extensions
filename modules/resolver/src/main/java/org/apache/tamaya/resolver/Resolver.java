@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.resolver;
 
+import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
 import org.apache.tamaya.resolver.spi.ExpressionResolver;
 import org.apache.tamaya.spi.ServiceContextManager;
@@ -41,8 +42,15 @@ public final class Resolver {
      * @return the filtered/evaluated value, including null.
      */
     public static String evaluateExpression(String key, String value){
-        return ServiceContextManager.getServiceContext().getService(ExpressionEvaluator.class)
-                .evaluateExpression(key, value, true);
+        return evaluator().evaluateExpression(key, value, true);
+    }
+
+    private static ExpressionEvaluator evaluator() {
+        ExpressionEvaluator evaluator = ServiceContextManager.getServiceContext().getService(ExpressionEvaluator.class);
+        if(evaluator==null){
+            throw new ConfigException("No ExpressionEvaluator registered.");
+        }
+        return evaluator;
     }
 
     /**
@@ -62,8 +70,7 @@ public final class Resolver {
      * @return the filtered/evaluated value, including null.
      */
     public static String evaluateExpression(String value, boolean maskNotFound){
-        return ServiceContextManager.getServiceContext().getService(ExpressionEvaluator.class)
-                .evaluateExpression(null, value, maskNotFound);
+        return evaluator().evaluateExpression(null, value, maskNotFound);
     }
 
     /**
@@ -71,7 +78,6 @@ public final class Resolver {
      * @return the resolvers currently known, never null.
      */
     public static Collection<ExpressionResolver> getResolvers(){
-        return ServiceContextManager.getServiceContext().getService(ExpressionEvaluator.class)
-                .getResolvers();
+        return evaluator().getResolvers();
     }
 }

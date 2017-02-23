@@ -52,7 +52,6 @@ public class TestPropertySource implements PropertySource{
         config.put("{meta}source.type:"+getClass().getName(), "PropertySource");
     }
 
-    @Override
     public int getOrdinal() {
         return 10;
     }

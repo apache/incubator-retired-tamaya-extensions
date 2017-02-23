@@ -20,6 +20,7 @@ package org.apache.tamaya.functions;
 
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.spisupport.PropertySourceComparator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,9 +53,8 @@ class MappedPropertySource implements PropertySource {
         this.keyMapper = Objects.requireNonNull(keyMapper);
     }
 
-    @Override
     public int getOrdinal() {
-        return this.propertySource.getOrdinal();
+        return PropertySourceComparator.getOrdinal(this.propertySource);
     }
 
     @Override

@@ -28,15 +28,14 @@ import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
 import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
 import org.apache.tamaya.spi.ServiceContextManager;
+import org.apache.tamaya.spisupport.PropertyFilterComparator;
+import org.apache.tamaya.spisupport.PropertySourceComparator;
 
-import javax.annotation.Priority;
 import javax.enterprise.inject.Vetoed;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
@@ -77,13 +76,6 @@ public class DefaultConfigurationContext implements ConfigurationContext {
      */
     private final ReentrantReadWriteLock propertySourceLock = new ReentrantReadWriteLock();
 
-    /** Comparator used for ordering property sources. */
-    private final PropertySourceComparator propertySourceComparator = new PropertySourceComparator();
-
-    /** Comparator used for ordering property filters. */
-    private final PropertyFilterComparator propertyFilterComparator = new PropertyFilterComparator();
-
-
     /**
      * The first time the Configuration system gets invoked we do initialize
      * all our {@link PropertySource}s and
@@ -99,7 +91,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         propertySources.addAll(evaluatePropertySourcesFromProviders());
 
         // now sort them according to their ordinal values
-        Collections.sort(propertySources, new PropertySourceComparator());
+        Collections.sort(propertySources, PropertySourceComparator.getInstance());
 
         immutablePropertySources = Collections.unmodifiableList(propertySources);
         LOG.info("Registered " + immutablePropertySources.size() + " property sources: " +
@@ -108,7 +100,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         // as next step we pick up the PropertyFilters pretty much the same way
         List<PropertyFilter> propertyFilters = new ArrayList<>();
         propertyFilters.addAll(ServiceContextManager.getServiceContext().getServices(PropertyFilter.class));
-        Collections.sort(propertyFilters, new PropertyFilterComparator());
+        Collections.sort(propertyFilters, PropertyFilterComparator.getInstance());
         immutablePropertyFilters = Collections.unmodifiableList(propertyFilters);
         LOG.info("Registered " + immutablePropertyFilters.size() + " property filters: " +
                 immutablePropertyFilters);
@@ -128,7 +120,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         // first we load all PropertySources which got registered via java.util.ServiceLoader
         propertySources.addAll(builder.getPropertySources());
         // now sort them according to their ordinal values
-        Collections.sort(propertySources, propertySourceComparator);
+        Collections.sort(propertySources, PropertySourceComparator.getInstance());
         immutablePropertySources = Collections.unmodifiableList(propertySources);
         LOG.info("Registered " + immutablePropertySources.size() + " property sources: " +
                 immutablePropertySources);
@@ -136,7 +128,7 @@ public class DefaultConfigurationContext implements ConfigurationContext {
         // as next step we pick up the PropertyFilters pretty much the same way
         List<PropertyFilter> propertyFilters = new ArrayList<>();
         propertyFilters.addAll(ServiceContextManager.getServiceContext().getServices(PropertyFilter.class));
-        Collections.sort(propertyFilters, propertyFilterComparator);
+        Collections.sort(propertyFilters, PropertyFilterComparator.getInstance());
         immutablePropertyFilters = Collections.unmodifiableList(propertyFilters);
         LOG.info("Registered " + immutablePropertyFilters.size() + " property filters: " +
                 immutablePropertyFilters);
@@ -163,10 +155,10 @@ public class DefaultConfigurationContext implements ConfigurationContext {
                     " provided the following property sources: " + sources);
                 propertySources.addAll(sources);
         }
-
         return propertySources;
     }
 
+    @Deprecated
     @Override
     public void addPropertySources(PropertySource... propertySourcesToAdd) {
         Lock writeLock = propertySourceLock.writeLock();
@@ -174,76 +166,11 @@ public class DefaultConfigurationContext implements ConfigurationContext {
             writeLock.lock();
             List<PropertySource> newPropertySources = new ArrayList<>(this.immutablePropertySources);
             newPropertySources.addAll(Arrays.asList(propertySourcesToAdd));
-            Collections.sort(newPropertySources, new PropertySourceComparator());
+            Collections.sort(newPropertySources, PropertySourceComparator.getInstance());
 
             this.immutablePropertySources = Collections.unmodifiableList(newPropertySources);
         } finally {
             writeLock.unlock();
-        }
-    }
-
-    /**
-     * Comparator used for ordering PropertySources.
-     */
-    private static class PropertySourceComparator implements Comparator<PropertySource>, Serializable {
-
-        private static final long serialVersionUID = 1L;
-
-        /**
-         * Order property source reversely, the most important come first.
-         *
-         * @param source1 the first PropertySource
-         * @param source2 the second PropertySource
-         * @return the comparison result.
-         */
-        private int comparePropertySources(PropertySource source1, PropertySource source2) {
-            if (source1.getOrdinal() < source2.getOrdinal()) {
-                return -1;
-            } else if (source1.getOrdinal() > source2.getOrdinal()) {
-                return 1;
-            } else {
-                return source1.getClass().getName().compareTo(source2.getClass().getName());
-            }
-        }
-
-        @Override
-        public int compare(PropertySource source1, PropertySource source2) {
-            return comparePropertySources(source1, source2);
-        }
-    }
-
-    /**
-     * Comparator used for ordering PropertyFilters.
-     */
-    private static class PropertyFilterComparator implements Comparator<PropertyFilter>, Serializable{
-
-        private static final long serialVersionUID = 1L;
-
-        /**
-         * Compare 2 filters for ordering the filter chain.
-         *
-         * @param filter1 the first filter
-         * @param filter2 the second filter
-         * @return the comparison result
-         */
-        private int comparePropertyFilters(PropertyFilter filter1, PropertyFilter filter2) {
-            Priority prio1 = filter1.getClass().getAnnotation(Priority.class);
-            Priority prio2 = filter2.getClass().getAnnotation(Priority.class);
-            int ord1 = prio1 != null ? prio1.value() : 0;
-            int ord2 = prio2 != null ? prio2.value() : 0;
-
-            if (ord1 < ord2) {
-                return -1;
-            } else if (ord1 > ord2) {
-                return 1;
-            } else {
-                return filter1.getClass().getName().compareTo(filter2.getClass().getName());
-            }
-        }
-
-        @Override
-        public int compare(PropertyFilter filter1, PropertyFilter filter2) {
-            return comparePropertyFilters(filter1, filter2);
         }
     }
 

@@ -48,7 +48,6 @@ final class ConfigWrappingPropertySource implements PropertySource {
         this.config = Objects.requireNonNull(config);
     }
 
-    @Override
     public int getOrdinal() {
         return ordinal;
     }

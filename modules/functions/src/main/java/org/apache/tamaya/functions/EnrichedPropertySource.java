@@ -20,6 +20,7 @@ package org.apache.tamaya.functions;
 
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.spisupport.PropertySourceComparator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -50,9 +51,8 @@ class EnrichedPropertySource implements PropertySource {
     }
 
 
-    @Override
     public int getOrdinal() {
-        return basePropertySource.getOrdinal();
+        return PropertySourceComparator.getOrdinal(basePropertySource);
     }
 
     @Override

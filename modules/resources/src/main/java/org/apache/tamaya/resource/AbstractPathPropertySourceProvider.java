@@ -150,7 +150,6 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
             this.properties.putAll(props);
         }
 
-        @Override
         public int getOrdinal() {
             PropertyValue configuredOrdinal = get(TAMAYA_ORDINAL);
             if (configuredOrdinal != null) {

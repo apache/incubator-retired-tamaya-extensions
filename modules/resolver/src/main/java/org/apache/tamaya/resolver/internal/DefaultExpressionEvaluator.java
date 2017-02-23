@@ -37,7 +37,6 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
 
     private static final Logger LOG = Logger.getLogger(DefaultExpressionEvaluator.class.getName());
 
-    private final List<ExpressionResolver> resolvers = new ArrayList<>();
 
     /**
      * Comparator used (not needed with Java8).
@@ -48,16 +47,6 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
             return compareExpressionResolver(o1, o2);
         }
     };
-
-    /**
-     * Default constructor.
-     */
-    public DefaultExpressionEvaluator() {
-        for (ExpressionResolver resolver : ServiceContextManager.getServiceContext().getServices(ExpressionResolver.class)) {
-            resolvers.add(resolver);
-        }
-        Collections.sort(resolvers, RESOLVER_COMPARATOR);
-    }
 
     /**
      * Order ExpressionResolver reversely, the most important come first.
@@ -161,7 +150,12 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
 
     @Override
     public Collection<ExpressionResolver> getResolvers() {
-        return new ArrayList<>(this.resolvers);
+        List<ExpressionResolver> resolvers = new ArrayList<>();
+        for (ExpressionResolver resolver : ServiceContextManager.getServiceContext().getServices(ExpressionResolver.class)) {
+            resolvers.add(resolver);
+        }
+        Collections.sort(resolvers, RESOLVER_COMPARATOR);
+        return resolvers;
     }
 
     /**
@@ -229,6 +223,7 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
     private String evaluateInternal(String unresolvedExpression, boolean maskUnresolved) {
         String value = null;
         // 1 check for explicit prefix
+        Collection<ExpressionResolver> resolvers = getResolvers();
         for(ExpressionResolver resolver:resolvers){
             if(unresolvedExpression.startsWith(resolver.getResolverPrefix())){
                 value = resolver.evaluate(unresolvedExpression.substring(resolver.getResolverPrefix().length()));

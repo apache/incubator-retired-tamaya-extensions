@@ -40,10 +40,6 @@ public final class PropertySourceFunctions {
      * Implementation of an empty propertySource.
      */
     private static final PropertySource EMPTY_PROPERTYSOURCE = new PropertySource() {
-        @Override
-        public int getOrdinal() {
-            return 0;
-        }
 
         @Override
         public String getName() {

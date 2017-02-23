@@ -42,21 +42,14 @@ public final class MutableConfigurationProvider {
     /**
      * URIs used by this query instance to identify the backends to use for write operations.
      */
-    private static MutableConfigurationProviderSpi mutableConfigurationProviderSpi = loadSpi();
-
-    /**
-     * SPI loader method.
-     * @throws ConfigException if loading fails.
-     * @return the SPI, never null.
-     */
-    private static MutableConfigurationProviderSpi loadSpi() {
-        try{
-            return ServiceContextManager.getServiceContext().getService(
+    private static MutableConfigurationProviderSpi spi(){
+            MutableConfigurationProviderSpi spi = ServiceContextManager.getServiceContext().getService(
                     MutableConfigurationProviderSpi.class)  ;
-        } catch(Exception e){
+        if(spi==null){
             throw new ConfigException("Failed to initialize MutableConfigurationProviderSpi - " +
                     "mutable configuration support.");
         }
+        return spi;
     }
 
 
@@ -70,7 +63,7 @@ public final class MutableConfigurationProvider {
      * @return a new MutableConfiguration instance
      */
     public static MutableConfiguration createMutableConfiguration(){
-        return mutableConfigurationProviderSpi.createMutableConfiguration(
+        return spi().createMutableConfiguration(
                 ConfigurationProvider.getConfiguration(), getApplyMostSignificantOnlyChangePolicy());
     }
 
@@ -82,7 +75,7 @@ public final class MutableConfigurationProvider {
      * @return a new MutableConfiguration instance, with the given change policy active.
      */
     public static MutableConfiguration createMutableConfiguration(ChangePropagationPolicy changePropgationPolicy){
-        return mutableConfigurationProviderSpi.createMutableConfiguration(
+        return spi().createMutableConfiguration(
                 ConfigurationProvider.getConfiguration(), changePropgationPolicy);
     }
 
@@ -109,7 +102,7 @@ public final class MutableConfigurationProvider {
      * @return a new MutableConfiguration instance
      */
     public static MutableConfiguration createMutableConfiguration(Configuration configuration, ChangePropagationPolicy changePropagationPolicy){
-        return mutableConfigurationProviderSpi.createMutableConfiguration(configuration, changePropagationPolicy);
+        return spi().createMutableConfiguration(configuration, changePropagationPolicy);
     }
 
     /**

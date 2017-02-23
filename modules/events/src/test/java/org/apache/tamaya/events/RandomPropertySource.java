@@ -32,11 +32,6 @@ public class RandomPropertySource implements PropertySource{
     private Map<String, String> data = new HashMap<>();
 
     @Override
-    public int getOrdinal() {
-        return 0;
-    }
-
-    @Override
     public String getName() {
         return "random";
     }

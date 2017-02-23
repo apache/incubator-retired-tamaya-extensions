@@ -20,6 +20,7 @@ package org.apache.tamaya.events;
 
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.spisupport.PropertySourceComparator;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -54,7 +55,7 @@ public final class FrozenPropertySource implements PropertySource, Serializable 
         this.properties.putAll(propertySource.getProperties());
         this.properties.put("[meta]frozenAt", String.valueOf(System.currentTimeMillis()));
         this.properties = Collections.unmodifiableMap(this.properties);
-        this.ordinal = propertySource.getOrdinal();
+        this.ordinal = PropertySourceComparator.getOrdinal(propertySource);
         this.name = propertySource.getName();
     }
 
@@ -76,7 +77,6 @@ public final class FrozenPropertySource implements PropertySource, Serializable 
         return this.name;
     }
 
-    @Override
     public int getOrdinal() {
         return this.ordinal;
     }

@@ -42,11 +42,6 @@ public class TestPropertySource implements PropertySource {
     }
 
     @Override
-    public int getOrdinal() {
-        return 0;
-    }
-
-    @Override
     public String getName() {
         return getClass().getName();
     }

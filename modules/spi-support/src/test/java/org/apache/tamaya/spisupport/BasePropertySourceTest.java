@@ -47,7 +47,7 @@ public class BasePropertySourceTest {
             }
         };
 
-        Assert.assertEquals(56, defaultPropertySource.getOrdinal());
+        Assert.assertEquals(56, PropertySourceComparator.getOrdinal(defaultPropertySource));
         Assert.assertEquals(1000, new OverriddenOrdinalPropertySource().getOrdinal());
 
         // propertySource with invalid ordinal

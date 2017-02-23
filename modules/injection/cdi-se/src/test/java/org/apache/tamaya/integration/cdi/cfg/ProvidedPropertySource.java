@@ -40,7 +40,6 @@ class ProvidedPropertySource implements PropertySource{
         config.put("{meta}source.type:"+getClass().getName(), "PropertySourceProvider");
     }
 
-    @Override
     public int getOrdinal() {
         return 10;
     }

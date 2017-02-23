@@ -70,11 +70,6 @@ public class PathBasedPropertySourceProvider extends AbstractPathPropertySourceP
         }
 
         @Override
-        public int getOrdinal() {
-            return 0;
-        }
-
-        @Override
         public String getName() {
             return name;
         }
