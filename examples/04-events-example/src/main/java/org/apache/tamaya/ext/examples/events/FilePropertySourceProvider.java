@@ -16,7 +16,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.apache.tamaya.ext.examples.fileobserver;
+package org.apache.tamaya.ext.examples.events;
 
 
 import org.apache.tamaya.ConfigException;
@@ -29,7 +29,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 
-import static org.apache.tamaya.ext.examples.fileobserver.Main.getPropertiesFilePath;
+import static org.apache.tamaya.ext.examples.events.Main.getPropertiesFilePath;
 
 public class FilePropertySourceProvider extends AbstractPathPropertySourceProvider {
     public FilePropertySourceProvider() {

@@ -16,10 +16,8 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.apache.tamaya.ext.examples.fileobserver;
+package org.apache.tamaya.ext.examples.events;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.events.ConfigEvent;
 import org.apache.tamaya.events.ConfigEventListener;
 import org.apache.tamaya.events.ConfigEventManager;
@@ -36,7 +34,6 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import static java.lang.System.out;
-import static java.nio.file.StandardOpenOption.CREATE;
 import static java.util.Arrays.asList;
 
 public class Main {

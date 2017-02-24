@@ -28,14 +28,13 @@ under the License.
         <version>0.3-incubating-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.apache.tamaya.ext.examples</groupId>
-    <artifactId>04-fileobserver-example</artifactId>
-    <version>0.3-incubating-SNAPSHOT</version>
+    <artifactId>04-events-example</artifactId>
 
-    <name>Apache Tamaya File Observer Example</name>
+    <name>Apache Tamaya Events Example</name>
 
-    <description>This project contains a simple example observing a directory
-        for (config) file changes, that updates the configuration correspondingly.
+    <description>
+        This project contains a simple example demonstrating the usage
+        of the events module to observe changes in a configuration.
     </description>
 
     <dependencies>
