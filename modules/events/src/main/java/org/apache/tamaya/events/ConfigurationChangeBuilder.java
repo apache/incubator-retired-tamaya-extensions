@@ -106,12 +106,12 @@ public final class ConfigurationChangeBuilder {
                 changes.add(new PropertyChangeEvent(original, en.getKey(), val, en.getValue()));
             }
         }
-        for (Map.Entry<String, String> en : map2.getProperties().entrySet()) {
-            String val = map1.get(en.getKey());
+        for (Map.Entry<String, String> en : target.getProperties().entrySet()) {
+            String val = original.get(en.getKey());
             if (val == null) {
-                changes.add(new PropertyChangeEvent(map1, en.getKey(), null, en.getValue()));
+                changes.add(new PropertyChangeEvent(original, en.getKey(), null, en.getValue()));
             } else if (!val.equals(en.getValue())) {
-                changes.add(new PropertyChangeEvent(map1, en.getKey(), val, en.getValue()));
+                changes.add(new PropertyChangeEvent(original, en.getKey(), val, en.getValue()));
             }
         }
         return changes;
