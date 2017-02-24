@@ -40,6 +40,7 @@ under the License.
         <module>01-resources-example</module>
         <module>02-resolver-example</module>
         <module>03-injection-example</module>
+        <module>04-fileobserver-example</module>
     </modules>
 
 </project>
