@@ -52,18 +52,12 @@ public class DefaultConfigChangeObserver {
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                System.out.println("*******");
                 if (running) {
-                    System.out.println("Observer läuft!");
                     checkConfigurationUpdate();
-                } else {
-                    System.out.println("Observer läuft nicht.");
                 }
-
             }
         }, START_DELAY, checkPeriod);
     }
-
 
     public void checkConfigurationUpdate() {
         LOG.finest("Checking configuration for changes...");
