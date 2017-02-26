@@ -18,6 +18,8 @@
  */
 package org.apache.tamaya.ext.examples.events;
 
+import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.events.ConfigEvent;
 import org.apache.tamaya.events.ConfigEventListener;
 import org.apache.tamaya.events.ConfigEventManager;
@@ -37,7 +39,7 @@ import static java.lang.System.out;
 import static java.util.Arrays.asList;
 
 public class Main {
-    private static final Duration EXAMPLE_RUNTIME = Duration.standardSeconds(30L);
+    private static final Duration EXAMPLE_RUNTIME = Duration.standardSeconds(300L);
 
     /*
      * Turns off all logging.
@@ -62,6 +64,13 @@ public class Main {
         ConfigEventManager.addListener(new ConfigurationChangeListener());
         ConfigEventManager.setChangeMonitoringPeriod(1_000L);
         ConfigEventManager.enableChangeMonitoring(true);
+        Configuration configuration = ConfigurationProvider.getConfiguration();
+
+        for (Map.Entry<String, String> e : configuration.getProperties().entrySet()) {
+            System.out.println(e.getKey() + ": " + e.getValue());
+        }
+
+
 
         out.println("****************************************************");
         out.println("File observer example");
@@ -102,9 +111,18 @@ public class Main {
             ConfigurationChange c = (ConfigurationChange) event;
 
             if (c.isKeyAffected("a")) {
-                PropertyChangeEvent change = c.getChanges().iterator().next();
-                Object oldValue = change.getOldValue();
-                Object newValue = change.getNewValue();
+                // Looking for the change event of property a. Not recomanded
+                // for production.
+                Object newValue = null;
+                Object oldValue = null;
+
+                for (PropertyChangeEvent change : c.getChanges()) {
+                    if ("a".equals(change.getPropertyName())) {
+                        oldValue = change.getOldValue();
+                        newValue = change.getNewValue();
+                        break;
+                    }
+                }
 
                 if (oldValue != null) {
                     out.println("Value for key a changed (" + oldValue + " (old) => " + newValue + " (new))");
