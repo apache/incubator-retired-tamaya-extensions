@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.events.internal;
 
+import org.apache.tamaya.events.FrozenConfiguration;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,4 +48,30 @@ public class DefaultConfigChangeObserverTest {
         assertThat(sut.isMonitoring()).isFalse();
     }
 
+    @Test
+    public void lastConfigIsSetByTheFirstCheckForChangesInTheConfiguration() {
+        DefaultConfigChangeObserver observer = new DefaultConfigChangeObserver();
+
+        assertThat(observer.getLastConfig()).describedAs("There must be no last configuration after creation.")
+                                            .isNull();
+
+        observer.checkConfigurationUpdate();
+
+        assertThat(observer.getLastConfig()).describedAs("After the firt check last configuration must be set.")
+                                            .isNotNull();
+    }
+
+    @Test
+    public void lastConfigIsUpdatedByASubSequentCheckForChangesInTheConfigration() {
+        DefaultConfigChangeObserver observer = new DefaultConfigChangeObserver();
+
+        observer.checkConfigurationUpdate();
+
+        FrozenConfiguration config1 = observer.getLastConfig();
+        observer.checkConfigurationUpdate();
+        FrozenConfiguration config2 = observer.getLastConfig();
+
+        assertThat(config1).describedAs("After the firt check last configuration must be set.")
+                                            .isNotEqualTo(config2);
+    }
 }

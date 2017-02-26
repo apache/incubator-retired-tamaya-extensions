@@ -64,20 +64,28 @@ public class DefaultConfigChangeObserver {
         FrozenConfiguration frozenConfig = FrozenConfiguration.of(ConfigurationProvider.getConfiguration());
         ConfigurationChange changes;
 
-        if (lastConfig == null) {
+        if (getLastConfig() == null) {
             changes = ConfigurationChangeBuilder.of().putAll(frozenConfig.getProperties())
                                                 .build();
         } else {
-            changes = ConfigurationChangeBuilder.of(lastConfig).addChanges(frozenConfig)
+            changes = ConfigurationChangeBuilder.of(getLastConfig()).addChanges(frozenConfig)
                                                 .build();
         }
 
-        lastConfig = frozenConfig;
-        
+        setLastConfig(frozenConfig);
+
         if(!changes.isEmpty()) {
             LOG.info("Identified configuration changes, publishing changes:\n" + changes);
             ConfigEventManager.fireEvent(changes);
         }
+    }
+
+    protected FrozenConfiguration getLastConfig() {
+        return lastConfig;
+    }
+
+    protected void setLastConfig(FrozenConfiguration newConfiguration) {
+        lastConfig = newConfiguration;
     }
 
     public long getCheckPeriod() {
