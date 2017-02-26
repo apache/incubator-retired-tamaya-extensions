@@ -81,6 +81,9 @@ public class ConfiguredTypeImpl implements ConfiguredType{
     }
 
     private void initFields(Class type, boolean autoConfigure) {
+        if (type.getSuperclass() != null) {
+            initFields(type.getSuperclass(), autoConfigure);
+        }
         for (Field f : type.getDeclaredFields()) {
             if (f.isAnnotationPresent(NoConfig.class)) {
                 LOG.finest("Ignored @NoConfig annotated field " + f.getClass().getName() + "#" +
@@ -112,6 +115,9 @@ public class ConfiguredTypeImpl implements ConfiguredType{
     }
 
     private void initMethods(Class type, boolean autoConfigure) {
+        if (type.getSuperclass() != null) {
+            initMethods(type.getSuperclass(), autoConfigure);
+        }
         // TODO revisit this logic here...
         for (Method m : type.getDeclaredMethods()) {
             if (m.isAnnotationPresent(NoConfig.class)) {
@@ -190,6 +196,9 @@ public class ConfiguredTypeImpl implements ConfiguredType{
             if(isConfiguredMethod(method)) {
                 return true;
             }
+        }
+        if (type.getSuperclass() != null) {
+            return isConfigured(type.getSuperclass());
         }
         return false;
     }

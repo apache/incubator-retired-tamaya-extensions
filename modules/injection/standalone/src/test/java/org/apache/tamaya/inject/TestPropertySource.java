@@ -39,6 +39,7 @@ public class TestPropertySource implements PropertySource {
         properties.put("NonAnnotatedConfigBean.classFieldKey", "Class-Field-Value");
         properties.put("NonAnnotatedConfigBean.fieldKey", "Field-Value");
         properties.put("annottext.NonAnnotatedConfigBean.fullKey", "Fullkey-Value");
+        properties.put("someMoreValue", "s'more");
     }
 
     @Override

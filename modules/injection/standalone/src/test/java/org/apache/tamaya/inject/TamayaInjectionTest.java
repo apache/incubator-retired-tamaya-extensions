@@ -20,6 +20,7 @@ package org.apache.tamaya.inject;
 
 import annottext.AnnotatedConfigBean;
 import annottext.AnnotatedConfigTemplate;
+import annottext.InheritedAnnotatedConfigBean;
 import annottext.NonAnnotatedConfigBean;
 import org.junit.Test;
 
@@ -68,6 +69,29 @@ public class TamayaInjectionTest {
         assertEquals(testInstance.getHostName(), testInstance.getDynamicValue().get());
         assertEquals(testInstance.javaVersion, System.getProperty("java.version"));
     }
+    
+    @Test
+    public void testInjectionInheritedClass(){
+        assertNotNull(ConfigurationInjection.getConfigurationInjector());
+        InheritedAnnotatedConfigBean testInstance = new InheritedAnnotatedConfigBean();
+        assertEquals(testInstance.getHostName(), null);
+        assertEquals(testInstance.getAnotherValue(), null);
+        assertEquals(testInstance.myParameter, null);
+        assertEquals(testInstance.simpleValue, null);
+        assertEquals(testInstance.someMoreValue, null);
+        assertEquals(testInstance.notConfigured, null);
+        ConfigurationInjection.getConfigurationInjector().configure(testInstance);
+        assertEquals(testInstance.getHostName(), "tamaya01.incubator.apache.org");
+        assertEquals(testInstance.getAnotherValue(), "HALLO!");
+        assertEquals(testInstance.myParameter, "ET");
+        assertEquals(testInstance.simpleValue, "aSimpleValue");
+        assertNotNull(testInstance.getDynamicValue());
+        assertTrue(testInstance.getDynamicValue().isPresent());
+        assertEquals(testInstance.getDynamicValue().get(), "tamaya01.incubator.apache.org");
+        assertEquals(testInstance.getHostName(), testInstance.getDynamicValue().get());
+        assertEquals(testInstance.javaVersion, System.getProperty("java.version"));
+        assertEquals(testInstance.someMoreValue, "s'more");
+    }    
 
     @Test
     public void testConfigTemplate(){

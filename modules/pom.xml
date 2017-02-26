@@ -32,6 +32,7 @@ under the License.
     <packaging>pom</packaging>
 
     <modules>
+        <module>features</module>
         <module>functions</module>
         <module>spi-support</module>
         <module>optional</module>
@@ -43,6 +44,7 @@ under the License.
         <module>resolver</module>
         <module>resources</module>
         <module>spring</module>
+        <module>jndi</module>
     </modules>
 
 </project>
