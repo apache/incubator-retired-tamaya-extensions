@@ -19,7 +19,15 @@
 package org.apache.tamaya.functions;
 
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.core.propertysource.EnvironmentPropertySource;
+import org.apache.tamaya.core.propertysource.SystemPropertySource;
+import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.junit.Test;
+
+import java.io.PrintStream;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static org.junit.Assert.*;
 
@@ -139,5 +147,43 @@ public class ConfigurationFunctionsTest {
         assertNotNull(ps);
         assertNotNull(ps.getProperties());
         assertTrue(ps.getProperties().isEmpty());
+    }
+
+    /**
+     * See https://issues.apache.org/jira/browse/TAMAYA-235
+     */
+    @Test
+    public void testSection_StripKeys() {
+        testSection(true);
+    }
+
+    /**
+     * See https://issues.apache.org/jira/browse/TAMAYA-235
+     */
+    @Test
+    public void testSection_NoStripKeys() {
+        testSection(false);
+    }
+
+    private void testSection(boolean stripKeys){
+        ConfigurationContextBuilder b = ConfigurationProvider.getConfigurationContextBuilder();
+        b.addPropertySources(new EnvironmentPropertySource(), new SystemPropertySource());
+        Configuration cfg = ConfigurationProvider.createConfiguration(b.build()).with(
+                ConfigurationFunctions.section("java.", stripKeys));
+        System.out.println("*****************************************************");
+        System.out.println("stripKeys: " + stripKeys);
+        System.out.println("*****************************************************");
+        dump(cfg.getProperties(), System.out);
+        System.out.println();
+        System.out.println("Example Metadata:");
+        System.out.println("\tjava.version         :  " + cfg.get("java.version"));
+        System.out.println("\tversion                 :  " + cfg.get("version"));
+    }
+
+    private void dump(Map<String, String> properties, PrintStream stream) {
+        stream.println("FULL DUMP:");
+        for (Map.Entry<String, String> en : new TreeMap<>(properties).entrySet()) {
+            stream.println("\t" + en.getKey() + " = " + en.getValue());
+        }
     }
 }

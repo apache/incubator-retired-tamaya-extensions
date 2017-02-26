@@ -240,7 +240,7 @@ public final class ConfigurationFunctions {
                             if(key.startsWith(areaKey)) {
                                 return key.substring(areaKey.length());
                             }
-                            return null;
+                            return areaKey + key;
                         }
                     }, "stripped");
                 }
