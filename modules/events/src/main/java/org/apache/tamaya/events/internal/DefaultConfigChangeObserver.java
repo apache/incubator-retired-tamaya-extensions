@@ -63,12 +63,13 @@ public class DefaultConfigChangeObserver {
         LOG.finest("Checking configuration for changes...");
         FrozenConfiguration frozenConfig = FrozenConfiguration.of(ConfigurationProvider.getConfiguration());
         ConfigurationChange changes;
-        if(lastConfig==null){
+
+        if (lastConfig == null) {
             changes = ConfigurationChangeBuilder.of().putAll(frozenConfig.getProperties())
-                    .build();
-        }else{
+                                                .build();
+        } else {
             changes = ConfigurationChangeBuilder.of(lastConfig).addChanges(frozenConfig)
-                    .build();
+                                                .build();
         }
 
         lastConfig = frozenConfig;
