@@ -79,9 +79,6 @@ public class DefaultConfigChangeObserver {
         }
         if(!changes.isEmpty()) {
             LOG.info("Identified configuration changes, publishing changes:\n" + changes);
-//            System.out.println("UPD detected with size=" + changes.getUpdatedSize());
-//            System.out.println("ADD detected with size=" + changes.getAddedSize());
-//            System.out.println("REM detected with size=" + changes.getRemovedSize());
             ConfigEventManager.fireEvent(changes);
         }
     }

@@ -90,31 +90,44 @@ public final class ConfigurationChangeBuilder {
 
     /**
      * Compares the two property config/configurations and creates a collection with all changes
-     * that must be applied to render {@code original} into {@code target}.
+     * that must be applied to render {@code previous} into {@code target}.
      *
-     * @param original the original map, not null.
-     * @param target the target map, not null.
+     * @param previous the previous map, not null.
+     * @param current the target map, not null.
      * @return a collection current change events, never {@code null}.
      */
-    public static Collection<PropertyChangeEvent> compare(Configuration original, Configuration target) {
-        List<PropertyChangeEvent> changes = new ArrayList<>();
-        for (Map.Entry<String, String> en : original.getProperties().entrySet()) {
-            String val = target.get(en.getKey());
-            if (val == null) {
-                changes.add(new PropertyChangeEvent(original, en.getKey(), null, en.getValue()));
-            } else if (!val.equals(en.getValue())) {
-                changes.add(new PropertyChangeEvent(original, en.getKey(), val, en.getValue()));
+    public static Collection<PropertyChangeEvent> compare(Configuration previous, Configuration current) {
+        TreeMap<String, PropertyChangeEvent> events = new TreeMap<>();
+
+        for (Map.Entry<String, String> en : previous.getProperties().entrySet()) {
+            String key = en.getKey();
+            String previousValue = en.getValue();
+            String currentValue = current.get(en.getKey());
+
+            if (currentValue == null) {
+                PropertyChangeEvent event = new PropertyChangeEvent(previous, key, previousValue, null);
+                events.put(key, event);
+            } else if (!Objects.equals(current, previous)) {
+                PropertyChangeEvent event = new PropertyChangeEvent(previous, key, currentValue, previousValue);
+                events.put(key, event);
             }
         }
-        for (Map.Entry<String, String> en : target.getProperties().entrySet()) {
-            String val = original.get(en.getKey());
-            if (val == null) {
-                changes.add(new PropertyChangeEvent(original, en.getKey(), null, en.getValue()));
-            } else if (!val.equals(en.getValue())) {
-                changes.add(new PropertyChangeEvent(original, en.getKey(), val, en.getValue()));
+
+        for (Map.Entry<String, String> en : current.getProperties().entrySet()) {
+            String key = en.getKey();
+            String previousValue = previous.get(en.getKey());
+            String currentValue = en.getValue();
+
+            if (previousValue == null) {
+                PropertyChangeEvent event = new PropertyChangeEvent(current, key, null, currentValue);
+                events.put(key, event);
+            } else if (!(Objects.equals(previousValue, currentValue) && events.containsKey(key))) {
+                PropertyChangeEvent event = new PropertyChangeEvent(current, en.getKey(), previousValue, en.getValue());
+                events.put(key, event);
             }
         }
-        return changes;
+
+        return events.values();
     }
 
     /*
@@ -145,7 +158,7 @@ public final class ConfigurationChangeBuilder {
      * @return the builder for chaining.
      */
     public ConfigurationChangeBuilder addChanges(Configuration newState) {
-        for (PropertyChangeEvent c : compare(newState, this.source)) {
+        for (PropertyChangeEvent c : compare(this.source, newState)) {
             this.delta.put(c.getPropertyName(), c);
         }
         return this;
