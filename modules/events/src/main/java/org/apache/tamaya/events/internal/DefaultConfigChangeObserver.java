@@ -70,13 +70,15 @@ public class DefaultConfigChangeObserver {
         FrozenConfiguration frozenConfig = FrozenConfiguration.of(ConfigurationProvider.getConfiguration());
         ConfigurationChange changes;
         if(lastConfig==null){
-            lastConfig = frozenConfig;
             changes = ConfigurationChangeBuilder.of().putAll(frozenConfig.getProperties())
                     .build();
         }else{
             changes = ConfigurationChangeBuilder.of(lastConfig).addChanges(frozenConfig)
                     .build();
         }
+
+        lastConfig = frozenConfig;
+        
         if(!changes.isEmpty()) {
             LOG.info("Identified configuration changes, publishing changes:\n" + changes);
             ConfigEventManager.fireEvent(changes);
