@@ -1,4 +1,3 @@
 Export-Package: \
 	org.apache.tamaya.functions
 Bundle-SymbolicName: org.apache.tamaya.functions
-Bundle-Version: 0.3-INCUBATING-SNAPSHOT

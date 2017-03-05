@@ -1,4 +1,3 @@
 Export-Package: \
 	org.apache.tamaya.integration.spring
 Bundle-SymbolicName: org.apache.tamaya.spring
-Bundle-Version: 0.3-INCUBATING-SNAPSHOT

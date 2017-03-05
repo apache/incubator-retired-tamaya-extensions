@@ -1,2 +1,6 @@
 Export-Package: \
 	org.apache.tamaya.jndi
+Bundle-SymbolicName: org.apache.tamaya.jndi
+Import-Package: org.apache.tamaya,\
+    org.apache.tamaya.inject.api,\
+    org.apache.tamaya.spi
