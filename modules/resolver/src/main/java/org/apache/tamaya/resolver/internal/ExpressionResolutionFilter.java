@@ -22,6 +22,7 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
 import org.apache.tamaya.spi.FilterContext;
 import org.apache.tamaya.spi.PropertyFilter;
+import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spi.ServiceContextManager;
 
 import javax.annotation.Priority;
@@ -84,9 +85,13 @@ public class ExpressionResolutionFilter implements PropertyFilter {
      * @return the resolved value, or the input in case where no expression was detected.
      */
     @Override
-    public String filterProperty(String valueToBeFiltered, FilterContext context){
+    public PropertyValue filterProperty(PropertyValue valueToBeFiltered, FilterContext context){
         LOG.finest("Resolving " + valueToBeFiltered + "(key=" + context.getKey() + ")");
-        return evaluator().evaluateExpression(context.getKey(), valueToBeFiltered, true);
+        String newVal = evaluator().evaluateExpression(context.getKey(), valueToBeFiltered.getValue(), true);
+        if(newVal!=null){
+            return valueToBeFiltered.toBuilder().setValue(newVal).build();
+        }
+        return null;
     }
 
 

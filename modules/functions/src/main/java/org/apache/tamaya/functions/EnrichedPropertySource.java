@@ -22,9 +22,7 @@ import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spisupport.PropertySourceComparator;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * PropertySource, that has values added or overridden.
@@ -33,7 +31,7 @@ class EnrichedPropertySource implements PropertySource {
 
     private final PropertySource basePropertySource;
 
-    private final Map<String, String> addedProperties;
+    private final Map<String, PropertyValue> addedProperties = new HashMap<>();
 
     private final boolean overriding;
 
@@ -46,11 +44,14 @@ class EnrichedPropertySource implements PropertySource {
      */
     EnrichedPropertySource(PropertySource propertySource, Map<String, String> properties, boolean overriding) {
         this.basePropertySource = Objects.requireNonNull(propertySource);
-        this.addedProperties = Objects.requireNonNull(properties);
+        for(Map.Entry<String,String> en:properties.entrySet()){
+            this.addedProperties.put(en.getKey(), PropertyValue.of(en.getKey(), en.getValue(), propertySource.getName()));
+        }
         this.overriding = overriding;
     }
 
 
+    @Override
     public int getOrdinal() {
         return PropertySourceComparator.getOrdinal(basePropertySource);
     }
@@ -63,9 +64,9 @@ class EnrichedPropertySource implements PropertySource {
     @Override
     public PropertyValue get(String key) {
         if (overriding) {
-            String val = addedProperties.get(key);
+            PropertyValue val = addedProperties.get(key);
             if (val != null) {
-                return PropertyValue.of(key, val, getName());
+                return val;
             }
             return basePropertySource.get(key);
         }
@@ -73,19 +74,24 @@ class EnrichedPropertySource implements PropertySource {
         if (val != null) {
             return val;
         }
-        return PropertyValue.of(key, addedProperties.get(key), getName());
+        return addedProperties.get(key);
 
     }
 
     @Override
-    public Map<String, String> getProperties() {
-        Map<String, String> allProps;
+    public Map<String, PropertyValue> getProperties() {
+        Map<String, PropertyValue> allProps;
         if (overriding) {
-            allProps = new HashMap<>(basePropertySource.getProperties());
+            allProps = new HashMap<>();
+            for(PropertyValue val:basePropertySource.getProperties().values()){
+                allProps.put(val.getKey(), val);
+            }
             allProps.putAll(addedProperties);
         } else {
             allProps = new HashMap<>(addedProperties);
-            allProps.putAll(basePropertySource.getProperties());
+            for(PropertyValue val:basePropertySource.getProperties().values()){
+                allProps.put(val.getKey(), val);
+            }
         }
         return allProps;
     }

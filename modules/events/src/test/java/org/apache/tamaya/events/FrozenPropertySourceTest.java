@@ -20,6 +20,7 @@ package org.apache.tamaya.events;
 
 import org.apache.tamaya.core.propertysource.SystemPropertySource;
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spisupport.PropertySourceComparator;
 import org.junit.Test;
 
@@ -59,8 +60,8 @@ public class FrozenPropertySourceTest {
     public void testGet() throws Exception {
         PropertySource ps = FrozenPropertySource.of(myPS);
         assertNotNull(ps);
-        for (Map.Entry<String, String> e : myPS.getProperties().entrySet()) {
-            assertEquals(ps.get(e.getKey()).getValue(), e.getValue());
+        for (Map.Entry<String, PropertyValue> e : myPS.getProperties().entrySet()) {
+            assertEquals(ps.get(e.getKey()).getValue(), e.getValue().getValue());
         }
     }
 

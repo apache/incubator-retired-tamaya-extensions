@@ -36,7 +36,7 @@ public class SystemPropertySource extends BasePropertySource {
      */
     public static final int DEFAULT_ORDINAL = 1000;
 
-    private volatile Map<String,String> cachedProperties;
+    private volatile Map<String,PropertyValue> cachedProperties;
 
     /**
      * previous System.getProperties().hashCode()
@@ -127,18 +127,22 @@ public class SystemPropertySource extends BasePropertySource {
     }
 
 
-    private Map<String, String> loadProperties() {
+    private Map<String, PropertyValue> loadProperties() {
         Properties sysProps = System.getProperties();
         previousHash = System.getProperties().hashCode();
         final String prefix = this.prefix;
-        Map<String, String> entries = new HashMap<>();
+        Map<String, PropertyValue> entries = new HashMap<>();
         for (Map.Entry<Object,Object> entry : sysProps.entrySet()) {
             if(prefix==null) {
-                entries.put("_" + entry.getKey() + ".source", getName());
-                entries.put((String) entry.getKey(), (String) entry.getValue());
+                entries.put((String) entry.getKey(),
+                        PropertyValue.of((String) entry.getKey(),
+                                (String) entry.getValue(),
+                                getName()));
             }else {
-                entries.put(prefix + entry.getKey(), (String)entry.getValue());
-                entries.put("_" + prefix + entry.getKey() + ".source", getName());
+                entries.put(prefix + entry.getKey(),
+                        PropertyValue.of(prefix + entry.getKey(),
+                                (String) entry.getValue(),
+                                getName()));
             }
         }
         return entries;
@@ -165,7 +169,7 @@ public class SystemPropertySource extends BasePropertySource {
     }
 
     @Override
-    public Map<String, String> getProperties() {
+    public Map<String, PropertyValue> getProperties() {
         if(disabled){
             return Collections.emptyMap();
         }
@@ -173,7 +177,7 @@ public class SystemPropertySource extends BasePropertySource {
         // synchronization was removed, Instance was marked as volatile. In the worst case it
         // is reloaded twice, but the values will be the same.
         if (previousHash != System.getProperties().hashCode()) {
-            Map<String, String> properties = loadProperties();
+            Map<String, PropertyValue> properties = loadProperties();
             this.cachedProperties = Collections.unmodifiableMap(properties);
         }
         return this.cachedProperties;

@@ -42,6 +42,7 @@ import java.util.logging.Logger;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
+import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spisupport.BasePropertySource;
 
 /**
@@ -114,10 +115,10 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
      */
     protected Collection<PropertySource> getPropertySources(final Path file) {
         return Arrays.asList(new PropertySource[]{new BasePropertySource(file.toString()) {
-            private final Map<String,String> props = readProperties(file);
+            private final Map<String,PropertyValue> props = readProperties(file);
 
             @Override
-            public Map<String, String> getProperties() {
+            public Map<String, PropertyValue> getProperties() {
                 return props;
             }
         }});
@@ -129,13 +130,14 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
      * @param file the file, not null.
      * @return properties as read from the given file.
      */
-    protected static Map<String,String> readProperties(Path file) {
+    protected static Map<String,PropertyValue> readProperties(Path file) {
         try (InputStream is = file.toUri().toURL().openStream()){
             final Properties props = new Properties();
                 props.load(is);
-            final Map<String,String> result = new HashMap<>();
+            final Map<String,PropertyValue> result = new HashMap<>();
             for(final Map.Entry<Object,Object> en:props.entrySet()){
-                result.put(String.valueOf(en.getKey()), String.valueOf(en.getValue()));
+                String key = String.valueOf(en.getKey());
+                result.put(key, PropertyValue.of(key, String.valueOf(en.getValue()), file.toString()));
             }
             return result;
         } catch (final Exception e) {

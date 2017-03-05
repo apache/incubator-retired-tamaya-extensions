@@ -19,6 +19,7 @@
 package org.apache.tamaya.json;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.spi.PropertyValue;
 
 import java.util.*;
 

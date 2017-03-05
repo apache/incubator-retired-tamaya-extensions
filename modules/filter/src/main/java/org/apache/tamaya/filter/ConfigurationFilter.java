@@ -19,6 +19,7 @@
 package org.apache.tamaya.filter;
 
 import org.apache.tamaya.spi.PropertyFilter;
+import org.apache.tamaya.spi.PropertyValue;
 
 
 /**
@@ -108,7 +109,7 @@ public final class ConfigurationFilter implements PropertyFilter{
     }
 
     @Override
-    public String filterProperty(String valueToBeFiltered, org.apache.tamaya.spi.FilterContext context) {
+    public PropertyValue filterProperty(PropertyValue valueToBeFiltered, org.apache.tamaya.spi.FilterContext context) {
         if(context.isSinglePropertyScoped()){
             for(PropertyFilter pred: THREADED_VALUE_FILTERS.get().getFilters()){
                 valueToBeFiltered = pred.filterProperty(valueToBeFiltered, context);

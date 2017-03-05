@@ -21,13 +21,7 @@ package org.apache.tamaya.spisupport;
 
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.ConversionContext;
-import org.apache.tamaya.spi.FilterContext;
-import org.apache.tamaya.spi.PropertyConverter;
-import org.apache.tamaya.spi.PropertyFilter;
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
+import org.apache.tamaya.spi.*;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -151,7 +145,7 @@ public class DefaultConfigurationContextTest {
         PropertyFilter testFilter = new PropertyFilter() {
 
             @Override
-            public String filterProperty(String value, FilterContext context) {
+            public PropertyValue filterProperty(PropertyValue value, FilterContext context) {
                 return value;
             }
         };

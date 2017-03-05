@@ -19,6 +19,7 @@
 package org.apache.tamaya.spisupport;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.spi.PropertyValue;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,7 +44,7 @@ public class SimplePropertySource extends BasePropertySource {
     /**
      * The current properties.
      */
-    private Map<String, String> properties;
+    private Map<String, PropertyValue> properties = new HashMap<>();
 
     /**
      * Creates a new Properties based PropertySource based on the given URL.
@@ -78,7 +79,9 @@ public class SimplePropertySource extends BasePropertySource {
      */
     public SimplePropertySource(String name, Map<String, String> properties, int defaultOrdinal){
         super(name, defaultOrdinal);
-        this.properties = new HashMap<>(properties);
+        for(Map.Entry<String,String> en: properties.entrySet()) {
+            this.properties.put(en.getKey(), PropertyValue.of(en.getKey(), en.getValue(), name));
+        }
     }
 
     /**
@@ -88,8 +91,7 @@ public class SimplePropertySource extends BasePropertySource {
      * @param properties the properties, not null.
      */
     public SimplePropertySource(String name, Map<String, String> properties) {
-        super(name, 0);
-        this.properties = new HashMap<>(properties);
+        this(name, properties, 0);
     }
 
     /**
@@ -119,7 +121,7 @@ public class SimplePropertySource extends BasePropertySource {
     }
 
     @Override
-    public Map<String, String> getProperties() {
+    public Map<String, PropertyValue> getProperties() {
         return this.properties;
     }
 
@@ -130,10 +132,10 @@ public class SimplePropertySource extends BasePropertySource {
      * @return loaded {@link Properties}
      * @throws IllegalStateException in case of an error while reading properties-file
      */
-    private static Map<String, String> load(URL propertiesFile) {
+    private static Map<String, PropertyValue> load(URL propertiesFile) {
         boolean isXML = isXMLPropertieFiles(propertiesFile);
 
-        Map<String, String> properties = new HashMap<>();
+        Map<String, PropertyValue> properties = new HashMap<>();
         try (InputStream stream = propertiesFile.openStream()) {
             Properties props = new Properties();
             if (stream != null) {
@@ -145,8 +147,7 @@ public class SimplePropertySource extends BasePropertySource {
             }
             String source = propertiesFile.toString();
             for (String key : props.stringPropertyNames()) {
-                properties.put(key, props.getProperty(key));
-                properties.put("_" + key + ".source", source);
+                properties.put(key, PropertyValue.of(key, props.getProperty(key), source));
             }
         } catch (IOException e) {
             throw new ConfigException("Error loading properties from " + propertiesFile, e);
@@ -167,7 +168,7 @@ public class SimplePropertySource extends BasePropertySource {
         private String name;
         private Integer defaultOrdinal;
         private Integer ordinal;
-        private Map<String, String> properties = new HashMap<>();
+        private Map<String, PropertyValue> properties = new HashMap<>();
 
         private Builder() {
         }
@@ -254,7 +255,9 @@ public class SimplePropertySource extends BasePropertySource {
          * @return a reference to this Builder
          */
         public Builder withProperties(Map<String, String> val) {
-            this.properties.putAll(val);
+            for(Map.Entry<String,String> en: val.entrySet()) {
+                this.properties.put(en.getKey(), PropertyValue.of(en.getKey(), en.getValue(), name));
+            }
             return this;
         }
 
@@ -265,18 +268,7 @@ public class SimplePropertySource extends BasePropertySource {
          * @return a reference to this Builder
          */
         public Builder withProperty(String key, String val) {
-            this.properties.put(key, val);
-            return this;
-        }
-
-        /**
-         * Sets the {@code properties} and returns a reference to this Builder so that the methods can be chained together.
-         *
-         * @param val the {@code properties} to set
-         * @return a reference to this Builder
-         */
-        public Builder withSource(String val) {
-            this.properties.put("_source", val);
+            this.properties.put(key, PropertyValue.of(key, val, name));
             return this;
         }
 
@@ -286,7 +278,6 @@ public class SimplePropertySource extends BasePropertySource {
          * @return a {@code SimplePropertySource} built with parameters of this {@code SimplePropertySource.Builder}
          */
         public SimplePropertySource build() {
-            this.properties.put("_builtAt", String.valueOf(System.currentTimeMillis()));
             return new SimplePropertySource(this);
         }
     }

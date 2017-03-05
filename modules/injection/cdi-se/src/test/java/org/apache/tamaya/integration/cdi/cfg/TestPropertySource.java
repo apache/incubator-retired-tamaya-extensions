@@ -63,12 +63,16 @@ public class TestPropertySource implements PropertySource{
 
     @Override
     public PropertyValue get(String key) {
-        return PropertyValue.of(key, config.get(key), getName());
+        String val = this.config.get(key);
+        if(val!=null) {
+            return PropertyValue.of(key, val, getName());
+        }
+        return null;
     }
 
     @Override
-    public Map<String, String> getProperties() {
-        return config;
+    public Map<String, PropertyValue> getProperties() {
+        return PropertyValue.map(config ,getName());
     }
 
     @Override

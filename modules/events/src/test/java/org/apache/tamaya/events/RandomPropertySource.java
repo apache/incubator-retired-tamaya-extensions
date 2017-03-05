@@ -20,6 +20,7 @@ package org.apache.tamaya.events;
 
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.spi.PropertyValueBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +30,12 @@ import java.util.Map;
  */
 public class RandomPropertySource implements PropertySource{
 
-    private Map<String, String> data = new HashMap<>();
+    private Map<String, PropertyValue> data = new HashMap<>();
+
+    @Override
+    public int getOrdinal() {
+        return 0;
+    }
 
     @Override
     public String getName() {
@@ -45,11 +51,10 @@ public class RandomPropertySource implements PropertySource{
     }
 
     @Override
-    public Map<String, String> getProperties() {
+    public Map<String, PropertyValue> getProperties() {
         synchronized(data) {
-            data.put("random.new", String.valueOf(Math.random()));
-            data.put("_random.new.source", getName());
-            data.put("_random.new.timestamp", String.valueOf(System.currentTimeMillis()));
+            data.put("random.new", new PropertyValueBuilder("random.new", String.valueOf(Math.random()), getName())
+            .addMetaEntry("_random.new.timestamp", String.valueOf(System.currentTimeMillis())).build());
             return new HashMap<>(data);
         }
     }

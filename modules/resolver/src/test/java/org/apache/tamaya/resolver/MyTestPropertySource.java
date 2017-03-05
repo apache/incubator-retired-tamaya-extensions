@@ -76,6 +76,11 @@ public class MyTestPropertySource implements PropertySource{
     }
 
     @Override
+    public int getOrdinal() {
+        return 0;
+    }
+
+    @Override
     public String getName() {
         return "test";
     }
@@ -86,8 +91,12 @@ public class MyTestPropertySource implements PropertySource{
     }
 
     @Override
-    public Map<String, String> getProperties() {
-        return properties;
+    public Map<String, PropertyValue> getProperties() {
+        Map<String, PropertyValue> res = new HashMap<>();
+        for(Map.Entry<String,String> en:properties.entrySet()){
+            res.put(en.getKey(), PropertyValue.of(en.getKey(), en.getValue(), "test"));
+        }
+        return res;
     }
 
     @Override

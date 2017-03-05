@@ -48,7 +48,10 @@ public class ConfigurationFunctionsTest {
 
     @Test
     public void testSection() throws Exception {
-// TODO implement test
+        // Tests with/without stripping of keys:
+        // See https://issues.apache.org/jira/browse/TAMAYA-235
+        testSection(false);
+        testSection(true);
     }
 
     @Test
@@ -149,21 +152,6 @@ public class ConfigurationFunctionsTest {
         assertTrue(ps.getProperties().isEmpty());
     }
 
-    /**
-     * See https://issues.apache.org/jira/browse/TAMAYA-235
-     */
-    @Test
-    public void testSection_StripKeys() {
-        testSection(true);
-    }
-
-    /**
-     * See https://issues.apache.org/jira/browse/TAMAYA-235
-     */
-    @Test
-    public void testSection_NoStripKeys() {
-        testSection(false);
-    }
 
     private void testSection(boolean stripKeys){
         ConfigurationContextBuilder b = ConfigurationProvider.getConfigurationContextBuilder();

@@ -22,6 +22,7 @@ import org.apache.tamaya.Configuration;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -63,8 +64,12 @@ final class ConfigWrappingPropertySource implements PropertySource {
     }
 
     @Override
-    public Map<String, String> getProperties() {
-        return config.getProperties();
+    public Map<String, PropertyValue> getProperties() {
+        Map<String,PropertyValue> result = new HashMap<>();
+        for(Map.Entry<String,String> en:config.getProperties().entrySet()){
+            result.put(en.getKey(), PropertyValue.of(en.getKey(), en.getValue(), getName()));
+        }
+        return result;
     }
 
     @Override

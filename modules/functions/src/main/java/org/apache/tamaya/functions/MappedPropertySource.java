@@ -22,9 +22,7 @@ import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spisupport.PropertySourceComparator;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * PropertySource implementation that maps certain parts (defined by an {@code UnaryOperator<String>}) to alternate sections.
@@ -53,6 +51,7 @@ class MappedPropertySource implements PropertySource {
         this.keyMapper = Objects.requireNonNull(keyMapper);
     }
 
+    @Override
     public int getOrdinal() {
         return PropertySourceComparator.getOrdinal(this.propertySource);
     }
@@ -63,13 +62,12 @@ class MappedPropertySource implements PropertySource {
     }
 
     @Override
-    public Map<String, String> getProperties() {
-        Map<String, String> result = new HashMap<>();
-        Map<String, String> map = this.propertySource.getProperties();
-        for (Map.Entry<String, String> en : map.entrySet()) {
+    public Map<String, PropertyValue> getProperties() {
+        Map<String,PropertyValue> result = new HashMap<>();
+        for (PropertyValue en : this.propertySource.getProperties().values()) {
             String targetKey = keyMapper.mapKey(en.getKey());
             if (targetKey != null) {
-                result.put(targetKey, en.getValue());
+                result.put(targetKey, PropertyValue.of(targetKey, en.getValue(), getName()));
             }
         }
         return result;
@@ -82,7 +80,14 @@ class MappedPropertySource implements PropertySource {
 
     @Override
     public PropertyValue get(String key) {
-        return PropertyValue.of(key, getProperties().get(key), getName());
+        PropertyValue result = this.propertySource.get(key);
+        if(result!=null){
+            String targetKey = keyMapper.mapKey(key);
+            if (targetKey != null) {
+                return result.toBuilder().mapKey(targetKey).build();
+            }
+        }
+        return null;
     }
 
 }

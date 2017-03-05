@@ -32,14 +32,14 @@ import java.util.Map;
 @Vetoed
 class ProvidedPropertySource implements PropertySource{
 
-    final Map<String,String> config = new HashMap<>();
+    final Map<String,PropertyValue> config = new HashMap<>();
 
     public ProvidedPropertySource(){
-        config.put("a.b.c.key3", "keys current a.b.c.key3");
-        config.put("a.b.c.key4", "keys current a.b.c.key4");
-        config.put("{meta}source.type:"+getClass().getName(), "PropertySourceProvider");
+        config.put("a.b.c.key3", PropertyValue.of("a.b.c.key3","keys current a.b.c.key3",getName()));
+        config.put("a.b.c.key4", PropertyValue.of("a.b.c.key4","keys current a.b.c.key4", getName()));
     }
 
+    @Override
     public int getOrdinal() {
         return 10;
     }
@@ -51,11 +51,11 @@ class ProvidedPropertySource implements PropertySource{
 
     @Override
     public PropertyValue get(String key) {
-        return PropertyValue.of(key, config.get(key), getName());
+        return config.get(key);
     }
 
     @Override
-    public Map<String, String> getProperties() {
+    public Map<String, PropertyValue> getProperties() {
         return config;
     }
 

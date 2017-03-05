@@ -141,8 +141,12 @@ public class MappedConfigurationDataPropertySource extends BasePropertySource {
     }
 
     @Override
-    public Map<String, String> getProperties() {
-        return Collections.unmodifiableMap(properties);
+    public Map<String, PropertyValue> getProperties() {
+        Map<String, PropertyValue> result = new HashMap<>();
+        for(Map.Entry<String,String> en:this.properties.entrySet()) {
+            result.put(en.getKey(), PropertyValue.of(en.getKey(), en.getValue(), getName()));
+        }
+        return result;
     }
 
 }

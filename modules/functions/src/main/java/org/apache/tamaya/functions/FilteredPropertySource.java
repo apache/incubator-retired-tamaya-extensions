@@ -44,6 +44,7 @@ class FilteredPropertySource implements PropertySource {
         this.filter = Objects.requireNonNull(filter);
     }
 
+    @Override
     public int getOrdinal(){
         return PropertySourceComparator.getOrdinal(baseSource);
     }
@@ -55,15 +56,19 @@ class FilteredPropertySource implements PropertySource {
 
     @Override
     public PropertyValue get(String key) {
-        return PropertyValue.of(key, getProperties().get(key), getName());
+        PropertyValue val = this.baseSource.get(key);
+        if(val!=null && filter.test(val.getKey())) {
+            return val;
+        }
+        return null;
     }
 
     @Override
-    public Map<String,String> getProperties(){
-        final Map<String,String> result = new HashMap<>();
-        for(Map.Entry<String,String> en: this.baseSource.getProperties().entrySet()) {
-            if (filter.test(en.getKey())) {
-                result.put(en.getKey(), en.getValue());
+    public Map<String, PropertyValue> getProperties(){
+        final Map<String,PropertyValue> result = new HashMap<>();
+        for(PropertyValue val: this.baseSource.getProperties().values()) {
+            if (filter.test(val.getKey())) {
+                result.put(val.getKey(), val);
             }
         }
         return result;

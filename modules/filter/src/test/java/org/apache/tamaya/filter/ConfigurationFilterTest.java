@@ -22,6 +22,7 @@ import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.spi.FilterContext;
 import org.apache.tamaya.spi.PropertyFilter;
+import org.apache.tamaya.spi.PropertyValue;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -45,8 +46,8 @@ public class ConfigurationFilterTest {
         assertNotNull(ConfigurationFilter.getSingleValueFilterContext());
         PropertyFilter testFilter = new PropertyFilter() {
             @Override
-            public String filterProperty(String value, FilterContext context) {
-                return context.getKey() + ":testGetSingleFilters";
+            public PropertyValue filterProperty(PropertyValue value, FilterContext context) {
+                return PropertyValue.of(context.getKey(), context.getKey() + ":testGetSingleFilters", "test");
             }
         };
         ConfigurationFilter.getSingleValueFilterContext().addFilter(testFilter);
@@ -61,8 +62,8 @@ public class ConfigurationFilterTest {
         assertNotNull(ConfigurationFilter.getSingleValueFilterContext());
         PropertyFilter testFilter = new PropertyFilter() {
             @Override
-            public String filterProperty(String value, FilterContext context) {
-                return context.getKey() + ":testGetSingleFilters";
+            public PropertyValue filterProperty(PropertyValue value, FilterContext context) {
+                return PropertyValue.of(context.getKey(), context.getKey() + ":testGetSingleFilters", "test");
             }
         };
         ConfigurationFilter.getSingleValueFilterContext().addFilter(testFilter);
@@ -77,8 +78,8 @@ public class ConfigurationFilterTest {
         assertNotNull(ConfigurationFilter.getMapFilterContext());
         PropertyFilter testFilter = new PropertyFilter() {
             @Override
-            public String filterProperty(String value, FilterContext context) {
-                return context.getKey() + ":testGetMapFilters";
+            public PropertyValue filterProperty(PropertyValue value, FilterContext context) {
+                return PropertyValue.of(context.getKey(), context.getKey() + ":testGetMapFilters", "test");
             }
         };
         ConfigurationFilter.getMapFilterContext().addFilter(testFilter);
@@ -93,8 +94,8 @@ public class ConfigurationFilterTest {
         assertNotNull(ConfigurationFilter.getMapFilterContext());
         PropertyFilter testFilter = new PropertyFilter() {
             @Override
-            public String filterProperty(String value, FilterContext context) {
-                return context.getKey() + ":testGetMapFilters";
+            public PropertyValue filterProperty(PropertyValue value, FilterContext context) {
+                return PropertyValue.of(context.getKey(), context.getKey() + ":testGetMapFilters", "test");
             }
         };
         ConfigurationFilter.getMapFilterContext().addFilter(testFilter);
@@ -109,8 +110,8 @@ public class ConfigurationFilterTest {
         assertNotNull(ConfigurationFilter.getSingleValueFilterContext());
         PropertyFilter testFilter = new PropertyFilter() {
             @Override
-            public String filterProperty(String value, FilterContext context) {
-                return context.getKey() + ":testGetSingleFilters";
+            public PropertyValue filterProperty(PropertyValue value, FilterContext context) {
+                return PropertyValue.of(context.getKey(), context.getKey() + ":testGetSingleFilters", "test");
             }
         };
         ConfigurationFilter.getSingleValueFilterContext().addFilter(testFilter);

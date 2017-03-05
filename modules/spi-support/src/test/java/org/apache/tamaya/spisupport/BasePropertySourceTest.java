@@ -21,13 +21,10 @@ package org.apache.tamaya.spisupport;
 
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
-import org.apache.tamaya.spi.PropertyValueBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class BasePropertySourceTest {
 
@@ -42,7 +39,7 @@ public class BasePropertySourceTest {
             }
 
             @Override
-            public Map<String, String> getProperties() {
+            public Map<String, PropertyValue> getProperties() {
                 return Collections.emptyMap();
             }
         };
@@ -56,7 +53,7 @@ public class BasePropertySourceTest {
 
     @Test
     public void testGet() {
-        Assert.assertEquals("1000", new OverriddenOrdinalPropertySource().get(PropertySource.TAMAYA_ORDINAL).get(PropertySource.TAMAYA_ORDINAL));
+        Assert.assertEquals(1000, new OverriddenOrdinalPropertySource().getOrdinal());
     }
 
     private static class OverriddenOrdinalPropertySource extends BasePropertySource {
@@ -66,10 +63,10 @@ public class BasePropertySourceTest {
         }
 
         @Override
-        public Map<String, String> getProperties() {
-            Map<String, String> map = new HashMap<>(1);
-            map.put(PropertySource.TAMAYA_ORDINAL, "1000");
-            return map;
+        public Map<String, PropertyValue> getProperties() {
+            Map<String,PropertyValue> props = new HashMap<>(1);
+            props.put(PropertySource.TAMAYA_ORDINAL, PropertyValue.of(PropertySource.TAMAYA_ORDINAL, "1000", getName()));
+            return props;
         }
     }
 
@@ -80,10 +77,10 @@ public class BasePropertySourceTest {
         }
 
         @Override
-        public Map<String, String> getProperties() {
-            Map<String, String> map = new HashMap<>(1);
-            map.put(PropertySource.TAMAYA_ORDINAL, "invalid");
-            return map;
+        public Map<String, PropertyValue> getProperties() {
+            Map<String,PropertyValue> props = new HashMap<>(1);
+            props.put(PropertySource.TAMAYA_ORDINAL, PropertyValue.of(PropertySource.TAMAYA_ORDINAL, "invalid", getName()));
+            return props;
         }
     }
 

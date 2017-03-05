@@ -40,11 +40,13 @@ public final class FrozenPropertySource implements PropertySource, Serializable 
     /**
      * The properties read.
      */
-    private Map<String, String> properties = new HashMap<>();
+    private Map<String, PropertyValue> properties = new HashMap<>();
     /**
      * The PropertySource's name.
      */
     private final String name;
+
+    private long frozenAt = System.currentTimeMillis();
 
     /**
      * Constructor.
@@ -53,7 +55,6 @@ public final class FrozenPropertySource implements PropertySource, Serializable 
      */
     private FrozenPropertySource(PropertySource propertySource) {
         this.properties.putAll(propertySource.getProperties());
-        this.properties.put("[meta]frozenAt", String.valueOf(System.currentTimeMillis()));
         this.properties = Collections.unmodifiableMap(this.properties);
         this.ordinal = PropertySourceComparator.getOrdinal(propertySource);
         this.name = propertySource.getName();
@@ -81,13 +82,21 @@ public final class FrozenPropertySource implements PropertySource, Serializable 
         return this.ordinal;
     }
 
-    @Override
-    public PropertyValue get(String key) {
-        return PropertyValue.of(key, this.properties.get(key), getName());
+    /**
+     * Get the creation timestamp of this instance.
+     * @return the creation timestamp
+     */
+    public long getFrozenAt(){
+        return frozenAt;
     }
 
     @Override
-    public Map<String, String> getProperties() {
+    public PropertyValue get(String key) {
+        return this.properties.get(key);
+    }
+
+    @Override
+    public Map<String, PropertyValue> getProperties() {
         return properties;
     }
 

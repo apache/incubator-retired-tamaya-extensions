@@ -39,7 +39,7 @@ public class JSONPropertySourceTest extends CommonJSONTestCaseCollection {
         assertThat(configURL, CoreMatchers.notNullValue());
 
         JSONPropertySource source = new JSONPropertySource(configURL, 4);
-        assertEquals(source.get(PropertySource.TAMAYA_ORDINAL).getValue(), "16784");
+        assertEquals(source.getOrdinal(), 16784);
     }
     
     @Test(expected=IOException.class)

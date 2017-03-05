@@ -89,20 +89,20 @@ public final class PropertySourceChangeBuilder {
      */
     public static Collection<PropertyChangeEvent> compare(PropertySource map1, PropertySource map2) {
         List<PropertyChangeEvent> changes = new ArrayList<>();
-        for (Map.Entry<String, String> en : map1.getProperties().entrySet()) {
+        for (Map.Entry<String, PropertyValue> en : map1.getProperties().entrySet()) {
             PropertyValue val = map2.get(en.getKey());
             if (val == null) {
-                changes.add(new PropertyChangeEvent(map1, en.getKey(), null, en.getValue()));
+                changes.add(new PropertyChangeEvent(map1, en.getKey(), null, en.getValue().getValue()));
             } else if (!val.equals(en.getValue())) {
-                changes.add(new PropertyChangeEvent(map1, en.getKey(), val.getValue(), en.getValue()));
+                changes.add(new PropertyChangeEvent(map1, en.getKey(), val.getValue(), en.getValue().getValue()));
             }
         }
-        for (Map.Entry<String, String> en : map2.getProperties().entrySet()) {
+        for (Map.Entry<String, PropertyValue> en : map2.getProperties().entrySet()) {
             PropertyValue val = map1.get(en.getKey());
             if (val == null) {
-                changes.add(new PropertyChangeEvent(map1, en.getKey(), en.getValue(), null));
+                changes.add(new PropertyChangeEvent(map1, en.getKey(), en.getValue().getValue(), null));
             } else if (!val.equals(en.getValue())) {
-                changes.add(new PropertyChangeEvent(map1, en.getKey(), en.getValue(), val.getValue()));
+                changes.add(new PropertyChangeEvent(map1, en.getKey(), en.getValue().getValue(), val.getValue()));
             }
         }
         return changes;
@@ -193,7 +193,7 @@ public final class PropertySourceChangeBuilder {
      * @return the builder for chaining.
      */
     public PropertySourceChangeBuilder putAll(Map<String, String> changes) {
-        for (Map.Entry<String, String> en : this.source.getProperties().entrySet()) {
+        for (Map.Entry<String, PropertyValue> en : this.source.getProperties().entrySet()) {
             this.delta.put(en.getKey(), new PropertyChangeEvent(this.source, en.getKey(), null, en.getValue()));
         }
         return this;
@@ -206,8 +206,8 @@ public final class PropertySourceChangeBuilder {
      */
     public PropertySourceChangeBuilder deleteAll() {
         this.delta.clear();
-        for (Map.Entry<String, String> en : this.source.getProperties().entrySet()) {
-            this.delta.put(en.getKey(), new PropertyChangeEvent(this.source, en.getKey(), en.getValue(), null));
+        for (Map.Entry<String, PropertyValue> en : this.source.getProperties().entrySet()) {
+            this.delta.put(en.getKey(), new PropertyChangeEvent(this.source, en.getKey(), en.getValue().getValue(), null));
         }
         return this;
     }

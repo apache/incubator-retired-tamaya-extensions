@@ -89,24 +89,13 @@ implements MutablePropertySource{
 
     @Override
     public PropertyValue get(String key) {
-        Map<String,String> properties = getProperties();
-        String val = properties.get(key);
-        if(val==null){
-            return null;
-        }
-        PropertyValueBuilder b = new PropertyValueBuilder(key, val, getName());
-        String metaKeyStart = "_" + key + ".";
-        for(Map.Entry<String,String> en:properties.entrySet()) {
-            if(en.getKey().startsWith(metaKeyStart)){
-                b.addContextData(en.getKey().substring(metaKeyStart.length()), en.getValue());
-            }
-        }
-        return b.build();
+        Map<String,PropertyValue> properties = getProperties();
+        return properties.get(key);
     }
 
     @Override
-    public Map<String, String> getProperties() {
-        return Collections.unmodifiableMap(this.properties);
+    public Map<String, PropertyValue> getProperties() {
+        return PropertyValue.map(this.properties, getName());
     }
 
     /**

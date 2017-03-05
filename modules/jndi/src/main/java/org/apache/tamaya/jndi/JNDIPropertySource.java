@@ -22,9 +22,15 @@ import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spisupport.BasePropertySource;
 
-import javax.naming.*;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NameClassPair;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -36,6 +42,12 @@ import java.util.logging.Logger;
 public class JNDIPropertySource extends BasePropertySource {
     /** The logger used. */
     private static final Logger LOG = Logger.getLogger(JNDIPropertySource.class.getName());
+
+    /**
+     * Default ordinal to be used, as defined by {@link PropertySource#getOrdinal()} documentation.
+     */
+    private static final int DEFAULT_ORDINAL = 200;
+
     /** The root context, not null. */
     private Context context;
     /** The scannable property, default is {@code false}. */
@@ -67,6 +79,7 @@ public class JNDIPropertySource extends BasePropertySource {
      */
     public JNDIPropertySource() throws NamingException {
         this("jndi");
+        setDefaultOrdinal(DEFAULT_ORDINAL);
     }
 
     /**
@@ -80,10 +93,10 @@ public class JNDIPropertySource extends BasePropertySource {
      * @return a map representation of the JNDI tree.
      */
     @Override
-    public Map<String, String> getProperties() {
+    public Map<String, PropertyValue> getProperties() {
         if(scannable){
             try {
-                return toMap(this.context);
+                return PropertyValue.map(toMap(this.context), getName());
             } catch (NamingException e) {
                 LOG.log(Level.WARNING, "Error scanning JNDI tree.", e);
             }
@@ -122,6 +135,7 @@ public class JNDIPropertySource extends BasePropertySource {
     public String toString() {
         return "JNDIPropertySource{" +
                 "name=" + getName() +
+                ", ordinal=" + getOrdinal() +
                 ", context=" + context +
                 '}';
     }

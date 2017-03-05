@@ -68,32 +68,32 @@ public class PropertySourceComparator implements Comparator<PropertySource>, Ser
     }
 
     public static int getOrdinal(PropertySource propertySource) {
-        PropertyValue ordinalValue = propertySource.get(PropertySource.TAMAYA_ORDINAL);
-        if(ordinalValue!=null){
-            try{
-                return Integer.parseInt(ordinalValue.getValue().trim());
-            }catch(Exception e){
-                LOG.finest("Failed to parse ordinal from " + PropertySource.TAMAYA_ORDINAL +
-                        " in " + propertySource.getName()+": "+ordinalValue.getValue());
-            }
-        }
-        try {
-            Method method = propertySource.getClass().getMethod("getOrdinal");
-            if(int.class.equals(method.getReturnType())){
-                try {
-                    return (int)method.invoke(propertySource);
-                } catch (Exception e) {
-                    LOG.log(Level.FINEST, "Error calling int getOrdinal() on " + propertySource.getName(), e);
-                }
-            }
-        } catch (NoSuchMethodException e) {
-            LOG.finest("No int getOrdinal() method found in " + propertySource.getName());
-        }
-        Priority prio = propertySource.getClass().getAnnotation(Priority.class);
-        if(prio!=null){
-            return prio.value();
-        }
-        return 0;
+//        PropertyValue ordinalValue = propertySource.get(PropertySource.TAMAYA_ORDINAL);
+//        if(ordinalValue!=null){
+//            try{
+//                return Integer.parseInt(ordinalValue.getValue().trim());
+//            }catch(Exception e){
+//                LOG.finest("Failed to parse ordinal from " + PropertySource.TAMAYA_ORDINAL +
+//                        " in " + propertySource.getName()+": "+ordinalValue.getValue());
+//            }
+//        }
+//        try {
+//            Method method = propertySource.getClass().getMethod("getOrdinal");
+//            if(int.class.equals(method.getReturnType())){
+//                try {
+//                    return (int)method.invoke(propertySource);
+//                } catch (Exception e) {
+//                    LOG.log(Level.FINEST, "Error calling int getOrdinal() on " + propertySource.getName(), e);
+//                }
+//            }
+//        } catch (NoSuchMethodException e) {
+//            LOG.finest("No int getOrdinal() method found in " + propertySource.getName());
+//        }
+//        Priority prio = propertySource.getClass().getAnnotation(Priority.class);
+//        if(prio!=null){
+//            return prio.value();
+//        }
+        return propertySource.getOrdinal();
     }
     @Override
     public int compare(PropertySource source1, PropertySource source2) {

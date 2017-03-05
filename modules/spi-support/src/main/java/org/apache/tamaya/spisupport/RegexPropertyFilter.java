@@ -20,6 +20,7 @@ package org.apache.tamaya.spisupport;
 
 import org.apache.tamaya.spi.FilterContext;
 import org.apache.tamaya.spi.PropertyFilter;
+import org.apache.tamaya.spi.PropertyValue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -53,7 +54,7 @@ public final class RegexPropertyFilter implements PropertyFilter{
     }
 
     @Override
-    public String filterProperty(String valueToBeFiltered, FilterContext context) {
+    public PropertyValue filterProperty(PropertyValue valueToBeFiltered, FilterContext context) {
         if(includes!=null){
             for(String expression:includes){
                 if(context.getKey().matches(expression)){

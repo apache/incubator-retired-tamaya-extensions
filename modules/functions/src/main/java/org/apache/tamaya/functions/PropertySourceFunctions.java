@@ -42,6 +42,11 @@ public final class PropertySourceFunctions {
     private static final PropertySource EMPTY_PROPERTYSOURCE = new PropertySource() {
 
         @Override
+        public int getOrdinal() {
+            return 0;
+        }
+
+        @Override
         public String getName() {
             return "<empty>";
         }
@@ -52,7 +57,7 @@ public final class PropertySourceFunctions {
         }
 
         @Override
-        public Map<String, String> getProperties() {
+        public Map<String, PropertyValue> getProperties() {
             return Collections.emptyMap();
         }
 

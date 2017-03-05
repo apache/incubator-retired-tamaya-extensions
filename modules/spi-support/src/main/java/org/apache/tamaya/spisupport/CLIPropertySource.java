@@ -18,6 +18,8 @@
  */
 package org.apache.tamaya.spisupport;
 
+import org.apache.tamaya.spi.PropertyValue;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +35,7 @@ public class CLIPropertySource extends BasePropertySource{
     private static String[] args = new String[0];
 
     /** The map of parsed main arguments. */
-    private static Map<String,String> mainArgs;
+    private static Map<String,PropertyValue> mainArgs;
 
     /** Initializes the initial state. */
     static{
@@ -117,11 +119,16 @@ public class CLIPropertySource extends BasePropertySource{
                 }
             }
         }
-        CLIPropertySource.mainArgs = Collections.unmodifiableMap(result);
+        Map<String,PropertyValue> finalProps = new HashMap<>();
+        for(Map.Entry<String,String> en:result.entrySet()) {
+            finalProps.put(en.getKey(),
+                    PropertyValue.of(en.getKey(), en.getValue(), "main-args"));
+        }
+        CLIPropertySource.mainArgs = Collections.unmodifiableMap(finalProps);
     }
 
     @Override
-    public Map<String, String> getProperties() {
+    public Map<String, PropertyValue> getProperties() {
         return Collections.unmodifiableMap(mainArgs);
     }
 }

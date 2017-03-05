@@ -19,6 +19,7 @@
 package org.apache.tamaya.events;
 
 import org.apache.tamaya.core.propertysource.BasePropertySource;
+import org.apache.tamaya.spi.PropertyValue;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,7 +37,7 @@ public class ChangeableGlobalPropertySource extends BasePropertySource{
     }
 
     @Override
-    public Map<String, String> getProperties() {
+    public Map<String, PropertyValue> getProperties() {
         return null;
     }
 

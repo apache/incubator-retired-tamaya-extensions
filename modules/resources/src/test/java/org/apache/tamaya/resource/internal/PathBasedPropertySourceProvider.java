@@ -21,16 +21,10 @@ package org.apache.tamaya.resource.internal;
 import org.apache.tamaya.resource.AbstractPathPropertySourceProvider;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
-import org.apache.tamaya.spi.PropertyValueBuilder;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Created by Anatole on 03.03.2015.
@@ -60,13 +54,21 @@ public class PathBasedPropertySourceProvider extends AbstractPathPropertySourceP
     private final static class PropertiesBasedPropertySource implements PropertySource{
 
         private final String name;
-        private final Map<String,String> properties = new HashMap<>();
+        private final Map<String,PropertyValue> properties = new HashMap<>();
 
         public PropertiesBasedPropertySource(String name, Properties props) {
-            this.name = name;
+            this.name = Objects.requireNonNull(name);
             for (Map.Entry en : props.entrySet()) {
-                this.properties.put(en.getKey().toString(), String.valueOf(en.getValue()));
+                this.properties.put(en.getKey().toString(),
+                        PropertyValue.of(en.getKey().toString(),
+                                String.valueOf(en.getValue()),
+                                name));
             }
+        }
+
+        @Override
+        public int getOrdinal() {
+            return 0;
         }
 
         @Override
@@ -76,11 +78,11 @@ public class PathBasedPropertySourceProvider extends AbstractPathPropertySourceP
 
         @Override
         public PropertyValue get(String key) {
-            return PropertyValue.of(key,properties.get(key), getName());
+            return properties.get(key);
         }
 
         @Override
-        public Map<String, String> getProperties() {
+        public Map<String, PropertyValue> getProperties() {
             return properties;
         }
 

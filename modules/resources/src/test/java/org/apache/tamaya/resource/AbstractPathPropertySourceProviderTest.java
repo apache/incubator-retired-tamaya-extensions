@@ -20,7 +20,6 @@ package org.apache.tamaya.resource;
 
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
-import org.apache.tamaya.spi.PropertyValueBuilder;
 import org.junit.Test;
 
 import java.net.URL;
@@ -121,7 +120,7 @@ public class AbstractPathPropertySourceProviderTest {
         }
 
         @Override
-        public Map<String, String> getProperties() {
+        public Map<String, PropertyValue> getProperties() {
             return Collections.emptyMap();
         }
 

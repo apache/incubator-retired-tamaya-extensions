@@ -50,7 +50,7 @@ public class JSONPropertySource implements PropertySource {
     /** The underlying resource. */
     private final URL urlResource;
     /** The values read. */
-    private final Map<String, String> values;
+    private final Map<String, PropertyValue> values;
     /** The evaluated ordinal. */
     private int ordinal;
     /** The JSON reader factory used. */
@@ -81,7 +81,7 @@ public class JSONPropertySource implements PropertySource {
         this.ordinal = defaultOrdinal; // may be overriden by read...
         this.values = readConfig(urlResource);
         if (this.values.containsKey(TAMAYA_ORDINAL)) {
-            this.ordinal = Integer.parseInt(this.values.get(TAMAYA_ORDINAL));
+            this.ordinal = Integer.parseInt(this.values.get(TAMAYA_ORDINAL).getValue());
         }
         Map<String, Object> config = new HashMap<>();
         config.put(JOHNZON_SUPPORTS_COMMENTS_PROP, true);
@@ -109,11 +109,12 @@ public class JSONPropertySource implements PropertySource {
 
     @Override
     public PropertyValue get(String key) {
-        return PropertyValue.of(key, getProperties().get(key), getName());
+        return getProperties().get(key);
     }
 
     @Override
-    public Map<String, String> getProperties() {
+    public Map<String, PropertyValue> getProperties() {
+
         return Collections.unmodifiableMap(values);
     }
 
@@ -123,7 +124,7 @@ public class JSONPropertySource implements PropertySource {
      * @return the configuration read from the given resource URL.
      * @throws ConfigException if resource URL cannot be read.
      */
-    protected Map<String, String> readConfig(URL urlResource) throws IOException{
+    protected Map<String, PropertyValue> readConfig(URL urlResource) throws IOException{
         try (InputStream is = urlResource.openStream()) {
             JsonStructure root = this.readerFactory.createReader(is, Charset.forName("UTF-8")).read();
 
@@ -135,7 +136,11 @@ public class JSONPropertySource implements PropertySource {
             Map<String, String> values = new HashMap<>();
             JSONVisitor visitor = new JSONVisitor((JsonObject)root, values);
             visitor.run();
-            return values;
+            Map<String, PropertyValue> result = new HashMap<>();
+            for(Map.Entry<String,String> en:values.entrySet()){
+                result.put(en.getKey(), PropertyValue.of(en.getKey(), en.getValue(), getName()));
+            }
+            return result;
         }catch(IOException ioe){
             throw ioe;
         }catch (Exception t) {

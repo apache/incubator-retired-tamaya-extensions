@@ -67,13 +67,13 @@ public class MappedConfigurationDataPropertySourceTest {
     @Test
     public void testGet() throws Exception {
         MappedConfigurationDataPropertySource ps = new MappedConfigurationDataPropertySource(createConfigurationData("test2"));
-        assertEquals("aValue", ps.get("a").get("a"));
-        assertNotNull(ps.get("section1.sectionKey1").get("section1.sectionKey1"));
-        assertNotNull(ps.get("section2.sectionKey1").get("section2.sectionKey1"));
+        assertEquals("aValue", ps.get("a").getValue());
+        assertNotNull(ps.get("section1.sectionKey1").getValue());
+        assertNotNull(ps.get("section2.sectionKey1").getValue());
         assertNull(ps.get("sectionKey1"));
         ps = new MappedConfigurationDataPropertySource(createConfigurationDataNoDefault("test2"));
-        assertEquals("sectionValue11", ps.get("section1.sectionKey1").get("section1.sectionKey1"));
-        assertEquals("sectionValue21", ps.get("section2.sectionKey1").get("section2.sectionKey1"));
+        assertEquals("sectionValue11", ps.get("section1.sectionKey1").getValue());
+        assertEquals("sectionValue21", ps.get("section2.sectionKey1").getValue());
         assertNull(ps.get("a"));
         assertNull(ps.get("section1"));
     }
@@ -82,7 +82,7 @@ public class MappedConfigurationDataPropertySourceTest {
     public void testGetProperties() throws Exception {
         MappedConfigurationDataPropertySource ps = new MappedConfigurationDataPropertySource(createConfigurationData("test3"));
         assertNotNull(ps.getProperties());
-        assertEquals("aValue", ps.getProperties().get("a"));
+        assertEquals("aValue", ps.getProperties().get("a").getValue());
         assertNotNull(ps.getProperties().get("section1.sectionKey1"));
         assertNotNull(ps.getProperties().get("section2.sectionKey1"));
         assertNull(ps.getProperties().get("section1.sectionKey2"));
@@ -91,8 +91,8 @@ public class MappedConfigurationDataPropertySourceTest {
         assertNull(ps.getProperties().get("sectionKey2"));
         ps = new MappedConfigurationDataPropertySource(createConfigurationDataNoDefault("test3"));
         assertNotNull(ps.getProperties());
-        assertEquals("sectionValue11", ps.getProperties().get("section1.sectionKey1"));
-        assertEquals("sectionValue21", ps.getProperties().get("section2.sectionKey1"));
+        assertEquals("sectionValue11", ps.getProperties().get("section1.sectionKey1").getValue());
+        assertEquals("sectionValue21", ps.getProperties().get("section2.sectionKey1").getValue());
         assertNull(ps.get("section1"));
     }
 }

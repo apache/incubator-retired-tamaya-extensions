@@ -21,6 +21,7 @@ package org.apache.tamaya.spisupport;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.FilterContext;
 import org.apache.tamaya.spi.PropertyFilter;
+import org.apache.tamaya.spi.PropertyValue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,14 +49,14 @@ public final class PropertyFiltering{
      */
     private PropertyFiltering(){}
 
-    public static String applyFilter(String key, Map<String,String> configData, ConfigurationContext configurationContext) {
+    public static PropertyValue applyFilter(String key, Map<String,PropertyValue> configData, ConfigurationContext configurationContext) {
         // Apply filters to values, prevent values filtered to null!
-        String unfilteredValue = configData.get(key);
+        PropertyValue unfilteredValue = configData.get(key);
         for (int i = 0; i < MAX_FILTER_LOOPS; i++) {
             boolean changed = false;
             // Apply filters to values, prevent values filtered to null!
             for (PropertyFilter filter : configurationContext.getPropertyFilters()) {
-                String newValue = filter.filterProperty(unfilteredValue, new FilterContext(key, configData, true));
+                PropertyValue newValue = filter.filterProperty(unfilteredValue, new FilterContext(key, configData));
                 if (newValue != null && !newValue.equals(unfilteredValue)) {
                     changed = true;
                     if (LOG.isLoggable(Level.FINEST)) {
@@ -85,17 +86,17 @@ public final class PropertyFiltering{
         return unfilteredValue;
     }
 
-    public static Map<String, String> applyFilters(Map<String, String> inputMap, ConfigurationContext configurationContext) {
-        Map<String, String> resultMap = new HashMap<>(inputMap);
+    public static Map<String, PropertyValue> applyFilters(Map<String, PropertyValue> inputMap, ConfigurationContext configurationContext) {
+        Map<String, PropertyValue> resultMap = new HashMap<>(inputMap);
         // Apply filters to values, prevent values filtered to null!
         for (int i = 0; i < MAX_FILTER_LOOPS; i++) {
             AtomicInteger changes = new AtomicInteger();
             for (PropertyFilter filter : configurationContext.getPropertyFilters()) {
-                for (Map.Entry<String, String> entry : inputMap.entrySet()) {
+                for (Map.Entry<String, PropertyValue> entry : inputMap.entrySet()) {
                     final String k = entry.getKey();
-                    final String v = entry.getValue();
+                    final PropertyValue v = entry.getValue();
 
-                    String newValue = filter.filterProperty(v, new FilterContext(k, inputMap, false));
+                    PropertyValue newValue = filter.filterProperty(v, new FilterContext(k, inputMap));
                     if (newValue != null && !newValue.equals(v)) {
                         changes.incrementAndGet();
                         LOG.finest("Filter - " + k + ": " + v + " -> " + newValue + " by " + filter);

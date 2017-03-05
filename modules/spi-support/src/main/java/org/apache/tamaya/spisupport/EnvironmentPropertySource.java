@@ -147,22 +147,21 @@ public class EnvironmentPropertySource extends BasePropertySource {
     }
 
     @Override
-    public Map<String, String> getProperties() {
+    public Map<String, PropertyValue> getProperties() {
         if(disabled){
             return Collections.emptyMap();
         }
         String prefix = this.prefix;
         if(prefix==null) {
-            Map<String, String> entries = new HashMap<>(System.getenv());
+            Map<String, PropertyValue> entries = new HashMap<>(System.getenv().size());
             for (Map.Entry<String, String> entry : System.getenv().entrySet()) {
-                entries.put("_" + entry.getKey() + ".source", getName());
+                entries.put(entry.getKey(), PropertyValue.of(entry.getKey(), entry.getValue(), getName()));
             }
             return entries;
         }else{
-            Map<String, String> entries = new HashMap<>();
+            Map<String, PropertyValue> entries = new HashMap<>(System.getenv().size());
             for (Map.Entry<String, String> entry : System.getenv().entrySet()) {
-                entries.put(prefix + entry.getKey(), entry.getValue());
-                entries.put("_" + prefix + entry.getKey() + ".source", getName());
+                entries.put(prefix + entry.getKey(), PropertyValue.of(prefix + entry.getKey(), entry.getValue(), getName()));
             }
             return entries;
         }

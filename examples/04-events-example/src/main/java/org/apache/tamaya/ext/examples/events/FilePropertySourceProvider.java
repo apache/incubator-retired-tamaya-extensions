@@ -23,6 +23,7 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.core.propertysource.BasePropertySource;
 import org.apache.tamaya.resource.AbstractPathPropertySourceProvider;
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,9 +50,9 @@ public class FilePropertySourceProvider extends AbstractPathPropertySourceProvid
         }
 
         @Override
-        public Map<String, String> getProperties() {
+        public Map<String, PropertyValue> getProperties() {
 
-            Map<String, String> properties = new HashMap<>();
+            Map<String, PropertyValue> properties = new HashMap<>();
             try (InputStream stream = propertiesFile.openStream()) {
                 Properties props = new Properties();
                 if (stream != null) {
@@ -59,7 +60,7 @@ public class FilePropertySourceProvider extends AbstractPathPropertySourceProvid
                 }
 
                 for (String key : props.stringPropertyNames()) {
-                    properties.put(key, props.getProperty(key));
+                    properties.put(key, PropertyValue.of(key, props.getProperty(key), getName()));
                 }
             } catch (IOException e) {
                 throw new ConfigException("Error loading properties from " + propertiesFile, e);

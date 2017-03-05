@@ -16,6 +16,8 @@
  */
 package org.apache.tamaya.spisupport;
 
+import org.apache.tamaya.spi.PropertyValue;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +32,7 @@ public class MapPropertySource extends BasePropertySource {
     /**
      * The current properties.
      */
-    private final Map<String, String> props = new HashMap<>();
+    private final Map<String, PropertyValue> props = new HashMap<>();
 
     /**
      * Creates a new instance, hereby using the default mechanism for evaluating the property source's
@@ -54,10 +56,14 @@ public class MapPropertySource extends BasePropertySource {
     public MapPropertySource(String name, Map<String, String> props, String prefix) {
         super(name);
         if (prefix == null) {
-            this.props.putAll(props);
+            for (Map.Entry<String, String> en : props.entrySet()) {
+                this.props.put(en.getKey(),
+                        PropertyValue.of(en.getKey(), en.getValue(), name));
+            }
         } else {
             for (Map.Entry<String, String> en : props.entrySet()) {
-                this.props.put(prefix + en.getKey(), en.getValue());
+                this.props.put(prefix + en.getKey(),
+                        PropertyValue.of(prefix + en.getKey(), en.getValue(), name));
             }
         }
     }
@@ -89,7 +95,7 @@ public class MapPropertySource extends BasePropertySource {
 
 
     @Override
-    public Map<String, String> getProperties() {
+    public Map<String, PropertyValue> getProperties() {
         return Collections.unmodifiableMap(this.props);
     }
 

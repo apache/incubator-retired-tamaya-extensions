@@ -29,6 +29,7 @@ import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
+import org.apache.tamaya.spi.ServiceContextManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,6 +56,25 @@ public class DefaultConfiguration implements Configuration {
      */
     private final ConfigurationContext configurationContext;
 
+    /**
+     * EvaluationStrategy
+     */
+    private ConfigValueEvaluator configEvaluator = loadConfigValueEvaluator();
+
+    private ConfigValueEvaluator loadConfigValueEvaluator() {
+        ConfigValueEvaluator eval = null;
+        try{
+            eval = ServiceContextManager.getServiceContext()
+                    .getService(ConfigValueEvaluator.class);
+        }catch(Exception e){
+            LOG.log(Level.WARNING, "Failed to load ConfigValueEvaluator from ServiceContext, using default.", e);
+        }
+        if(eval==null){
+            eval = new DefaultConfigValueEvaluator();
+        }
+        return eval;
+    }
+
 
     /**
      * Constructor.
@@ -71,11 +91,15 @@ public class DefaultConfiguration implements Configuration {
      */
     @Override
     public String get(String key) {
-        PropertyValue configData = evaluteRawValue(key);
-        if(configData==null){
+        PropertyValue value = configEvaluator.evaluteRawValue(key, configurationContext);
+        if(value==null || value.getValue()==null){
             return null;
         }
-        return PropertyFilterManager.applyFilter(key, configData.getConfigEntries(), configurationContext);
+        value = PropertyFilterManager.applyFilter(key, value, configurationContext);
+        if(value!=null){
+            return value.getValue();
+        }
+        return null;
     }
 
     /**
@@ -85,16 +109,13 @@ public class DefaultConfiguration implements Configuration {
      */
     protected PropertyValue evaluteRawValue(String key) {
         List<PropertySource> propertySources = configurationContext.getPropertySources();
-        Map<String,String> unfilteredValue = null;
+        PropertyValue filteredValue = null;
         PropertyValueCombinationPolicy combinationPolicy = this.configurationContext
                 .getPropertyValueCombinationPolicy();
         for (PropertySource propertySource : propertySources) {
-            unfilteredValue = combinationPolicy.collect(unfilteredValue, key, propertySource);
+            filteredValue = combinationPolicy.collect(filteredValue, key, propertySource);
         }
-        if(unfilteredValue==null){
-            return null;
-        }
-        return PropertyValue.of(key, unfilteredValue.get(key), unfilteredValue.get("_"+key+".source"));
+        return filteredValue;
     }
 
 
@@ -124,31 +145,20 @@ public class DefaultConfiguration implements Configuration {
      */
     @Override
     public Map<String, String> getProperties() {
-        return PropertyFilterManager.applyFilters(evaluateUnfilteredMap(), configurationContext);
-    }
-
-    /**
-     * Evaluate all properties, but do not apply filtering on the output.
-     * @return the unfiltered key, value map.
-     */
-    protected Map<String, String> evaluateUnfilteredMap() {
-        List<PropertySource> propertySources = new ArrayList<>(configurationContext.getPropertySources());
-        Collections.reverse(propertySources);
-        Map<String, String> result = new HashMap<>();
-        for (PropertySource propertySource : propertySources) {
-            try {
-                int origSize = result.size();
-                Map<String, String> otherMap = propertySource.getProperties();
-                LOG.log(Level.FINEST, null, "Overriding with properties from " + propertySource.getName());
-                result.putAll(otherMap);
-                LOG.log(Level.FINEST, null, "Handled properties from " + propertySource.getName() + "(new: " +
-                        (result.size() - origSize) + ", overrides: " + origSize + ", total: " + result.size());
-            } catch (Exception e) {
-                LOG.log(Level.SEVERE, "Error adding properties from PropertySource: " + propertySource + ", ignoring PropertySource.", e);
+        Map<String, PropertyValue> filtered = PropertyFiltering.applyFilters(
+                configEvaluator.evaluateRawValues(configurationContext),
+                configurationContext);
+        Map<String,String> result = new HashMap<>();
+        for(PropertyValue val:filtered.values()){
+            if(val.getValue()!=null) {
+                result.put(val.getKey(), val.getValue());
+                // TODO: Discuss metadata handling...
+                result.putAll(val.getMetaEntries());
             }
         }
         return result;
     }
+
 
     /**
      * Accesses the current String value for the given key and tries to convert it
@@ -185,7 +195,8 @@ public class DefaultConfiguration implements Configuration {
     protected <T> T convertValue(String key, String value, TypeLiteral<T> type) {
         if (value != null) {
             List<PropertyConverter<T>> converters = configurationContext.getPropertyConverters(type);
-            ConversionContext context = new ConversionContext.Builder(this, configurationContext, key, type).build();
+            ConversionContext context = new ConversionContext.Builder(this, this.configurationContext, key, type)
+                    .build();
             for (PropertyConverter<T> converter : converters) {
                 try {
                     T t = converter.convert(value, context);
@@ -196,8 +207,13 @@ public class DefaultConfiguration implements Configuration {
                     LOG.log(Level.FINEST, "PropertyConverter: " + converter + " failed to convert value: " + value, e);
                 }
             }
+            // if the target type is a String, we can return the value, no conversion required.
+            if(type.equals(TypeLiteral.of(String.class))){
+                return (T)value;
+            }
+            // unsupported type, throw an exception
             throw new ConfigException("Unparseable config value for type: " + type.getRawType().getName() + ": " + key +
-            ", supported formats: "+context.getSupportedFormats());
+                    ", supported formats: " + context.getSupportedFormats());
         }
         return null;
     }

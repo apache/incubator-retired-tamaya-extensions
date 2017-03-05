@@ -126,7 +126,7 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
         /** The property source's name. */
         private final String name;
         /** The properties. */
-        private final Map<String,String> properties = new HashMap<>();
+        private final Map<String,PropertyValue> properties = new HashMap<>();
 
         /**
          * Constructor for a simple properties configuration.
@@ -134,9 +134,10 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
          * @param props the properties, not null
          */
         public PropertiesBasedPropertySource(String name, Properties props) {
-            this.name = name;
+            this.name = Objects.requireNonNull(name);
             for (Entry<Object, Object> en : props.entrySet()) {
-                this.properties.put(en.getKey().toString(), String.valueOf(en.getValue()));
+                this.properties.put(en.getKey().toString(),
+                        PropertyValue.of(en.getKey().toString(), String.valueOf(en.getValue()), name));
             }
         }
 
@@ -147,7 +148,10 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
          */
         public PropertiesBasedPropertySource(String name, Map<String,String> props) {
             this.name = Objects.requireNonNull(name);
-            this.properties.putAll(props);
+            for (Entry<String, String> en : props.entrySet()) {
+                this.properties.put(en.getKey(),
+                        PropertyValue.of(en.getKey(), en.getValue(), name));
+            }
         }
 
         public int getOrdinal() {
@@ -179,11 +183,11 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
 
         @Override
         public PropertyValue get(String key) {
-            return PropertyValue.of(key, getProperties().get(key), getName());
+            return this.properties.get(key);
         }
 
         @Override
-        public Map<String, String> getProperties() {
+        public Map<String, PropertyValue> getProperties() {
             return properties;
         }
 

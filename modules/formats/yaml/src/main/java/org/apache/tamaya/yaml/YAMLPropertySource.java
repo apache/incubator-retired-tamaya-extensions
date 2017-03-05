@@ -23,6 +23,7 @@ import org.apache.tamaya.spi.PropertyValue;
 
 import java.net.URL;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -37,7 +38,7 @@ public class YAMLPropertySource implements PropertySource {
     /** The underlying resource. */
     private final URL urlResource;
     /** The values read. */
-    private final Map<String, String> values;
+    private final Map<String, PropertyValue> values;
     /** The evaluated ordinal. */
     private int ordinal;
     /** The format implementation used for parsing. */
@@ -59,9 +60,13 @@ public class YAMLPropertySource implements PropertySource {
     public YAMLPropertySource(URL resource, int defaultOrdinal) {
         urlResource = Objects.requireNonNull(resource);
         this.ordinal = defaultOrdinal; // may be overriden by read...
-        this.values = format.readConfig(urlResource);
-        if (this.values.containsKey(TAMAYA_ORDINAL)) {
-            this.ordinal = Integer.parseInt(this.values.get(TAMAYA_ORDINAL));
+        Map<String,String> cfg = format.readConfig(urlResource);
+        this.values = new HashMap<>();
+        for(Map.Entry<String,String> en:cfg.entrySet()){
+            this.values.put(en.getKey(), PropertyValue.of(en.getKey(), en.getValue(), getName()));
+        }
+        if (cfg.containsKey(TAMAYA_ORDINAL)) {
+            this.ordinal = Integer.parseInt(cfg.get(TAMAYA_ORDINAL));
         }
     }
 
@@ -85,11 +90,11 @@ public class YAMLPropertySource implements PropertySource {
 
     @Override
     public PropertyValue get(String key) {
-        return PropertyValue.of(key, getProperties().get(key), getName());
+        return getProperties().get(key);
     }
 
     @Override
-    public Map<String, String> getProperties() {
+    public Map<String, PropertyValue> getProperties() {
         return Collections.unmodifiableMap(values);
     }
 

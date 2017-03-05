@@ -19,6 +19,7 @@
 package org.apache.tamaya.filter;
 
 import org.apache.tamaya.spi.PropertyFilter;
+import org.apache.tamaya.spi.PropertyValue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -101,7 +102,7 @@ public final class FilterContext implements PropertyFilter{
     }
 
     @Override
-    public String filterProperty(String valueToBeFiltered, org.apache.tamaya.spi.FilterContext context) {
+    public PropertyValue filterProperty(PropertyValue valueToBeFiltered, org.apache.tamaya.spi.FilterContext context) {
         for(PropertyFilter filter:filters){
             valueToBeFiltered = filter.filterProperty(valueToBeFiltered, context);
         }

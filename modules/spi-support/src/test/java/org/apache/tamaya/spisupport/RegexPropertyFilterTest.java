@@ -19,6 +19,7 @@
 package org.apache.tamaya.spisupport;
 
 import org.apache.tamaya.spi.FilterContext;
+import org.apache.tamaya.spi.PropertyValue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,18 +35,23 @@ public class RegexPropertyFilterTest {
     public void testFilterProperty() throws Exception {
         RegexPropertyFilter filter = new RegexPropertyFilter();
         filter.setIncludes("test1.*");
-        Map<String,String> map = new HashMap<>();
-        map.put("test1", "test1");
-        map.put("test2", "test2");
-        map.put("test1.test3", "test.test3");
-        assertEquals(filter.filterProperty("test1.", new FilterContext("test1.", map, true)), "test1.");
-        assertNull(filter.filterProperty("test2", new FilterContext("test2.", map, true)));
-        assertEquals(filter.filterProperty("test1.test3", new FilterContext("test1.test3", map, true)), "test1.test3");
+        Map<String,PropertyValue> map = new HashMap<>();
+        map.put("test1", PropertyValue.of("test1", "test1", "test"));
+        map.put("test2", PropertyValue.of("test2", "test2", "test"));
+        map.put("test1.test3", PropertyValue.of("test1.test3", "test.test3", "test"));
+        assertEquals(filter.filterProperty(PropertyValue.of("test1.", "test1", "test"), new FilterContext("test1.", map)).getValue(), "test1");
+        assertNull(filter.filterProperty(PropertyValue.of("test2", "test2", "test"), new FilterContext("test2.", map)));
+        assertEquals(filter.filterProperty(
+                PropertyValue.of("test1.test3", "testx.test3", "test"),
+                new FilterContext("test1.test3", map)).getValue(), "testx.test3");
+        assertEquals(filter.filterProperty(
+                PropertyValue.of("test1.test3", "testx.test3", "test"),
+                new FilterContext("test1.test3", map)).getValue(), "testx.test3");
         filter = new RegexPropertyFilter();
         filter.setIncludes("test1.*");
-        assertNotNull(filter.filterProperty("test1", new FilterContext("test1", map, true)));
-        assertNull(filter.filterProperty("test2", new FilterContext("test2", map, true)));
-        assertNull(filter.filterProperty("test.test3", new FilterContext("test.test3", map, true)));
+        assertNotNull(filter.filterProperty(PropertyValue.of("test1", "test1", "test"), new FilterContext("test1", map)));
+        assertNull(filter.filterProperty(PropertyValue.of("test2", "test2", "test"), new FilterContext("test2", map)));
+        assertNull(filter.filterProperty(PropertyValue.of("test.test3", "test1", "test"), new FilterContext("test.test3", map)));
     }
 
     @org.junit.Test

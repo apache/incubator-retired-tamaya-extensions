@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.jndi;
 
+import org.apache.tamaya.spi.PropertyValue;
 import org.junit.Test;
 
 import javax.naming.Context;
@@ -55,7 +56,7 @@ public class JNDIPropertySourceTest{
     public void testScanContext() throws NamingException, MalformedURLException {
         JNDIPropertySource ps = new JNDIPropertySource("jndi-test", getTestDirContext(createFSContext()));
         assertFalse(ps.isScannable());
-        Map<String,String> props = ps.getProperties();
+        Map<String,PropertyValue> props = ps.getProperties();
         assertNotNull(props);
         assertTrue(props.isEmpty());
         ps.setScannable(true);
