@@ -86,8 +86,8 @@ public class ExpressionResolutionFilter implements PropertyFilter {
      */
     @Override
     public PropertyValue filterProperty(PropertyValue valueToBeFiltered, FilterContext context){
-        LOG.finest("Resolving " + valueToBeFiltered + "(key=" + context.getKey() + ")");
-        String newVal = evaluator().evaluateExpression(context.getKey(), valueToBeFiltered.getValue(), true);
+        LOG.finest("Resolving " + valueToBeFiltered);
+        String newVal = evaluator().evaluateExpression(valueToBeFiltered.getKey(), valueToBeFiltered.getValue(), true);
         if(newVal!=null){
             return valueToBeFiltered.toBuilder().setValue(newVal).build();
         }

@@ -18,8 +18,11 @@
  */
 package org.apache.tamaya.filter;
 
+import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.spisupport.DefaultConfigurationContext;
+import org.apache.tamaya.spisupport.DefaultConfigurationContextBuilder;
 import org.apache.tamaya.spisupport.RegexPropertyFilter;
 import org.junit.Test;
 
@@ -34,31 +37,32 @@ import static org.junit.Assert.*;
  */
 public class ProgrammableFilterTest {
 
-    PropertyValue test1Property = PropertyValue.of("test1","test1","test");
-    PropertyValue test2Property = PropertyValue.of("test2","test2","test");
-    PropertyValue test3Property = PropertyValue.of("test.test3","test.test3","test");
+    private static ConfigurationContext context = new DefaultConfigurationContextBuilder().build();
+    private static PropertyValue test1Property = PropertyValue.of("test1","test1","test");
+    private static PropertyValue test2Property = PropertyValue.of("test2","test2","test");
+    private static PropertyValue test3Property = PropertyValue.of("test.test3","test.test3","test");
 
     @Test
     public void testAddRemoveFilter() throws Exception {
         FilterContext filter = new FilterContext();
         Map<String,PropertyValue> map = new HashMap<>();
-        assertEquals(filter.filterProperty(test1Property, new org.apache.tamaya.spi.FilterContext("test1", map)), test1Property);
-        assertEquals(filter.filterProperty(test2Property, new org.apache.tamaya.spi.FilterContext("test2", map)), test2Property);
-        assertEquals(filter.filterProperty(test3Property, new org.apache.tamaya.spi.FilterContext("test.test3", map)), test3Property);
+        assertEquals(filter.filterProperty(test1Property, new org.apache.tamaya.spi.FilterContext(test1Property, map, context)), test1Property);
+        assertEquals(filter.filterProperty(test2Property, new org.apache.tamaya.spi.FilterContext(test2Property, map, context)), test2Property);
+        assertEquals(filter.filterProperty(test3Property, new org.apache.tamaya.spi.FilterContext(test3Property, map, context)), test3Property);
         RegexPropertyFilter regexFilter = new RegexPropertyFilter();
         regexFilter.setIncludes("test\\..*");
         filter.addFilter(regexFilter);
-        assertNull(filter.filterProperty(test1Property, new org.apache.tamaya.spi.FilterContext("test1", map)));
-        assertNull(filter.filterProperty(test2Property, new org.apache.tamaya.spi.FilterContext("test2", map)));
-        assertEquals(filter.filterProperty(test3Property, new org.apache.tamaya.spi.FilterContext("test.test3", map)), test3Property);
+        assertNull(filter.filterProperty(test1Property, new org.apache.tamaya.spi.FilterContext(test1Property, map, context)));
+        assertNull(filter.filterProperty(test2Property, new org.apache.tamaya.spi.FilterContext(test2Property, map, context)));
+        assertEquals(filter.filterProperty(test3Property, new org.apache.tamaya.spi.FilterContext(test3Property, map, context)), test3Property);
         filter.removeFilter(0);
-        assertEquals(filter.filterProperty(test1Property, new org.apache.tamaya.spi.FilterContext("test1", map)), test1Property);
-        assertEquals(filter.filterProperty(test2Property, new org.apache.tamaya.spi.FilterContext("test2", map)), test2Property);
-        assertEquals(filter.filterProperty(test3Property, new org.apache.tamaya.spi.FilterContext("test.test3", map)), test3Property);
+        assertEquals(filter.filterProperty(test1Property, new org.apache.tamaya.spi.FilterContext(test1Property, map, context)), test1Property);
+        assertEquals(filter.filterProperty(test2Property, new org.apache.tamaya.spi.FilterContext(test2Property, map, context)), test2Property);
+        assertEquals(filter.filterProperty(test3Property, new org.apache.tamaya.spi.FilterContext(test3Property, map, context)), test3Property);
         filter.addFilter(0, regexFilter);
-        assertNull(filter.filterProperty(test1Property, new org.apache.tamaya.spi.FilterContext("test1", map)));
-        assertNull(filter.filterProperty(test2Property, new org.apache.tamaya.spi.FilterContext("test2", map)));
-        assertEquals(filter.filterProperty(test3Property, new org.apache.tamaya.spi.FilterContext("test.test3", map)), test3Property);
+        assertNull(filter.filterProperty(test1Property, new org.apache.tamaya.spi.FilterContext(test1Property, map, context)));
+        assertNull(filter.filterProperty(test2Property, new org.apache.tamaya.spi.FilterContext(test2Property, map, context)));
+        assertEquals(filter.filterProperty(test3Property, new org.apache.tamaya.spi.FilterContext(test3Property, map, context)), test3Property);
     }
 
     @Test
@@ -70,17 +74,17 @@ public class ProgrammableFilterTest {
         map.put("test1", "test1");
         map.put("test2", "test2");
         map.put("test.test3", "test.test3");
-        assertEquals(filter.filterProperty(test1Property, new org.apache.tamaya.spi.FilterContext("test1", test1Property)), test1Property);
-        assertEquals(filter.filterProperty(test2Property, new org.apache.tamaya.spi.FilterContext("test1.", test2Property)), test2Property);
-        assertEquals(filter.filterProperty(test3Property, new org.apache.tamaya.spi.FilterContext("test1.test3", test3Property)), test3Property);
+        assertEquals(filter.filterProperty(test1Property, new org.apache.tamaya.spi.FilterContext(test1Property, context)), test1Property);
+        assertEquals(filter.filterProperty(test2Property, new org.apache.tamaya.spi.FilterContext(test2Property, context)), test2Property);
+        assertEquals(filter.filterProperty(test3Property, new org.apache.tamaya.spi.FilterContext(test3Property, context)), test3Property);
         filter.addFilter(regexFilter);
-        assertEquals(filter.filterProperty(test1Property, new org.apache.tamaya.spi.FilterContext("test1", test1Property)), test1Property);
-        assertEquals(filter.filterProperty(test2Property, new org.apache.tamaya.spi.FilterContext("test1.", test2Property)), test2Property);
-        assertNull(filter.filterProperty(test1Property, new org.apache.tamaya.spi.FilterContext("test.test3", test3Property)));
+        assertEquals(filter.filterProperty(test1Property, new org.apache.tamaya.spi.FilterContext(test1Property, context)), test1Property);
+        assertNull(filter.filterProperty(test2Property, new org.apache.tamaya.spi.FilterContext(test2Property, context)));
+        assertNull(filter.filterProperty(test3Property, new org.apache.tamaya.spi.FilterContext(test3Property, context)));
         filter.clearFilters();
-        assertEquals(filter.filterProperty(test1Property, new org.apache.tamaya.spi.FilterContext("test1", test1Property)), test1Property);
-        assertEquals(filter.filterProperty(test2Property, new org.apache.tamaya.spi.FilterContext("test2", test2Property)), test2Property);
-        assertEquals(filter.filterProperty(test3Property, new org.apache.tamaya.spi.FilterContext("test.test3", test3Property)), test3Property);
+        assertEquals(filter.filterProperty(test1Property, new org.apache.tamaya.spi.FilterContext(test1Property, context)), test1Property);
+        assertEquals(filter.filterProperty(test2Property, new org.apache.tamaya.spi.FilterContext(test2Property, context)), test2Property);
+        assertEquals(filter.filterProperty(test3Property, new org.apache.tamaya.spi.FilterContext(test3Property, context)), test3Property);
     }
 
     @Test
@@ -92,13 +96,13 @@ public class ProgrammableFilterTest {
         map.put("test1", test1Property);
         map.put("test2", test1Property);
         map.put("test.test3", test3Property);
-        assertEquals(filter.filterProperty(test1Property, new org.apache.tamaya.spi.FilterContext("test1", test1Property)), test1Property);
-        assertEquals(filter.filterProperty(test2Property, new org.apache.tamaya.spi.FilterContext("test2", map)), test2Property);
-        assertEquals(filter.filterProperty(test3Property, new org.apache.tamaya.spi.FilterContext("test.test3", map)), test3Property);
+        assertEquals(filter.filterProperty(test1Property, new org.apache.tamaya.spi.FilterContext(test1Property, context)), test1Property);
+        assertEquals(filter.filterProperty(test2Property, new org.apache.tamaya.spi.FilterContext(test2Property, map, context)), test2Property);
+        assertEquals(filter.filterProperty(test3Property, new org.apache.tamaya.spi.FilterContext(test3Property, map, context)), test3Property);
         filter.setFilters(regexFilter);
-        assertEquals(filter.filterProperty(test1Property, new org.apache.tamaya.spi.FilterContext("test.1", map)), test1Property);
-        assertEquals(filter.filterProperty(test2Property, new org.apache.tamaya.spi.FilterContext("test.2", map)), test2Property);
-        assertNull(filter.filterProperty(test3Property, new org.apache.tamaya.spi.FilterContext("test3.test3", map)));
+        assertEquals(filter.filterProperty(test3Property, new org.apache.tamaya.spi.FilterContext(test3Property, map, context)), test3Property);
+        assertNull(filter.filterProperty(test2Property, new org.apache.tamaya.spi.FilterContext(test2Property, map, context)));
+        assertNull(filter.filterProperty(test1Property, new org.apache.tamaya.spi.FilterContext(test1Property, map, context)));
     }
 
     @Test
@@ -107,13 +111,13 @@ public class ProgrammableFilterTest {
         RegexPropertyFilter regexFilter = new RegexPropertyFilter();
         regexFilter.setIncludes("test1.*");
         Map<String,String> map = new HashMap<>();
-        assertEquals(filter.filterProperty(test1Property, new org.apache.tamaya.spi.FilterContext("test1", test1Property)), test1Property);
-        assertEquals(filter.filterProperty(test2Property, new org.apache.tamaya.spi.FilterContext("test2", test2Property)), test2Property);
-        assertEquals(filter.filterProperty(test3Property, new org.apache.tamaya.spi.FilterContext("test1.test3", test3Property)), test3Property);
+        assertEquals(filter.filterProperty(test1Property, new org.apache.tamaya.spi.FilterContext(test1Property, context)), test1Property);
+        assertEquals(filter.filterProperty(test2Property, new org.apache.tamaya.spi.FilterContext(test2Property, context)), test2Property);
+        assertEquals(filter.filterProperty(test3Property, new org.apache.tamaya.spi.FilterContext(test3Property, context)), test3Property);
         filter.setFilters(Arrays.asList(new PropertyFilter[]{regexFilter}));
-        assertEquals(filter.filterProperty(test1Property, new org.apache.tamaya.spi.FilterContext("test1", test1Property)), test1Property);
-        assertNull(filter.filterProperty(test2Property, new org.apache.tamaya.spi.FilterContext("test2", test2Property)));
-        assertNull(filter.filterProperty(test3Property, new org.apache.tamaya.spi.FilterContext("test.test3", test3Property)));
+        assertEquals(filter.filterProperty(test1Property, new org.apache.tamaya.spi.FilterContext(test1Property, context)), test1Property);
+        assertNull(filter.filterProperty(test2Property, new org.apache.tamaya.spi.FilterContext(test2Property, context)));
+        assertNull(filter.filterProperty(test3Property, new org.apache.tamaya.spi.FilterContext(test3Property, context)));
     }
 
     @Test

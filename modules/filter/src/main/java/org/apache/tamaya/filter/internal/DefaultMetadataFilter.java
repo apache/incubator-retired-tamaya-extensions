@@ -34,7 +34,7 @@ public final class DefaultMetadataFilter implements PropertyFilter{
             return valueToBeFiltered;
         }
         if(ConfigurationFilter.isMetadataFiltered()) {
-            if (context.getKey().startsWith("_")) {
+            if (context.getProperty().getKey().startsWith("_")) {
                 // Hide metadata entries.
                 return null;
             }

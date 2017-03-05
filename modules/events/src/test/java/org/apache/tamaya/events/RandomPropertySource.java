@@ -53,7 +53,7 @@ public class RandomPropertySource implements PropertySource{
     @Override
     public Map<String, PropertyValue> getProperties() {
         synchronized(data) {
-            data.put("random.new", new PropertyValueBuilder("random.new", String.valueOf(Math.random()), getName())
+            data.put("random.new", PropertyValue.builder("random.new", String.valueOf(Math.random()), getName())
             .addMetaEntry("_random.new.timestamp", String.valueOf(System.currentTimeMillis())).build());
             return new HashMap<>(data);
         }

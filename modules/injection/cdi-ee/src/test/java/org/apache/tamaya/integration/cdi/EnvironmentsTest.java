@@ -77,7 +77,7 @@ package org.apache.tamaya.integration.cdi;
 //
 //    private static void generateAsserts(Properties test) {
 //        for (Map.Entry<Object, Object> entry : test.entrySet()) {
-//            System.out.printf("assertEquals(\"%s\", test.getProperty(\"%s\"));%n", entry.getValue(), entry.getKey());
+//            System.out.printf("assertEquals(\"%s\", test.getProperty(\"%s\"));%n", entry.getProperty(), entry.getKey());
 //        }
 //    }
 //}

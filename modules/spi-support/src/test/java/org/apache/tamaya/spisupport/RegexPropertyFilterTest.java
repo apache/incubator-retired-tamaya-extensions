@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.spisupport;
 
+import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.FilterContext;
 import org.apache.tamaya.spi.PropertyValue;
 
@@ -31,27 +32,32 @@ import static org.junit.Assert.*;
  */
 public class RegexPropertyFilterTest {
 
+    private static PropertyValue prop1 = PropertyValue.of("test1", "test1", "test");
+    private static PropertyValue prop2 = PropertyValue.of("test2", "test2", "test");
+    private static PropertyValue prop3 = PropertyValue.of("test1.test3", "test.test3", "test");
+    private static ConfigurationContext configContext = new DefaultConfigurationContext();
+
     @org.junit.Test
     public void testFilterProperty() throws Exception {
         RegexPropertyFilter filter = new RegexPropertyFilter();
         filter.setIncludes("test1.*");
         Map<String,PropertyValue> map = new HashMap<>();
-        map.put("test1", PropertyValue.of("test1", "test1", "test"));
-        map.put("test2", PropertyValue.of("test2", "test2", "test"));
-        map.put("test1.test3", PropertyValue.of("test1.test3", "test.test3", "test"));
-        assertEquals(filter.filterProperty(PropertyValue.of("test1.", "test1", "test"), new FilterContext("test1.", map)).getValue(), "test1");
-        assertNull(filter.filterProperty(PropertyValue.of("test2", "test2", "test"), new FilterContext("test2.", map)));
+        map.put(prop1.getKey(), prop1);
+        map.put(prop2.getKey(), prop2);
+        map.put(prop3.getKey(), prop3);
+        assertEquals(filter.filterProperty(prop1, new FilterContext(prop1, configContext)), prop1);
+        assertNull(filter.filterProperty(prop2, new FilterContext(prop2, configContext)));
         assertEquals(filter.filterProperty(
-                PropertyValue.of("test1.test3", "testx.test3", "test"),
-                new FilterContext("test1.test3", map)).getValue(), "testx.test3");
+                prop3,
+                new FilterContext(prop3, map, configContext)), prop3);
         assertEquals(filter.filterProperty(
-                PropertyValue.of("test1.test3", "testx.test3", "test"),
-                new FilterContext("test1.test3", map)).getValue(), "testx.test3");
+                prop3,
+                new FilterContext(prop3, map, configContext)), prop3);
         filter = new RegexPropertyFilter();
         filter.setIncludes("test1.*");
-        assertNotNull(filter.filterProperty(PropertyValue.of("test1", "test1", "test"), new FilterContext("test1", map)));
-        assertNull(filter.filterProperty(PropertyValue.of("test2", "test2", "test"), new FilterContext("test2", map)));
-        assertNull(filter.filterProperty(PropertyValue.of("test.test3", "test1", "test"), new FilterContext("test.test3", map)));
+        assertNotNull(filter.filterProperty(prop1, new FilterContext(prop1, map, configContext)));
+        assertNull(filter.filterProperty(prop2, new FilterContext(prop2, map, configContext)));
+        assertNotNull(filter.filterProperty(prop3, new FilterContext(prop3, map, configContext)));
     }
 
     @org.junit.Test

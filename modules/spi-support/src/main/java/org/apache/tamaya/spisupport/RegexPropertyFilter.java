@@ -57,7 +57,7 @@ public final class RegexPropertyFilter implements PropertyFilter{
     public PropertyValue filterProperty(PropertyValue valueToBeFiltered, FilterContext context) {
         if(includes!=null){
             for(String expression:includes){
-                if(context.getKey().matches(expression)){
+                if(context.getProperty().getKey().matches(expression)){
                     return valueToBeFiltered;
                 }
             }
@@ -65,7 +65,7 @@ public final class RegexPropertyFilter implements PropertyFilter{
         }
         if(excludes!=null){
             for(String expression:excludes){
-                if(context.getKey().matches(expression)){
+                if(context.getProperty().getKey().matches(expression)){
                     return null;
                 }
             }

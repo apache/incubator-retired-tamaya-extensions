@@ -47,7 +47,7 @@ public class ConfigurationFilterTest {
         PropertyFilter testFilter = new PropertyFilter() {
             @Override
             public PropertyValue filterProperty(PropertyValue value, FilterContext context) {
-                return PropertyValue.of(context.getKey(), context.getKey() + ":testGetSingleFilters", "test");
+                return value.toBuilder().setValue(value.getKey() + ":testGetSingleFilters").build();
             }
         };
         ConfigurationFilter.getSingleValueFilterContext().addFilter(testFilter);
@@ -63,7 +63,7 @@ public class ConfigurationFilterTest {
         PropertyFilter testFilter = new PropertyFilter() {
             @Override
             public PropertyValue filterProperty(PropertyValue value, FilterContext context) {
-                return PropertyValue.of(context.getKey(), context.getKey() + ":testGetSingleFilters", "test");
+                return value.toBuilder().setValue(value.getKey() + ":testGetSingleFilters").build();
             }
         };
         ConfigurationFilter.getSingleValueFilterContext().addFilter(testFilter);
@@ -79,7 +79,7 @@ public class ConfigurationFilterTest {
         PropertyFilter testFilter = new PropertyFilter() {
             @Override
             public PropertyValue filterProperty(PropertyValue value, FilterContext context) {
-                return PropertyValue.of(context.getKey(), context.getKey() + ":testGetMapFilters", "test");
+                return value.toBuilder().setValue(value.getKey() + ":testGetMapFilters").build();
             }
         };
         ConfigurationFilter.getMapFilterContext().addFilter(testFilter);
@@ -95,7 +95,7 @@ public class ConfigurationFilterTest {
         PropertyFilter testFilter = new PropertyFilter() {
             @Override
             public PropertyValue filterProperty(PropertyValue value, FilterContext context) {
-                return PropertyValue.of(context.getKey(), context.getKey() + ":testGetMapFilters", "test");
+                return value .toBuilder().setValue(value.getKey() + ":testGetMapFilters").build();
             }
         };
         ConfigurationFilter.getMapFilterContext().addFilter(testFilter);
@@ -111,7 +111,7 @@ public class ConfigurationFilterTest {
         PropertyFilter testFilter = new PropertyFilter() {
             @Override
             public PropertyValue filterProperty(PropertyValue value, FilterContext context) {
-                return PropertyValue.of(context.getKey(), context.getKey() + ":testGetSingleFilters", "test");
+                return value.toBuilder().setValue(value.getKey() + ":testGetSingleFilters").build();
             }
         };
         ConfigurationFilter.getSingleValueFilterContext().addFilter(testFilter);

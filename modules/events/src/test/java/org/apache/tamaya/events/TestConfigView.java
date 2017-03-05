@@ -60,7 +60,7 @@ public class TestConfigView implements ConfigOperator{
                 }
                 return result;
 //                return config.getProperties().entrySet().stream().filter(e -> e.getKey().startsWith("test")).collect(
-//                        Collectors.toMap(en -> en.getKey(), en -> en.getValue()));
+//                        Collectors.toMap(en -> en.getKey(), en -> en.getProperty()));
             }
 
             @Override
