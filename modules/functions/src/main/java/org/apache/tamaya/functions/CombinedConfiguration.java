@@ -24,9 +24,7 @@ import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConfigurationContext;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Combines a set of child configurations to a new one, by overriding the first entries with result from
@@ -35,8 +33,12 @@ import java.util.Map;
 class CombinedConfiguration implements Configuration{
     /** The name of the new configuration. */
     private final String name;
-    /** The configuration's in evaluation order. Instances with higher indices override results with lower ones. */
-    private final Configuration[] configurations;
+
+    /**
+     * The configuration's in evaluation order. Instances with higher indices
+     * override results with lower ones.
+     */
+    private final ArrayList<Configuration> configurations = new ArrayList<>();
 
     /**
      * Creates a combined configuration instance.
@@ -45,7 +47,16 @@ class CombinedConfiguration implements Configuration{
      */
     public CombinedConfiguration(String configName, Configuration... configs) {
         this.name = configName;
-        this.configurations = configs == null ? new Configuration[0] : configs.clone();
+
+        if (null != configs) {
+            for (Configuration config : configs) {
+                if (config == null) {
+                    continue;
+                }
+
+                configurations.add(config);
+            }
+        }
     }
 
     @Override
@@ -133,14 +144,14 @@ class CombinedConfiguration implements Configuration{
     @Override
     public ConfigurationContext getContext() {
         // TODO thjink on combining the participating contexts...
-        return configurations[0].getContext();
+        return configurations.get(0).getContext();
     }
 
     @Override
     public String toString() {
         return "CombinedConfiguration{" +
                 "name='" + name + '\'' +
-                ", configurations=" + Arrays.toString(configurations) +
+                ", configurations=" + configurations +
                 '}';
     }
 }

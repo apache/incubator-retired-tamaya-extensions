@@ -78,6 +78,13 @@ public class CombinedConfigurationTest {
     }
 
     @Test
+    public void createCombinedConfigurationWithNullNullAsSingleConfiguration() {
+        CombinedConfiguration cc = new CombinedConfiguration("abc", null, null);
+
+        assertThat(cc.get("nil")).isNull();
+    }
+
+    @Test
     public void requestedEntryIsntInAnyConfigration() throws Exception {
 
         CombinedConfiguration cc = new CombinedConfiguration("abc", configWithA1, configWithB, configWithC);
