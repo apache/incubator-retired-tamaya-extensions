@@ -43,9 +43,9 @@ class CombinedConfiguration implements Configuration{
      * @param configName the name of the new config.
      * @param configs the configurations hereby instances with higher indices override results with lower ones.
      */
-    public CombinedConfiguration(String configName, Configuration... configs){
+    public CombinedConfiguration(String configName, Configuration... configs) {
         this.name = configName;
-        this.configurations =configs.clone();
+        this.configurations = configs == null ? new Configuration[0] : configs.clone();
     }
 
     @Override
