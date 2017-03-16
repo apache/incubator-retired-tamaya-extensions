@@ -26,11 +26,7 @@ import org.apache.tamaya.inject.api.ConfigDefaultSections;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Vetoed;
-import javax.enterprise.inject.spi.AnnotatedType;
-import javax.enterprise.inject.spi.Extension;
-import javax.enterprise.inject.spi.InjectionPoint;
-import javax.enterprise.inject.spi.InjectionTarget;
-import javax.enterprise.inject.spi.ProcessInjectionTarget;
+import javax.enterprise.inject.spi.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Set;
@@ -40,7 +36,7 @@ import java.util.Set;
  * with CDI by adding configuration features to CDI (config enable CDI beans).
  */
 @Vetoed
-public final class SEInjectorCDIExtension implements Extension {
+public final class TamayaSEInjectionExtension implements Extension {
 
     /**
      * Method that injects the values into any configured fields, by wrapping the given

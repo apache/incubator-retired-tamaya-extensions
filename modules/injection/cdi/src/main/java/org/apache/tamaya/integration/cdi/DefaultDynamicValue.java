@@ -21,12 +21,12 @@ package org.apache.tamaya.integration.cdi;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.inject.spi.BaseDynamicValue;
 import org.apache.tamaya.inject.api.DynamicValue;
-import org.apache.tamaya.inject.spi.InjectionUtils;
 import org.apache.tamaya.inject.api.LoadPolicy;
 import org.apache.tamaya.inject.api.UpdatePolicy;
 import org.apache.tamaya.inject.api.WithPropertyConverter;
+import org.apache.tamaya.inject.spi.BaseDynamicValue;
+import org.apache.tamaya.inject.spi.InjectionUtils;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
@@ -40,11 +40,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**

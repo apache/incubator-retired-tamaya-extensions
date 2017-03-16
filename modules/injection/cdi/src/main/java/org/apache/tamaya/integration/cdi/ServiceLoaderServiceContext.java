@@ -128,7 +128,7 @@ final class ServiceLoaderServiceContext implements ServiceContext {
      * @param services to scan
      * @param <T>      type of the service
      *
-     * @return the service with the highest {@link javax.annotation.Priority#value()}
+     * @return the service with the highest {@link Priority#value()}
      *
      * @throws ConfigException if there are multiple service implementations with the maximum priority
      */

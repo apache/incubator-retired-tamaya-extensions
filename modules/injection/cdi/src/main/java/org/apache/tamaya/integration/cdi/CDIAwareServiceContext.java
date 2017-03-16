@@ -36,7 +36,7 @@ import java.util.logging.Logger;
 
 /**
  * <p>This class implements a {@link ServiceContext}, which basically provides a similar loading mechanism as used
- * by the {@link java.util.ServiceLoader}. Whereas the {@link java.util.ServiceLoader} only loads configurations
+ * by the {@link ServiceLoader}. Whereas the {@link ServiceLoader} only loads configurations
  * and instances from one classloader, this loader manages configs found and the related instances for each
  * classloader along the classloader hierarchies individually. It ensures instances are loaded on the classloader
  * level, where they first are visible. Additionally it ensures the same configuration resource (and its
@@ -75,6 +75,20 @@ public class CDIAwareServiceContext implements ServiceContext {
         return serviceType.cast(cached);
     }
 
+    @Override
+    public <T> T create(Class<T> serviceType) {
+        T serv = getService(serviceType);
+        if(serv!=null){
+            try {
+                return (T)serv.getClass().newInstance();
+            } catch (Exception e) {
+                Logger.getLogger(getClass().getName())
+                        .log(Level.SEVERE, "Failed to create new instance of: " +serviceType.getName(), e);
+            }
+        }
+        return null;
+    }
+
     /**
      * Loads and registers services.
      *
@@ -85,7 +99,7 @@ public class CDIAwareServiceContext implements ServiceContext {
     @Override
     public <T> List<T> getServices(final Class<T> serviceType) {
         List<T> found = defaultServiceContext.getServices(serviceType);
-        BeanManager beanManager = TamayaCDIIntegration.getBeanManager();
+        BeanManager beanManager = TamayaCDIAccessor.getBeanManager();
         Instance<T> cdiInstances = null;
         if(beanManager!=null){
             Set<Bean<?>> instanceBeans = beanManager.getBeans(Instance.class);
@@ -99,20 +113,6 @@ public class CDIAwareServiceContext implements ServiceContext {
             }
         }
         return found;
-    }
-
-    @Override
-    public <T> T create(Class<T> serviceType) {
-        T serv = getService(serviceType);
-        if(serv!=null){
-            try {
-                return (T)serv.getClass().newInstance();
-            } catch (Exception e) {
-                Logger.getLogger(getClass().getName())
-                        .log(Level.SEVERE, "Failed to create new instance of: " +serviceType.getName(), e);
-            }
-        }
-        return null;
     }
 
     @Override

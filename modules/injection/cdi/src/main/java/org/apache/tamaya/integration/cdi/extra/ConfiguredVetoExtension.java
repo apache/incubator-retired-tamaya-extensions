@@ -16,18 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.tamaya.integration.cdi.config;
+package org.apache.tamaya.integration.cdi.extra;
 
 import org.apache.tamaya.ConfigurationProvider;
 
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 
 /**
  * CDI Extension that can be used to veto on beans by configuring the fully qualified class names (as regex expression)
  * under {@code javax.enterprise.inject.vetoed}. Multiple expression can be added as comma separated values.
  */
-public class ConfiguredVetoExtension {
+public class ConfiguredVetoExtension implements Extension {
 
     public void observesBean(@Observes ProcessAnnotatedType<?> type){
         String vetoedTypesVal = ConfigurationProvider.getConfiguration().get("javax.enterprise.inject.vetoed");

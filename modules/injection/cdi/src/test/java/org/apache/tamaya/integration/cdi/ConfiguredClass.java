@@ -22,9 +22,8 @@ package org.apache.tamaya.integration.cdi;
 
 import org.apache.tamaya.inject.api.Config;
 
-import java.math.BigDecimal;
-
 import javax.inject.Singleton;
+import java.math.BigDecimal;
 
 /**
  * Class to be loaded from CDI to ensure fields are correctly configured using CDI injection mechanisms.

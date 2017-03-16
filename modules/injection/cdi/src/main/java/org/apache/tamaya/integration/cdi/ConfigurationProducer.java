@@ -16,26 +16,27 @@
  */
 package org.apache.tamaya.integration.cdi;
 
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.ConfigOperator;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.inject.api.Config;
-import org.apache.tamaya.inject.api.ConfigDefaultSections;
-import org.apache.tamaya.inject.api.DynamicValue;
-import org.apache.tamaya.inject.api.WithConfigOperator;
-import org.apache.tamaya.inject.api.WithPropertyConverter;
+import org.apache.tamaya.*;
+import org.apache.tamaya.inject.api.*;
+import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
+import java.io.File;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.Time;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,7 +49,7 @@ public class ConfigurationProducer {
 
     private static final Logger LOGGER = Logger.getLogger(ConfigurationProducer.class.getName());
 
-    private DynamicValue createynamicValue(final InjectionPoint injectionPoint) {
+    private DynamicValue createDynamicValue(final InjectionPoint injectionPoint) {
         Member member = injectionPoint.getMember();
         if (member instanceof Field) {
             return DefaultDynamicValue.of((Field) member, ConfigurationProvider.getConfiguration());
@@ -60,25 +61,115 @@ public class ConfigurationProducer {
 
     @Produces
     @Config
+    public File resolveAndConvert_File(final InjectionPoint injectionPoint) {
+        return (File)resolveAndConvert(injectionPoint);
+    }
+
+    @Produces
+    @Config
+    public BigDecimal resolveAndConvert_BigDecimal(final InjectionPoint injectionPoint) {
+        return (BigDecimal)resolveAndConvert(injectionPoint);
+    }
+
+    @Produces
+    @Config
+    public BigInteger resolveAndConvert_BigInteger(final InjectionPoint injectionPoint) {
+        return (BigInteger)resolveAndConvert(injectionPoint);
+    }
+
+    @Produces
+    @Config
+    public Number resolveAndConvert_Number(final InjectionPoint injectionPoint) {
+        return (Number)resolveAndConvert(injectionPoint);
+    }
+
+    @Produces
+    @Config
+    public Boolean resolveAndConvert_Boolean(final InjectionPoint injectionPoint) {
+        return (Boolean)resolveAndConvert(injectionPoint);
+    }
+
+    @Produces
+    @Config
+    public Byte resolveAndConvert_Byte(final InjectionPoint injectionPoint) {
+        return (Byte)resolveAndConvert(injectionPoint);
+    }
+
+    @Produces
+    @Config
+    public Short resolveAndConvert_Short(final InjectionPoint injectionPoint) {
+        return (Short)resolveAndConvert(injectionPoint);
+    }
+
+    @Produces
+    @Config
+    public Integer resolveAndConvert_Integer(final InjectionPoint injectionPoint) {
+        return (Integer)resolveAndConvert(injectionPoint);
+    }
+
+    @Produces
+    @Config
+    public Long resolveAndConvert_Long(final InjectionPoint injectionPoint) {
+        return (Long)resolveAndConvert(injectionPoint);
+    }
+
+    @Produces
+    @Config
+    public Float resolveAndConvert_Float(final InjectionPoint injectionPoint) {
+        return (Float)resolveAndConvert(injectionPoint);
+    }
+
+    @Produces
+    @Config
+    public Double resolveAndConvert_Double(final InjectionPoint injectionPoint) {
+        return (Double)resolveAndConvert(injectionPoint);
+    }
+
+    @Produces
+    @Config
+    public Date resolveAndConvert_Date(final InjectionPoint injectionPoint) {
+        return (Date)resolveAndConvert(injectionPoint);
+    }
+
+    @Produces
+    @Config
+    public String resolveAndConvert_String(final InjectionPoint injectionPoint) {
+        return (String)resolveAndConvert(injectionPoint);
+    }
+
+    @Produces
+    @Config
+    public GregorianCalendar resolveAndConvert_GregorianCalendar(final InjectionPoint injectionPoint) {
+        return (GregorianCalendar)resolveAndConvert(injectionPoint);
+    }
+
+    @Produces
+    @Config
+    public Calendar resolveAndConvert_Calendar(final InjectionPoint injectionPoint) {
+        return (Calendar)resolveAndConvert(injectionPoint);
+    }
+
+    @Produces
+    @Config
     public Object resolveAndConvert(final InjectionPoint injectionPoint) {
         if (DynamicValue.class.equals(injectionPoint.getAnnotated().getBaseType())) {
-            return createynamicValue(injectionPoint);
+            return createDynamicValue(injectionPoint);
         }
         final Config annotation = injectionPoint.getAnnotated().getAnnotation(Config.class);
         final ConfigDefaultSections typeAnnot = injectionPoint.getAnnotated().getAnnotation(ConfigDefaultSections.class);
-        final List<String> keys = ConfigurationExtension.evaluateKeys(injectionPoint.getMember().getName(),
+        final List<String> keys = TamayaCDIInjectionExtension.evaluateKeys(injectionPoint.getMember().getName(),
                 annotation != null ? annotation.value() : null,
                 typeAnnot != null ? typeAnnot.value() : null);
 
         final WithConfigOperator withOperatorAnnot = injectionPoint.getAnnotated().getAnnotation(WithConfigOperator.class);
         ConfigOperator operator = null;
         if (withOperatorAnnot != null) {
-            operator = ConfigurationExtension.CUSTOM_OPERATORS.get(withOperatorAnnot.value());
+            operator = TamayaCDIInjectionExtension.CUSTOM_OPERATORS.get(withOperatorAnnot.value());
         }
         PropertyConverter customConverter = null;
         final WithPropertyConverter withConverterAnnot = injectionPoint.getAnnotated().getAnnotation(WithPropertyConverter.class);
         if (withConverterAnnot != null) {
-            customConverter = ConfigurationExtension.CUSTOM_CONVERTERS.get(withConverterAnnot.value());
+            customConverter = TamayaCDIInjectionExtension.CUSTOM_CONVERTERS.get(withConverterAnnot.value());
         }
 
         // unless the extension is not installed, this should never happen because the extension
@@ -89,7 +180,7 @@ public class ConfigurationProducer {
         }
         final Class<?> toType = (Class<?>) injectionPoint.getAnnotated().getBaseType();
         String textValue = null;
-        String defaultTextValue = annotation.defaultValue().isEmpty() ? null : annotation.defaultValue();
+        String defaultTextValue = annotation.defaultValue().isEmpty() ? "" : annotation.defaultValue();
         String keyFound = null;
         for (String key : keys) {
             textValue = config.get(key);
@@ -142,6 +233,21 @@ public class ConfigurationProducer {
         }
         LOGGER.finest(String.format("Injecting %s for key %s in class %s", keyFound, value.toString(), injectionPoint.toString()));
         return value;
+    }
+
+    @Produces
+    public Configuration getConfiguration(){
+        return ConfigurationProvider.getConfiguration();
+    }
+
+    @Produces
+    public ConfigurationContext getConfigurationContext(){
+        return ConfigurationProvider.getConfiguration().getContext();
+    }
+
+    @Produces
+    public ConfigurationContextBuilder getConfigurationContextBuilder(){
+        return ConfigurationProvider.getConfigurationContextBuilder();
     }
 
 }
