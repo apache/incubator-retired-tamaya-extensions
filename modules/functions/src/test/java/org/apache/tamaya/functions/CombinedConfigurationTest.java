@@ -106,6 +106,13 @@ public class CombinedConfigurationTest {
         assertThat(cc.get("b")).isEqualTo("b");
     }
 
+    /*
+     * Tests for getOrDefault(String, String)
+     */
+
+    // null, null
+    // a, b
+    // a,  null
     // getOrDefault none one three
 
     // String getOrDefault(String var1, String var2); none one three
@@ -126,17 +133,4 @@ public class CombinedConfigurationTest {
 
     // ConfigurationContext getContext();  none one three
 
-
-    private static class InMemoryConfiguration extends DefaultConfiguration {
-        public InMemoryConfiguration(ConfigurationContext configurationContext) {
-            super(configurationContext);
-        }
-        //        private Map<String, String> entries = new TreeMap<>();
-
-//        public InMemoryConfiguration addEntry(String key, String value) {
-//            entries.put(key, value);
-//
-//            return this;
-//        }
-    }
 }
