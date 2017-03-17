@@ -73,10 +73,15 @@ class CombinedConfiguration implements Configuration{
 
     @Override
     public String getOrDefault(String key, String defaultValue) {
+        Objects.requireNonNull(key, "Key must be given.");
+        Objects.requireNonNull(defaultValue, "Value must be given.");
+
         String val = get(key);
-        if(val==null){
+
+        if (val == null) {
             return defaultValue;
         }
+
         return val;
     }
 
