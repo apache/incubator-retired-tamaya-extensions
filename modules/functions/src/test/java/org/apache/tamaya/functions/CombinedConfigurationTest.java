@@ -28,6 +28,7 @@ import org.apache.tamaya.spisupport.DefaultConfiguration;
 import org.apache.tamaya.spisupport.DefaultConfigurationContext;
 import org.apache.tamaya.spisupport.DefaultConfigurationContextBuilder;
 import org.apache.tamaya.spisupport.SimplePropertySource;
+import org.assertj.core.api.ThrowableAssert;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -36,6 +37,9 @@ import java.util.TreeMap;
 
 import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.mock;
 
 
 public class CombinedConfigurationTest {
@@ -106,6 +110,39 @@ public class CombinedConfigurationTest {
         assertThat(cc.get("b")).isEqualTo("b");
     }
 
+    /*
+     * Tests for getOrDefault(String, String)
+     */
+
+    @Test
+    public void getOrDefaultWithSignatureStringStringThrowsNPEIfKeyIsNull() {
+        final CombinedConfiguration cc = mock(CombinedConfiguration.class, CALLS_REAL_METHODS);
+
+        assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
+            @Override
+            public void call() throws Throwable {
+                cc.getOrDefault(null, "d");
+            }
+        }).isInstanceOf(NullPointerException.class)
+          .hasMessage("Key must be given.");
+    }
+
+    @Test
+    public void getOrDefaultWithSignatureStringStringThrowsNPEIfValueIsNull() {
+        final CombinedConfiguration cc = mock(CombinedConfiguration.class, CALLS_REAL_METHODS);
+
+        assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
+            @Override
+            public void call() throws Throwable {
+                cc.getOrDefault("key", (String)null);
+            }
+        }).isInstanceOf(NullPointerException.class)
+          .hasMessage("Value must be given.");
+    }
+
+
+    // a, b
+    // a,  null
     // getOrDefault none one three
 
     // String getOrDefault(String var1, String var2); none one three
@@ -126,17 +163,4 @@ public class CombinedConfigurationTest {
 
     // ConfigurationContext getContext();  none one three
 
-
-    private static class InMemoryConfiguration extends DefaultConfiguration {
-        public InMemoryConfiguration(ConfigurationContext configurationContext) {
-            super(configurationContext);
-        }
-        //        private Map<String, String> entries = new TreeMap<>();
-
-//        public InMemoryConfiguration addEntry(String key, String value) {
-//            entries.put(key, value);
-//
-//            return this;
-//        }
-    }
 }

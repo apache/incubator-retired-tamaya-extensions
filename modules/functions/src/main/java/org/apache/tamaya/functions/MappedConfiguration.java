@@ -53,7 +53,10 @@ class MappedConfiguration implements Configuration {
 
     @Override
     public String getOrDefault(String key, String defaultValue) {
+        Objects.requireNonNull(key, "Key must be given");
+        Objects.requireNonNull(defaultValue, "DefaultValue must be given.");
         String val = get(key);
+
         if(val==null){
             return defaultValue;
         }
