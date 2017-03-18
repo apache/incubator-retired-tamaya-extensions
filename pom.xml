@@ -83,6 +83,7 @@ under the License.
         <jruby.version>1.7.20</jruby.version>
         <findbugs.version>3.0.4</findbugs.version>
         <mockito.version>1.10.19</mockito.version>
+        <pitest-plugin.version>1.1.11</pitest-plugin.version>
         <rat.version>0.12</rat.version>
         <toolchains.plugin>1.1</toolchains.plugin>
 
@@ -344,6 +345,10 @@ under the License.
             <artifactId>geronimo-annotation_1.2_spec</artifactId>
             <version>1.0-alpha-1</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
     </dependencies>
 
 
@@ -512,6 +517,18 @@ under the License.
                         </archive>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.pitest</groupId>
+                    <artifactId>pitest-maven</artifactId>
+                    <version>${pitest-plugin.version}</version>
+                    <configuration>
+                        <coverageThreshold>80</coverageThreshold>
+                        <targetClasses>
+                            <param>org.apache.tamaya.*</param>
+                        </targetClasses>
+                    </configuration>
+                </plugin>
+
                 <plugin>
                     <groupId>biz.aQute.bnd</groupId>
                     <artifactId>bnd-maven-plugin</artifactId>
