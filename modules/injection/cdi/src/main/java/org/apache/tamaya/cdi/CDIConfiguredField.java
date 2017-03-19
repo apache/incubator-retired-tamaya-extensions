@@ -14,30 +14,35 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.tamaya.integration.cdi;
+package org.apache.tamaya.cdi;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.inject.spi.ConfiguredMethod;
+import org.apache.tamaya.inject.spi.ConfiguredField;
 
 import javax.enterprise.inject.spi.InjectionPoint;
-import java.lang.reflect.Method;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 /**
- * Implementation of a configured methods for CDI module.
+ * CDI implementation for event publishing of configured instances.
  */
-public class CDIConfiguredMethod implements ConfiguredMethod{
+class CDIConfiguredField implements ConfiguredField{
 
-    private final Method method;
+    private final Field field;
     private List<String> keys = new ArrayList<>();
 
-    CDIConfiguredMethod(InjectionPoint injectionPoint, List<String> keys){
-        this.method = (Method)injectionPoint.getMember();
+    CDIConfiguredField(InjectionPoint injectionPoint, List<String> keys){
+        this.field = (Field)injectionPoint.getMember();
         this.keys.addAll(keys);
         this.keys = Collections.unmodifiableList(this.keys);
+    }
+
+    @Override
+    public Class<?> getType() {
+        return field.getType();
     }
 
     @Override
@@ -46,23 +51,18 @@ public class CDIConfiguredMethod implements ConfiguredMethod{
     }
 
     @Override
-    public Class<?>[] getParameterTypes() {
-        return method.getParameterTypes();
-    }
-
-    @Override
-    public Method getAnnotatedMethod() {
-        return method;
+    public Field getAnnotatedField() {
+        return field;
     }
 
     @Override
     public String getName() {
-        return method.getName();
+        return field.getName();
     }
 
     @Override
     public String getSignature() {
-        return null;
+        return getName()+':'+field.getType().getName();
     }
 
     @Override
@@ -72,6 +72,6 @@ public class CDIConfiguredMethod implements ConfiguredMethod{
 
     @Override
     public String toString() {
-        return "CDIConfiguredMethod["+getSignature()+']';
+        return "CDIConfiguredField["+getSignature()+']';
     }
 }

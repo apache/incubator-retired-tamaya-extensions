@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.tamaya.integration.cdi;
+package org.apache.tamaya.cdi;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.ConfigOperator;

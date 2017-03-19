@@ -18,7 +18,7 @@
  * under the License.
  *
  */
-package org.apache.tamaya.integration.cdi;
+package org.apache.tamaya.cdi;
 
 import org.apache.tamaya.inject.api.Config;
 

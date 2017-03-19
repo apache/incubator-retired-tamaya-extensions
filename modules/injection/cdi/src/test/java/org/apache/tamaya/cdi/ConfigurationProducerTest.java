@@ -14,16 +14,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.tamaya.integration.cdi;
+package org.apache.tamaya.cdi;
 
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.Module;
+import org.apache.tamaya.cdi.ConfigurationProducer;
+import org.apache.tamaya.cdi.TamayaCDIAccessor;
+import org.apache.tamaya.cdi.TamayaCDIInjectionExtension;
 import org.apache.tamaya.inject.api.Config;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.tomitribe.util.Duration;
 
 import javax.inject.Inject;
 import java.io.File;

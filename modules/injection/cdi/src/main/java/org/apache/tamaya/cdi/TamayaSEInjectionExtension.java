@@ -16,7 +16,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.apache.tamaya.integration.cdi;
+package org.apache.tamaya.cdi;
 
 
 import org.apache.tamaya.inject.ConfigurationInjection;
@@ -27,6 +27,7 @@ import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Vetoed;
 import javax.enterprise.inject.spi.*;
+import javax.inject.Inject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Set;
@@ -91,7 +92,7 @@ public final class TamayaSEInjectionExtension implements Extension {
         }
         // if no class level annotation is there we might have field level annotations only
         for (Field field : type.getDeclaredFields()) {
-            if (field.isAnnotationPresent(Config.class)) {
+            if (field.isAnnotationPresent(Config.class) && !field.isAnnotationPresent(Inject.class)) {
                 return true;
             }
         }

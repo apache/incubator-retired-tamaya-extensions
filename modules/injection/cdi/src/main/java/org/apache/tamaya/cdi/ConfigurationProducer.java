@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.tamaya.integration.cdi;
+package org.apache.tamaya.cdi;
 
 import org.apache.tamaya.*;
 import org.apache.tamaya.inject.api.*;
@@ -33,7 +33,6 @@ import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.sql.Time;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -57,96 +56,6 @@ public class ConfigurationProducer {
             return DefaultDynamicValue.of((Method) member, ConfigurationProvider.getConfiguration());
         }
         return null;
-    }
-
-    @Produces
-    @Config
-    public File resolveAndConvert_File(final InjectionPoint injectionPoint) {
-        return (File)resolveAndConvert(injectionPoint);
-    }
-
-    @Produces
-    @Config
-    public BigDecimal resolveAndConvert_BigDecimal(final InjectionPoint injectionPoint) {
-        return (BigDecimal)resolveAndConvert(injectionPoint);
-    }
-
-    @Produces
-    @Config
-    public BigInteger resolveAndConvert_BigInteger(final InjectionPoint injectionPoint) {
-        return (BigInteger)resolveAndConvert(injectionPoint);
-    }
-
-    @Produces
-    @Config
-    public Number resolveAndConvert_Number(final InjectionPoint injectionPoint) {
-        return (Number)resolveAndConvert(injectionPoint);
-    }
-
-    @Produces
-    @Config
-    public Boolean resolveAndConvert_Boolean(final InjectionPoint injectionPoint) {
-        return (Boolean)resolveAndConvert(injectionPoint);
-    }
-
-    @Produces
-    @Config
-    public Byte resolveAndConvert_Byte(final InjectionPoint injectionPoint) {
-        return (Byte)resolveAndConvert(injectionPoint);
-    }
-
-    @Produces
-    @Config
-    public Short resolveAndConvert_Short(final InjectionPoint injectionPoint) {
-        return (Short)resolveAndConvert(injectionPoint);
-    }
-
-    @Produces
-    @Config
-    public Integer resolveAndConvert_Integer(final InjectionPoint injectionPoint) {
-        return (Integer)resolveAndConvert(injectionPoint);
-    }
-
-    @Produces
-    @Config
-    public Long resolveAndConvert_Long(final InjectionPoint injectionPoint) {
-        return (Long)resolveAndConvert(injectionPoint);
-    }
-
-    @Produces
-    @Config
-    public Float resolveAndConvert_Float(final InjectionPoint injectionPoint) {
-        return (Float)resolveAndConvert(injectionPoint);
-    }
-
-    @Produces
-    @Config
-    public Double resolveAndConvert_Double(final InjectionPoint injectionPoint) {
-        return (Double)resolveAndConvert(injectionPoint);
-    }
-
-    @Produces
-    @Config
-    public Date resolveAndConvert_Date(final InjectionPoint injectionPoint) {
-        return (Date)resolveAndConvert(injectionPoint);
-    }
-
-    @Produces
-    @Config
-    public String resolveAndConvert_String(final InjectionPoint injectionPoint) {
-        return (String)resolveAndConvert(injectionPoint);
-    }
-
-    @Produces
-    @Config
-    public GregorianCalendar resolveAndConvert_GregorianCalendar(final InjectionPoint injectionPoint) {
-        return (GregorianCalendar)resolveAndConvert(injectionPoint);
-    }
-
-    @Produces
-    @Config
-    public Calendar resolveAndConvert_Calendar(final InjectionPoint injectionPoint) {
-        return (Calendar)resolveAndConvert(injectionPoint);
     }
 
     @Produces

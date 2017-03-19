@@ -17,41 +17,29 @@
  * under the License.
  *
  */
-package org.apache.tamaya.integration.cdi.cfg;
+package org.apache.tamaya.cdi.cfg;
 
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 
-import javax.inject.Singleton;
+import javax.enterprise.inject.Vetoed;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by Anatole on 17.09.2015.
  */
-@Singleton
-public class TestPropertySource implements PropertySource{
+@Vetoed
+class ProvidedPropertySource implements PropertySource{
 
-    final Map<String,String> config = new HashMap<>();
+    final Map<String,PropertyValue> config = new HashMap<>();
 
-    public TestPropertySource(){
-        config.put("a.b.c.key1", "keys current a.b.c.key1");
-        config.put("a.b.c.key2", "keys current a.b.c.key2");
-        config.put("a.b.key3", "keys current a.b.key3");
-        config.put("a.b.key4", "keys current a.b.key4");
-        config.put("a.key5", "keys current a.key5");
-        config.put("a.key6", "keys current a.key6");
-        config.put("int1", "123456");
-        config.put("int2", "111222");
-        config.put("testProperty", "testPropertyValue!");
-        config.put("booleanT", "true");
-        config.put("double1", "1234.5678");
-        config.put("BD", "123456789123456789123456789123456789.123456789123456789123456789123456789");
-        config.put("testProperty", "keys current testProperty");
-        config.put("runtimeVersion", "${java.version}");
-        config.put("{meta}source.type:"+getClass().getName(), "PropertySource");
+    public ProvidedPropertySource(){
+        config.put("a.b.c.key3", PropertyValue.of("a.b.c.key3","keys current a.b.c.key3",getName()));
+        config.put("a.b.c.key4", PropertyValue.of("a.b.c.key4","keys current a.b.c.key4", getName()));
     }
 
+    @Override
     public int getOrdinal() {
         return 10;
     }
@@ -63,16 +51,12 @@ public class TestPropertySource implements PropertySource{
 
     @Override
     public PropertyValue get(String key) {
-        String val = this.config.get(key);
-        if(val!=null) {
-            return PropertyValue.of(key, val, getName());
-        }
-        return null;
+        return config.get(key);
     }
 
     @Override
     public Map<String, PropertyValue> getProperties() {
-        return PropertyValue.map(config ,getName());
+        return config;
     }
 
     @Override
