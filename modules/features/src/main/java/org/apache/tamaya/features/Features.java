@@ -163,12 +163,23 @@ public final class Features {
     }
 
     /**
-     * Checks if the given class canm be loaded, using {@code Class.forName(classname)}.
+     * Checks if the given class canm be loaded, using {@code Class.forName(classname)}
+     * using the current Thread Context ClassLoader.
+     * @param classname the fully qualified classname.
      * @return true, if the given class canm be loaded.
      */
     public static boolean checkClassIsLoadable(String classname) {
+        return checkClassIsLoadable(classname, Thread.currentThread().getContextClassLoader());
+    }
+
+    /**
+     * Checks if the given class canm be loaded, using {@code Class.forName(classname)}.
+     * @param classname the fully qualified classname.
+     * @return true, if the given class canm be loaded.
+     */
+    public static boolean checkClassIsLoadable(String classname, ClassLoader classLoader) {
         try{
-            Class.forName(Objects.requireNonNull(classname), false, Thread.currentThread().getContextClassLoader());
+            Class.forName(Objects.requireNonNull(classname), false, classLoader);
             return true;
         }catch(Throwable e){
             return false;
