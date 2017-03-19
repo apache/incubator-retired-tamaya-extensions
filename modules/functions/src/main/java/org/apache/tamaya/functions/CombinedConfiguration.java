@@ -54,15 +54,16 @@ class CombinedConfiguration implements Configuration{
                     continue;
                 }
 
-                configurations.add(config);
+                addConfiguration(config);
             }
         }
     }
 
+
     @Override
     public String get(String key) {
         String curValue = null;
-        for(Configuration config: configurations){
+        for(Configuration config: getConfigurations()){
             String value = config.get(key);
             if(value!=null){
                 curValue = value;
@@ -87,6 +88,10 @@ class CombinedConfiguration implements Configuration{
 
     @Override
     public <T> T getOrDefault(String key, Class<T> type, T defaultValue) {
+        Objects.requireNonNull(type, "Type must be given.");
+        Objects.requireNonNull(key, "Key must be given.");
+        Objects.requireNonNull(defaultValue, "Default value must be given.");
+
         T val = get(key, type);
         if(val==null){
             return defaultValue;
@@ -97,7 +102,7 @@ class CombinedConfiguration implements Configuration{
     @Override
     public <T> T get(String key, Class<T> type) {
         T curValue = null;
-        for(Configuration config: configurations){
+        for(Configuration config: getConfigurations()){
             T value = config.get(key, type);
             if(value!=null){
                 curValue = value;
@@ -109,7 +114,7 @@ class CombinedConfiguration implements Configuration{
     @Override
     public <T> T get(String key, TypeLiteral<T> type) {
         T curValue = null;
-        for(Configuration config: configurations){
+        for(Configuration config: getConfigurations()){
             T value = config.get(key, type);
             if(value!=null){
                 curValue = value;
@@ -120,6 +125,10 @@ class CombinedConfiguration implements Configuration{
 
     @Override
     public <T> T getOrDefault(String key, TypeLiteral<T> type, T defaultValue) {
+        Objects.requireNonNull(key, "Key must be given.");
+        Objects.requireNonNull(type, "Type must be given.");
+        Objects.requireNonNull(defaultValue, "Default value must be given.");
+
         T val = get(key, type);
         if(val==null){
             return defaultValue;
@@ -130,7 +139,7 @@ class CombinedConfiguration implements Configuration{
     @Override
     public Map<String, String> getProperties() {
         Map<String, String> result = new HashMap<>();
-        for(Configuration ps:configurations){
+        for(Configuration ps : getConfigurations()){
             result.putAll(ps.getProperties());
         }
         return result;
@@ -138,11 +147,15 @@ class CombinedConfiguration implements Configuration{
 
     @Override
     public Configuration with(ConfigOperator operator) {
+        Objects.requireNonNull(operator, "Operator must be given.");
+
         return operator.operate(this);
     }
 
     @Override
     public <T> T query(ConfigQuery<T> query) {
+        Objects.requireNonNull(query, "Query must be given.");
+
         return query.query(this);
     }
 
@@ -159,4 +172,14 @@ class CombinedConfiguration implements Configuration{
                 ", configurations=" + configurations +
                 '}';
     }
+
+    protected void addConfiguration(Configuration config) {
+        configurations.add(config);
+    }
+
+    protected List<Configuration> getConfigurations() {
+        return configurations;
+    }
+
+
 }
