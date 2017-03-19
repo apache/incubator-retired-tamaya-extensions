@@ -57,7 +57,7 @@ public final class Features {
      * Checks if <i>tamaya-injection</i> is on the classpath.
      * @return true, if <i>tamaya-injection</i> is on the classpath.
      */
-    public static boolean injectionAvailable() {
+    public static boolean injectionStandaloneAvailable() {
         return checkClassIsLoadable("org.apache.tamaya.inject.ConfigurationInjector");
     }
 
@@ -66,7 +66,7 @@ public final class Features {
      * @return true, if <i>tamaya-injection-cdi</i> or <i>tamaya-injection-ee</i> is on the classpath.
      */
     public static boolean injectionCDIAvailable() {
-        return checkClassIsLoadable("org.apache.tamaya.integration.cdi.TamayaCDIIntegration");
+        return checkClassIsLoadable("org.apache.tamaya.cdi.DefaultDynamicValue");
     }
 
     /**
@@ -74,7 +74,7 @@ public final class Features {
      * @return true, if <i>tamaya-mutableconfig</i> is on the classpath.
      */
     public static boolean mutableConfigAvailable() {
-        return checkClassIsLoadable("org.apache.tamaya.mutableconfig.MutableConfigProvider");
+        return checkClassIsLoadable("org.apache.tamaya.mutableconfig.MutableConfigurationProvider");
     }
 
     /**
@@ -90,7 +90,7 @@ public final class Features {
      * @return true, if <i>tamaya-resolver</i> is on the classpath.
      */
     public static boolean resolverAvailable() {
-        return checkClassIsLoadable("org.apache.tamaya.resolver.ResourceResolver");
+        return checkClassIsLoadable("org.apache.tamaya.resolver.Resolver");
     }
 
     /**
@@ -168,9 +168,9 @@ public final class Features {
      */
     public static boolean checkClassIsLoadable(String classname) {
         try{
-            Class.forName(Objects.requireNonNull(classname));
+            Class.forName(Objects.requireNonNull(classname), false, Thread.currentThread().getContextClassLoader());
             return true;
-        }catch(Exception e){
+        }catch(Throwable e){
             return false;
         }
     }
