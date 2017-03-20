@@ -87,14 +87,6 @@ public class ConfigurationProducerTest {
         @Config(value = "defaultFile.value", defaultValue = "./")
         private File defaultFile;
 
-//        @Inject
-//        @Config(value = "duration.value", defaultValue = "2 hours and 54 minutes")
-//        private Duration duration;
-//
-//        @Inject
-//        @Config(value = "defaultDuration.value", defaultValue = "2 hours and 54 minutes")
-//        private Duration defaultDuration;
-
         @Inject
         @Config(value = "boolean.value", defaultValue = "true")
         private Boolean aBoolean;
@@ -119,10 +111,6 @@ public class ConfigurationProducerTest {
             return file;
         }
 
-//        public Duration getDuration() {
-//            return duration;
-//        }
-
         public Boolean getaBoolean() {
             return aBoolean;
         }
@@ -139,10 +127,6 @@ public class ConfigurationProducerTest {
             return defaultFile;
         }
 
-//        public Duration getDefaultDuration() {
-//            return defaultDuration;
-//        }
-
         public Boolean getDefaultBoolean() {
             return defaultBoolean;
         }
@@ -158,8 +142,6 @@ public class ConfigurationProducerTest {
                     ", defaultString='" + defaultString + '\'' +
                     ", file=" + file +
                     ", defaultFile=" + defaultFile +
-//                    ", duration=" + duration +
-//                    ", defaultDuration=" + defaultDuration +
                     ", aBoolean=" + aBoolean +
                     ", defaultBoolean=" + defaultBoolean +
                     ", integer=" + integer +

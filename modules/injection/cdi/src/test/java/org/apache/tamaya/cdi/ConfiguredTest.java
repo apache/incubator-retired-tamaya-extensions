@@ -80,4 +80,9 @@ public class ConfiguredTest{
         assertTrue(injectedClass.configContext == injectedClass.configContext2);
     }
 
+    @Test(expected=Exception.class)
+    public void test_error_Injection() {
+        NotFoundNoDefault injectedClass = CDI.current().select(NotFoundNoDefault.class).get();
+    }
+
 }
