@@ -32,8 +32,7 @@
     <modules>
         <module>injection-api</module>
         <module>standalone</module>
-        <module>cdi-se</module>
-        <module>cdi-ee</module>
+        <module>cdi</module>
     </modules>
 
 </project>
