@@ -44,8 +44,10 @@ public class InMemoryPropertySource implements PropertySource {
         return name;
     }
 
-    public void setName(String name) {
+    public InMemoryPropertySource setName(String name) {
         this.name = name;
+
+        return this;
     }
 
     @Override

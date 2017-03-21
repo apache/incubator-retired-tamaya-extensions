@@ -34,6 +34,7 @@ public class FilteredPropertySourceTest {
     /*
      * Tests for getName()
      */
+
     @Test
     public void getNameReturnsTheNameOfTheBaseConfiguration() {
         PropertySource propertySource = mock(PropertySource.class, NOT_MOCKED_ANSWER);
