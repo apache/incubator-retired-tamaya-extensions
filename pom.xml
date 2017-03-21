@@ -526,6 +526,9 @@ under the License.
                         <targetClasses>
                             <param>org.apache.tamaya.*</param>
                         </targetClasses>
+                        <excludedMethods>
+                            <param>toString</param>
+                        </excludedMethods>
                     </configuration>
                 </plugin>
 
