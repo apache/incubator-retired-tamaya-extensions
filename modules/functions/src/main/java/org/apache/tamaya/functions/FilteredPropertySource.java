@@ -46,7 +46,7 @@ class FilteredPropertySource implements PropertySource {
 
     @Override
     public int getOrdinal(){
-        return PropertySourceComparator.getOrdinal(baseSource);
+        return PropertySourceComparator.getOrdinal(getBaseSource());
     }
 
     @Override
@@ -56,7 +56,7 @@ class FilteredPropertySource implements PropertySource {
 
     @Override
     public PropertyValue get(String key) {
-        PropertyValue val = this.baseSource.get(key);
+        PropertyValue val = this.getBaseSource().get(key);
         if(val!=null && filter.test(val.getKey())) {
             return val;
         }
@@ -66,7 +66,7 @@ class FilteredPropertySource implements PropertySource {
     @Override
     public Map<String, PropertyValue> getProperties(){
         final Map<String,PropertyValue> result = new HashMap<>();
-        for(PropertyValue val: this.baseSource.getProperties().values()) {
+        for(PropertyValue val: this.getBaseSource().getProperties().values()) {
             if (filter.test(val.getKey())) {
                 result.put(val.getKey(), val);
             }
@@ -76,14 +76,18 @@ class FilteredPropertySource implements PropertySource {
 
     @Override
     public boolean isScannable() {
-        return baseSource.isScannable();
+        return getBaseSource().isScannable();
     }
 
     @Override
     public String toString() {
         return "FilteredPropertySource{" +
-                "baseSource=" + baseSource +
+                "baseSource=" + getBaseSource() +
                 ", filter=" + filter +
                 '}';
+    }
+
+    protected PropertySource getBaseSource() {
+        return baseSource;
     }
 }
