@@ -48,7 +48,7 @@ class EnrichedConfiguration implements Configuration {
      */
     EnrichedConfiguration(Configuration configuration, Map<String, Object> properties, boolean overriding) {
         this.baseConfiguration = Objects.requireNonNull(configuration);
-        this.addedProperties.putAll(addedProperties);
+        this.addedProperties.putAll(properties);
         this.overriding = overriding;
     }
 
