@@ -54,6 +54,8 @@ class EnrichedConfiguration implements Configuration {
 
     @Override
     public String get(String key) {
+        Objects.requireNonNull(key, "Key must be given.");
+
         if (overriding) {
             Object val = addedProperties.get(key);
             if (val != null) {
@@ -74,6 +76,9 @@ class EnrichedConfiguration implements Configuration {
 
     @Override
     public String getOrDefault(String key, String defaultValue) {
+        Objects.requireNonNull(key, "Key must be given.");
+        Objects.requireNonNull(defaultValue, "Default value must be given.");
+
         String val = get(key);
         if (val == null) {
             return defaultValue;
@@ -83,6 +88,10 @@ class EnrichedConfiguration implements Configuration {
 
     @Override
     public <T> T getOrDefault(String key, Class<T> type, T defaultValue) {
+        Objects.requireNonNull(key, "Key not given.");
+        Objects.requireNonNull(type, "Class not given.");
+        Objects.requireNonNull(defaultValue, "Default value not given.");
+
         T val = get(key, type);
         if (val == null) {
             return defaultValue;
@@ -117,6 +126,10 @@ class EnrichedConfiguration implements Configuration {
 
     @Override
     public <T> T getOrDefault(String key, TypeLiteral<T> type, T defaultValue) {
+        Objects.requireNonNull(key, "Key not given.");
+        Objects.requireNonNull(type, "Type not given.");
+        Objects.requireNonNull(defaultValue, "Default value not given.");
+
         T val = get(key, type);
         if (val == null) {
             return defaultValue;

@@ -35,6 +35,7 @@ class MappedPropertySource implements PropertySource {
      * The mapping operator.
      */
     private final KeyMapper keyMapper;
+
     /**
      * The base configuration.
      */
@@ -78,16 +79,41 @@ class MappedPropertySource implements PropertySource {
         return propertySource.isScannable();
     }
 
+
+    /**
+     * <p>Access a property by its key.</p>
+     *
+     * <p>
+     *  The key of the property to be returned must be equal to the key
+     *  returned by the mapping operator (key mapper) and not equal
+     *  to the key of the base configuration.
+     * </p>
+     *
+     * @param key the property's key, not {@code null}.
+     * @return the property value map, where {@code map.get(key) == value},
+     *         including also any metadata. In case a value is {@code null},
+     *         simply return {@code null}.
+     */
     @Override
     public PropertyValue get(String key) {
-        PropertyValue result = this.propertySource.get(key);
-        if(result!=null){
-            String targetKey = keyMapper.mapKey(key);
-            if (targetKey != null) {
-                return result.toBuilder().mapKey(targetKey).build();
+        Objects.requireNonNull(key, "Key must be given.");
+
+        String mappedKey = keyMapper.mapKey(key);
+        PropertyValue result = null;
+
+        if (mappedKey != null) {
+            for (PropertyValue property : propertySource.getProperties().values()) {
+                String newKey = keyMapper.mapKey(property.getKey());
+
+                if (mappedKey.equals(newKey)) {
+                    String mappedName = getName();
+                    return property.toBuilder().mapKey(newKey)
+                                   .setSource(mappedName).build();
+                }
             }
         }
-        return null;
+
+        return result;
     }
 
 }
