@@ -523,6 +523,7 @@ under the License.
                     <version>${pitest-plugin.version}</version>
                     <configuration>
                         <coverageThreshold>80</coverageThreshold>
+                        <timestampedReports>false</timestampedReports>
                         <targetClasses>
                             <param>org.apache.tamaya.*</param>
                         </targetClasses>
