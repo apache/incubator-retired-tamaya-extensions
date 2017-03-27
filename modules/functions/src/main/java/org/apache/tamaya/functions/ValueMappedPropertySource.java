@@ -62,8 +62,10 @@ class ValueMappedPropertySource implements PropertySource{
     @Override
     public Map<String, PropertyValue> getProperties() {
         Map<String,PropertyValue> result = new HashMap<>();
-        for(PropertyValue val:source.getProperties().values()) {
-            result.put(val.getKey(), val.toBuilder().setValue(valueFilter.mapProperty(val.getKey(), val.getValue())).build());
+        for(PropertyValue val : source.getProperties().values()) {
+            String mappedValue = valueFilter.mapProperty(val.getKey(), val.getValue());
+            PropertyValue value = val.toBuilder().setValue(mappedValue).build();
+            result.put(val.getKey(), value);
         }
         return result;
     }

@@ -22,15 +22,9 @@ import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
+
+import static java.lang.System.arraycopy;
 
 /**
  * Accessor that provides useful functions along with configuration.
@@ -83,28 +77,89 @@ public final class PropertySourceFunctions {
      *
      * @param key        the fully qualified entry key, not null
      * @param sectionKey the section key, not null
+     *
      * @return true, if the entry is exact in this section
      */
     public static boolean isKeyInSection(String key, String sectionKey) {
+        Objects.requireNonNull(key, "Key must be given.");
+        Objects.requireNonNull(sectionKey, "Section key must be given.");
+
+        sectionKey = normalizeSectionKey(sectionKey);
+
         int lastIndex = key.lastIndexOf('.');
         String curAreaKey = lastIndex > 0 ? key.substring(0, lastIndex) : "";
         return curAreaKey.equals(sectionKey);
     }
 
+    private static String normalizeKey(String key) {
+        return key.startsWith(".") ? key.substring(1)
+                                   : key;
+    }
+
+    static String normalizeSectionKey(String sectionKey) {
+        // Ignore unneeded and trailing dot at the end of the section key
+
+        String normalizedKey = sectionKey.endsWith(".")
+                   ? sectionKey.substring(0, sectionKey.length() - 1)
+                   : sectionKey;
+
+        normalizedKey = sectionKey.startsWith(".") ? sectionKey.length() == 1 ? ""
+                                                                              : normalizedKey.substring(1)
+                                                   : normalizedKey;
+
+        return normalizedKey;
+    }
+
     /**
      * Calculates the current section key and compares it to the given section keys.
      *
-     * @param key         the fully qualified entry key, not null
-     * @param sectionKeys the section keys, not null
-     * @return true, if the entry is exact in this section
+     * @param key             the fully qualified entry key, not {@code null}
+     * @param sectionKey      the section keys, not {@code null}
+     * @param moreSectionKeys the more section keys, not {@code null}
+     *
+     * @return true, if the entry is in one of the given sections
      */
-    public static boolean isKeyInSections(String key, String... sectionKeys) {
+    public static boolean isKeyInSections(String key, String sectionKey, String... moreSectionKeys) {
+        Objects.requireNonNull(key, "Key must be given.");
+        Objects.requireNonNull(sectionKey, "At least one section key must be given.");
+        Objects.requireNonNull(moreSectionKeys, "Additional section keys must not be null.");
+
+        String[] sectionKeys = new String[moreSectionKeys.length + 1];
+        sectionKeys[0] = sectionKey;
+
+        if (moreSectionKeys.length > 0) {
+            arraycopy(moreSectionKeys, 0, sectionKeys, 1, moreSectionKeys.length);
+        }
+
+        return isKeyInSections(key, sectionKeys);
+    }
+
+    /**
+     * Calculates the current section key and compares it to the given section keys.
+     *
+     * @param key             the fully qualified entry key, not {@code null}
+     * @param sectionKeys     the section keys, not {@code null}
+     *
+     *  @return true, if the entry is in one of the given sections
+     */
+    public static boolean isKeyInSections(String key, String[] sectionKeys) {
+        Objects.requireNonNull(key, "Key must be given.");
+        Objects.requireNonNull(sectionKeys, "Section keys must be given.");
+
+        boolean result = false;
+
         for (String areaKey : sectionKeys) {
+            if (areaKey == null) {
+                continue;
+            }
+
             if (isKeyInSection(key, areaKey)) {
-                return true;
+                result = true;
+                break;
             }
         }
-        return false;
+
+        return result;
     }
 
     /**
@@ -117,10 +172,12 @@ public final class PropertySourceFunctions {
      */
     public static Set<String> sections(Map<String, String> properties) {
         final Set<String> areas = new HashSet<>();
-        for (String s : properties.keySet()) {
-            int index = s.lastIndexOf('.');
+        for (String key : properties.keySet()) {
+            String normalizedKey = normalizeKey(key);
+
+            int index = normalizedKey.lastIndexOf('.');
             if (index > 0) {
-                areas.add(s.substring(0, index));
+                areas.add(normalizedKey.substring(0, index));
             } else {
                 areas.add("<root>");
             }
@@ -139,15 +196,19 @@ public final class PropertySourceFunctions {
      */
     public static Set<String> transitiveSections(Map<String, String> properties) {
         final Set<String> transitiveAreas = new HashSet<>();
-        for (String s : sections(properties)) {
-            int index = s.lastIndexOf('.');
-            if (index < 0) {
+        for (String section : sections(properties)) {
+            section = normalizeSectionKey(section);
+
+            int index = section.lastIndexOf('.');
+            if (index < 0 && section.isEmpty()) {
                 transitiveAreas.add("<root>");
+            } if (index < 0) {
+                transitiveAreas.add(section);
             } else {
                 while (index > 0) {
-                    s = s.substring(0, index);
-                    transitiveAreas.add(s);
-                    index = s.lastIndexOf('.');
+                    section = section.substring(0, index);
+                    transitiveAreas.add(section);
+                    index = section.lastIndexOf('.');
                 }
             }
         }

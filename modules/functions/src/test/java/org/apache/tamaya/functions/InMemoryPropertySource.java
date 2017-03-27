@@ -68,7 +68,8 @@ public class InMemoryPropertySource implements PropertySource {
         Map<String, PropertyValue> result = new HashMap<>();
 
         for (Map.Entry<String, String> entry : properties.entrySet()) {
-            result.put(entry.getKey(), PropertyValue.of(entry.getKey(), entry.getValue(), getName()));
+            PropertyValue value = PropertyValue.of(entry.getKey(), entry.getValue(), getName());
+            result.put(entry.getKey(), value);
         }
 
         return result;
