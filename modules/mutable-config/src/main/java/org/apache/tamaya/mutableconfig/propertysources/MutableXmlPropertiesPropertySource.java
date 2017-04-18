@@ -163,5 +163,11 @@ implements MutablePropertySource{
         }
     }
 
+    @Override
+    protected String toStringValues() {
+        return  super.toStringValues() +
+                "  file=" + file + '\n';
+    }
+
 
 }

@@ -99,12 +99,4 @@ public class MapPropertySource extends BasePropertySource {
         return Collections.unmodifiableMap(this.props);
     }
 
-    @Override
-    public String toString() {
-        return "MapPropertySource{" +
-                "name=" + getName() + ", " +
-                "ordinal=" + getOrdinal() +
-                '}';
-    }
-
 }

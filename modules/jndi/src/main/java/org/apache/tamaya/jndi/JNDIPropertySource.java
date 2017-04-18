@@ -132,12 +132,9 @@ public class JNDIPropertySource extends BasePropertySource {
     }
 
     @Override
-    public String toString() {
-        return "JNDIPropertySource{" +
-                "name=" + getName() +
-                ", ordinal=" + getOrdinal() +
-                ", context=" + context +
-                '}';
+    protected String toStringValues() {
+        return super.toStringValues() +
+                "\n  context=" + context + '\'';
     }
 
     /**

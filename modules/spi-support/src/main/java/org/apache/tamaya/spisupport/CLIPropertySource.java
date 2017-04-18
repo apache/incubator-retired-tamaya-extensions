@@ -20,10 +20,7 @@ package org.apache.tamaya.spisupport;
 
 import org.apache.tamaya.spi.PropertyValue;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * PropertySource that allows to add the programs main arguments as configuration entries. Unix syntax using '--' and
@@ -130,5 +127,11 @@ public class CLIPropertySource extends BasePropertySource{
     @Override
     public Map<String, PropertyValue> getProperties() {
         return Collections.unmodifiableMap(mainArgs);
+    }
+
+    @Override
+    protected String toStringValues() {
+        return  super.toStringValues() +
+                "  args=" + Arrays.toString(args) + '\n';
     }
 }

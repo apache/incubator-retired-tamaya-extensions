@@ -172,4 +172,11 @@ public class EnvironmentPropertySource extends BasePropertySource {
         return true;
     }
 
+    @Override
+    protected String toStringValues() {
+        return  super.toStringValues() +
+                "  prefix=" + prefix + '\n' +
+                "  disabled=" + disabled + '\n';
+    }
+
 }

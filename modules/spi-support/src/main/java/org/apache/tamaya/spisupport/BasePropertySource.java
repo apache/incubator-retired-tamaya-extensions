@@ -147,4 +147,17 @@ public abstract class BasePropertySource implements PropertySource{
     public boolean isScannable(){
         return true;
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "{" +
+                toStringValues() +
+                '}';
+    }
+
+    protected String toStringValues() {
+        return  "  defaultOrdinal=" + defaultOrdinal + '\n' +
+                "  ordinal=" + ordinal  + '\n' +
+                "  name='" + name + '\''  + '\n';
+    }
 }

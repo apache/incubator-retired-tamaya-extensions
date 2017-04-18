@@ -187,4 +187,11 @@ public class SystemPropertySource extends BasePropertySource {
     public boolean isScannable() {
         return true;
     }
+
+    @Override
+    protected String toStringValues() {
+        return  super.toStringValues() +
+                "  prefix=" + prefix + '\n' +
+                "  disabled=" + disabled + '\n';
+    }
 }

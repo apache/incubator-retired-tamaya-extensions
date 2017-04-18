@@ -149,4 +149,10 @@ public class MappedConfigurationDataPropertySource extends BasePropertySource {
         return result;
     }
 
+    @Override
+    protected String toStringValues() {
+        return  super.toStringValues() +
+                "  dataSupplier=" + dataSupplier + '\n';
+    }
+
 }
