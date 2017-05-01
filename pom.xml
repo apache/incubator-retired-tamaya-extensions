@@ -73,6 +73,7 @@ under the License.
         <asciidoctor.version>1.5.2</asciidoctor.version>
         <asciidoctor-diagramm.version>1.2.1</asciidoctor-diagramm.version>
         <asciidoctorj.version>1.5.2</asciidoctorj.version>
+        <assembly.version>3.0.0</assembly.version>
         <checkstyle.version>2.15</checkstyle.version>
         <enforcer.version>1.4.1</enforcer.version>
         <gem.plugin>1.0.7</gem.plugin>
@@ -365,6 +366,11 @@ under the License.
                     <groupId>de.saumya.mojo</groupId>
                     <artifactId>gem-maven-plugin</artifactId>
                     <version>${gem.plugin}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>${assembly.version}</version>
                 </plugin>
 
                 <plugin>
