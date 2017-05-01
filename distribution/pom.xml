@@ -614,7 +614,7 @@ under the License.
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>attach-distribution-src</id>
+                        <id>attach-distribution-bin</id>
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
@@ -625,7 +625,7 @@ under the License.
                         </configuration>
                     </execution>
                     <execution>
-                        <id>attach-distribution-bin</id>
+                        <id>attach-distribution-src</id>
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
