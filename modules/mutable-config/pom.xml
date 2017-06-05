@@ -25,6 +25,7 @@ under the License.
         <version>0.3-incubating-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
+
     <artifactId>tamaya-mutable-config</artifactId>
     <name>Apache Tamaya Modules - Mutable Configuration</name>
     <description>This module provides abstraction, if your scenario needs to actively change configuration entries
@@ -69,7 +70,7 @@ under the License.
         <dependency>
             <groupId>org.apache.tamaya.ext</groupId>
             <artifactId>tamaya-events</artifactId>
-            <version>0.3-incubating-SNAPSHOT</version>
+            <version>${project.version}</version>
             <optional>true</optional>
             <scope>provided</scope>
         </dependency>

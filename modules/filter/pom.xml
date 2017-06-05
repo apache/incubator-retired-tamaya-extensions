@@ -60,7 +60,7 @@ under the License.
         <dependency>
             <groupId>org.apache.tamaya.ext</groupId>
             <artifactId>tamaya-spisupport</artifactId>
-            <version>0.3-incubating-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

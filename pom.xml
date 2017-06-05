@@ -27,6 +27,7 @@ under the License.
       <artifactId>apache</artifactId>
       <version>18</version>
    </parent>
+
     <groupId>org.apache.tamaya.ext</groupId>
     <artifactId>tamaya-extensions-all</artifactId>
     <version>0.3-incubating-SNAPSHOT</version>

@@ -25,6 +25,7 @@
         <version>0.3-incubating-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
+
     <artifactId>tamaya-formats-all</artifactId>
     <name>Apache Tamaya Modules - Formats Parent</name>
     <packaging>pom</packaging>

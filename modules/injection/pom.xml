@@ -25,6 +25,7 @@
         <version>0.3-incubating-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
+
     <artifactId>tamaya-injection-all</artifactId>
     <name>Apache Tamaya Modules - Injection Parent</name>
     <packaging>pom</packaging>
