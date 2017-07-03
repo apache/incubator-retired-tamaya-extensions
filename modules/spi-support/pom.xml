@@ -42,13 +42,13 @@ under the License.
         <dependency>
             <groupId>org.apache.tamaya</groupId>
             <artifactId>tamaya-api</artifactId>
-            <version>${project.version}</version>
+            <version>${tamaya-apicore.version}</version>
         </dependency>
         <!-- Test scope only, do not create a code dependency! -->
         <dependency>
             <groupId>org.apache.tamaya</groupId>
             <artifactId>tamaya-core</artifactId>
-            <version>${project.version}</version>
+            <version>${tamaya-apicore.version}</version>
             <scope>test</scope>
         </dependency>
 

@@ -48,6 +48,9 @@ under the License.
     </prerequisites>
 
     <properties>
+        <!-- Used version of Tamaya API&Core -->
+        <tamaya-apicore.version>0.3-incubating-SNAPSHOT</tamaya-apicore.version>
+
         <commons-io.version>2.5</commons-io.version>
         <findbugs.skip>false</findbugs.skip>
         <jdkVersion>1.7</jdkVersion>
@@ -390,7 +393,7 @@ under the License.
                         <dependency>
                             <groupId>org.apache.tamaya</groupId>
                             <artifactId>buildconfigurations</artifactId>
-                            <version>${project.version}</version>
+                            <version>${tamaya-apicore.version}</version>
                         </dependency>
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
@@ -442,7 +445,7 @@ under the License.
                         <dependency>
                             <groupId>org.apache.tamaya</groupId>
                             <artifactId>buildconfigurations</artifactId>
-                            <version>${project.version}</version>
+                            <version>${tamaya-apicore.version}</version>
                         </dependency>
                     </dependencies>
                 </plugin>

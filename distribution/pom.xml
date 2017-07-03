@@ -40,7 +40,7 @@ under the License.
         <dependency>
             <groupId>org.apache.tamaya</groupId>
             <artifactId>tamaya-docs</artifactId>
-            <version>${project.version}</version>
+            <version>${tamaya-apicore.version}</version>
             <classifier>documentation</classifier>
             <type>zip</type>
         </dependency>
@@ -49,36 +49,36 @@ under the License.
         <dependency>
             <groupId>org.apache.tamaya</groupId>
             <artifactId>tamaya-api</artifactId>
-            <version>${project.version}</version>
+            <version>${tamaya-apicore.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
             <artifactId>tamaya-api</artifactId>
-            <version>${project.version}</version>
+            <version>${tamaya-apicore.version}</version>
             <classifier>sources</classifier>
         </dependency>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
             <artifactId>tamaya-api</artifactId>
-            <version>${project.version}</version>
+            <version>${tamaya-apicore.version}</version>
             <classifier>javadoc</classifier>
         </dependency>
 
         <dependency>
             <groupId>org.apache.tamaya</groupId>
             <artifactId>tamaya-core</artifactId>
-            <version>${project.version}</version>
+            <version>${tamaya-apicore.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
             <artifactId>tamaya-core</artifactId>
-            <version>${project.version}</version>
+            <version>${tamaya-apicore.version}</version>
             <classifier>sources</classifier>
         </dependency>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
             <artifactId>tamaya-core</artifactId>
-            <version>${project.version}</version>
+            <version>${tamaya-apicore.version}</version>
             <classifier>javadoc</classifier>
         </dependency>
 
