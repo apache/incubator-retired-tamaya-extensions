@@ -49,7 +49,7 @@ under the License.
 
     <properties>
         <!-- Used version of Tamaya API&Core -->
-        <tamaya-apicore.version>0.3-incubating-SNAPSHOT</tamaya-apicore.version>
+        <tamaya-apicore.version>0.3-incubating</tamaya-apicore.version>
 
         <commons-io.version>2.5</commons-io.version>
         <findbugs.skip>false</findbugs.skip>
