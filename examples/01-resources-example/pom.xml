@@ -25,11 +25,11 @@ under the License.
     <parent>
         <groupId>org.apache.tamaya.ext.examples</groupId>
         <artifactId>examples</artifactId>
-        <version>0.3-incubating-SNAPSHOT</version>
+        <version>0.3-incubating</version>
     </parent>
 
     <artifactId>01-resources-example</artifactId>
-    <version>0.3-incubating-SNAPSHOT</version>
+    <version>0.3-incubating</version>
 
     <name>Apache Tamaya Resource Location Example</name>
     <description>This project contains a simple example using the resource location module.</description>
