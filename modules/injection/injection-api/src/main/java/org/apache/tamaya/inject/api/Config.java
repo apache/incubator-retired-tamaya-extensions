@@ -34,14 +34,11 @@ import java.lang.annotation.Target;
  * <h3>Simplest variant</h3>
  * Below the most simple variant of a configured class is given:
  * <pre>
- * {@code
  * package a.b;
  *
  * public class ConfiguredItem {
- *
- *   @Config
+ *   &amp;Config
  *   private String aValue;
- * }
  * }
  * </pre>
  * Configuration resolution is implemented as follows:
@@ -57,13 +54,11 @@ import java.lang.annotation.Target;
  * <h3>Explicit annotations</h3>
  * In the next example we explicitly define the configuration keys to be used:
  * <pre>
- * {@code
- * @ConfigDefaultSections("section1")
+ * &amp;ConfigDefaultSections("section1")
  * public class ConfiguredItem {
  *
- *   @Config(value = {"b", "[a.b.deprecated.keys]", "a"}, defaultValue = "myDefaultValue")
+ *   &amp;Config(value = {"b", "[a.b.deprecated.keys]", "a"}, defaultValue = "myDefaultValue")
  *   private String aValue;
- * }
  * }
  * </pre>
  *
@@ -76,14 +71,12 @@ import java.lang.annotation.Target;
  * In the last example we explicitly define the configuration keys but omit the section part, letting the default
  * section names to be taken:
  * <pre>
- * {@code
  * package a.b;
  *
  * public class ConfiguredItem {
  *
- *   @Config(value = {"b", "[a.b.deprecated.keys]", "a"}, defaultValue = "myDefaultValue")
+ *   &amp;Config(value = {"b", "[a.b.deprecated.keys]", "a"}, defaultValue = "myDefaultValue")
  *   private String aValue;
- * }
  * }
  * </pre>
  *
