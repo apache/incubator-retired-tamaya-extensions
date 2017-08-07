@@ -26,17 +26,8 @@ package org.apache.tamaya.functions;
  *
  * @param <T> the type of the input to the predicate
  */
-//@FunctionalInterface
-public interface Predicate<T> {
-
-    /**
-     * Evaluates this predicate on the given argument.
-     *
-     * @param t the input argument
-     * @return {@code true} if the input argument matches the predicate,
-     * otherwise {@code false}
-     */
-    boolean test(T t);
+@FunctionalInterface
+public interface Predicate<T> extends java.util.function.Predicate<T>{
 
 }
 

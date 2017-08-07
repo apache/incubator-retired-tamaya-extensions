@@ -23,7 +23,7 @@ package org.apache.tamaya.functions;
  * if mapped to null).
  *
  */
-//@FunctionalInterface
+@FunctionalInterface
 public interface KeyMapper {
 
     /**

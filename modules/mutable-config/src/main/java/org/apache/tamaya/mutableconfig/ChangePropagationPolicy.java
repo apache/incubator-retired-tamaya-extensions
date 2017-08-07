@@ -39,6 +39,7 @@ import java.util.Collection;
  * <li><b>NONE: </b>Do not apply any changes.</li>
  * </ul>
  */
+@FunctionalInterface
 public interface ChangePropagationPolicy {
 
     /**

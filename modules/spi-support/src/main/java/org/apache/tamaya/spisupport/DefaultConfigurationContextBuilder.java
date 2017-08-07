@@ -67,7 +67,8 @@ public class DefaultConfigurationContextBuilder implements ConfigurationContextB
     }
 
     /**
-     * Creates a new builder instance.
+     * Creates a new builder instance initializing it with the given context.
+     * @param context the context to be used, not null.
      */
     public DefaultConfigurationContextBuilder(ConfigurationContext context) {
         this.propertyConverters.putAll(context.getPropertyConverters());
