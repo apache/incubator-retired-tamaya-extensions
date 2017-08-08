@@ -39,6 +39,8 @@ public class PropertySourceComparator implements Comparator<PropertySource>, Ser
 
     private static final PropertySourceComparator INSTANCE = new PropertySourceComparator();
 
+    private String alternativeOrdinalKey;
+
     private PropertySourceComparator(){}
 
     /**
@@ -58,9 +60,9 @@ public class PropertySourceComparator implements Comparator<PropertySource>, Ser
      * @return the comparison result.
      */
     private int comparePropertySources(PropertySource source1, PropertySource source2) {
-        if (getOrdinal(source1) < getOrdinal(source2)) {
+        if (getOrdinal(source1, alternativeOrdinalKey) < getOrdinal(source2, alternativeOrdinalKey)) {
             return -1;
-        } else if (getOrdinal(source1) > getOrdinal(source2)) {
+        } else if (getOrdinal(source1, alternativeOrdinalKey) > getOrdinal(source2, alternativeOrdinalKey)) {
             return 1;
         } else {
             return source1.getClass().getName().compareTo(source2.getClass().getName());
@@ -68,35 +70,38 @@ public class PropertySourceComparator implements Comparator<PropertySource>, Ser
     }
 
     public static int getOrdinal(PropertySource propertySource) {
-//        PropertyValue ordinalValue = propertySource.get(PropertySource.TAMAYA_ORDINAL);
-//        if(ordinalValue!=null){
-//            try{
-//                return Integer.parseInt(ordinalValue.getProperty().trim());
-//            }catch(Exception e){
-//                LOG.finest("Failed to parse ordinal from " + PropertySource.TAMAYA_ORDINAL +
-//                        " in " + propertySource.getName()+": "+ordinalValue.getProperty());
-//            }
-//        }
-//        try {
-//            Method method = propertySource.getClass().getMethod("getOrdinal");
-//            if(int.class.equals(method.getReturnType())){
-//                try {
-//                    return (int)method.invoke(propertySource);
-//                } catch (Exception e) {
-//                    LOG.log(Level.FINEST, "Error calling int getOrdinal() on " + propertySource.getName(), e);
-//                }
-//            }
-//        } catch (NoSuchMethodException e) {
-//            LOG.finest("No int getOrdinal() method found in " + propertySource.getName());
-//        }
-//        Priority prio = propertySource.getClass().getAnnotation(Priority.class);
-//        if(prio!=null){
-//            return prio.value();
-//        }
+        return getOrdinal(propertySource, null);
+    }
+
+    public static int getOrdinal(PropertySource propertySource, String alternativeOrdinalKey) {
+        if(alternativeOrdinalKey!=null) {
+            PropertyValue ordinalValue = propertySource.get(alternativeOrdinalKey);
+            if (ordinalValue != null) {
+                try {
+                    return Integer.parseInt(ordinalValue.getValue().trim());
+                } catch (Exception e) {
+                    LOG.finest("Failed to parse ordinal from " + alternativeOrdinalKey +
+                            " in " + propertySource.getName() + ": " + ordinalValue.getValue());
+                }
+            }
+        }
         return propertySource.getOrdinal();
     }
+
+    /**
+     * Overrides/adds the key to evaluate/override a property sources ordinal.
+     * @param ordinalKey sets the alternative ordinal key, if null default
+     *                   behaviour will be active.
+     * @return the instance for chaining.
+     */
+    public PropertySourceComparator setOrdinalKey(String ordinalKey) {
+        this.alternativeOrdinalKey = ordinalKey;
+        return this;
+    }
+
     @Override
     public int compare(PropertySource source1, PropertySource source2) {
         return comparePropertySources(source1, source2);
     }
+
 }
