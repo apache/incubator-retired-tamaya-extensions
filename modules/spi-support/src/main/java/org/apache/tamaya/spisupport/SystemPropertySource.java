@@ -133,16 +133,18 @@ public class SystemPropertySource extends BasePropertySource {
         final String prefix = this.prefix;
         Map<String, PropertyValue> entries = new HashMap<>();
         for (Map.Entry<Object,Object> entry : sysProps.entrySet()) {
-            if(prefix==null) {
-                entries.put((String) entry.getKey(),
-                        PropertyValue.of((String) entry.getKey(),
-                                (String) entry.getValue(),
-                                getName()));
-            }else {
-                entries.put(prefix + entry.getKey(),
-                        PropertyValue.of(prefix + entry.getKey(),
-                                (String) entry.getValue(),
-                                getName()));
+            if(entry.getKey() instanceof String && entry.getValue() instanceof String) {
+                if (prefix == null) {
+                    entries.put((String) entry.getKey(),
+                            PropertyValue.of((String) entry.getKey(),
+                                    (String) entry.getValue(),
+                                    getName()));
+                } else {
+                    entries.put(prefix + entry.getKey(),
+                            PropertyValue.of(prefix + entry.getKey(),
+                                    (String) entry.getValue(),
+                                    getName()));
+                }
             }
         }
         return entries;
