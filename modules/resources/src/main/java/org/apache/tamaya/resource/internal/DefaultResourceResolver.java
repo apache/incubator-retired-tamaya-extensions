@@ -21,6 +21,7 @@ package org.apache.tamaya.resource.internal;
 import org.apache.tamaya.resource.BaseResourceResolver;
 import org.apache.tamaya.resource.ResourceLocator;
 import org.apache.tamaya.spi.ServiceContextManager;
+import org.osgi.service.component.annotations.Component;
 
 import javax.annotation.Priority;
 import java.net.URL;
@@ -33,6 +34,7 @@ import java.util.logging.Logger;
  * Simple default implementation of the resource loader, which does only support direct references to files.
  */
 @Priority(0)
+@Component
 public class DefaultResourceResolver extends BaseResourceResolver {
 
     private static final Logger LOG = Logger.getLogger(DefaultResourceResolver.class.getName());

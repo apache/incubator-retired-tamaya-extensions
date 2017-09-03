@@ -21,6 +21,7 @@ package org.apache.tamaya.format.formats;
 import org.apache.tamaya.format.ConfigurationData;
 import org.apache.tamaya.format.ConfigurationDataBuilder;
 import org.apache.tamaya.format.ConfigurationFormat;
+import org.osgi.service.component.annotations.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,6 +36,7 @@ import java.util.logging.Logger;
  *
  * @see java.util.Properties#loadFromXML(java.io.InputStream)
  */
+@Component
 public class PropertiesXmlFormat implements ConfigurationFormat {
     /**
      * The logger.

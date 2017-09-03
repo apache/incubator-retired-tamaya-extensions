@@ -22,6 +22,7 @@ import org.apache.tamaya.events.ConfigEvent;
 import org.apache.tamaya.events.ConfigEventListener;
 import org.apache.tamaya.events.spi.ConfigEventManagerSpi;
 import org.apache.tamaya.spi.ServiceContextManager;
+import org.osgi.service.component.annotations.Component;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,6 +35,7 @@ import java.util.logging.Logger;
  * Default implementation of {@link DefaultConfigEventManagerSpi} just forwarding all
  * events synchronously to the listeners.
  */
+@Component
 public class DefaultConfigEventManagerSpi implements ConfigEventManagerSpi {
 
     private static final Logger LOG = Logger.getLogger(DefaultConfigEventManagerSpi.class.getName());

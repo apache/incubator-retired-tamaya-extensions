@@ -1,3 +1,32 @@
-Export-Package: \
-	org.apache.tamaya.mutableconfig
+-buildpath: \
+	osgi.annotation; version=6.0.0,\
+	osgi.core; version=6.0,\
+	osgi.cmpn; version=6.0
+
+-testpath: \
+	${junit}
+
+javac.source: 1.8
+javac.target: 1.8
+
+Bundle-Version: ${version}.${tstamp}
+Bundle-Name: Apache Tamaya - Mutable Configuration
 Bundle-SymbolicName: org.apache.tamaya.mutableconfig
+Bundle-Description: Apacha Tamaya Config - Mutable Configuration Support
+Bundle-Category: API
+Bundle-Copyright: (C) Apache Foundation
+Bundle-License: Apache Licence version 2
+Bundle-Vendor: Apache Software Foundation
+Bundle-ContactAddress: dev-tamaya@incubator.apache.org
+Bundle-DocURL: http://tamaya.apache.org
+Export-Package: \
+	org.apache.tamaya.mutableconfig,\
+    org.apache.tamaya.mutableconfig.propertysources,\
+    org.apache.tamaya.mutableconfig.spi
+Private-Package: \
+    org.apache.tamaya.mutableconfig.internal
+Import-Package: \
+	org.apache.tamaya,\
+	org.apache.tamaya.spi
+Export-Service: \
+    org.apache.tamaya.mutableconfig.spi.MutableConfigProviderSpi

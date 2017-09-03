@@ -21,6 +21,7 @@ package org.apache.tamaya.jndi;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spisupport.BasePropertySource;
+import org.osgi.service.component.annotations.Component;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -39,6 +40,7 @@ import java.util.logging.Logger;
 /**
  * Propertysource that accesses JNDI as source for configuration entries.
  */
+@Component
 public class JNDIPropertySource extends BasePropertySource {
     /** The logger used. */
     private static final Logger LOG = Logger.getLogger(JNDIPropertySource.class.getName());

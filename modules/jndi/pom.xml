@@ -64,6 +64,11 @@ under the License.
             <version>4.6-b01</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+            <version>5.0.0</version>
+        </dependency>
     </dependencies>
 
 </project>
