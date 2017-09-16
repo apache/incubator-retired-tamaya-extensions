@@ -43,10 +43,6 @@ under the License.
         <url>https://apache.org</url>
     </organization>
 
-    <prerequisites>
-        <maven>3.0.5</maven>
-    </prerequisites>
-
     <properties>
         <!-- Used version of Tamaya API&Core -->
         <tamaya-apicore.version>0.4-incubating-SNAPSHOT</tamaya-apicore.version>
