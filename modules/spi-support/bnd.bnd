@@ -11,7 +11,7 @@ javac.target: 1.8
 
 Bundle-Version: ${version}.${tstamp}
 Bundle-Name: Apache Tamaya - SPI Support
-Bundle-SymbolicName: org.apache.tamaya.resource
+Bundle-SymbolicName: org.apache.tamaya.spisupport
 Bundle-Description: Apacha Tamaya Config - SPI Support
 Bundle-Category: Implementation
 Bundle-Copyright: (C) Apache Foundation
