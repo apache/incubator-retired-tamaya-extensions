@@ -21,7 +21,6 @@ package org.apache.tamaya.json;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
-import org.osgi.service.component.annotations.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,7 +43,6 @@ import static java.lang.String.format;
 /**
  * Property source based on a JSON file.
  */
-@Component
 public class JSONPropertySource implements PropertySource {
     /** Constant for enabling comments in Johnzon. */
     public static final String JOHNZON_SUPPORTS_COMMENTS_PROP = "org.apache.johnzon.supports-comments";

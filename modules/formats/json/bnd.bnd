@@ -23,7 +23,8 @@ Export-Package: \
 	org.apache.tamaya.json
 Import-Package: \
 	org.apache.tamaya,\
-	org.apache.tamaya.spi
+	org.apache.tamaya.spi,\
+	org.apache.tamaya.format
 Export-Service: \
     org.apache.tamaya.format.ConfigurationFormat
 

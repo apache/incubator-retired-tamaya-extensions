@@ -21,7 +21,6 @@ package org.apache.tamaya.json;
 import org.apache.tamaya.format.ConfigurationData;
 import org.apache.tamaya.format.ConfigurationDataBuilder;
 import org.apache.tamaya.format.ConfigurationFormat;
-import org.osgi.service.component.annotations.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,7 +41,6 @@ import javax.json.JsonReaderFactory;
  *
  * @see <a href="http://www.json.org">JSON format specification</a>
  */
-@Component
 public class JSONFormat implements ConfigurationFormat {
     /** Property that make Johnzon accept commentc. */
     public static final String JOHNZON_SUPPORTS_COMMENTS_PROP = "org.apache.johnzon.supports-comments";
