@@ -23,4 +23,5 @@ Export-Package: \
 	org.apache.tamaya.jndi
 Import-Package: \
 	org.apache.tamaya,\
-	org.apache.tamaya.spi
+	org.apache.tamaya.spi,\
+	org.apache.tamaya.spisupport
