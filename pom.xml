@@ -522,14 +522,17 @@ under the License.
                     <artifactId>pitest-maven</artifactId>
                     <version>${pitest-plugin.version}</version>
                     <configuration>
-                        <coverageThreshold>80</coverageThreshold>
+                        <mutationThreshold>50</mutationThreshold>
                         <timestampedReports>false</timestampedReports>
                         <targetClasses>
                             <param>org.apache.tamaya.*</param>
                         </targetClasses>
+                        <excludedClasses>
+                        </excludedClasses>
                         <excludedMethods>
                             <param>toString</param>
                         </excludedMethods>
+                        <verbose>true</verbose>
                     </configuration>
                 </plugin>
 
@@ -803,6 +806,25 @@ under the License.
     </build>
 
     <profiles>
+        <profile>
+            <id>coverage</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-maven</artifactId>
+                        <executions>
+                            <execution>
+                                <id>mutationcoverage</id>
+                                <goals>
+                                    <goal>mutationCoverage</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <!-- The release profile. It ensures that all checks
              will be done and everything will be build what need
              to be build. -->
