@@ -103,12 +103,10 @@ public final class ConfigurationChangeBuilder {
             String key = en.getKey();
             String previousValue = en.getValue();
             String currentValue = current.get(en.getKey());
-
-            if (currentValue == null) {
-                PropertyChangeEvent event = new PropertyChangeEvent(previous, key, previousValue, null);
-                events.put(key, event);
-            } else if (!Objects.equals(current, previous)) {
-                PropertyChangeEvent event = new PropertyChangeEvent(previous, key, currentValue, previousValue);
+            if(Objects.equals(currentValue, previousValue)){
+                continue;
+            }else {
+                PropertyChangeEvent event = new PropertyChangeEvent(previous, key, previousValue, currentValue);
                 events.put(key, event);
             }
         }
@@ -117,16 +115,16 @@ public final class ConfigurationChangeBuilder {
             String key = en.getKey();
             String previousValue = previous.get(en.getKey());
             String currentValue = en.getValue();
-
-            if (previousValue == null) {
-                PropertyChangeEvent event = new PropertyChangeEvent(current, key, null, currentValue);
-                events.put(key, event);
-            } else if (!(Objects.equals(previousValue, currentValue) && events.containsKey(key))) {
-                PropertyChangeEvent event = new PropertyChangeEvent(current, en.getKey(), previousValue, en.getValue());
-                events.put(key, event);
+            if(Objects.equals(currentValue, previousValue)){
+                continue;
+            }else{
+                if (previousValue == null) {
+                    PropertyChangeEvent event = new PropertyChangeEvent(current, key, null, currentValue);
+                    events.put(key, event);
+                }
+                // the other cases were already covered by the previous loop.
             }
         }
-
         return events.values();
     }
 
