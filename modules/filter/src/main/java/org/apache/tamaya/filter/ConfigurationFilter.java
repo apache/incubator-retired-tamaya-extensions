@@ -20,6 +20,7 @@ package org.apache.tamaya.filter;
 
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertyValue;
+import org.osgi.service.component.annotations.Component;
 
 
 /**
@@ -38,6 +39,7 @@ import org.apache.tamaya.spi.PropertyValue;
  *     doing so will create nasty side effects of configuration not being visisble depending on the thread
  *     active.
  */
+@Component
 public final class ConfigurationFilter implements PropertyFilter{
 
     static final ThreadLocal<Boolean> THREADED_METADATA_FILTERED = new ThreadLocal<Boolean>(){

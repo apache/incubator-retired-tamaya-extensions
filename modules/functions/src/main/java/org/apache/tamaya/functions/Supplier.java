@@ -29,13 +29,7 @@ package org.apache.tamaya.functions;
  *
  * @param <T> the type of results supplied by this supplier
  */
-//@FunctionalInterface
-public interface Supplier<T> {
+@FunctionalInterface
+public interface Supplier<T> extends java.util.function.Supplier<T>{
 
-    /**
-     * Gets a result.
-     *
-     * @return a result
-     */
-    T get();
 }

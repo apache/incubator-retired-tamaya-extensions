@@ -32,10 +32,6 @@ under the License.
     <name>Apache Tamaya Adaptive Configuration Filtering</name>
     <packaging>jar</packaging>
 
-    <properties>
-        <jdkVersion>1.7</jdkVersion>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
@@ -62,6 +58,17 @@ under the License.
             <artifactId>tamaya-spisupport</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+            <version>5.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+            <version>5.0.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

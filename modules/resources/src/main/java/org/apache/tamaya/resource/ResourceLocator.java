@@ -24,6 +24,7 @@ import java.util.Collection;
 /**
  * Delegate interface for loading URLs from a given data resource locator pattern String.
  */
+@FunctionalInterface
 public interface ResourceLocator {
 
     /**

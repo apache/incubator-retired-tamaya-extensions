@@ -36,11 +36,13 @@ import org.apache.tamaya.inject.api.NoConfig;
 import org.apache.tamaya.inject.api.Config;
 import org.apache.tamaya.inject.api.ConfigDefaultSections;
 import org.apache.tamaya.inject.spi.ConfiguredType;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * Simple injector singleton that also registers instances configured using weak references.
  */
 @Priority(0)
+@Component
 public final class DefaultConfigurationInjector implements ConfigurationInjector {
 
     private final Map<Class<?>, ConfiguredType> configuredTypes = new ConcurrentHashMap<>();

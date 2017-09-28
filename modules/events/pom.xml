@@ -32,10 +32,6 @@ under the License.
     <name>Apache Tamaya Event and dynamic Update Extensions</name>
     <packaging>jar</packaging>
 
-    <properties>
-        <jdkVersion>1.7</jdkVersion>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
@@ -81,6 +77,12 @@ under the License.
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+            <version>5.0.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

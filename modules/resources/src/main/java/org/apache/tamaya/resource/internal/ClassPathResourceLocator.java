@@ -20,6 +20,7 @@ package org.apache.tamaya.resource.internal;
 
 import org.apache.tamaya.resource.ResourceLocator;
 import org.apache.tamaya.spi.ServiceContextManager;
+import org.osgi.service.component.annotations.Component;
 
 import javax.annotation.Priority;
 import java.io.IOException;
@@ -35,6 +36,7 @@ import java.util.logging.Logger;
  * Created by atsticks on 01.03.16.
  */
 @Priority(90)
+@Component
 public class ClassPathResourceLocator implements ResourceLocator{
     /**
      * The logger used.

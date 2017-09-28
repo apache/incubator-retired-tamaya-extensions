@@ -35,7 +35,6 @@ under the License.
     <inceptionYear>2016</inceptionYear>
 
     <properties>
-        <jdkVersion>1.7</jdkVersion>
         <snakeyaml.version>1.17</snakeyaml.version>
     </properties>
 

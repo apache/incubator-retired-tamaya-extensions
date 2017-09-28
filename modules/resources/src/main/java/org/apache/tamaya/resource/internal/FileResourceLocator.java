@@ -19,6 +19,7 @@
 package org.apache.tamaya.resource.internal;
 
 import org.apache.tamaya.resource.ResourceLocator;
+import org.osgi.service.component.annotations.Component;
 
 import javax.annotation.Priority;
 import java.io.File;
@@ -34,6 +35,7 @@ import java.util.logging.Logger;
  * {@link ResourceLocator} for locating local files.
  */
 @Priority(80)
+@Component
 public class FileResourceLocator implements ResourceLocator{
     /**
      * The logger used.

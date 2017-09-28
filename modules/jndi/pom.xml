@@ -32,10 +32,6 @@ under the License.
     <name>Apache Tamaya JNDI Support</name>
     <packaging>jar</packaging>
 
-    <properties>
-        <jdkVersion>1.7</jdkVersion>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
@@ -67,6 +63,11 @@ under the License.
             <artifactId>fscontext</artifactId>
             <version>4.6-b01</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+            <version>5.0.0</version>
         </dependency>
     </dependencies>
 

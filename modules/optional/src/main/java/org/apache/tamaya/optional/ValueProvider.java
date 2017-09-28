@@ -26,6 +26,7 @@ package org.apache.tamaya.optional;
  * code with optional Tamaya configuration support to create a bridge between his code and the values optionally
  * returned by Tamaya.
  */
+@FunctionalInterface
 public interface ValueProvider {
 
     /**

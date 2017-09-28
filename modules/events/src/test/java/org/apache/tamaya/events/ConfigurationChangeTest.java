@@ -69,6 +69,7 @@ public class ConfigurationChangeTest {
     @Test
     public void testGetTimestamp() throws Exception {
         Configuration config = ConfigurationProvider.getConfiguration();
+        Thread.sleep(10L);
         ConfigurationChange change = ConfigurationChangeBuilder.of(config).build();
         assertTrue((System.currentTimeMillis() - change.getTimestamp()) > 0L);
         change = ConfigurationChangeBuilder.of(config).setTimestamp(10L).build();

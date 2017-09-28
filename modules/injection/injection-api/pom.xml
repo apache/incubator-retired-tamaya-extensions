@@ -33,7 +33,6 @@ under the License.
     <packaging>jar</packaging>
 
     <properties>
-        <jdkVersion>1.7</jdkVersion>
         <geronimo-atinject-1.0-spec.version>1.0</geronimo-atinject-1.0-spec.version>
         <geronimo-jcdi-1.1-spec.version>1.0</geronimo-jcdi-1.1-spec.version>
     </properties>

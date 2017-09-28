@@ -22,6 +22,7 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.format.ConfigurationData;
 import org.apache.tamaya.format.ConfigurationDataBuilder;
 import org.apache.tamaya.format.ConfigurationFormat;
+import org.osgi.service.component.annotations.Component;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,6 +34,7 @@ import java.util.logging.Logger;
 /**
  * Implements a ini file format.
  */
+@Component
 public class IniConfigurationFormat implements ConfigurationFormat {
 
     /**

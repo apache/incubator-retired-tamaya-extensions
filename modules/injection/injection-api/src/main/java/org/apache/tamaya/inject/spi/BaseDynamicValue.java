@@ -28,7 +28,7 @@ import java.io.Serializable;
  * code), can apply a new value. Depending on the {@link org.apache.tamaya.inject.api.UpdatePolicy} the new value is applied immedeately, when the
  * change has been identified, or it requires an programmatic commit by client code to
  * activate the change in the {@link DynamicValue}. Similarly an instance also can ignore all
- * later changes to the value.</p>
+ * later changes to the value.
  *
  * <h3>Implementation Specification</h3>
  * This class is

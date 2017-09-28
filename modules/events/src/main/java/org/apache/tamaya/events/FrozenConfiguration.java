@@ -209,7 +209,7 @@ public final class FrozenConfiguration implements Configuration, Serializable {
      *
      * <p>The time is taken from {@linkplain System#currentTimeMillis()}</p>
      *
-     * @see {@linkplain System#currentTimeMillis()}
+     * @see System#currentTimeMillis()
      * @return the moment in time when this configruration has been created
      */
     public long getFrozenAt() {

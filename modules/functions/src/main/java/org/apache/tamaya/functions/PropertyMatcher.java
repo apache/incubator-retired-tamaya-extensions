@@ -22,7 +22,7 @@ package org.apache.tamaya.functions;
  * Represents a selector predicate for selecting configuration properties.
  * This can be used as a functional interface in Java 8.
  */
-//@FunctionalInterface
+@FunctionalInterface
 public interface PropertyMatcher {
 
     /**

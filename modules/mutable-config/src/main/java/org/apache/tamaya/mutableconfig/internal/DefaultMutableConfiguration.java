@@ -28,6 +28,7 @@ import org.apache.tamaya.mutableconfig.ConfigChangeRequest;
 import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.PropertySource;
+import org.osgi.service.component.annotations.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,6 +43,7 @@ import java.util.logging.Logger;
 /**
  * Default implementation of a {@link MutableConfiguration}.
  */
+@Component
 public class DefaultMutableConfiguration implements MutableConfiguration {
     private static final Logger LOG = Logger.getLogger(DefaultMutableConfiguration.class.getName());
     private ConfigChangeRequest changeRequest = new ConfigChangeRequest(UUID.randomUUID().toString());

@@ -21,12 +21,14 @@ package org.apache.tamaya.events.internal;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.events.ConfigEvent;
 import org.apache.tamaya.events.ConfigEventListener;
+import org.osgi.service.component.annotations.Component;
 
 import java.util.logging.Logger;
 
 /**
  * Simple ConfigListener that simply logs any detected config changes to INFO level.
  */
+@Component
 public class LoggingConfigListener implements ConfigEventListener {
 
     private static final Logger LOG = Logger.getLogger(LoggingConfigListener.class.getName());

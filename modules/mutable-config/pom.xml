@@ -32,10 +32,6 @@ under the License.
         and write changes back to some property sources, files etc.</description>
     <packaging>jar</packaging>
 
-    <properties>
-        <jdkVersion>1.7</jdkVersion>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
@@ -73,6 +69,11 @@ under the License.
             <version>${project.version}</version>
             <optional>true</optional>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+            <version>5.0.0</version>
         </dependency>
     </dependencies>
 
