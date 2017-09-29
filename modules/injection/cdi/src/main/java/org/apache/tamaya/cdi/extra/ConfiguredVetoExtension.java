@@ -30,11 +30,12 @@ import javax.enterprise.inject.spi.ProcessAnnotatedType;
  */
 public class ConfiguredVetoExtension implements Extension {
 
-    public void observesBean(@Observes ProcessAnnotatedType<?> type){
+    public void observesBean(@Observes ProcessAnnotatedType<?> type) {
         String vetoedTypesVal = ConfigurationProvider.getConfiguration().get("javax.enterprise.inject.vetoed");
         String[] vetoedTypes = vetoedTypesVal.split(",");
-        for(String typeExpr:vetoedTypes){
-            if(type.getAnnotatedType().getJavaClass().getName().matches(typeExpr)){
+        for (String typeExpr : vetoedTypes) {
+            String typeExprTrimmed = typeExpr.trim();
+            if (type.getAnnotatedType().getJavaClass().getName().matches(typeExprTrimmed)) {
                 type.veto();
             }
         }
