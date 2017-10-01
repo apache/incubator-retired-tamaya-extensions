@@ -23,7 +23,9 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import javax.enterprise.inject.spi.InjectionPoint;
+import java.io.File;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -56,19 +58,129 @@ public class CDIConfiguredMethodTest {
         assertThat(ccm.getName(), equalTo("getValue"));
     }
 
-    public static class Klazz {
-        private OtherKlazz<String> value;
+    @Test
+    public void returnsCorrectSignatureOfTheGivenMethod1() throws Exception {
+        String expectedSignature = "public org.apache.tamaya.cdi.OtherKlazz<java.lang.String> getValue()";
 
-        public OtherKlazz<String> getValue() {
-            return value;
-        }
+        Method method = Klazz.class.getMethod("getValue");
+        List<String> keys = asList("rate", "weight");
+        InjectionPoint ip = Mockito.mock(InjectionPoint.class);
 
-        public void setValue(OtherKlazz<String> value) {
-            this.value = value;
-        }
+        when(ip.getMember()).thenReturn(method);
+
+        CDIConfiguredMethod ccm = new CDIConfiguredMethod(ip, keys);
+
+        assertThat(ccm.getSignature(), equalTo(expectedSignature));
     }
 
-    public static class OtherKlazz<T> {
+    @Test
+    public void returnsCorrectSignatureOfTheGivenMethod2() throws Exception {
+        String expectedSignature = "public int getPrimitiveIntValue()";
 
+        Method method = Klazz.class.getMethod("getPrimitiveIntValue");
+        List<String> keys = asList("rate", "weight");
+        InjectionPoint ip = Mockito.mock(InjectionPoint.class);
+
+        when(ip.getMember()).thenReturn(method);
+
+        CDIConfiguredMethod ccm = new CDIConfiguredMethod(ip, keys);
+
+        assertThat(ccm.getSignature(), equalTo(expectedSignature));
     }
+
+    @Test
+    public void returnsCorrectSignatureOfTheGivenMethodReturnTypeIsVoid() throws Exception {
+        String expectedSignature = "public void voidMethod()";
+
+        Method method = Klazz.class.getMethod("voidMethod");
+        List<String> keys = asList("rate", "weight");
+        InjectionPoint ip = Mockito.mock(InjectionPoint.class);
+
+        when(ip.getMember()).thenReturn(method);
+
+        CDIConfiguredMethod ccm = new CDIConfiguredMethod(ip, keys);
+
+        assertThat(ccm.getSignature(), equalTo(expectedSignature));
+    }
+
+    @Test
+    public void returnsCorrectSignatureOfTheGivenMethodWithExceptions() throws Exception {
+        String expectedSignature = "public void methodWithExceptions() " +
+                                   "throws java.io.FileNotFoundException," +
+                                   "java.nio.file.AccessDeniedException";
+
+        Method method = Klazz.class.getMethod("methodWithExceptions");
+        List<String> keys = asList("rate", "weight");
+        InjectionPoint ip = Mockito.mock(InjectionPoint.class);
+
+        when(ip.getMember()).thenReturn(method);
+
+        CDIConfiguredMethod ccm = new CDIConfiguredMethod(ip, keys);
+
+        assertThat(ccm.getSignature(), equalTo(expectedSignature));
+    }
+
+    @Test
+    public void returnsCorrectSignatureOfTheGivenMethodWithOneException() throws Exception {
+        String expectedSignature = "public void methodWithException() " +
+                                   "throws java.io.FileNotFoundException";
+
+        Method method = Klazz.class.getMethod("methodWithException");
+        List<String> keys = asList("rate", "weight");
+        InjectionPoint ip = Mockito.mock(InjectionPoint.class);
+
+        when(ip.getMember()).thenReturn(method);
+
+        CDIConfiguredMethod ccm = new CDIConfiguredMethod(ip, keys);
+
+        assertThat(ccm.getSignature(), equalTo(expectedSignature));
+    }
+
+    @Test
+    public void returnsCorrectSignatureOfTheGivenMethodWithOneParameter() throws Exception {
+        String expectedSignature = "public void methodWithOneParameter(java.lang.String)";
+
+        Method method = Klazz.class.getMethod("methodWithOneParameter", String.class);
+        List<String> keys = asList("rate", "weight");
+        InjectionPoint ip = Mockito.mock(InjectionPoint.class);
+
+        when(ip.getMember()).thenReturn(method);
+
+        CDIConfiguredMethod ccm = new CDIConfiguredMethod(ip, keys);
+
+        assertThat(ccm.getSignature(), equalTo(expectedSignature));
+    }
+
+    @Test
+    public void returnsCorrectSignatureOfTheGivenMethodWithTwoParameters() throws Exception {
+        String expectedSignature = "public void methodWithTwoParameters(java.lang.String,java.io.File)";
+
+        Method method = Klazz.class.getMethod("methodWithTwoParameters", String.class, File.class);
+        List<String> keys = asList("rate", "weight");
+        InjectionPoint ip = Mockito.mock(InjectionPoint.class);
+
+        when(ip.getMember()).thenReturn(method);
+
+        CDIConfiguredMethod ccm = new CDIConfiguredMethod(ip, keys);
+
+        assertThat(ccm.getSignature(), equalTo(expectedSignature));
+    }
+
+    @Test
+    public void returnsCorrectSignatureOfTheGivenMethodWithOneTypeParameter() throws Exception {
+        String expectedSignature = "public <T> java.util.Collection<T> methodWithTypeParameter" +
+                                   "(java.util.Collection<T>)";
+
+        Method method = Klazz.class.getMethod("methodWithTypeParameter", Collection.class);
+
+        List<String> keys = asList("rate", "weight");
+        InjectionPoint ip = Mockito.mock(InjectionPoint.class);
+
+        when(ip.getMember()).thenReturn(method);
+
+        CDIConfiguredMethod ccm = new CDIConfiguredMethod(ip, keys);
+
+        assertThat(ccm.getSignature(), equalTo(expectedSignature));
+    }
+
 }

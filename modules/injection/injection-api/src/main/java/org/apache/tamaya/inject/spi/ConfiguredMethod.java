@@ -54,7 +54,7 @@ public interface ConfiguredMethod {
 
     /**
      * Get the methods signature, e.g. {@code void setName(String)}.
-     * @return he signature, never null.
+     * @return the signature, never {@code null}.
      */
     String getSignature();
 

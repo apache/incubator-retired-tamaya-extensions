@@ -26,6 +26,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static java.lang.String.format;
+
 /**
  * Implementation of a configured methods for CDI module.
  */
@@ -62,7 +64,18 @@ public class CDIConfiguredMethod implements ConfiguredMethod{
 
     @Override
     public String getSignature() {
-        return null;
+        String className = getAnnotatedMethod().getDeclaringClass().getName();
+        String methodName = getAnnotatedMethod().getName();
+        String anchor = format(".%s(", methodName);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(getAnnotatedMethod().toGenericString());
+
+        int anchorStart = sb.indexOf(anchor);
+
+        sb.delete(anchorStart - className.length(), anchorStart + 1);
+
+        return sb.toString();
     }
 
     @Override
