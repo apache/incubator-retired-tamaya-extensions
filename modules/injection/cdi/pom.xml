@@ -23,7 +23,6 @@ under the License.
         <groupId>org.apache.tamaya.ext</groupId>
         <artifactId>tamaya-injection-all</artifactId>
         <version>0.4-incubating-SNAPSHOT</version>
-        <relativePath>..</relativePath>
     </parent>
 
     <artifactId>tamaya-cdi</artifactId>
@@ -123,10 +122,6 @@ under the License.
             <artifactId>deltaspike-test-control-module-impl</artifactId>
             <version>${ds.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
