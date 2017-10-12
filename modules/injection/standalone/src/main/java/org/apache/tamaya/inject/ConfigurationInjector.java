@@ -20,7 +20,8 @@ package org.apache.tamaya.inject;
 
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.functions.Supplier;
+
+import java.util.function.Supplier;
 
 /**
  * Accessor interface for injection of configuration and configuration templates.

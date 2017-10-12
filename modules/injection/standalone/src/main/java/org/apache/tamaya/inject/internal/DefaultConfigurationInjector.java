@@ -20,7 +20,6 @@ package org.apache.tamaya.inject.internal;
 
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.functions.Supplier;
 import org.apache.tamaya.inject.ConfigurationInjector;
 
 import javax.annotation.Priority;
@@ -30,6 +29,7 @@ import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 import org.apache.tamaya.inject.api.NoConfig;
@@ -43,7 +43,7 @@ import org.osgi.service.component.annotations.Component;
  */
 @Priority(0)
 @Component
-public final class DefaultConfigurationInjector implements ConfigurationInjector {
+public class DefaultConfigurationInjector implements ConfigurationInjector {
 
     private final Map<Class<?>, ConfiguredType> configuredTypes = new ConcurrentHashMap<>();
 
