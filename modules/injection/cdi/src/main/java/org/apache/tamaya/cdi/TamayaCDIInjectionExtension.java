@@ -18,8 +18,6 @@ package org.apache.tamaya.cdi;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.ConfigOperator;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.inject.api.Config;
 import org.apache.tamaya.inject.api.ConfigDefaultSections;
 import org.apache.tamaya.inject.api.WithConfigOperator;
@@ -28,9 +26,11 @@ import org.apache.tamaya.spi.PropertyConverter;
 
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.*;
+import javax.inject.Provider;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
@@ -51,7 +51,7 @@ public class TamayaCDIInjectionExtension implements Extension {
     static final Map<Class, PropertyConverter> CUSTOM_CONVERTERS = new ConcurrentHashMap<>();
 
     private final Set<Type> types = new HashSet<>();
-    private Bean<?> convBean;
+    private Bean<?> tamayaProducerBean;
 
     /**
      * Constructor for loading logging its load.
@@ -71,15 +71,14 @@ public class TamayaCDIInjectionExtension implements Extension {
         CDIConfiguredType configuredType = new CDIConfiguredType(pb.getBean().getBeanClass());
 
         boolean configured = false;
-        boolean logged = false;
         for (InjectionPoint injectionPoint : ips) {
             if (injectionPoint.getAnnotated().isAnnotationPresent(Config.class)) {
+                LOG.fine("Configuring: " + injectionPoint);
                 final Config annotation = injectionPoint.getAnnotated().getAnnotation(Config.class);
-                final ConfigDefaultSections typeAnnot = injectionPoint.getAnnotated().getAnnotation(ConfigDefaultSections.class);
+                final ConfigDefaultSections typeAnnot = injectionPoint.getMember().getDeclaringClass().getAnnotation(ConfigDefaultSections.class);
                 final List<String> keys = evaluateKeys(injectionPoint.getMember().getName(),
                         annotation!=null?annotation.value():null,
                         typeAnnot!=null?typeAnnot.value():null);
-
                 final WithConfigOperator withOperatorAnnot = injectionPoint.getAnnotated().getAnnotation(WithConfigOperator.class);
                 if(withOperatorAnnot!=null){
                     tryLoadOpererator(withOperatorAnnot.value());
@@ -88,34 +87,12 @@ public class TamayaCDIInjectionExtension implements Extension {
                 if(withConverterAnnot!=null){
                     tryLoadConverter(withConverterAnnot.value());
                 }
-
-                // We don't want to wait until the injection really fails at runtime.
-                // If there is a non resolvable configuration, we want to know at startup.
-                Configuration config = ConfigurationProvider.getConfiguration();
-                String value = null;
-                for(String key:keys) {
-                    value = config.get(key);
-                    if(value!=null){
-                        break;
-                    }
-                }
-                if(value==null && !annotation.defaultValue().isEmpty()){
-                    value = annotation.defaultValue();
-                }
-                if(value==null){
-                    throw new ConfigException(String.format(
-                            "Cannot resolve any of the possible configuration keys: %s. Please provide one of the given keys " +
-                                    "with a value in your configuration sources.",
-                            keys.toString()));
-                }
-                types.add(injectionPoint.getType());
-                if(annotation!=null){
-                    configured = true;
-                    if(!logged) {
-                        LOG.finest("Enabling Tamaya CDI Configuration on bean: " + configuredType.getName());
-                    }
-                    configuredType.addConfiguredMember(injectionPoint, keys);
-                }
+                Type originalType = injectionPoint.getAnnotated().getBaseType();
+                Type convertedType = unwrapType(originalType);
+                types.add(convertedType);
+                configured = true;
+                LOG.finest("Enabling Tamaya CDI Configuration on bean: " + configuredType.getName());
+                configuredType.addConfiguredMember(injectionPoint, keys);
             }
         }
         if(configured) {
@@ -126,15 +103,24 @@ public class TamayaCDIInjectionExtension implements Extension {
 
     public void captureConvertBean(@Observes final ProcessProducerMethod<?, ?> ppm) {
         if (ppm.getAnnotated().isAnnotationPresent(Config.class)) {
-            convBean = ppm.getBean();
+            tamayaProducerBean = ppm.getBean();
         }
-
     }
 
     public void addConverter(@Observes final AfterBeanDiscovery abd, final BeanManager bm) {
-        if(!types.isEmpty()) {
-            abd.addBean(new ConverterBean(convBean, types));
+        if(!types.isEmpty()&& tamayaProducerBean!=null) {
+            abd.addBean(new ConverterBean(tamayaProducerBean, types));
         }
+    }
+
+    private Type unwrapType(Type type) {
+        if(type instanceof ParameterizedType) {
+            Type rawType = ((ParameterizedType) type).getRawType();
+            if(rawType == Provider.class || rawType == Instance.class) {
+                return ((ParameterizedType) type).getActualTypeArguments()[0];
+            }
+        }
+        return type;
     }
 
     private void tryLoadOpererator(Class<? extends ConfigOperator> operatorClass) {
@@ -215,7 +201,7 @@ public class TamayaCDIInjectionExtension implements Extension {
 
         public ConverterBean(final Bean convBean, final Set<Type> types) {
             this.types = types;
-            this.delegate = convBean;
+            this.delegate = Objects.requireNonNull(convBean);
         }
 
         @Override

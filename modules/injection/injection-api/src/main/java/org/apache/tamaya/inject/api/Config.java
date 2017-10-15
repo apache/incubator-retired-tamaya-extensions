@@ -89,6 +89,9 @@ import java.lang.annotation.Target;
 @Target(value = { ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
 public @interface Config {
 
+    /** Value that is set by default as default, so it is possible to use empty Strings as default values. */
+    String UNCONFIGURED_VALUE = "org.apache.tamaya.config.configproperty.unconfigureddvalue";
+
     /**
      * Defines the configuration property keys to be used. Hereby the first non null value evaluated is injected as
      * property value.
@@ -109,7 +112,7 @@ public @interface Config {
      * @return default value used in case resolution fails.
      */
     @Nonbinding
-    String defaultValue() default "";
+    String defaultValue() default UNCONFIGURED_VALUE;
 
     /**
      * Flag that defines if a configuration property is required. If a required

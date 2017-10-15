@@ -134,10 +134,9 @@ final class InjectionHelper {
         }
         String configValue = evaluteConfigValue(keys, retKey, config);
         if (configValue == null) {
-            if(prop==null || prop.defaultValue().isEmpty()){
-                return null;
+            if(prop!=null && !prop.defaultValue().equals(Config.UNCONFIGURED_VALUE)){
+                return prop.defaultValue();
             }
-            return prop.defaultValue();
         }
         return configValue;
     }

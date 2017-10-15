@@ -19,15 +19,20 @@
  */
 package org.apache.tamaya.cdi;
 
-import org.apache.deltaspike.testcontrol.api.TestControl;
-import org.apache.deltaspike.testcontrol.api.junit.CdiTestRunner;
 import org.hamcrest.MatcherAssert;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.model.InitializationError;
+import org.mockito.AdditionalMatchers;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.spi.CDI;
-import javax.inject.Singleton;
+import javax.enterprise.inject.spi.Extension;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
@@ -36,9 +41,19 @@ import static org.junit.Assert.assertTrue;
 /**
  * Tests for CDI integration.
  */
-@RunWith(CdiTestRunner.class)
-@TestControl(startScopes = {ApplicationScoped.class, Singleton.class})
-public class ConfiguredTest{
+@RunWith(Arquillian.class)
+public class ConfiguredTest {
+
+    @Deployment
+    public static Archive deployment() {
+        return ShrinkWrap.create(WebArchive.class)
+                .addClasses(ConfiguredTest.class, ConfiguredClass.class, InjectedClass.class,
+                        AdditionalMatchers.class, NotFoundNoDefault.class,
+                        ConfigurationProducer.class)
+                .addAsServiceProvider(Extension.class, TamayaCDIInjectionExtension.class)
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+                .addAsWebInfResource("META-INF/javaconfiguration.properties", "META-INF/javaconfiguration.properties");
+    }
 
     @Test
     public void test_Configuration_is_injected_correctly(){

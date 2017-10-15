@@ -17,11 +17,11 @@
 package org.apache.tamaya.cdi;
 
 import org.apache.tamaya.inject.api.Config;
-import org.tomitribe.util.Duration;
 
 import javax.enterprise.inject.Alternative;
 import javax.inject.Inject;
 import java.io.File;
+import java.time.Duration;
 
 
 @Alternative

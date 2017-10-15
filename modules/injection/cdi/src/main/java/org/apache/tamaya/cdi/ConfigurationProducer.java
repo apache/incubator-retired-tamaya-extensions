@@ -24,18 +24,11 @@ import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
-import java.io.File;
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Field;
-import java.lang.reflect.Member;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import javax.inject.Provider;
+import java.lang.reflect.*;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -65,7 +58,7 @@ public class ConfigurationProducer {
             return createDynamicValue(injectionPoint);
         }
         final Config annotation = injectionPoint.getAnnotated().getAnnotation(Config.class);
-        final ConfigDefaultSections typeAnnot = injectionPoint.getAnnotated().getAnnotation(ConfigDefaultSections.class);
+        final ConfigDefaultSections typeAnnot = injectionPoint.getMember().getDeclaringClass().getAnnotation(ConfigDefaultSections.class);
         final List<String> keys = TamayaCDIInjectionExtension.evaluateKeys(injectionPoint.getMember().getName(),
                 annotation != null ? annotation.value() : null,
                 typeAnnot != null ? typeAnnot.value() : null);
@@ -83,64 +76,98 @@ public class ConfigurationProducer {
 
         // unless the extension is not installed, this should never happen because the extension
         // enforces the resolvability of the config
-        Configuration config = ConfigurationProvider.getConfiguration();
-        if (operator != null) {
-            config = operator.operate(config);
-        }
-        final Class<?> toType = (Class<?>) injectionPoint.getAnnotated().getBaseType();
+
+        String defaultTextValue = annotation.defaultValue().equals(Config.UNCONFIGURED_VALUE) ? null : annotation.defaultValue();
         String textValue = null;
-        String defaultTextValue = annotation.defaultValue().isEmpty() ? "" : annotation.defaultValue();
+        Configuration config = ConfigurationProvider.getConfiguration();
+        if(operator!=null) {
+            config = config.with(operator);
+        }
         String keyFound = null;
-        for (String key : keys) {
+        for(String key:keys) {
             textValue = config.get(key);
-            if (textValue != null) {
+            if(textValue!=null) {
                 keyFound = key;
                 break;
             }
         }
-        ConversionContext.Builder builder = new ConversionContext.Builder(config,
-                ConfigurationProvider.getConfiguration().getContext(), keyFound, TypeLiteral.of(toType));
-        if (injectionPoint.getMember() instanceof AnnotatedElement) {
-            builder.setAnnotatedElement((AnnotatedElement) injectionPoint.getMember());
+        if(textValue==null) {
+            textValue = defaultTextValue;
         }
-        ConversionContext conversionContext = builder.build();
-        Object value = null;
-        if (keyFound != null) {
-            if (customConverter != null) {
-                value = customConverter.convert(textValue, conversionContext);
+        ConversionContext conversionContext = createConversionContext(keyFound, keys, injectionPoint);
+        Object value = convertValue(textValue, conversionContext, injectionPoint, customConverter);
+        if (value == null) {
+            throw new ConfigException(String.format(
+                    "Can't resolve any of the possible config keys: %s to the required target type: %s, supported formats: %s",
+                    keys, conversionContext.getTargetType(), conversionContext.getSupportedFormats().toString()));
+        }
+        LOGGER.finest(String.format("Injecting %s for key %s in class %s", keyFound, value.toString(), injectionPoint.toString()));
+        return value;
+    }
+
+    static ConversionContext createConversionContext(String key, List<String> keys, InjectionPoint injectionPoint) {
+        final Type targetType = injectionPoint.getAnnotated().getBaseType();
+        Configuration config = ConfigurationProvider.getConfiguration();
+        ConversionContext.Builder builder = new ConversionContext.Builder(config,
+                ConfigurationProvider.getConfiguration().getContext(), key, TypeLiteral.of(targetType));
+        // builder.setKeys(keys);
+        if(targetType instanceof ParameterizedType){
+            ParameterizedType pt = (ParameterizedType)targetType;
+            if(pt.getRawType().equals(Provider.class)) {
+                builder.setTargetType(
+                        TypeLiteral.of(pt.getActualTypeArguments()[0]));
             }
-            if (value == null) {
-                value = config.get(keyFound, toType);
+        }
+        if (injectionPoint.getMember() instanceof Field) {
+            Field annotated = (Field)injectionPoint.getMember();
+            if(annotated.isAnnotationPresent(Config.class)) {
+                builder.setAnnotatedElement(annotated);
             }
-        } else if (defaultTextValue != null) {
-            value = defaultTextValue;
-            if (customConverter != null) {
-                value = customConverter.convert((String)value, conversionContext);
-            }
-            if (value != null) {
-                List<PropertyConverter<Object>> converters = ConfigurationProvider.getConfiguration().getContext()
-                        .getPropertyConverters(TypeLiteral.of(toType));
-                for (PropertyConverter<Object> converter : converters) {
-                    try {
-                        value = converter.convert(defaultTextValue, conversionContext);
-                        if (value != null) {
-                            LOGGER.log(Level.FINEST, "Parsed default value from '" + defaultTextValue + "' into " +
-                                    injectionPoint);
-                            break;
-                        }
-                    } catch (Exception e) {
-                        LOGGER.log(Level.FINEST, "Failed to convert default value '" + defaultTextValue + "' for " +
-                                injectionPoint, e);
+        }else if(injectionPoint.getMember() instanceof Method){
+            Method method = (Method)injectionPoint.getMember();
+            for(Type type:method.getParameterTypes()){
+                if(type instanceof AnnotatedElement){
+                    AnnotatedElement annotated = (AnnotatedElement)type;
+                    if(annotated.isAnnotationPresent(Config.class)) {
+                        builder.setAnnotatedElement(annotated);
                     }
                 }
             }
         }
-        if (value == null) {
-            throw new ConfigException(String.format(
-                    "Can't resolve any of the possible config keys: %s to the required target type: %s, supported formats: %s",
-                    keys.toString(), toType.getName(), conversionContext.getSupportedFormats().toString()));
+        return builder.build();
+    }
+
+    static Object convertValue(String textValue, ConversionContext conversionContext, InjectionPoint injectionPoint,
+                               PropertyConverter customConverter) {
+        if (customConverter != null) {
+            return customConverter.convert(textValue, conversionContext);
         }
-        LOGGER.finest(String.format("Injecting %s for key %s in class %s", keyFound, value.toString(), injectionPoint.toString()));
+        if(String.class.equals(conversionContext.getTargetType().getRawType())){
+            return textValue;
+        }
+        Object value = null;
+        Type toType = injectionPoint.getAnnotated().getBaseType();
+        if(toType instanceof ParameterizedType){
+            ParameterizedType pt = (ParameterizedType)toType;
+            if(Provider.class.equals(pt.getRawType()) || Instance.class.equals(pt.getRawType())){
+                toType = pt.getActualTypeArguments()[0];
+            }
+        }
+        List<PropertyConverter<Object>> converters = ConfigurationProvider.getConfiguration().getContext()
+                .getPropertyConverters(TypeLiteral.of(toType));
+        for (PropertyConverter<Object> converter : converters) {
+            try {
+                value = converter.convert(textValue, conversionContext);
+                if (value != null) {
+                    LOGGER.log(Level.FINEST, "Parsed value from '" + textValue + "' into " +
+                            injectionPoint);
+                    break;
+                }
+            } catch (Exception e) {
+                LOGGER.log(Level.FINEST, "Failed to convert value '" + textValue + "' for " +
+                        injectionPoint, e);
+            }
+        }
         return value;
     }
 

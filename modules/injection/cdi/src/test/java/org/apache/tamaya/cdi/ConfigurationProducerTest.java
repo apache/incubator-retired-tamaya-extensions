@@ -16,34 +16,39 @@
  */
 package org.apache.tamaya.cdi;
 
-import org.apache.openejb.jee.EjbJar;
-import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.Module;
-import org.apache.tamaya.cdi.ConfigurationProducer;
-import org.apache.tamaya.cdi.TamayaCDIAccessor;
-import org.apache.tamaya.cdi.TamayaCDIInjectionExtension;
 import org.apache.tamaya.inject.api.Config;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.model.InitializationError;
 
+import javax.enterprise.inject.spi.Extension;
 import javax.inject.Inject;
+import javax.inject.Provider;
 import java.io.File;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-@RunWith(ApplicationComposer.class)
+@RunWith(Arquillian.class)
 public class ConfigurationProducerTest {
 
-    @Module
-    @Classes(cdi = true, value = {
-        AllTypes.class,
-        TamayaCDIInjectionExtension.class, TamayaCDIAccessor.class,
-        ConfigurationProducer.class
-    })
-    public EjbJar jar() {
-        return new EjbJar("config");
+    @Deployment
+    public static Archive deployment() {
+        return ShrinkWrap.create(WebArchive.class)
+                .addClasses(ConfiguredClass.class, InjectedClass.class,
+                        TamayaCDIInjectionExtension.class, TamayaCDIAccessor.class,
+                        ConfigurationProducer.class)
+                .addAsServiceProvider(Extension.class, TamayaCDIInjectionExtension.class)
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+                .addAsWebInfResource("META-INF/javaconfiguration.properties", "META-INF/javaconfiguration.properties");
     }
 
     @Inject
@@ -69,11 +74,58 @@ public class ConfigurationProducerTest {
         assertEquals(123, (int) allTypes.getInteger());
     }
 
+    @Test
+    public void optionalStringFieldIsSet() {
+        assertNotNull(allTypes);
+        assertNotNull(allTypes.optionalString);
+        assertTrue(allTypes.optionalString.isPresent());
+        assertEquals("hello", allTypes.optionalString.get());
+    }
+
+    @Test
+    public void optionalIntegerFieldIsSet() {
+        assertNotNull(allTypes);
+        assertNotNull(allTypes.optionalInteger);
+        assertTrue(allTypes.optionalInteger.isPresent());
+        assertEquals(123, allTypes.optionalInteger.get().longValue());
+    }
+
+    @Test
+    public void providerStringFieldIsSet() {
+        assertNotNull(allTypes);
+        assertNotNull(allTypes.providerString);
+        assertEquals("hello", allTypes.providerString.get());
+        assertEquals("hello", allTypes.providerString.get());
+    }
+
+    @Test
+    public void providerIntegerFieldIsSet() {
+        assertNotNull(allTypes);
+        assertNotNull(allTypes.providerInteger);
+        assertEquals(123, allTypes.providerInteger.get().longValue());
+        assertEquals(123, allTypes.providerInteger.get().longValue());
+    }
+
     static class AllTypes {
+
+        private String stringAsMethodParam;
+        private Integer integerAsMethodParam;
+        private Optional<String> optionalStringAsMethodParam;
+        private Optional<Integer> optionalIntegerAsMethodParam;
+        private Provider<String> providerStringAsMethodParam;
+        private Provider<Integer> providerIntegerAsMethodParam;
 
         @Inject
         @Config(value = "string.value", defaultValue = "defaultString")
         private String string;
+
+        @Inject
+        @Config(value = "string.value", defaultValue = "defaultString")
+        private Optional<String> optionalString;
+
+        @Inject
+        @Config(value = "string.value", defaultValue = "defaultString")
+        private Provider<String> providerString;
 
         @Inject
         @Config(value = "defaultString.value", defaultValue = "defaultString")
@@ -102,6 +154,14 @@ public class ConfigurationProducerTest {
         @Inject
         @Config(value = "defaultInteger.value", defaultValue = "45")
         private Integer defaultInteger;
+
+        @Inject
+        @Config(value = "integer.value", defaultValue = "45")
+        private Optional<Integer> optionalInteger;
+
+        @Inject
+        @Config(value = "integer.value", defaultValue = "45")
+        private Provider<Integer> providerInteger;
 
         public String getString() {
             return string;
@@ -133,6 +193,37 @@ public class ConfigurationProducerTest {
 
         public Integer getDefaultInteger() {
             return defaultInteger;
+        }
+
+
+        @Inject
+        public void setStringAsMethodParam(@Config(value = "string.value", defaultValue = "defaultString") String stringAsMethodParam) {
+            this.stringAsMethodParam = stringAsMethodParam;
+        }
+
+        @Inject
+        public void setIntegerAsMethodParam(@Config(value = "integer.value", defaultValue = "45")Integer integerAsMethodParam) {
+            this.integerAsMethodParam = integerAsMethodParam;
+        }
+
+        @Inject
+        public void setOptionalStringAsMethodParam(@Config(value = "string.value", defaultValue = "defaultString") Optional<String> optionalStringAsMethodParam) {
+            this.optionalStringAsMethodParam = optionalStringAsMethodParam;
+        }
+
+        @Inject
+        public void setOptionalIntegerAsMethodParam(@Config(value = "integer.value", defaultValue = "45") Optional<Integer> optionalIntegerAsMethodParam) {
+            this.optionalIntegerAsMethodParam = optionalIntegerAsMethodParam;
+        }
+
+        @Inject
+        public void setProviderStringAsMethodParam(@Config(value = "string.value", defaultValue = "defaultString") Provider<String> providerStringAsMethodParam) {
+            this.providerStringAsMethodParam = providerStringAsMethodParam;
+        }
+
+        @Inject
+        public void setProviderIntegerAsMethodParam(@Config(value = "integer.value", defaultValue = "45") Provider<Integer> providerIntegerAsMethodParam) {
+            this.providerIntegerAsMethodParam = providerIntegerAsMethodParam;
         }
 
         @Override
