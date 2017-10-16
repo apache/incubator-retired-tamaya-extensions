@@ -28,9 +28,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -49,22 +52,62 @@ public class ConfigCommandsTest extends AbstractOSGITest{
 
     @Test
     public void testPropertySources() throws Exception {
-        commands.tm_propertysources();
+        String out = runTest(() -> {
+            commands.tm_propertysources();
+            return null;
+        });
+        assertTrue(out.startsWith("Property Sources"));
+        assertTrue(out.contains(  "----------------"));
+        assertTrue(out.contains("ID"));
+        assertTrue(out.contains("Ordinal"));
+        assertTrue(out.contains("Class"));
+        assertTrue(out.contains("Size"));
+        assertTrue(out.contains("environment-properties"));
+        assertTrue(out.contains("system-properties"));
+
     }
 
     @Test
     public void testProperty_Default() throws Exception {
-        commands.tm_property("system-properties", "java.version", false);
+        String out = runTest(() -> {
+            commands.tm_property("system-properties", "java.version", false);
+            return null;
+        });
+        assertEquals(System.getProperty("java.version").trim(), out.trim());
     }
 
     @Test
     public void testProperty_Extended() throws Exception {
-        commands.tm_property("system-properties", "java.version", true);
+        String out = runTest(() -> {
+            commands.tm_property("system-properties", "java.version", true);
+            return null;
+        });
+        assertTrue(out.contains(System.getProperty("java.version")));
+        assertTrue(out.contains("Property Source"));
+        assertTrue(out.contains("Value"));
+        assertTrue(out.contains("system-properties"));
     }
 
     @Test
     public void testPropertsource() throws Exception {
-        commands.tm_propertysource("system-properties");
+        String out = runTest(() -> {
+            commands.tm_propertysource("system-properties");
+            return null;
+        });
+        assertTrue(out.startsWith("Property Source"));
+        assertTrue(out.contains("ID"));
+        assertTrue(out.contains("system-properties"));
+        assertTrue(out.contains("Ordinal"));
+        assertTrue(out.contains("1000"));
+        assertTrue(out.contains("Class"));
+        assertTrue(out.contains("SystemPropertySource"));
+        assertTrue(out.contains("Properties"));
+        assertTrue(out.contains("Key"));
+        assertTrue(out.contains("Value"));
+        assertTrue(out.contains("Source"));
+        assertTrue(out.contains("Meta"));
+        assertTrue(out.contains("java.version"));
+        assertTrue(out.contains(System.getProperty("java.version")));
     }
 
     @Test
@@ -72,8 +115,34 @@ public class ConfigCommandsTest extends AbstractOSGITest{
         Dictionary<String,Object> testConfig = new Hashtable<>();
         testConfig.put("test","testVal");
         doReturn(testConfig).when(tamayaConfigPlugin).getOSGIConfiguration(any(),any());
-        commands.tm_config(null,"testConfig");
-        commands.tm_config("java","testConfig");
+        String out = runTest(() -> {
+            commands.tm_config(null, "testConfig");
+            return null;
+        });
+        assertTrue(out.contains("Tamaya Configuration"));
+        assertTrue(out.contains("Section"));
+        assertTrue(out.contains("[testConfig]"));
+        assertTrue(out.contains("Configuration"));
+        out = runTest(() -> {
+            commands.tm_config("java", "testConfig");
+            return null;
+        });
+        assertTrue(out.contains("Tamaya Configuration"));
+        assertTrue(out.contains("Section"));
+        assertTrue(out.contains("[testConfig]"));
+        assertTrue(out.contains("Filter"));
+        assertTrue(out.contains("java"));
+        assertTrue(out.contains("Configuration"));
+        out = runTest(() -> {
+            commands.tm_config("java", "");
+            return null;
+        });
+        assertTrue(out.contains("Tamaya Configuration"));
+        assertTrue(out.contains("Section"));
+        assertTrue(out.contains("java"));
+        assertTrue(out.contains("Configuration"));
+        assertTrue(out.contains(".version"));
+        assertTrue(out.contains(System.getProperty("java.version")));
     }
 
     @Test
@@ -81,9 +150,35 @@ public class ConfigCommandsTest extends AbstractOSGITest{
         Dictionary<String,Object> testConfig = new Hashtable<>();
         testConfig.put("test","testVal");
         doReturn(testConfig).when(tamayaConfigPlugin).updateConfig(any(),any(), anyBoolean(), anyBoolean());
-        commands.tm_apply_config("testApplyConfig", Policy.EXTEND, true);
+        String out = runTest(() -> {
+            commands.tm_apply_config("testApplyConfig", Policy.EXTEND, true);
+            return null;
+        });
+        assertTrue(out.contains("Applied Configuration"));
+        assertTrue(out.contains("PID"));
+        assertTrue(out.contains("testApplyConfig"));
+        assertTrue(out.contains("Policy"));
+        assertTrue(out.contains("EXTEND"));
+        assertTrue(out.contains("Dryrun"));
+        assertTrue(out.contains("true"));
+        assertTrue(out.contains("OSGI Configuration for PID"));
+        assertTrue(out.contains("test"));
+        assertTrue(out.contains("testVal"));
         verify(tamayaConfigPlugin).updateConfig("testApplyConfig", Policy.EXTEND, true, true);
-        commands.tm_apply_config("testApplyConfig", Policy.OVERRIDE, false);
+        out = runTest(() -> {
+            commands.tm_apply_config("testApplyConfig", Policy.OVERRIDE, false);
+            return null;
+        });
+        assertTrue(out.contains("Applied Configuration"));
+        assertTrue(out.contains("PID"));
+        assertTrue(out.contains("testApplyConfig"));
+        assertTrue(out.contains("Policy"));
+        assertTrue(out.contains("OVERRIDE"));
+        assertTrue(out.contains("Dryrun"));
+        assertTrue(out.contains("false"));
+        assertTrue(out.contains("OSGI Configuration for PID"));
+        assertTrue(out.contains("test"));
+        assertTrue(out.contains("testVal"));
         verify(tamayaConfigPlugin).updateConfig("testApplyConfig", Policy.OVERRIDE, true, false);
     }
 

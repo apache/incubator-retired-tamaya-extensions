@@ -18,12 +18,14 @@
  */
 package org.apache.tamaya.gogo.shell;
 
+import org.apache.tamaya.osgi.ConfigHistory;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -53,9 +55,12 @@ public class HistoryCommandsTest extends AbstractOSGITest{
     }
 
     @Test
-    public void testHisatory_Get() throws Exception {
-        commands.tm_history_get("testHisatory_Get", "");
-        verify(tamayaConfigPlugin).getHistory("testHisatory_Get");
+    public void testHistory_Get() throws Exception {
+        commands.tm_history_get("testHistory_Get", "");
+        verify(tamayaConfigPlugin).getHistory("testHistory_Get");
+        reset(tamayaConfigPlugin);
+        commands.tm_history_get("testHistory_Get", "BEGIN,END");
+        verify(tamayaConfigPlugin).getHistory("testHistory_Get");
     }
 
     @Test

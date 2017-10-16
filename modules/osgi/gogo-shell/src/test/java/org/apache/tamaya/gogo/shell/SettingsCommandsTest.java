@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.gogo.shell;
 
+import org.apache.tamaya.osgi.Policy;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -75,4 +76,17 @@ public class SettingsCommandsTest extends AbstractOSGITest{
         verify(tamayaConfigPlugin).setAutoUpdateEnabled(false);
     }
 
+    @Test
+    public void testPolicy() throws Exception {
+        commands.tm_policy();
+        verify(tamayaConfigPlugin).getDefaultPolicy();
+    }
+
+    @Test
+    public void testPolicySet() throws Exception {
+        commands.tm_policy_set(Policy.EXTEND);
+        verify(tamayaConfigPlugin).setDefaultPolicy(Policy.EXTEND);
+        commands.tm_policy_set(Policy.OVERRIDE);
+        verify(tamayaConfigPlugin).setDefaultPolicy(Policy.OVERRIDE);
+    }
 }

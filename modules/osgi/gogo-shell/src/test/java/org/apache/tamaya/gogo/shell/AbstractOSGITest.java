@@ -28,9 +28,14 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.mockito.Matchers.any;
@@ -59,6 +64,20 @@ public abstract class AbstractOSGITest {
 
     protected Dictionary<String,Object> getProperties(String pid){
         return this.properties.get(pid);
+    }
+
+    String runTest(Callable<?> r) throws Exception {
+        PrintStream backup = System.out;
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        PrintStream pw = new PrintStream(bos);
+        System.setOut(pw);
+        try{
+            r.call();
+            return new String(bos.toByteArray());
+        }finally{
+            System.setOut(backup);
+            pw.flush();
+        }
     }
 
     @Before
