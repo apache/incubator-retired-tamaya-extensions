@@ -36,7 +36,7 @@ public class ActivatorTest extends AbstractOSGITest{
     public void startStop() throws Exception {
         Activator activator = new Activator();
         activator.start(this.bundleContext);
-        verify(bundleContext).registerService(eq(TamayaOSGIInjector.class), anyObject(), anyObject());
+        verify(bundleContext).registerService(eq(ConfigInjectionService.class), anyObject(), anyObject());
         activator.stop(this.bundleContext);
     }
 

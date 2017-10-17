@@ -79,8 +79,8 @@ public class ConfigCommandsTest extends AbstractOSGITest{
         assertTrue(result.contains("OSGI Configuration for PID"));
         assertTrue(result.contains("applyTamayaConfiguration"));
         assertTrue(result.contains("OVERRIDE"));
-        assertTrue(result.contains("Applied"));
-        assertTrue(result.contains("false"));
+        assertTrue(result.contains("Dryrun"));
+        assertTrue(result.contains("true"));
     }
 
     @Test
