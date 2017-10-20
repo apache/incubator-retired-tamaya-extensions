@@ -92,6 +92,7 @@ public class ConfigurationProducer {
             }
         }
         if(textValue==null) {
+            LOGGER.info("Using default value: '" + defaultTextValue + "' for IP: " + injectionPoint );
             textValue = defaultTextValue;
         }
         ConversionContext conversionContext = createConversionContext(keyFound, keys, injectionPoint);
