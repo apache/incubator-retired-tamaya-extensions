@@ -160,12 +160,12 @@ public class ConfigurationProducer {
             try {
                 value = converter.convert(textValue, conversionContext);
                 if (value != null) {
-                    LOGGER.log(Level.FINEST, "Parsed value from '" + textValue + "' into " +
+                    LOGGER.log(Level.INFO, "Parsed value from '" + textValue + "' into " +
                             injectionPoint);
                     break;
                 }
             } catch (Exception e) {
-                LOGGER.log(Level.FINEST, "Failed to convert value '" + textValue + "' for " +
+                LOGGER.log(Level.INFO, "Failed to convert value '" + textValue + "' for " +
                         injectionPoint, e);
             }
         }
