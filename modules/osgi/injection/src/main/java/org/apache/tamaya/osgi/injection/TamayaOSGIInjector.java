@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.osgi.injection;
 
+import org.apache.tamaya.Configuration;
 import org.apache.tamaya.osgi.TamayaConfigPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -26,6 +27,7 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -54,6 +56,8 @@ public class TamayaOSGIInjector{
      */
     public TamayaOSGIInjector(BundleContext context) {
         this.context = Objects.requireNonNull(context);
+        ServiceReference<ConfigurationAdmin> cmRef = context.getServiceReference(ConfigurationAdmin.class);
+        this.cm = Objects.requireNonNull(context.getService(cmRef));
     }
 
     /**
@@ -127,10 +131,15 @@ public class TamayaOSGIInjector{
     static boolean isInjectionEnabled(ServiceReference reference){
         String enabledVal = (String)reference.getProperty(ConfigInjectionService.TAMAYA_INJECTION_ENABLED_PROP);
         if(enabledVal!=null){
-            return Boolean.parseBoolean(enabledVal);
-        }
-        if(enabledVal!=null){
-            return Boolean.parseBoolean(enabledVal);
+            enabledVal = enabledVal.toLowerCase(Locale.ENGLISH);
+            switch(enabledVal){
+                case "true":
+                case "yes":
+                case "on":
+                    return true;
+                default:
+                    return false;
+            }
         }
         return isInjectionEnabled(reference.getBundle());
     }
@@ -143,7 +152,15 @@ public class TamayaOSGIInjector{
     static boolean isInjectionEnabled(Bundle bundle){
         String enabledVal = (String)bundle.getHeaders().get(ConfigInjectionService.TAMAYA_INJECTION_ENABLED_MANIFEST);
         if(enabledVal!=null){
-            return Boolean.parseBoolean(enabledVal);
+            enabledVal = enabledVal.toLowerCase(Locale.ENGLISH);
+            switch(enabledVal){
+                case "true":
+                case "yes":
+                case "on":
+                    return true;
+                default:
+                    return false;
+            }
         }
         return false;
     }

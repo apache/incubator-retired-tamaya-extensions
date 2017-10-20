@@ -57,6 +57,8 @@ final class OSGIConfigurationInjector{
      */
     public OSGIConfigurationInjector(ConfigurationAdmin cm, String pid, String location){
         this.cm = Objects.requireNonNull(cm);
+        this.pid = Objects.requireNonNull(pid);
+        this.location = location;
         tamayaOSGIConfiguration = ConfigurationProvider.createConfiguration(
                 ConfigurationProvider.getConfigurationContextBuilder()
                 .addDefaultPropertyConverters()

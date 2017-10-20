@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.osgi.injection;
 
-import org.apache.tamaya.inject.api.Config;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -33,6 +32,17 @@ import static org.junit.Assert.*;
 @RunWith(MockitoJUnitRunner.class)
 public class OSGIConfigurationInjectorTest extends AbstractOSGITest{
 
+    @Test
+    public void getPid() throws Exception {
+        OSGIConfigurationInjector injector = new OSGIConfigurationInjector(cm, "getPid");
+        assertEquals("getPid", injector.getPid());
+    }
+
+    @Test
+    public void getLocation() throws Exception {
+        OSGIConfigurationInjector injector = new OSGIConfigurationInjector(cm, "getLocation", "/test");
+        assertEquals("/test", injector.getLocation());
+    }
 
     @Test
     public void configure() throws Exception {
@@ -41,7 +51,7 @@ public class OSGIConfigurationInjectorTest extends AbstractOSGITest{
         Example result = injector.configure(example);
         assertNotNull(result);
         assertTrue(result==example);
-        checkExampleConfig(example);
+        Example.checkExampleConfig(example);
     }
 
     @Test
@@ -50,48 +60,15 @@ public class OSGIConfigurationInjectorTest extends AbstractOSGITest{
         Supplier<Example> supplier = injector.getConfiguredSupplier(Example::new);
         assertNotNull(supplier);
         Example example = supplier.get();
-        checkExampleConfig(example);
+        Example.checkExampleConfig(example);
     }
 
     @Test
     public void createTemplate() throws Exception {
         OSGIConfigurationInjector injector = new OSGIConfigurationInjector(cm, "OSGIConfigurationInjectorTest");
         TemplateExample template = injector.createTemplate(TemplateExample.class);
-        checkExampleConfig(template);
+        Example.checkExampleConfig(template);
     }
 
-    private void checkExampleConfig(Example example) {
-        assertNotNull(example);
-        assertEquals(example.javaHome, System.getProperty("java.home"));
-        assertEquals(example.javaVersion, System.getProperty("java.version"));
-        assertEquals(example.javaUsed, true);
-    }
 
-    private void checkExampleConfig(TemplateExample template) {
-        assertNotNull(template);
-        assertEquals(template.getJavaHome(), System.getProperty("java.home"));
-        assertEquals(template.javaVersion(), System.getProperty("java.version"));
-        assertEquals(template.isJavaUsed(), true);
-    }
-
-    private static final class Example {
-        @Config("java.home")
-        String javaHome;
-        @Config("java.version")
-        String javaVersion;
-        @Config(value = "java.used", defaultValue = "true")
-        boolean javaUsed;
-    }
-
-    private interface TemplateExample {
-
-        @Config("java.home")
-        String getJavaHome();
-
-        @Config("java.version")
-        String javaVersion();
-
-        @Config(value = "java.used", defaultValue = "true")
-        boolean isJavaUsed();
-    }
 }

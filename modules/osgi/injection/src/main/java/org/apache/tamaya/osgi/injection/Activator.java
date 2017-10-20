@@ -53,12 +53,12 @@ public class Activator implements BundleActivator {
     public void stop(BundleContext context) throws Exception {
         LOG.finest("Unregistering Tamaya Config injector...");
         if (serviceReg != null) {
-            injector.stop();
             serviceReg.unregister();
         }
+        injector.stop();
     }
 
-    private final class TamayaConfigInjectionService implements ConfigInjectionService{
+    static final class TamayaConfigInjectionService implements ConfigInjectionService{
 
         private TamayaOSGIInjector injector;
 

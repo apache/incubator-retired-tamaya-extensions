@@ -42,6 +42,31 @@ public class OSGIConfigAdminPropertySourceTest extends AbstractOSGITest{
     }
 
     @Test
+    public void getPID() throws Exception {
+        assertEquals("tamaya", propertySource.getPid());
+    }
+
+    @Test
+    public void getLocation() throws Exception {
+        assertNull(propertySource.getLocation());
+    }
+
+    @Test
+    public void getDefaultOrdinal() throws Exception {
+        assertEquals(0, propertySource.getDefaultOrdinal());
+    }
+
+    @Test
+    public void getOrdinal() throws Exception {
+        assertEquals(0, propertySource.getOrdinal());
+    }
+
+    @Test
+    public void isScannable() throws Exception {
+        assertEquals(true, propertySource.isScannable());
+    }
+
+    @Test
     public void get() throws Exception {
         PropertyValue val = propertySource.get("java.home");
         assertNotNull(val);
