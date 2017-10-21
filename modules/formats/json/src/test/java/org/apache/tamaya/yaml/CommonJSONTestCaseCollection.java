@@ -18,23 +18,21 @@
  */
 package org.apache.tamaya.yaml;
 
-import org.apache.tamaya.ConfigException;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.net.URL;
+
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spisupport.PropertySourceComparator;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-
-import java.io.IOException;
-import java.net.URL;
-
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Class with a collection of common test cases each JSON processing
@@ -46,7 +44,7 @@ public abstract class CommonJSONTestCaseCollection {
 
     @Test
     public void canReadNonLatinCharacters() throws Exception {
-        URL configURL = JSONPropertySourceTest.class
+        URL configURL = CommonJSONTestCaseCollection.class
              .getResource("/configs/valid/cyrillic.json");
 
         assertThat(configURL, Matchers.notNullValue());
@@ -60,8 +58,22 @@ public abstract class CommonJSONTestCaseCollection {
     }
 
     @Test
+    public void canReadUnicodeCharacters() throws Exception {
+        URL configURL = CommonJSONTestCaseCollection.class
+                .getResource("/configs/valid/kanji.json");
+
+        assertThat(configURL, Matchers.notNullValue());
+
+        PropertySource propertySource = getPropertiesFrom(configURL);
+
+        assertThat(propertySource.get("onamae"), Matchers.notNullValue());
+        // 霊屋 = Tamaya
+        assertThat(propertySource.get("onamae").getValue(), equalTo("\u970a\u5c4b"));
+    }
+
+    @Test
     public void canReadNestedStringOnlyJSONConfigFile2() throws Exception {
-        URL configURL = JSONPropertySourceTest.class
+        URL configURL = CommonJSONTestCaseCollection.class
                 .getResource("/configs/valid/simple-nested-string-only-config-1.json");
 
         assertThat(configURL, CoreMatchers.notNullValue());
@@ -85,7 +97,7 @@ public abstract class CommonJSONTestCaseCollection {
     @Test
     public void canReadNestedStringOnlyJSONConfigFileWithObjectInTheMiddle()
             throws Exception {
-        URL configURL = JSONPropertySourceTest.class
+        URL configURL = CommonJSONTestCaseCollection.class
                 .getResource("/configs/valid/simple-nested-string-only-config-2.json");
 
         assertThat(configURL, CoreMatchers.notNullValue());
@@ -111,7 +123,7 @@ public abstract class CommonJSONTestCaseCollection {
 
     @Test(expected = IOException.class)
     public void canHandleIllegalJSONFileWhichContainsAnArray() throws Exception {
-        URL configURL = JSONPropertySourceTest.class.getResource("/configs/invalid/with-array.json");
+        URL configURL = CommonJSONTestCaseCollection.class.getResource("/configs/invalid/with-array.json");
 
         assertThat(configURL, CoreMatchers.notNullValue());
 
@@ -120,7 +132,7 @@ public abstract class CommonJSONTestCaseCollection {
 
     @Test(expected = IOException.class)
     public void canHandleIllegalJSONFileConsistingOfOneOpeningBracket() throws Exception {
-        URL configURL = JSONPropertySourceTest.class.getResource("/configs/invalid/only-opening-bracket.json");
+        URL configURL = CommonJSONTestCaseCollection.class.getResource("/configs/invalid/only-opening-bracket.json");
 
         assertThat(configURL, CoreMatchers.notNullValue());
 
@@ -129,7 +141,7 @@ public abstract class CommonJSONTestCaseCollection {
 
     @Test(expected = IOException.class)
     public void canHandleIllegalJSONFileWhichIsEmpty() throws Exception {
-        URL configURL = JSONPropertySourceTest.class.getResource("/configs/invalid/empty-file.json");
+        URL configURL = CommonJSONTestCaseCollection.class.getResource("/configs/invalid/empty-file.json");
 
         assertThat(configURL, CoreMatchers.notNullValue());
 
@@ -138,7 +150,7 @@ public abstract class CommonJSONTestCaseCollection {
 
     @Test
     public void priorityInConfigFileOverwriteExplicitlyGivenPriority() throws Exception {
-        URL configURL = JSONPropertySourceTest.class.getResource("/configs/valid/with-explicit-priority.json");
+        URL configURL = CommonJSONTestCaseCollection.class.getResource("/configs/valid/with-explicit-priority.json");
 
         assertThat(configURL, CoreMatchers.notNullValue());
 
@@ -149,7 +161,7 @@ public abstract class CommonJSONTestCaseCollection {
 
     @Test
     public void canReadFlatStringOnlyJSONConfigFile() throws Exception {
-        URL configURL = JSONPropertySourceTest.class.getResource("/configs/valid/simple-flat-string-only-config.json");
+        URL configURL = CommonJSONTestCaseCollection.class.getResource("/configs/valid/simple-flat-string-only-config.json");
 
         assertThat(configURL, CoreMatchers.notNullValue());
 
@@ -171,7 +183,7 @@ public abstract class CommonJSONTestCaseCollection {
 
     @Test(expected = IOException.class)
     public void emptyJSONFileResultsInConfigException() throws Exception {
-        URL configURL = JSONPropertySourceTest.class.getResource("/configs/invalid/empty-file.json");
+        URL configURL = CommonJSONTestCaseCollection.class.getResource("/configs/invalid/empty-file.json");
 
         assertThat(configURL, CoreMatchers.notNullValue());
 
@@ -182,7 +194,7 @@ public abstract class CommonJSONTestCaseCollection {
 
     @Test
     public void canHandleEmptyJSONObject() throws Exception {
-        URL configURL = JSONPropertySourceTest.class.getResource("/configs/valid/empty-object-config.json");
+        URL configURL = CommonJSONTestCaseCollection.class.getResource("/configs/valid/empty-object-config.json");
 
         assertThat(configURL, CoreMatchers.notNullValue());
 

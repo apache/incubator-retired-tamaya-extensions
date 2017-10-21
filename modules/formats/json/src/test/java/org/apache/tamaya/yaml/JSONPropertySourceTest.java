@@ -18,17 +18,16 @@
  */
 package org.apache.tamaya.yaml;
 
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.json.JSONPropertySource;
-import org.apache.tamaya.spi.PropertySource;
-import org.hamcrest.CoreMatchers;
-import org.junit.Test;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.net.URL;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import org.apache.tamaya.json.JSONPropertySource;
+import org.apache.tamaya.spi.PropertySource;
+import org.hamcrest.CoreMatchers;
+import org.junit.Test;
 
 public class JSONPropertySourceTest extends CommonJSONTestCaseCollection {
 
