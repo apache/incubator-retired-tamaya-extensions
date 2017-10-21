@@ -18,24 +18,23 @@
  */
 package org.apache.tamaya.jndi;
 
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValue;
-import org.apache.tamaya.spisupport.BasePropertySource;
-import org.osgi.service.component.annotations.Component;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.spisupport.BasePropertySource;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * Propertysource that accesses JNDI as source for configuration entries.
@@ -52,7 +51,7 @@ public class JNDIPropertySource extends BasePropertySource {
 
     /** The root context, not null. */
     private Context context;
-    /** The scannable property, default is {@code false}. */
+    /** The scanable property, default is {@code false}. */
     private boolean scannable = false;
 
     /**
@@ -85,7 +84,7 @@ public class JNDIPropertySource extends BasePropertySource {
     }
 
     /**
-     * If the property source is not scannable, an empty map is returned, otherwise
+     * If the property source is not scanable, an empty map is returned, otherwise
      * the current JNDI context is mapped to configuration map:
      * <ul>
      *   <li>For each leave entry one entry is created.</li>
@@ -115,7 +114,7 @@ public class JNDIPropertySource extends BasePropertySource {
      * If set to true, the property source will return a String representation of the JNDI
      * tree when calling {@code getProperties()}.
      * @see #getProperties()
-     * @param val true, to activate scannable (default is false).
+     * @param val true, to activate scanable (default is false).
      */
     public void setScannable(boolean val){
         this.scannable = val;

@@ -18,16 +18,18 @@
  */
 package org.apache.tamaya.json;
 
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.spi.PropertyValue;
-
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Iterator;
+import java.util.Map;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonString;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
+
+import org.apache.tamaya.ConfigException;
 
 /**
  * Visitor implementation to read a JSON formatted input source.
