@@ -37,7 +37,7 @@ import javax.json.JsonReaderFactory;
 
 /**
  * Implementation of the {@link org.apache.tamaya.format.ConfigurationFormat}
- * able to read configuration properties represented in JSON
+ * able to read configuration properties with comments represented in JSON
  *
  * @see <a href="http://www.json.org">JSON format specification</a>
  */
