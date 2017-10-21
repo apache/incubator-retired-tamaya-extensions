@@ -39,7 +39,6 @@ under the License.
         <module>events</module>
         <module>filter</module>
         <module>formats</module>
-        <module>injection</module>
         <module>mutable-config</module>
         <module>resolver</module>
         <module>resources</module>
@@ -47,6 +46,7 @@ under the License.
         <module>jndi</module>
         <module>osgi</module>
         <module>microprofile</module>
+        <module>injection</module>
     </modules>
 
 </project>
