@@ -42,13 +42,13 @@ import javax.json.JsonReaderFactory;
  * @see <a href="http://www.json.org">JSON format specification</a>
  */
 public class JSONFormat implements ConfigurationFormat {
-    /** Property that make Johnzon accept commentc. */
+    /** Property that makes Johnzon accept comments. */
     public static final String JOHNZON_SUPPORTS_COMMENTS_PROP = "org.apache.johnzon.supports-comments";
     /** The reader factory used. */
     private final JsonReaderFactory readerFactory;
 
     /**
-     * Constructor, itniaitlizing zhe JSON reader factory.
+     * Constructor, initializing the JSON reader factory.
      */
     public JSONFormat(){
         Map<String, Object> config = new HashMap<>();
