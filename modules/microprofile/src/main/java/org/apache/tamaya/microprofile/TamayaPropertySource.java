@@ -30,7 +30,7 @@ import java.util.Optional;
 /**
  * Property source implementation that wraps a Microprofile {@link ConfigSource} instance.
  */
-public class TamayaPropertySource implements PropertySource{
+public class TamayaPropertySource implements PropertySource {
 
     private ConfigSource delegate;
 
