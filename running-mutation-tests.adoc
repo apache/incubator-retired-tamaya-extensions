@@ -1,18 +1,20 @@
 = How to run mutation tests
 
-The Tamaya Extensions projects supports
+The Tamaya Extensions project supports
 https://en.wikipedia.org/wiki/Mutation_testing[mutation testing^] by
 the integration of http://pitest.org/quickstart/maven/[PIT^]
-to validate the quality and effectivness of our tests.
+to validate the quality and effectiveness of our tests.
 
 == Running PIT
 
-PIT is not part of the normal build process of Tamaya Extensions. Therefor it must
-be executed manually by executing the following command.
+PIT is not part of the normal build process of Tamaya Extensions. Therefore it must
+be executed manually by executing the following command:
 
-[source]
+[source:bash]
 ----
-> mvn install org.pitest:pitest-maven:mutationCoverage
+$ mvn -Pcoverage
+or
+$ mvn install org.pitest:pitest-maven:mutationCoverage
 ----
 
 
