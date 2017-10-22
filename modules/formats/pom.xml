@@ -35,5 +35,4 @@
         <module>json</module>
         <module>yaml</module>
     </modules>
-
 </project>

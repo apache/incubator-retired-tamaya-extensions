@@ -332,7 +332,6 @@ under the License.
                 <artifactId>johnzon-core</artifactId>
                 <version>${johnzon.version}</version>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
 
