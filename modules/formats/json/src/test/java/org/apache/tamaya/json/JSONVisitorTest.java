@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.json;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +27,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 
+import org.apache.tamaya.ConfigException;
 import org.junit.Test;
 
 public class JSONVisitorTest {
@@ -60,4 +62,15 @@ public class JSONVisitorTest {
 		assertThat(targetStore).isEmpty();
 	}
 
+	@Test(expected = ConfigException.class)
+	public void arraysAreNotSupported() {
+		JsonObject startNode = Json.createObjectBuilder().//
+				add("arrayKey", Json.createArrayBuilder().build()).//
+				build();
+		Map<String, String> targetStore = new HashMap<>();
+		JSONVisitor visitor = new JSONVisitor(startNode, targetStore);
+		assertThat(visitor).isNotNull();
+		visitor.run();
+	}
+	
 }
