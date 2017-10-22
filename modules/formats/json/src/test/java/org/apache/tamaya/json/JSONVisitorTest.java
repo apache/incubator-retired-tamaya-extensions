@@ -33,13 +33,14 @@ import org.junit.Test;
 public class JSONVisitorTest {
 
 	@Test
-	public void ensureJSONisParsedProperlyWithDifferentValueTypes() {
+	public void ensureJSONisParsedProperlyWithDifferentValueTypesFilteringOutEmptyValues() {
 		JsonObject startNode = Json.createObjectBuilder().//
 				add("key.sub", "value").//
 				add("anotherKey", true).//
 				add("notAnotherKey", false).//
 				add("number", 4711).//
 				add("null", JsonValue.NULL).//
+				add("empty", JsonValue.EMPTY_JSON_OBJECT).//
 				build();
 		Map<String, String> targetStore = new HashMap<>();
 		JSONVisitor visitor = new JSONVisitor(startNode, targetStore);
@@ -48,6 +49,11 @@ public class JSONVisitorTest {
 		visitor.run();
 
 		assertThat(targetStore).hasSize(5);
+		assertThat(targetStore).containsKeys("key.sub", "anotherKey", "notAnotherKey", "number", "null");
+		assertThat(targetStore).containsEntry("key.sub", "value");
+		assertThat(targetStore).containsEntry("null", null);		
+		assertThat(targetStore).containsEntry("anotherKey", "true");
+		assertThat(targetStore).doesNotContainKey("empty");
 	}
 
 	@Test
@@ -72,5 +78,5 @@ public class JSONVisitorTest {
 		assertThat(visitor).isNotNull();
 		visitor.run();
 	}
-	
+
 }
