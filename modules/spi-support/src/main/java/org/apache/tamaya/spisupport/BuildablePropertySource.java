@@ -63,6 +63,11 @@ public class BuildablePropertySource implements PropertySource{
     }
 
     @Override
+    public boolean isScannable() {
+        return true;
+    }
+
+    @Override
     public int hashCode() {
         return name.hashCode();
     }
