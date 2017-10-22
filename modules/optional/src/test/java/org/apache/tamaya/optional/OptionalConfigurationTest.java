@@ -23,12 +23,13 @@ import static org.junit.Assert.*;
 /**
  * Created by Anatole on 07.09.2015.
  */
+@SuppressWarnings("unchecked")
 public class OptionalConfigurationTest {
 
     @org.junit.Test
     public void testOf_OTHER_OVERRIDES_TAMAYA() throws Exception {
         OptionalConfiguration cfg = OptionalConfiguration.of(EvaluationPolicy.OTHER_OVERRIDES_TAMAYA, new ValueProvider() {
-            @Override
+			@Override
             public <T> T get(String key, Class<T> type) {
                 return (T)"result";
             }
