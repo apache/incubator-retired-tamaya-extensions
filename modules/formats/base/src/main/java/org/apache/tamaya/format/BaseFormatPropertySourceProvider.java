@@ -21,8 +21,6 @@ package org.apache.tamaya.format;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;

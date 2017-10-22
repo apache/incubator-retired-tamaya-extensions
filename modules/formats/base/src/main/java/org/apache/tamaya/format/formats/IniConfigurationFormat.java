@@ -29,18 +29,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.logging.Logger;
 
 /**
  * Implements a ini file format.
  */
 @Component
 public class IniConfigurationFormat implements ConfigurationFormat {
-
-    /**
-     * The logger.
-     */
-    private final static Logger LOG = Logger.getLogger(IniConfigurationFormat.class.getName());
 
     @Override
     public String getName() {

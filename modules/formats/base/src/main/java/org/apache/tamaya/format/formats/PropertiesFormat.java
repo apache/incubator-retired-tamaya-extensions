@@ -28,7 +28,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 /**
  * Implementation of a {@link org.apache.tamaya.format.ConfigurationFormat} for -properties files.
@@ -37,11 +36,6 @@ import java.util.logging.Logger;
  */
 @Component
 public class PropertiesFormat implements ConfigurationFormat {
-    /**
-     * The logger.
-     */
-    private final static Logger LOG = Logger.getLogger(PropertiesFormat.class.getName());
-
 
     @Override
     public String getName() {
