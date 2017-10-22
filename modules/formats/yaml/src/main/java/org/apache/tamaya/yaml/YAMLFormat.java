@@ -61,8 +61,7 @@ public class YAMLFormat implements ConfigurationFormat {
     @Override
     public ConfigurationData readConfiguration(String resource, InputStream inputStream) {
         Map<String, String> values = readConfig(resource, inputStream);
-        return ConfigurationDataBuilder.of(resource, this).addProperties(values)
-            .build();
+        return ConfigurationDataBuilder.of(resource, this).addDefaultProperties(values).build();
     }
 
     /**
@@ -85,7 +84,7 @@ public class YAMLFormat implements ConfigurationFormat {
 
     /**
      * Reads the configuration.
-     * @param urlResource soure of the configuration.
+     * @param urlResource source of the configuration.
      * @return the configuration read from the given resource URL.
      * @throws ConfigException if resource URL cannot be read.
      */
@@ -113,7 +112,8 @@ public class YAMLFormat implements ConfigurationFormat {
      *               returned as result of the format reading operation ans integrated into the overall configuration
      *               map.
      */
-    protected void mapYamlIntoProperties(String prefix, Object config, HashMap<String, String> values) {
+    @SuppressWarnings("unchecked")
+	protected void mapYamlIntoProperties(String prefix, Object config, HashMap<String, String> values) {
         // add further data types supported by yaml, e.g. date, ...
         if(config instanceof List){
             StringBuilder b = new StringBuilder();
