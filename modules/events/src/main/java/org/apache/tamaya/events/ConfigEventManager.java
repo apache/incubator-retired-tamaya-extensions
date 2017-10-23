@@ -28,6 +28,7 @@ import java.util.Collection;
  * Singleton accessor for accessing the event support component that distributes change events of
  * {@link org.apache.tamaya.spi.PropertySource} and {@link org.apache.tamaya.Configuration}.
  */
+@SuppressWarnings("rawtypes")
 public final class ConfigEventManager {
     /**
      * The backing SPI.
@@ -62,7 +63,7 @@ public final class ConfigEventManager {
      * @param l the listener not null.
      * @param eventType the event type to which this listener listens to.
      */
-    public static <T extends ConfigEvent> void addListener(ConfigEventListener l, Class<T> eventType) {
+	public static <T extends ConfigEvent> void addListener(ConfigEventListener l, Class<T> eventType) {
         spi().addListener(l);
     }
 
@@ -82,7 +83,7 @@ public final class ConfigEventManager {
      * @param l the listener, not null.
      * @param eventType the event type to which this listener listens to.
      */
-    public static <T extends ConfigEvent> void removeListener(ConfigEventListener l, Class<T> eventType) {
+	public static <T extends ConfigEvent> void removeListener(ConfigEventListener l, Class<T> eventType) {
         spi().removeListener(l);
     }
 
@@ -92,7 +93,7 @@ public final class ConfigEventManager {
      * @param <T> type param
      * @return a list with the listeners found, never null.
      */
-    public static <T extends ConfigEvent>
+	public static <T extends ConfigEvent>
         Collection<? extends ConfigEventListener> getListeners(Class<T> type) {
         return spi().getListeners(type);
     }

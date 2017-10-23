@@ -20,13 +20,12 @@ package org.apache.tamaya.events;
 
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
-import org.apache.tamaya.spi.PropertyValueBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * PropertySource that provides a randome entry, different on each access!
+ * PropertySource that provides a random entry, different on each access!
  */
 public class RandomPropertySource implements PropertySource{
 

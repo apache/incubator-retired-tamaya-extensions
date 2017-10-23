@@ -23,6 +23,7 @@ import org.mockito.stubbing.Answer;
 
 import java.lang.reflect.Method;
 
+@SuppressWarnings("rawtypes")
 public class MethodNotMockedAnswer implements Answer
 {
     @Override

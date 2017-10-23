@@ -22,7 +22,6 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.ConfigOperator;
 import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConversionContext;
@@ -101,7 +100,8 @@ public class TestConfigView implements ConfigOperator{
                 return val;
             }
 
-            @Override
+            @SuppressWarnings("unchecked")
+			@Override
             public <T> T get(String key, Class<T> type) {
                 return (T) get(key, TypeLiteral.of(type));
             }
@@ -121,7 +121,7 @@ public class TestConfigView implements ConfigOperator{
             public <T> T get(String key, TypeLiteral<T> type) {
                 String value = get(key);
                 if (value != null) {
-                    List<PropertyConverter<T>> converters = ConfigurationProvider.getConfigurationContext()
+                    List<PropertyConverter<T>> converters = getContext()
                             .getPropertyConverters(type);
                     ConversionContext context = new ConversionContext.Builder(
                             key,type).build();

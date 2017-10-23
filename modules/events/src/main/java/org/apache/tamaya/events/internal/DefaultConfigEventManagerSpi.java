@@ -35,12 +35,13 @@ import java.util.logging.Logger;
  * Default implementation of {@link DefaultConfigEventManagerSpi} just forwarding all
  * events synchronously to the listeners.
  */
+@SuppressWarnings("rawtypes")
 @Component
 public class DefaultConfigEventManagerSpi implements ConfigEventManagerSpi {
 
     private static final Logger LOG = Logger.getLogger(DefaultConfigEventManagerSpi.class.getName());
 
-    private final Map<Class,List<ConfigEventListener>> listeners = new ConcurrentHashMap<>();
+	private final Map<Class,List<ConfigEventListener>> listeners = new ConcurrentHashMap<>();
 
     private final ExecutorService publisher = Executors.newCachedThreadPool();
 
@@ -68,7 +69,7 @@ public class DefaultConfigEventManagerSpi implements ConfigEventManagerSpi {
         addListener(l, ConfigEvent.class);
     }
 
-    @Override
+	@Override
     public <T extends ConfigEvent> void addListener(ConfigEventListener l, Class<T> eventType){
         List<ConfigEventListener> ls = listeners.get(eventType);
         if(ls==null){

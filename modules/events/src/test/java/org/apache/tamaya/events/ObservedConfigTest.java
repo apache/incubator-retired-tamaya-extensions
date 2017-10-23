@@ -18,18 +18,9 @@
  */
 package org.apache.tamaya.events;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.events.folderobserver.TestObservingProvider;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Map;
-
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**

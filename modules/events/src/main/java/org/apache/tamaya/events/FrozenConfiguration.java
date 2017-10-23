@@ -22,7 +22,6 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.ConfigOperator;
 import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.functions.ConfigurationFunctions;
 import org.apache.tamaya.spi.ConfigurationContext;
@@ -95,7 +94,8 @@ public final class FrozenConfiguration implements Configuration, Serializable {
         return val;
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public <T> T get(String key, Class<T> type) {
         return (T) get(key, TypeLiteral.of(type));
     }
@@ -115,10 +115,10 @@ public final class FrozenConfiguration implements Configuration, Serializable {
     public <T> T get(String key, TypeLiteral<T> type) {
         String value = get(key);
         if (value != null) {
-            List<PropertyConverter<T>> converters = ConfigurationProvider.getConfigurationContext()
+            List<PropertyConverter<T>> converters = getContext()
                     .getPropertyConverters(type);
             ConversionContext context = new ConversionContext.Builder(this,
-                    ConfigurationProvider.getConfigurationContext(), key,type).build();
+                    getContext(), key,type).build();
             for (PropertyConverter<T> converter : converters) {
                 try {
                     T t = converter.convert(value, context);
@@ -210,7 +210,7 @@ public final class FrozenConfiguration implements Configuration, Serializable {
      * <p>The time is taken from {@linkplain System#currentTimeMillis()}</p>
      *
      * @see System#currentTimeMillis()
-     * @return the moment in time when this configruration has been created
+     * @return the moment in time when this configuration has been created
      */
     public long getFrozenAt() {
         return frozenAt;

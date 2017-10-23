@@ -28,6 +28,7 @@ import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -65,7 +66,7 @@ class FileChangeListener implements Runnable {
                         StandardWatchEventKinds.ENTRY_MODIFY,
                         StandardWatchEventKinds.ENTRY_CREATE);
             } catch (IOException e) {
-                throw new FileChangeListenerException("An error happened when does try to registry to watch the folder", e);
+                throw new FileChangeListenerException("An error happened when you tried to register to watch the folder", e);
             }
         }
     }
@@ -103,9 +104,9 @@ class FileChangeListener implements Runnable {
                 }
             }
             watckKey.reset();
-            Thread.sleep(1_000L);
+            TimeUnit.SECONDS.sleep(1);
         } catch (Exception e) {
-            throw new FileChangeListenerException("An error happened when does try to watch the folder", e);
+            throw new FileChangeListenerException("An error happened when you tried to register to watch the folder", e);
         }
     }
 
@@ -118,7 +119,7 @@ class FileChangeListener implements Runnable {
             FileSystem fileSystem = Paths.get(".").getFileSystem();
             return fileSystem.newWatchService();
         } catch (IOException e) {
-            LOGGER.log(Level.WARNING, "The file System does not supports WatchService", e);
+            LOGGER.log(Level.WARNING, "The filesystem does not support WatchService", e);
             return null;
         }
 

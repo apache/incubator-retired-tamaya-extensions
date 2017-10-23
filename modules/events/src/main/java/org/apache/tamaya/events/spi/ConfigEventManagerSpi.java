@@ -29,6 +29,7 @@ import java.util.Collection;
  * by default this equals to registering it with {@link java.util.ServiceLoader}. Add {@link javax.annotation.Priority}
  * annotations for overriding (higher values override lower values).
  */
+@SuppressWarnings("rawtypes")
 public interface ConfigEventManagerSpi {
     /**
      * Adds a listener for observing events. References of this
@@ -47,7 +48,7 @@ public interface ConfigEventManagerSpi {
      * @param eventType the type of concrete configuration event this listeners should be informed about. All other
      *                  event types will never be delivered to this listener instance.
      */
-    <T extends ConfigEvent> void addListener(ConfigEventListener l, Class<T> eventType);
+	<T extends ConfigEvent> void addListener(ConfigEventListener l, Class<T> eventType);
 
     /**
      * Removes a listener for observing events.
@@ -82,7 +83,7 @@ public interface ConfigEventManagerSpi {
     Collection<? extends ConfigEventListener> getListeners(Class<? extends ConfigEvent> eventType);
 
     /**
-     * Publishes an event to all interested listeners, hereby executing all registered listeners sequentually and
+     * Publishes an event to all interested listeners, hereby executing all registered listeners sequentially and
      * synchronously.,
      *
      * @param event the event, not null.
@@ -90,7 +91,7 @@ public interface ConfigEventManagerSpi {
     void fireEvent(ConfigEvent<?> event);
 
     /**
-     * Publishes an event to all interested listeners, hereby publishing the change events asynchrously and in
+     * Publishes an event to all interested listeners, hereby publishing the change events asynchronously and in
      * parallel (multithreaded).
      *
      * @param event the event, not null.
@@ -117,12 +118,11 @@ public interface ConfigEventManagerSpi {
      * Start/stop the change monitoring service, which will observe/reevaluate the current configuration regularly
      * and trigger ConfigurationChange events if something is changed. This is quite handy for publishing
      * configuration changes to whatever systems are interested in. Hereby the origin of a configuration change
-     * can be on this machine, or also remotedly. For handling corresponding {@link ConfigEventListener} have
+     * can be on this machine, or also remotely. For handling corresponding {@link ConfigEventListener} have
      * to be registered, e.g. listening on {@link org.apache.tamaya.events.ConfigurationChange} events.
      * 
      * @param enable whether to enable or disable the change monitoring.
      */
     void enableChangeMonitor(boolean enable);
-
 
 }

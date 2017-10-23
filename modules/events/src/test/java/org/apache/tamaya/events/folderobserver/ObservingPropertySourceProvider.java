@@ -68,7 +68,7 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     /**
-     * Constructorm using an explicit directory, ignoring all kind of configuration, if set.
+     * Constructor using an explicit directory, ignoring all kind of configuration, if set.
      *
      * @param directory the target directory. If null, the default configuration and system property are used.
      */
@@ -176,7 +176,6 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
     @Override
     public void directoryChanged(Path directory) {
         synchronized (this.propertySources) {
-            final List<PropertySource> existingPropertySources = new ArrayList<>(propertySources);
             propertySources.clear();
             final Collection<PropertySource> sourcesRead = readConfiguration(directory);
             this.propertySources.addAll(sourcesRead);

@@ -19,7 +19,6 @@
 package org.apache.tamaya.events;
 
 import org.apache.tamaya.Configuration;
-import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -58,7 +57,6 @@ public class FrozenConfigurationTest {
     /*
      * All tests for equals() and hashCode() go here...
      */
-
     @Test
     public void twoFrozenAreDifferentIfTheyHaveADifferentIdAndFrozenAtTimestamp() {
         Map<String, String> properties = new HashMap<>();

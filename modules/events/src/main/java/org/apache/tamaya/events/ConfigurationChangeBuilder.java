@@ -22,9 +22,7 @@ import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 
 import java.beans.PropertyChangeEvent;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.SortedMap;
@@ -167,7 +165,7 @@ public final class ConfigurationChangeBuilder {
      *
      * @param key   the changed key
      * @param value the new value.
-     * @return this instance for chining.
+     * @return this instance for chaining.
      */
     public ConfigurationChangeBuilder addChange(String key, String value) {
         this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.get(key), value));
@@ -271,15 +269,10 @@ public final class ConfigurationChangeBuilder {
         return new ConfigurationChange(this);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return "ConfigurationChangeSetBuilder [config=" + source + ", " +
                 ", delta=" + delta + "]";
     }
-
 
 }

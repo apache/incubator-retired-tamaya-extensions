@@ -20,8 +20,6 @@ package org.apache.tamaya.events;
 
 import org.junit.Test;
 
-import java.util.UUID;
-
 import static org.junit.Assert.*;
 
 /**
