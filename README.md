@@ -16,19 +16,19 @@ There are at least two main usage scenarios for Tamaya, which are synergetic:
   allows them to add their own configuration mechanisms such as databases, datagrids or REST services.
 
 More information on Tamaya can be found on the [homepage of Apache Tamaya](https://tamaya.incubator.apache.org/).
- 
+
 ## Tamaya Extensions
 
 The extensions module contains all currently available and supported extension modules to enhance and use Tamaya more broadly.
 
 ## Building Apache Tamaya Extensions
 
-The Apache Tamaya project is built with [Maven 3](https://maven.apache.org/) and [Java 7](https://java.sun.com/), so you need JDK >=1.7 and a reasonable version of maven
+The Apache Tamaya project is built with [Maven 3](https://maven.apache.org/) and [Java 8](https://java.sun.com/), so you need JDK >=1.8 and a reasonable version of maven
 installed on your computer.
 
 
-Then you can build Tamaya by the following command:
+Then you can build Tamaya extensions via:
 ```
 $ export MAVEN_OPTS="-Xmx512m -XX:PermGenSpace=200m"
-$ mvn 
+$ mvn
 ```
