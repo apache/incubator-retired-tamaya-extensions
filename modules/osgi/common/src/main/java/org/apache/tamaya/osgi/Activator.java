@@ -20,10 +20,7 @@ package org.apache.tamaya.osgi;
 
 import org.apache.tamaya.osgi.commands.TamayaConfigService;
 import org.osgi.framework.*;
-import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
-import org.osgi.service.cm.ConfigurationPlugin;
-import org.osgi.service.component.annotations.Reference;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -31,7 +28,7 @@ import java.util.logging.Logger;
 
 /**
  * Activator that registers the Tamaya based Service Class for {@link ConfigurationAdmin},
- * using a default service priority of {@code 0}. This behaviour is configurable based on OSGI properties:
+ * using a default service priority of {@code 0}. This behavior is configurable based on OSGI properties:
  * <ul>
  *     <li><p><b>org.tamaya.integration.osgi.cm.ranking, type: int</b> allows to configure the OSGI service ranking for
  *     Tamaya based ConfigurationAdmin instance. The default ranking used is 10.</p></li>
@@ -49,12 +46,8 @@ public class Activator implements BundleActivator {
 
     private TamayaConfigPlugin plugin;
 
-
     @Override
     public void start(BundleContext context) throws Exception {
-        ServiceReference<ConfigurationAdmin> cmRef = context.getServiceReference(ConfigurationAdmin.class);
-        ConfigurationAdmin cm = context.getService(cmRef);
-        Configuration configuration = cm.getConfiguration(TamayaConfigPlugin.COMPONENTID, null);
         this.plugin = new TamayaConfigPlugin(context);
         Dictionary<String, Object> props = new Hashtable<>();
         props.put(Constants.SERVICE_RANKING, DEFAULT_RANKING);
@@ -70,5 +63,4 @@ public class Activator implements BundleActivator {
             registration.unregister();
         }
     }
-
 }

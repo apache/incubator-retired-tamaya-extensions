@@ -24,7 +24,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Class storing the history of changers done to the OSGI configuration by Tamaya.
+ * Class storing the history of changes applied to the OSGI configuration by Tamaya.
  * This class can be used in the future to restore the previous state, if needed.
  */
 public final class ConfigHistory implements Serializable{
@@ -226,8 +226,8 @@ public final class ConfigHistory implements Serializable{
 
 
     /**
-     * This methd saves the (serialized) history in the plugin's OSGI configuration using
-     * the HISTORY_KEY key.
+     * This method saves the (serialized) history in the plugin's OSGI configuration using
+     * the key {@link #HISTORY_KEY}.
      * @param osgiConfig the plugin config, not null.
      */
     static void save(Dictionary<String,Object> osgiConfig){
@@ -246,7 +246,8 @@ public final class ConfigHistory implements Serializable{
      * Restores the history from the plugin's OSGI configuration.
      * @param osgiConfig
      */
-    static void restore(Dictionary<String,Object> osgiConfig){
+    @SuppressWarnings("unchecked")
+	static void restore(Dictionary<String,Object> osgiConfig){
         try{
             String serialized = (String)osgiConfig.get(HISTORY_KEY);
             if(serialized!=null) {
@@ -256,7 +257,7 @@ public final class ConfigHistory implements Serializable{
                 ois.close();
             }
         } catch (Exception e) {
-            LOG.log(Level.WARNING, "Failed to store getConfig change history.", e);
+            LOG.log(Level.WARNING, "Failed to restore getConfig change history.", e);
         }
     }
 

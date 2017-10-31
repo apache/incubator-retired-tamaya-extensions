@@ -212,6 +212,7 @@ public class TamayaConfigPlugin implements TamayaConfigService,BundleListener, S
         return true;
     }
 
+    // REVIEW is this method still needed at all?
     private boolean isAutoUpdateEnabled(Bundle bundle, Dictionary<String,Object> props) {
         Object enabledVal = props.get(TAMAYA_AUTO_UPDATE_ENABLED_PROP);
         if(enabledVal!=null){
@@ -250,9 +251,9 @@ public class TamayaConfigPlugin implements TamayaConfigService,BundleListener, S
             this.enabledByDefault = Boolean.parseBoolean(enabledVal.toString());
         }
         if(this.enabledByDefault) {
-            LOG.info("Tamaya Config is enabledByDefault by default. Add Tamaya-Enabled to your bundle manifests to enable it.");
+            LOG.info("Tamaya Config is enabled by default. Add Tamaya-Enabled to your bundle manifests to enable it.");
         }else{
-            LOG.info("Tamaya Config is enabled by default. Add Tamaya-Disabled to your bundle manifests to disable it.");
+            LOG.info("Tamaya Config is not enabled by default. Add Tamaya-Disabled to your bundle manifests to disable it.");
         }
     }
 
@@ -343,7 +344,8 @@ public class TamayaConfigPlugin implements TamayaConfigService,BundleListener, S
 
     @Override
     public boolean restoreBackup(String pid){
-        Dictionary<String,Object> config = (Dictionary<String,Object>) Backups.get(pid);
+        @SuppressWarnings("unchecked")
+		Dictionary<String,Object> config = (Dictionary<String,Object>) Backups.get(pid);
         if(config==null){
             return false;
         }
