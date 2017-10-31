@@ -28,9 +28,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Singleton class to store OSGI configuration backups before change the OSGI
+ * Singleton class to store OSGI configuration backups before changing the OSGI
  * Config with Tamaya settings. This allows to restore the configuration in
- * case of issues.
+ * case of problems.
  */
 final class Backups {
 
@@ -50,16 +50,16 @@ final class Backups {
     }
 
     /**
-     * Converts the dictionary to a hash table to enabled serialization.
-     * @param dictionary he config, not null.
-     * @return the correspoinding Hashtable
+     * Converts the dictionary to a hash table to enable serialization.
+     * @param dictionary the config, not null.
+     * @return the corresponding Hashtable
      */
     private static Hashtable<String, ?> toHashtable(Dictionary<String, ?> dictionary) {
         if (dictionary == null) {
             return null;
         }
         if(dictionary instanceof Hashtable){
-            return (Hashtable) dictionary;
+            return (Hashtable<String,?>) dictionary;
         }
         Hashtable<String, Object> map = new Hashtable<>(dictionary.size());
         Enumeration<String> keys = dictionary.keys();
@@ -73,7 +73,7 @@ final class Backups {
     /**
      * Removes a backup.
      * @param pid the PID, not null.
-     * @return
+     * @return the removed dictionary or null if unknown
      */
     public static Dictionary<String,?> remove(String pid){
         return initialConfigState.remove(pid);
@@ -104,7 +104,7 @@ final class Backups {
     }
 
     /**
-     * Get all current kjnown PIDs.
+     * Get all currently known PIDs.
      * @return the PIDs, never null.
      */
     public static Set<String> getPids(){
@@ -114,15 +114,15 @@ final class Backups {
     /**
      * Checks if a backup exists for a given PID.
      * @param pid the pid, not null.
-     * @return
+     * @return {@code true} if there is a backup for the given PID, {@code false} otherwise.
      */
     public static boolean contains(String pid){
         return initialConfigState.containsKey(pid);
     }
 
     /**
-     * Saves the bachups into the given config.
-     * @param config the config, not nul.
+     * Saves the backups into the given config.
+     * @param config the config, not null.
      */
     public static void save(Dictionary<String,Object> config){
         try{
@@ -138,12 +138,13 @@ final class Backups {
     }
 
     /**
-     * Restores the backups ino the given config.
+     * Restores the backups into the given config.
      * @param config the config, not null.
      */
-    public static void restore(Dictionary<String,Object> config){
+    @SuppressWarnings("unchecked")
+	public static void restore(Dictionary<String,Object> config){
         try{
-            String serialized = (String)config.get("tamaya.backup");
+            String serialized = (String)config.get(TAMAYA_BACKUP);
             if(serialized!=null) {
                 ByteArrayInputStream bis = new ByteArrayInputStream(Base64.getDecoder().decode(serialized));
                 ObjectInputStream ois = new ObjectInputStream(bis);
@@ -151,7 +152,7 @@ final class Backups {
                 ois.close();
             }
         } catch (Exception e) {
-            LOG.log(Level.WARNING, "Failed to store getConfig change getHistory.", e);
+            LOG.log(Level.WARNING, "Failed to store getConfig change history.", e);
         }
     }
 }
