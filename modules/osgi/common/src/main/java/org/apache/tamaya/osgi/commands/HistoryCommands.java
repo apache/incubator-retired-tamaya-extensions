@@ -38,7 +38,6 @@ public final class HistoryCommands{
     private HistoryCommands(){}
 
     public static String clearHistory(TamayaConfigService service, String pid) throws IOException {
-        int size = service.getHistory(pid).size();
         if(pid!=null){
             service.clearHistory(pid);
             return "Deleted Config Change History for PID: " + pid;
@@ -46,7 +45,6 @@ public final class HistoryCommands{
             service.clearHistory();
             return "Deleted complete Config Change History.";
         }
-
     }
 
     public static String getHistory(TamayaConfigService service, String pid, String... events) throws IOException {
@@ -96,6 +94,5 @@ public final class HistoryCommands{
         }
         return result;
     }
-
 
 }

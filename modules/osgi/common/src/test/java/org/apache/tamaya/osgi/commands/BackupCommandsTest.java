@@ -43,7 +43,7 @@ public class BackupCommandsTest extends AbstractOSGITest {
         result = BackupCommands.createBackup(tamayaConfigPlugin, cm, "createBackup", false);
         assertNotNull(result);
         assertTrue(result.contains("createBackup"));
-        assertTrue(result.contains("Creating backup failed"));
+        assertTrue(result.contains("Creating of backup failed"));
         assertTrue(result.contains("already existing"));
         assertTrue(tamayaConfigPlugin.containsBackup("createBackup"));
         // any existing backups gets overridden

@@ -47,11 +47,11 @@ public final class BackupCommands {
                 if(service.createBackup(pid)){
                     return "Backup created, PID = " + pid + '\n' +  printProps(props);
                 }else{
-                    return "Creating backup failed. Backup already existing, PID = " + pid;
+                    return "Creating of backup failed. Backup already existing, PID = " + pid;
                 }
             }
         }
-        return "Creating backup failed. No Config found, PID = " + pid;
+        return "Creating of backup failed. No Config found, PID = " + pid;
     }
 
     public static String deleteBackup(TamayaConfigService service, String pid) throws IOException {

@@ -32,7 +32,6 @@ import static org.junit.Assert.*;
  */
 public class BackupsTest {
 
-
     private Dictionary<String,Object> createConfig(String pid){
         Hashtable<String,Object> config = new Hashtable<>();
         config.put("test.id", pid);

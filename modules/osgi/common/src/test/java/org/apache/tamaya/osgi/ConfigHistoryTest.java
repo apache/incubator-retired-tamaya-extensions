@@ -35,35 +35,35 @@ public class ConfigHistoryTest {
     public void configuring() throws Exception {
         ConfigHistory en = ConfigHistory.configuring("configuring", "configuring_test");
         assertNotNull(en);
-        assertEquals(en.getPid(), "configuring");
-        assertEquals(en.getType(), ConfigHistory.TaskType.BEGIN);
-        assertEquals(en.getValue(), "configuring_test");
+        assertEquals("configuring", en.getPid());
+        assertEquals(ConfigHistory.TaskType.BEGIN, en.getType());
+        assertEquals("configuring_test", en.getValue());
     }
 
     @Test
     public void configured() throws Exception {
         ConfigHistory en = ConfigHistory.configured("configured", "configured_test");
         assertNotNull(en);
-        assertEquals(en.getPid(), "configured");
-        assertEquals(en.getType(), ConfigHistory.TaskType.END);
-        assertEquals(en.getValue(), "configured_test");
+        assertEquals("configured", en.getPid());
+        assertEquals(ConfigHistory.TaskType.END, en.getType());
+        assertEquals("configured_test", en.getValue());
     }
 
     @Test
     public void propertySet() throws Exception {
         ConfigHistory en = ConfigHistory.propertySet("propertySet", "propertySet.key", "new", "prev");
         assertNotNull(en);
-        assertEquals(en.getPid(), "propertySet");
-        assertEquals(en.getType(), ConfigHistory.TaskType.PROPERTY);
-        assertEquals(en.getKey(), "propertySet.key");
-        assertEquals(en.getPreviousValue(), "prev");
-        assertEquals(en.getValue(),"new");
+        assertEquals("propertySet", en.getPid());
+        assertEquals(ConfigHistory.TaskType.PROPERTY, en.getType());
+        assertEquals("propertySet.key", en.getKey());
+        assertEquals("prev", en.getPreviousValue());
+        assertEquals("new", en.getValue());
     }
 
     @Test
     public void setGetMaxHistory() throws Exception {
         ConfigHistory.setMaxHistory(1000);
-        assertEquals(ConfigHistory.getMaxHistory(),1000);
+        assertEquals(1000, ConfigHistory.getMaxHistory());
     }
 
     @Test
@@ -88,13 +88,13 @@ public class ConfigHistoryTest {
         }
         List<ConfigHistory> hist = ConfigHistory.getHistory("history1");
         assertNotNull(hist);
-        assertTrue(hist.size()==102);
+        assertEquals(102, hist.size());
         hist = ConfigHistory.getHistory("history2");
         assertNotNull(hist);
-        assertTrue(hist.size()==100);
+        assertEquals(100, hist.size());
         hist = ConfigHistory.getHistory(null);
         assertNotNull(hist);
-        assertTrue(hist.size()>=202);
+        assertTrue(hist.size()>202);
     }
 
     @Test
@@ -107,27 +107,30 @@ public class ConfigHistoryTest {
         }
         List<ConfigHistory> hist = ConfigHistory.getHistory("history3");
         assertNotNull(hist);
-        assertTrue(hist.size()==100);
-        assertEquals(ConfigHistory.getHistory("history4").size(), 100);
+        assertEquals(100, hist.size());
+        assertEquals(100, ConfigHistory.getHistory("history4").size());
         ConfigHistory.clearHistory("history3");
-        assertEquals(ConfigHistory.getHistory("history3").size(), 0);
-        assertEquals(ConfigHistory.getHistory("history4").size(), 100);
+        assertEquals(0, ConfigHistory.getHistory("history3").size());
+        assertEquals(100, ConfigHistory.getHistory("history4").size());
         ConfigHistory.clearHistory(null);
-        assertEquals(ConfigHistory.getHistory().size(), 0);
-        assertEquals(ConfigHistory.getHistory("history4").size(), 0);
+        assertTrue(ConfigHistory.getHistory().isEmpty());
+        assertTrue(ConfigHistory.getHistory("history4").isEmpty());
     }
 
 
     @Test
     public void setPreviousValue() throws Exception {
+    	// TODO
     }
 
     @Test
     public void getValue() throws Exception {
+    	// TODO
     }
 
     @Test
     public void getKey() throws Exception {
+    	// TODO
     }
 
     @Test
@@ -135,14 +138,14 @@ public class ConfigHistoryTest {
         for(int i=0;i<10;i++){
             ConfigHistory.propertySet("save", "getHistory"+i, "prev"+i, "new"+i);
         }
-        assertEquals(ConfigHistory.getHistory("save").size(), 10);
+        assertEquals(10, ConfigHistory.getHistory("save").size());
         Dictionary<String,Object> config = new Hashtable<>();
         ConfigHistory.save(config);
-        assertEquals(ConfigHistory.getHistory("save").size(), 10);
+        assertEquals(10, ConfigHistory.getHistory("save").size());
         ConfigHistory.clearHistory();
-        assertEquals(ConfigHistory.getHistory("save").size(), 0);
+        assertTrue(ConfigHistory.getHistory("save").isEmpty());
         ConfigHistory.restore(config);
-        assertEquals(ConfigHistory.getHistory("save").size(), 10);
+        assertEquals(10, ConfigHistory.getHistory("save").size());
     }
 
 }

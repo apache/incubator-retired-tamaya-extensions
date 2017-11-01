@@ -40,7 +40,6 @@ public class TamayaConfigPluginTest extends  AbstractOSGITest{
 
     @Test
     public void testOperationMode() throws Exception {
-        Policy om = tamayaConfigPlugin.getDefaultPolicy();
         tamayaConfigPlugin.setDefaultPolicy(Policy.EXTEND);
         assertEquals(Policy.EXTEND, tamayaConfigPlugin.getDefaultPolicy());
         tamayaConfigPlugin.setDefaultPolicy(Policy.OVERRIDE);
@@ -73,8 +72,6 @@ public class TamayaConfigPluginTest extends  AbstractOSGITest{
 
     @Test
     public void testSetGetConfigValue() throws Exception {
-        Dictionary<String,Object> config = new Hashtable<>();
-        String val = (String)((TamayaConfigPlugin)tamayaConfigPlugin).getConfigValue("foo");
         ((TamayaConfigPlugin)tamayaConfigPlugin).setConfigValue("bar", "foo");
         assertEquals(((TamayaConfigPlugin)tamayaConfigPlugin).getConfigValue("bar"), "foo");
     }
@@ -84,21 +81,21 @@ public class TamayaConfigPluginTest extends  AbstractOSGITest{
         org.apache.tamaya.Configuration config = ((TamayaConfigPlugin)tamayaConfigPlugin).getTamayaConfiguration("java.");
         assertNotNull(config);
         assertNull(config.get("jlkjllj"));
-        assertEquals(config.get("home"),System.getProperty("java.home"));
+        assertEquals(System.getProperty("java.home"), config.get("home"));
     }
 
     @Test
     public void getUpdateConfig() throws Exception {
         Dictionary<String, Object> config = tamayaConfigPlugin.updateConfig(TamayaConfigPlugin.COMPONENTID);
         assertNotNull(config);
-        assertEquals(config.get("java.home"), System.getProperty("java.home"));
+        assertEquals(System.getProperty("java.home"), config.get("java.home"));
     }
 
     @Test
     public void getUpdateConfig_DryRun() throws Exception {
         Dictionary<String, Object> config = tamayaConfigPlugin.updateConfig(TamayaConfigPlugin.COMPONENTID, true);
         assertNotNull(config);
-        assertEquals(config.get("java.home"), System.getProperty("java.home"));
+        assertEquals(System.getProperty("java.home"), config.get("java.home"));
     }
 
     @Test
@@ -112,7 +109,7 @@ public class TamayaConfigPluginTest extends  AbstractOSGITest{
     public void getPluginConfig() throws Exception {
         Dictionary<String, Object> config = ((TamayaConfigPlugin)tamayaConfigPlugin).getPluginConfig();
         assertNotNull(config);
-        assertEquals(config, super.getProperties(TamayaConfigPlugin.COMPONENTID));
+        assertEquals(super.getProperties(TamayaConfigPlugin.COMPONENTID), config);
     }
 
     @Test
@@ -124,12 +121,12 @@ public class TamayaConfigPluginTest extends  AbstractOSGITest{
         TamayaConfigPlugin plugin = new TamayaConfigPlugin(bundleContext);
         om = plugin.getDefaultPolicy();
         assertNotNull(om);
-        assertEquals(om, Policy.UPDATE_ONLY);
+        assertEquals(Policy.UPDATE_ONLY, om);
         pluginConfig.put(Policy.class.getSimpleName(), Policy.OVERRIDE.toString());
         plugin = new TamayaConfigPlugin(bundleContext);
         om = plugin.getDefaultPolicy();
         assertNotNull(om);
-        assertEquals(om, Policy.OVERRIDE);
+        assertEquals(Policy.OVERRIDE, om);
     }
 
     @Test
@@ -142,12 +139,12 @@ public class TamayaConfigPluginTest extends  AbstractOSGITest{
         assertFalse(config.getProperties().isEmpty());
         assertTrue(config.getProperties().size() > 4);
         // Override should add additional values
-        assertEquals(config.getProperties().get("my.testProperty1"), "success1");
-        assertEquals(config.getProperties().get("my.testProperty2"), "success2");
-        assertEquals(config.getProperties().get("my.testProperty3"), "success3");
-        assertEquals(config.getProperties().get("my.testProperty4"), "success4");
+        assertEquals("success1", config.getProperties().get("my.testProperty1"));
+        assertEquals("success2", config.getProperties().get("my.testProperty2"));
+        assertEquals("success3", config.getProperties().get("my.testProperty3"));
+        assertEquals("success4", config.getProperties().get("my.testProperty4"));
         // Extend should also update any existing values...
-        assertEquals(config.getProperties().get("java.version"), "Java2000");
+        assertEquals("Java2000", config.getProperties().get("java.version"));
         tamayaConfigPlugin.restoreBackup("tamaya");
     }
 
@@ -165,12 +162,12 @@ public class TamayaConfigPluginTest extends  AbstractOSGITest{
         assertFalse(config.getProperties().isEmpty());
         assertTrue(config.getProperties().size() > 4);
         // Override should add additional values
-        assertEquals(config.getProperties().get("my.testProperty1"), "success1");
-        assertEquals(config.getProperties().get("my.testProperty2"), "success2");
-        assertEquals(config.getProperties().get("my.testProperty3"), "success3");
-        assertEquals(config.getProperties().get("my.testProperty4"), "success4");
+        assertEquals("success1", config.getProperties().get("my.testProperty1"));
+        assertEquals("success2", config.getProperties().get("my.testProperty2"));
+        assertEquals("success3", config.getProperties().get("my.testProperty3"));
+        assertEquals("success4", config.getProperties().get("my.testProperty4"));
         // Extend should also update any existing values...
-        assertEquals(config.getProperties().get("java.version"), "Java2000");
+        assertEquals("Java2000", config.getProperties().get("java.version"));
         tamayaConfigPlugin.restoreBackup("tamaya");
     }
 

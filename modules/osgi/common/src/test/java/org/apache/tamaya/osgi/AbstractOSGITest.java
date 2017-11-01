@@ -21,7 +21,6 @@ package org.apache.tamaya.osgi;
 import org.apache.tamaya.osgi.commands.TamayaConfigService;
 import org.junit.Before;
 import org.mockito.Mock;
-import org.mockito.stubbing.Answer;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -76,7 +75,8 @@ public abstract class AbstractOSGITest {
         doReturn(tamayaConfigPlugin).when(bundleContext).getService(tamayaRef);
     }
 
-    protected Configuration initConfigurationMock(final String pid)throws Exception{
+    @SuppressWarnings("unchecked")
+	protected Configuration initConfigurationMock(final String pid)throws Exception{
         Configuration config = mock(Configuration.class);
         doAnswer(invocation -> {
             Hashtable<String,Object> props = properties.get(pid);
@@ -89,7 +89,7 @@ public abstract class AbstractOSGITest {
             if(props==null){
                 props = new Hashtable<>();
                 properties.put(pid, props);
-                for(Map.Entry en:System.getProperties().entrySet()){
+                for(Map.Entry<Object,Object> en:System.getProperties().entrySet()){
                     props.put(en.getKey().toString(), en.getValue());
                 }
             }
