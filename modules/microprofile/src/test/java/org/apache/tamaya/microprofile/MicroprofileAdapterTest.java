@@ -18,12 +18,13 @@
  */
 package org.apache.tamaya.microprofile;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.*;
+import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spisupport.BuildablePropertySource;
+import org.assertj.core.api.Assertions;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.config.spi.ConfigBuilder;
@@ -31,10 +32,7 @@ import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.eclipse.microprofile.config.spi.Converter;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -48,11 +46,33 @@ public class MicroprofileAdapterTest {
     }
 
     @Test
+    public void toConfigWithTamayaConfiguration() throws Exception {
+        Configuration configuration = new MyConfiguration();
+        MicroprofileConfig config = new MicroprofileConfig(configuration);
+        TamayaConfiguration tamayaConfiguration = new TamayaConfiguration(config);
+
+        Config result = MicroprofileAdapter.toConfig(tamayaConfiguration);
+
+        Assertions.assertThat(result).isNotNull()
+                  .isInstanceOf(MicroprofileConfig.class)
+                  .isSameAs(config);
+    }
+
+    @Test
     public void toConfiguration() throws Exception {
         Config mpConfig = ConfigProvider.getConfig();
         Configuration config = MicroprofileAdapter.toConfiguration(mpConfig);
         assertNotNull(config);
         assertEquals(mpConfig.getPropertyNames(), config.getProperties().keySet());
+    }
+
+    @Test
+    public void toConfigurationWithNoneMicroprofileConfig() throws Exception {
+        Config config = new MyConfig();
+        Configuration result = MicroprofileAdapter.toConfiguration(config);
+
+        Assertions.assertThat(result).isNotNull()
+                  .isInstanceOf(TamayaConfiguration.class);
     }
 
     @Test
@@ -157,6 +177,80 @@ public class MicroprofileAdapterTest {
         assertEquals(tamayaProps.keySet(), props.keySet());
         assertEquals(tamayaProps.get("a").getValue(), "b");
         assertEquals("toPropertyValueMap", tamayaProps.get("a").getSource());
+    }
+
+    static class MyConfig implements Config {
+        @Override
+        public <T> T getValue(String s, Class<T> aClass) {
+            throw new RuntimeException("Not implemented yet!");
+        }
+
+        @Override
+        public <T> Optional<T> getOptionalValue(String s, Class<T> aClass) {
+            throw new RuntimeException("Not implemented yet!");
+        }
+
+        @Override
+        public Iterable<String> getPropertyNames() {
+            throw new RuntimeException("Not implemented yet!");
+        }
+
+        @Override
+        public Iterable<ConfigSource> getConfigSources() {
+            throw new RuntimeException("Not implemented yet!");
+        }
+    }
+
+    static class MyConfiguration implements Configuration {
+        @Override
+        public String get(String key) {
+            throw new RuntimeException("Not implemented yet!");
+        }
+
+        @Override
+        public String getOrDefault(String key, String defaultValue) {
+            throw new RuntimeException("Not implemented yet!");
+        }
+
+        @Override
+        public <T> T getOrDefault(String key, Class<T> type, T defaultValue) {
+            throw new RuntimeException("Not implemented yet!");
+        }
+
+        @Override
+        public <T> T get(String key, Class<T> type) {
+            throw new RuntimeException("Not implemented yet!");
+        }
+
+        @Override
+        public <T> T get(String key, TypeLiteral<T> type) {
+            throw new RuntimeException("Not implemented yet!");
+        }
+
+        @Override
+        public <T> T getOrDefault(String key, TypeLiteral<T> type, T defaultValue) {
+            throw new RuntimeException("Not implemented yet!");
+        }
+
+        @Override
+        public Map<String, String> getProperties() {
+            throw new RuntimeException("Not implemented yet!");
+        }
+
+        @Override
+        public Configuration with(ConfigOperator operator) {
+            throw new RuntimeException("Not implemented yet!");
+        }
+
+        @Override
+        public <T> T query(ConfigQuery<T> query) {
+            throw new RuntimeException("Not implemented yet!");
+        }
+
+        @Override
+        public ConfigurationContext getContext() {
+            throw new RuntimeException("Not implemented yet!");
+        }
     }
 
 }

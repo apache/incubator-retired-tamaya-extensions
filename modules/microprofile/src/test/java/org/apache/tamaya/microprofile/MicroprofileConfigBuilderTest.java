@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.microprofile;
 
+import org.assertj.core.api.Assertions;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.spi.ConfigBuilder;
 import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
@@ -26,7 +27,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static org.junit.Assert.*;
 
@@ -96,4 +100,28 @@ public class MicroprofileConfigBuilderTest {
         assertNotNull(src);
     }
 
+    @Test
+    public void addDiscoveredSourcesAddsAllConfigSources() throws Exception {
+        ConfigBuilder builder = ConfigProviderResolver.instance().getBuilder();
+
+        Config config = builder.addDiscoveredSources()
+                               .addDefaultSources().build();
+
+        Iterable<ConfigSource> iterable = config.getConfigSources();
+
+        List<String> name = StreamSupport.stream(iterable.spliterator(), false)
+                                         .map(ConfigSource::getName)
+                                         .collect(Collectors.toList());
+
+        Assertions.assertThat(name).hasSize(4)
+                  .containsExactlyInAnyOrder("paris",
+                                             "SystemPropertySource",
+                                             "environment-properties",
+                                             "META-INF/microprofile-config.properties");
+    }
+
+    @Test
+    public void addDiscoveredSourcesAddsAllConfigSourceProviders() throws Exception {
+     //   throw new RuntimeException("Not implemented yet!");
+    }
 }

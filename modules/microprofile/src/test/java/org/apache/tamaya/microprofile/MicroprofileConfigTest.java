@@ -41,7 +41,7 @@ public class MicroprofileConfigTest {
         for (ConfigSource cs : sources) {
             count++;
         }
-        assertEquals(3, count);
+        assertEquals(4, count);
     }
 
     @Test
