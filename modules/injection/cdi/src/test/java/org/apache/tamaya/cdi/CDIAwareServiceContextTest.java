@@ -18,6 +18,45 @@
  */
 package org.apache.tamaya.cdi;
 
-public class CDIAwareServiceContextTest {
+import org.junit.Test;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
+public class CDIAwareServiceContextTest {
+    private CDIAwareServiceContext context = new CDIAwareServiceContext();
+
+    @Test
+    public void getServiceReturnsNonCachedInstanceAtFirstCall() {
+        assertThat(context.isCached(VertigoService.class)).isFalse();
+
+        VertigoService service = context.getService(VertigoService.class);
+
+        assertThat(service).isNotNull();
+        assertThat(context.isCached(VertigoService.class)).isTrue();
+    }
+
+    @Test
+    public void getServiceReturnsOnSecondCallCachedInstance() throws Exception {
+        VertigoService service1 = context.getService(VertigoService.class);
+        assertThat(context.isCached(VertigoService.class)).isTrue();
+
+        VertigoService service2 = context.getService(VertigoService.class);
+
+        assertThat(service2).isNotNull().isSameAs(service1);
+    }
+
+    @Test
+    public void getServiceReturnsNullIfThereAreNoRegisteredSPIInstancesAvailable() throws Exception {
+        DominoService service = context.getService(DominoService.class);
+
+        assertThat(service).isNull();
+    }
+
+    @Test
+    public void getServiceReturnsInstanceWithHighestPriority() throws Exception {
+        TartanService service = context.getService(TartanService.class);
+
+        assertThat(service).isNotNull();
+        assertThat(service).isInstanceOf(TartanServiceTwoImpl.class);
+    }
 }

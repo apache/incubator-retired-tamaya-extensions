@@ -61,6 +61,7 @@ public class CDIAwareServiceContext implements ServiceContext {
     @Override
     public <T> T getService(Class<T> serviceType) {
         Object cached = singletons.get(serviceType);
+
         if (cached == null) {
             Collection<T> services = getServices(serviceType);
             if (services.isEmpty()) {
@@ -68,7 +69,7 @@ public class CDIAwareServiceContext implements ServiceContext {
             } else {
                 cached = getServiceWithHighestPriority(services, serviceType);
             }
-            if(cached!=null) {
+            if (cached != null) {
                 singletons.put(serviceType, cached);
             }
         }
@@ -203,4 +204,15 @@ public class CDIAwareServiceContext implements ServiceContext {
         return 20;
     }
 
+    /**
+     * <p>Checks the internal used cache contains already instances
+     * of the given type.</p>
+     *
+     * @param clazz type to be checked if it is already in the internal cache.
+     * @return {@code true} if there are cached instances of the requested type,
+     *         otherwise {@code false}.
+     */
+    protected boolean isCached(Class<?> clazz) {
+        return singletons.containsKey(clazz);
+    }
 }
