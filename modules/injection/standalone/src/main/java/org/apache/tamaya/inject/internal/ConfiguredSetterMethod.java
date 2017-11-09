@@ -41,7 +41,6 @@ public class ConfiguredSetterMethod implements ConfiguredMethod {
      * The configured field instance.
      */
     private Method setterMethod;
-    private Collection<String> configuredKeys;
 
     /**
      * Models a configured field and provides mechanisms for injection.
@@ -87,7 +86,7 @@ public class ConfiguredSetterMethod implements ConfiguredMethod {
 
 
     /**
-     * Access the applyable configuration keys for this field.
+     * Access the applicable configuration keys for this field.
      *
      * @return the configuration keys, never null.
      */
@@ -126,7 +125,7 @@ public class ConfiguredSetterMethod implements ConfiguredMethod {
 
     private String printTypes(Class<?>[] parameterTypes) {
         StringBuilder b = new StringBuilder();
-        for(Class cl:parameterTypes){
+        for(@SuppressWarnings("rawtypes") Class cl:parameterTypes){
             b.append(cl.getName());
             b.append(',');
         }

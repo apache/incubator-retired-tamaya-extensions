@@ -71,7 +71,7 @@ class CDIConfiguredType implements ConfiguredType{
 
     /**
      * Used to build up during injection point processing.
-     * @param injectionPoint the CDI injection ppint, not null.
+     * @param injectionPoint the CDI injection point, not null.
      * @param keys the possible config keys, in order of precedence, not null.
      */
     void addConfiguredMember(InjectionPoint injectionPoint, List<String> keys) {

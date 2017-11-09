@@ -110,7 +110,7 @@ public class DefaultConfigurationInjector implements ConfigurationInjector {
     }
 
     /**
-     * Configured the current instance and reigsterd necessary listener to forward config change events as
+     * Configured the current instance and registerd necessary listener to forward config change events as
      * defined by the current annotations in place.
      *
      * @param instance the instance to be configured
@@ -121,7 +121,7 @@ public class DefaultConfigurationInjector implements ConfigurationInjector {
     }
 
     /**
-     * Configured the current instance and reigsterd necessary listener to forward config change events as
+     * Configured the current instance and registerd necessary listener to forward config change events as
      * defined by the current annotations in place.
      *
      * @param instance the instance to be configured
@@ -140,7 +140,7 @@ public class DefaultConfigurationInjector implements ConfigurationInjector {
     }
 
     /**
-     * Create a template implementting the annotated methods based on current configuration data.
+     * Create a template implementing the annotated methods based on current configuration data.
      *
      * @param templateType the type of the template to be created.
      */
@@ -150,7 +150,7 @@ public class DefaultConfigurationInjector implements ConfigurationInjector {
     }
 
     /**
-     * Create a template implementting the annotated methods based on current configuration data.
+     * Create a template implementing the annotated methods based on current configuration data.
      *
      * @param templateType the type of the template to be created.
      * @param config the target configuration, not null.

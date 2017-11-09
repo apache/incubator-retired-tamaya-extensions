@@ -73,7 +73,7 @@ final class ServiceLoaderServiceContext implements ServiceContext {
         try {
             return implType.newInstance();
         } catch (Exception e) {
-            LOG.log(Level.SEVERE, "Failed to create instabce of " + implType.getName(), e);
+            LOG.log(Level.SEVERE, "Failed to create instance of " + implType.getName(), e);
             return  null;
         }
     }

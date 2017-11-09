@@ -16,6 +16,17 @@
  */
 package org.apache.tamaya.cdi;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.util.Optional;
+
+import javax.enterprise.inject.spi.Extension;
+import javax.inject.Inject;
+import javax.inject.Provider;
+
 import org.apache.tamaya.inject.api.Config;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -25,27 +36,16 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.model.InitializationError;
-
-import javax.enterprise.inject.spi.Extension;
-import javax.inject.Inject;
-import javax.inject.Provider;
-import java.io.File;
-import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
 public class ConfigurationProducerTest {
 
     @Deployment
-    public static Archive deployment() {
+    public static Archive<?> deployment() {
         return ShrinkWrap.create(WebArchive.class)
                 .addClasses(ConfiguredClass.class, InjectedClass.class,
                         TamayaCDIInjectionExtension.class, TamayaCDIAccessor.class,
-                        ConfigurationProducer.class)
+                        org.apache.tamaya.cdi.ConfigurationProducer.class)
                 .addAsServiceProvider(Extension.class, TamayaCDIInjectionExtension.class)
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
                 .addAsWebInfResource("META-INF/javaconfiguration.properties", "META-INF/javaconfiguration.properties");
@@ -227,18 +227,16 @@ public class ConfigurationProducerTest {
         }
 
         @Override
-        public String toString() {
-            return "AllTypes{" +
-                    "string='" + string + '\'' +
-                    ", defaultString='" + defaultString + '\'' +
-                    ", file=" + file +
-                    ", defaultFile=" + defaultFile +
-                    ", aBoolean=" + aBoolean +
-                    ", defaultBoolean=" + defaultBoolean +
-                    ", integer=" + integer +
-                    ", defaultInteger=" + defaultInteger +
-                    '}';
-        }
+		public String toString() {
+			return "AllTypes [stringAsMethodParam=" + stringAsMethodParam + ", integerAsMethodParam="
+					+ integerAsMethodParam + ", optionalStringAsMethodParam=" + optionalStringAsMethodParam
+					+ ", optionalIntegerAsMethodParam=" + optionalIntegerAsMethodParam
+					+ ", providerStringAsMethodParam=" + providerStringAsMethodParam + ", providerIntegerAsMethodParam="
+					+ providerIntegerAsMethodParam + ", string=" + string + ", optionalString=" + optionalString
+					+ ", providerString=" + providerString + ", defaultString=" + defaultString + ", file=" + file
+					+ ", defaultFile=" + defaultFile + ", aBoolean=" + aBoolean + ", defaultBoolean=" + defaultBoolean
+					+ ", integer=" + integer + ", defaultInteger=" + defaultInteger + ", optionalInteger="
+					+ optionalInteger + ", providerInteger=" + providerInteger + "]";
+		}
     }
-
 }

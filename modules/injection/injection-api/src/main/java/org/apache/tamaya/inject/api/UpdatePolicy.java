@@ -27,7 +27,7 @@ public enum UpdatePolicy {
      */
     @Deprecated
     IMMEDEATE,
-    /** New values are applied immedately and registered listeners are informed about the change. */
+    /** New values are applied immediately and registered listeners are informed about the change. */
     IMMEDIATE,
     /** New values or not applied, but stored in the newValue property. Explicit call to DynamicValue#commit
      of DynamicValue#commitAndGet are required to accept the change and inform the listeners about the change.
@@ -40,7 +40,7 @@ public enum UpdatePolicy {
     @Deprecated
     EXPLCIT,
     /**
-     * New values are always immedately discarded, listeners are not triggered.
+     * New values are always immediately discarded, listeners are not triggered.
      */
     NEVER,
     /**

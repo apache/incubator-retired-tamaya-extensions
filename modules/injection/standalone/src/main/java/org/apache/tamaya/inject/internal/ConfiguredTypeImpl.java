@@ -150,7 +150,7 @@ public class ConfiguredTypeImpl implements ConfiguredType{
                         configuredSetterMethods.add(new ConfiguredSetterMethod(m));
                         return true;
                     } catch (Exception e) {
-                        throw new ConfigException("Failed to initialized configured setter method: " +
+                        throw new ConfigException("Failed to initialize configured setter method: " +
                                 m.getDeclaringClass().getName() + '.' + m.getName(), e);
                     }
                 }

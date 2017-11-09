@@ -33,8 +33,8 @@ import java.util.Collection;
 import java.util.Objects;
 
 /**
- * Small class that contains and manages all information anc access to a configured field and a concrete instance current
- * it (referenced by a weak reference). It also implements all aspects current keys filtering, converting any applying the
+ * Small class that contains and manages all information and access to a configured field and a concrete instance current
+ * it (referenced by a weak reference). It also implements all aspects current keys filtering, converting and applying the
  * final keys by reflection.
  */
 public class ConfiguredFieldImpl implements ConfiguredField{
@@ -55,7 +55,7 @@ public class ConfiguredFieldImpl implements ConfiguredField{
 
 
     /**
-     * Evaluate the initial keys fromMap the configuration and applyChanges it to the field.
+     * Evaluate the initial keys from the configuration and apply changes to the field.
      *
      * @param target the target instance.
      * @throws ConfigException if evaluation or conversion failed.
@@ -140,7 +140,7 @@ public class ConfiguredFieldImpl implements ConfiguredField{
     }
 
     /**
-     * Access the applyable configuration keys for this field.
+     * Access the applicable configuration keys for this field.
      * @return the configuration keys, never null.
      */
     @Override

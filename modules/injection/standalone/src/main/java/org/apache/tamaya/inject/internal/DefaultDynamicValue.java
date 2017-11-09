@@ -49,8 +49,8 @@ import java.util.logging.Logger;
 
 /**
  * A accessor for a single configured value. This can be used to support values that may change during runtime,
- * reconfigured or final. Hereby external code (could be Tamaya configuration listners or client code), can set a
- * new value. Depending on the {@link UpdatePolicy} the new value is immedeately active or it requires an active commit
+ * reconfigured or final. Hereby external code (could be Tamaya configuration listeners or client code), can set a
+ * new value. Depending on the {@link UpdatePolicy} the new value is immediately active or it requires an active commit
  * by client code. Similarly an instance also can ignore all later changes to the value.
  * <h3>Implementation Details</h3>
  * This class is
@@ -74,7 +74,7 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
      */
     private final String[] keys;
     /**
-     * Back reference to the base configuration instance. This reference is used reevalaute the given property and
+     * Back reference to the base configuration instance. This reference is used reevaluate the given property and
      * compare the result with the previous value after a configuration change was triggered.
      */
     private final Configuration configuration;
@@ -134,19 +134,20 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
         }
     }
 
-    public static DynamicValue of(Field annotatedField, Configuration configuration) {
+    public static DynamicValue<?> of(Field annotatedField, Configuration configuration) {
         return of(annotatedField, configuration, LoadPolicy.ALWAYS, UpdatePolicy.IMMEDIATE);
     }
 
-    public static DynamicValue of(Field annotatedField, Configuration configuration, LoadPolicy loadPolicy) {
+    public static DynamicValue<?> of(Field annotatedField, Configuration configuration, LoadPolicy loadPolicy) {
         return of(annotatedField, configuration, loadPolicy, UpdatePolicy.IMMEDIATE);
     }
 
-    public static DynamicValue of(Field annotatedField, Configuration configuration, UpdatePolicy updatePolicy) {
+    public static DynamicValue<?> of(Field annotatedField, Configuration configuration, UpdatePolicy updatePolicy) {
         return of(annotatedField, configuration, LoadPolicy.ALWAYS, updatePolicy);
     }
 
-    public static DynamicValue of(Field annotatedField, Configuration configuration, LoadPolicy loadPolicy, UpdatePolicy updatePolicy) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public static DynamicValue<?> of(Field annotatedField, Configuration configuration, LoadPolicy loadPolicy, UpdatePolicy updatePolicy) {
         // Check for adapter/filter
         Type targetType = annotatedField.getGenericType();
         if (targetType == null) {
@@ -178,19 +179,20 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
                 TypeLiteral.of(targetType), propertyConverter, keys, loadPolicy, updatePolicy);
     }
 
-    public static DynamicValue of(Method method, Configuration configuration) {
+    public static DynamicValue<?> of(Method method, Configuration configuration) {
         return of(method, configuration, LoadPolicy.ALWAYS, UpdatePolicy.IMMEDIATE);
     }
 
-    public static DynamicValue of(Method method, Configuration configuration, UpdatePolicy updatePolicy) {
+    public static DynamicValue<?> of(Method method, Configuration configuration, UpdatePolicy updatePolicy) {
         return of(method, configuration, LoadPolicy.ALWAYS, updatePolicy);
     }
 
-    public static DynamicValue of(Method method, Configuration configuration, LoadPolicy loadPolicy) {
+    public static DynamicValue<?> of(Method method, Configuration configuration, LoadPolicy loadPolicy) {
         return of(method, configuration, loadPolicy, UpdatePolicy.IMMEDIATE);
     }
 
-    public static DynamicValue of(Method method, Configuration configuration, LoadPolicy loadPolicy, UpdatePolicy updatePolicy) {
+    @SuppressWarnings("unchecked")
+	public static DynamicValue<?> of(Method method, Configuration configuration, LoadPolicy loadPolicy, UpdatePolicy updatePolicy) {
         // Check for adapter/filter
         Type targetType = method.getGenericReturnType();
         if (targetType == null) {
@@ -227,7 +229,8 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
      * Commits a new value that has not been committed yet, make it the new value of the instance. On change any
      * registered listeners will be triggered.
      */
-    public void commit() {
+    @SuppressWarnings("unchecked")
+	public void commit() {
         T oldValue = value;
         value = newValue==null?null:(T)newValue[0];
         newValue = null;
@@ -252,7 +255,6 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
     public void discard() {
         newValue = null;
     }
-
 
     /**
      * Access the {@link UpdatePolicy} used for updating this value.
@@ -287,7 +289,7 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
     /**
      * Removes a listener to be called, when this value has been changed.
      *
-     * @param l the listner to be removed, not null
+     * @param l the listener to be removed, not null
      */
     public void removeListener(PropertyChangeListener l) {
         if (listeners != null) {
@@ -402,11 +404,9 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
      * @return the uncommitted new value, or null.
      */
     public T getNewValue() {
-        T nv = newValue==null?null:(T)newValue[0];
-        if (nv != null) {
-            return nv;
-        }
-        return null;
+        @SuppressWarnings("unchecked")
+		T nv = newValue==null?null:(T)newValue[0];
+        return nv;
     }
 
 
@@ -428,7 +428,8 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
      * @throws IOException            if deserialization fails.
      * @throws ClassNotFoundException
      */
-    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+    @SuppressWarnings("unchecked")
+	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
         this.updatePolicy = (UpdatePolicy) ois.readObject();
         if (isPresent()) {
             this.value = (T) ois.readObject();
@@ -495,6 +496,5 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
             }
         }
     }
-
 
 }

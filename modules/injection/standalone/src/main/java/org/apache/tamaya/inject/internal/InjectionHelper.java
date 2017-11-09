@@ -141,7 +141,6 @@ final class InjectionHelper {
         return configValue;
     }
 
-
     private static String evaluteConfigValue(List<String> keys, String[] retKey, Configuration config) {
         String configValue = null;
         for (String key : keys) {
@@ -156,8 +155,6 @@ final class InjectionHelper {
         return configValue;
     }
 
-
-    @SuppressWarnings("rawtypes")
     public static <T> T adaptValue(AnnotatedElement element, TypeLiteral<T> targetType, String key, String configValue) {
         // Check for adapter/filter
         T adaptedValue = null;
