@@ -45,6 +45,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 /**
@@ -407,6 +408,24 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
         @SuppressWarnings("unchecked")
 		T nv = newValue==null?null:(T)newValue[0];
         return nv;
+    }
+
+    @Override
+    public T orElseGet(Supplier<? extends T> other) {
+        T t = evaluateValue();
+        if(t==null){
+            return other.get();
+        }
+        return t;
+    }
+
+    @Override
+    public <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X {
+        T t = evaluateValue();
+        if(t==null){
+            throw exceptionSupplier.get();
+        }
+        return t;
     }
 
 

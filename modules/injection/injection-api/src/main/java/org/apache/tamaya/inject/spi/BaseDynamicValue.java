@@ -21,6 +21,7 @@ package org.apache.tamaya.inject.spi;
 import org.apache.tamaya.inject.api.DynamicValue;
 
 import java.io.Serializable;
+import java.util.function.Supplier;
 
 /**
  * Basic abstract implementation skeleton for a {@link DynamicValue}. This can be used to support values that may
@@ -80,47 +81,46 @@ public abstract class BaseDynamicValue<T> implements DynamicValue<T>, Serializab
         return value;
     }
 
-    // TODO: Enable with Java 8 support.
-//    /**
-//     * Return the value if present, otherwise invoke {@code other} and return
-//     * the result of that invocation.
-//     *
-//     * @param other a {@code ConfiguredItemSupplier} whose result is returned if no value
-//     *              is present
-//     * @return the value if present otherwise the result of {@code other.get()}
-//     * @throws NullPointerException if value is not present and {@code other} is
-//     *                              null
-//     */
-//    public T orElseGet(Supplier<? extends T> other) {
-//        T value = get();
-//        if (value == null) {
-//            return other.get();
-//        }
-//        return value;
-//    }
-//
-//    /**
-//     * Return the contained value, if present, otherwise throw an exception
-//     * to be created by the provided supplier.
-//     * <p>
-//     * NOTE A method reference to the exception constructor with an empty
-//     * argument list can be used as the supplier. For example,
-//     * {@code IllegalStateException::new}
-//     *
-//     * @param <X>               Type of the exception to be thrown
-//     * @param exceptionSupplier The supplier which will return the exception to
-//     *                          be thrown
-//     * @return the present value
-//     * @throws X                    if there is no value present
-//     * @throws NullPointerException if no value is present and
-//     *                              {@code exceptionSupplier} is null
-//     */
-//    public <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X {
-//        T value = get();
-//        if (value == null) {
-//            throw exceptionSupplier.get();
-//        }
-//        return value;
-//    }
+    /**
+     * Return the value if present, otherwise invoke {@code other} and return
+     * the result of that invocation.
+     *
+     * @param other a {@code ConfiguredItemSupplier} whose result is returned if no value
+     *              is present
+     * @return the value if present otherwise the result of {@code other.get()}
+     * @throws NullPointerException if value is not present and {@code other} is
+     *                              null
+     */
+    public T orElseGet(Supplier<? extends T> other) {
+        T value = get();
+        if (value == null) {
+            return other.get();
+        }
+        return value;
+    }
+
+    /**
+     * Return the contained value, if present, otherwise throw an exception
+     * to be created by the provided supplier.
+     * <p>
+     * NOTE A method reference to the exception constructor with an empty
+     * argument list can be used as the supplier. For example,
+     * {@code IllegalStateException::new}
+     *
+     * @param <X>               Type of the exception to be thrown
+     * @param exceptionSupplier The supplier which will return the exception to
+     *                          be thrown
+     * @return the present value
+     * @throws X                    if there is no value present
+     * @throws NullPointerException if no value is present and
+     *                              {@code exceptionSupplier} is null
+     */
+    public <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X {
+        T value = get();
+        if (value == null) {
+            throw exceptionSupplier.get();
+        }
+        return value;
+    }
 
 }
