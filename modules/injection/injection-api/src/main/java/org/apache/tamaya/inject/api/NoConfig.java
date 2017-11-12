@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
 
 /**
  * This is a small marker annotations to inform Tamaya that the annotated element should never be injected with
- * configured data. This is useful because by default Tamaya tries to lookup and inject configuration also by
+ * configured data. This is useful because Tamaya can also try to lookup and inject configuration also by
  * using property or method names without annotations. With that annotation none of these will be happen.
  */
 @Retention(RetentionPolicy.RUNTIME)
