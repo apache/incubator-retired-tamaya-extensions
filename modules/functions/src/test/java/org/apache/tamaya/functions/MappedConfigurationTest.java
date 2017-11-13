@@ -18,15 +18,8 @@
  */
 package org.apache.tamaya.functions;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spisupport.DefaultConfigurationContext;
 import org.junit.Test;
-import org.mockito.Matchers;
-import org.mockito.Mockito;
-import org.mockito.internal.matchers.Null;
 
-import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doCallRealMethod;

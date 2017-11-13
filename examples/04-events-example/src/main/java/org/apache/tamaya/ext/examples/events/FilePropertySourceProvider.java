@@ -20,7 +20,7 @@ package org.apache.tamaya.ext.examples.events;
 
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.core.propertysource.BasePropertySource;
+import org.apache.tamaya.spisupport.propertysource.BasePropertySource;
 import org.apache.tamaya.resource.AbstractPathPropertySourceProvider;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;

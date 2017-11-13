@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.ext.examples.resources;
 
-import org.apache.tamaya.core.propertysource.SimplePropertySource;
+import org.apache.tamaya.spisupport.propertysource.SimplePropertySource;
 import org.apache.tamaya.resource.AbstractPathPropertySourceProvider;
 import org.apache.tamaya.spi.PropertySource;
 

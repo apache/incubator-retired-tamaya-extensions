@@ -33,7 +33,7 @@ import javax.naming.NamingException;
 
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
-import org.apache.tamaya.spisupport.BasePropertySource;
+import org.apache.tamaya.spisupport.propertysource.BasePropertySource;
 import org.osgi.service.component.annotations.Component;
 
 /**

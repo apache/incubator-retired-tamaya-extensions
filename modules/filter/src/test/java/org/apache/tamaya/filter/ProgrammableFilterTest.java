@@ -21,8 +21,7 @@ package org.apache.tamaya.filter;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertyValue;
-import org.apache.tamaya.spisupport.DefaultConfigurationContext;
-import org.apache.tamaya.spisupport.DefaultConfigurationContextBuilder;
+import org.apache.tamaya.core.internal.DefaultConfigurationContextBuilder;
 import org.apache.tamaya.spisupport.RegexPropertyFilter;
 import org.junit.Test;
 

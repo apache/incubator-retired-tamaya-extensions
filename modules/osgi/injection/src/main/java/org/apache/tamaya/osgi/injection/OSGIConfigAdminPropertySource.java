@@ -19,7 +19,7 @@
 package org.apache.tamaya.osgi.injection;
 
 import org.apache.tamaya.spi.PropertyValue;
-import org.apache.tamaya.spisupport.BasePropertySource;
+import org.apache.tamaya.spisupport.propertysource.BasePropertySource;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 

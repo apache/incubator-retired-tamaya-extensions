@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.microprofile;
 
-import org.apache.tamaya.spisupport.PropertiesResourcePropertySource;
+import org.apache.tamaya.spisupport.propertysource.PropertiesResourcePropertySource;
 
 
 /**

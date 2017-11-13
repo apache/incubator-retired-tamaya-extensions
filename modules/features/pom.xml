@@ -108,7 +108,7 @@ under the License.
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.tamaya.ext</groupId>
+            <groupId>org.apache.tamaya</groupId>
             <artifactId>tamaya-spisupport</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>

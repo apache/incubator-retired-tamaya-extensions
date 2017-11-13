@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.events;
 
-import org.apache.tamaya.core.propertysource.SystemPropertySource;
+import org.apache.tamaya.spisupport.propertysource.SystemPropertySource;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spisupport.PropertySourceComparator;

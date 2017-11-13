@@ -30,6 +30,7 @@ import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Provider;
 import java.lang.reflect.*;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -147,11 +148,16 @@ public class ConfigurationProducer {
             return textValue;
         }
         Object value = null;
+        ParameterizedType pt = null;
         Type toType = injectionPoint.getAnnotated().getBaseType();
         if(toType instanceof ParameterizedType){
-            ParameterizedType pt = (ParameterizedType)toType;
-            if(Provider.class.equals(pt.getRawType()) || Instance.class.equals(pt.getRawType())){
+            pt = (ParameterizedType)toType;
+            if(Provider.class.equals(pt.getRawType()) || Instance.class.equals(pt.getRawType())
+                    || Optional.class.equals(pt.getRawType())){
                 toType = pt.getActualTypeArguments()[0];
+            }
+            if(toType.equals(String.class)){
+                value = textValue;
             }
         }
         List<PropertyConverter<Object>> converters = ConfigurationProvider.getConfiguration().getContext()
@@ -168,6 +174,9 @@ public class ConfigurationProducer {
                 LOGGER.log(Level.INFO, "Failed to convert value '" + textValue + "' for " +
                         injectionPoint, e);
             }
+        }
+        if(pt != null && Optional.class.equals(pt.getRawType())){
+            return Optional.ofNullable(value);
         }
         return value;
     }

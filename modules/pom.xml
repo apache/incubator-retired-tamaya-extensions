@@ -34,7 +34,6 @@ under the License.
     <modules>
         <module>features</module>
         <module>functions</module>
-        <module>spi-support</module>
         <module>optional</module>
         <module>events</module>
         <module>filter</module>

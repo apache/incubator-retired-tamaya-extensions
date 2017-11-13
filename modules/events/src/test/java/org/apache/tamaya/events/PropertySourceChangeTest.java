@@ -18,9 +18,9 @@
  */
 package org.apache.tamaya.events;
 
-import org.apache.tamaya.core.propertysource.EnvironmentPropertySource;
-import org.apache.tamaya.core.propertysource.SimplePropertySource;
-import org.apache.tamaya.core.propertysource.SystemPropertySource;
+import org.apache.tamaya.spisupport.propertysource.EnvironmentPropertySource;
+import org.apache.tamaya.spisupport.propertysource.SimplePropertySource;
+import org.apache.tamaya.spisupport.propertysource.SystemPropertySource;
 import org.apache.tamaya.spi.PropertySource;
 import org.junit.Test;
 

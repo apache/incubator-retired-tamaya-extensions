@@ -20,7 +20,7 @@ package org.apache.tamaya.format;
 
 import org.apache.tamaya.functions.Supplier;
 import org.apache.tamaya.spi.PropertyValue;
-import org.apache.tamaya.spisupport.BasePropertySource;
+import org.apache.tamaya.spisupport.propertysource.BasePropertySource;
 
 import java.util.HashMap;
 import java.util.Map;

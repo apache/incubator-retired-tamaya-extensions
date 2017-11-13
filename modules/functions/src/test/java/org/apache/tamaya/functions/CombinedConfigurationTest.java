@@ -23,23 +23,16 @@ import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.apache.tamaya.spisupport.DefaultConfiguration;
-import org.apache.tamaya.spisupport.DefaultConfigurationContext;
-import org.apache.tamaya.spisupport.DefaultConfigurationContextBuilder;
-import org.apache.tamaya.spisupport.SimplePropertySource;
+import org.apache.tamaya.core.internal.DefaultConfigurationContextBuilder;
+import org.apache.tamaya.spisupport.propertysource.SimplePropertySource;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;

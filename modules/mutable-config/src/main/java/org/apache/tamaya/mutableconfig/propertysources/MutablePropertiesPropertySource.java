@@ -22,8 +22,7 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.mutableconfig.ConfigChangeRequest;
 import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
 import org.apache.tamaya.spi.PropertyValue;
-import org.apache.tamaya.spi.PropertyValueBuilder;
-import org.apache.tamaya.spisupport.BasePropertySource;
+import org.apache.tamaya.spisupport.propertysource.BasePropertySource;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -31,7 +30,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;

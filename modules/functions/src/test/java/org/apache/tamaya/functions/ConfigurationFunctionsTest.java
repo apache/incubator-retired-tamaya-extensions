@@ -20,8 +20,8 @@ package org.apache.tamaya.functions;
 
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.core.propertysource.EnvironmentPropertySource;
-import org.apache.tamaya.core.propertysource.SystemPropertySource;
+import org.apache.tamaya.spisupport.propertysource.EnvironmentPropertySource;
+import org.apache.tamaya.spisupport.propertysource.SystemPropertySource;
 import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.junit.Test;
 

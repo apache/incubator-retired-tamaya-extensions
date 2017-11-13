@@ -43,7 +43,7 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
 import org.apache.tamaya.spi.PropertyValue;
-import org.apache.tamaya.spisupport.BasePropertySource;
+import org.apache.tamaya.spisupport.propertysource.BasePropertySource;
 
 /**
  * This implementation runs in a folder taking up all files compatible with the given

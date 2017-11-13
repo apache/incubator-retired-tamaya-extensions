@@ -18,8 +18,8 @@
  */
 package org.apache.tamaya.microprofile;
 
-import org.apache.tamaya.spisupport.BuildablePropertySource;
-import org.apache.tamaya.spisupport.BuildablePropertySourceProvider;
+import org.apache.tamaya.spisupport.propertysource.BuildablePropertySource;
+import org.apache.tamaya.spisupport.propertysource.BuildablePropertySourceProvider;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.junit.Test;
 
