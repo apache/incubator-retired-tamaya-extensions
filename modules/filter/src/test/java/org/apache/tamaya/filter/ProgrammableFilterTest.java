@@ -21,7 +21,7 @@ package org.apache.tamaya.filter;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertyValue;
-import org.apache.tamaya.core.internal.DefaultConfigurationContextBuilder;
+import org.apache.tamaya.core.internal.CoreConfigurationContextBuilder;
 import org.apache.tamaya.spisupport.RegexPropertyFilter;
 import org.junit.Test;
 
@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  */
 public class ProgrammableFilterTest {
 
-    private static ConfigurationContext context = new DefaultConfigurationContextBuilder().build();
+    private static ConfigurationContext context = new CoreConfigurationContextBuilder().build();
     private static PropertyValue test1Property = PropertyValue.of("test1","test1","test");
     private static PropertyValue test2Property = PropertyValue.of("test2","test2","test");
     private static PropertyValue test3Property = PropertyValue.of("test.test3","test.test3","test");

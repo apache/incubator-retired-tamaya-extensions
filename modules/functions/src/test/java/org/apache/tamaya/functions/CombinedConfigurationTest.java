@@ -24,7 +24,7 @@ import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spisupport.DefaultConfiguration;
-import org.apache.tamaya.core.internal.DefaultConfigurationContextBuilder;
+import org.apache.tamaya.core.internal.CoreConfigurationContextBuilder;
 import org.apache.tamaya.spisupport.propertysource.SimplePropertySource;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.Test;
@@ -57,15 +57,15 @@ public class CombinedConfigurationTest {
         SimplePropertySource sourceWithKeyC = new SimplePropertySource("C", singletonMap("c", "c"));
         SimplePropertySource sourceWithoutKeys = new SimplePropertySource("NONE", Collections.<String, String>emptyMap());
 
-        ConfigurationContext ccWithA1 = new DefaultConfigurationContextBuilder().addPropertySources(sourceWithKeyA1)
+        ConfigurationContext ccWithA1 = new CoreConfigurationContextBuilder().addPropertySources(sourceWithKeyA1)
                                                                                 .build();
-        ConfigurationContext ccWithA2 = new DefaultConfigurationContextBuilder().addPropertySources(sourceWithKeyA2)
+        ConfigurationContext ccWithA2 = new CoreConfigurationContextBuilder().addPropertySources(sourceWithKeyA2)
                                                                                 .build();
-        ConfigurationContext ccWithB = new DefaultConfigurationContextBuilder().addPropertySources(sourceWithKeyB)
+        ConfigurationContext ccWithB = new CoreConfigurationContextBuilder().addPropertySources(sourceWithKeyB)
                                                                                .build();
-        ConfigurationContext ccWithC = new DefaultConfigurationContextBuilder().addPropertySources(sourceWithKeyC)
+        ConfigurationContext ccWithC = new CoreConfigurationContextBuilder().addPropertySources(sourceWithKeyC)
                                                                                .build();
-        ConfigurationContext ccWithoutEntries = new DefaultConfigurationContextBuilder().addPropertySources(sourceWithoutKeys)
+        ConfigurationContext ccWithoutEntries = new CoreConfigurationContextBuilder().addPropertySources(sourceWithoutKeys)
                                                                                         .build();
 
         configWithA1 = new DefaultConfiguration(ccWithA1);
