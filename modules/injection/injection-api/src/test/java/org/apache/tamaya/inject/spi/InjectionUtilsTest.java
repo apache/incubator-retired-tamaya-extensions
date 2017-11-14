@@ -18,14 +18,38 @@
  */
 package org.apache.tamaya.inject.spi;
 
+import org.apache.tamaya.inject.api.Config;
+import org.apache.tamaya.inject.api.ConfigDefaultSections;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class InjectionUtilsTest {
+
+    @Test
+    public void getKeysMethod() {
+        class Klazz {
+            @Config({"val", "val2", "[vvv]"})
+            public void setValue(String field){}
+        }
+
+        Method method = Klazz.class.getMethods()[0];
+
+        List<String> foundKeys = InjectionUtils.getKeys(method);
+
+        assertThat(foundKeys).isNotNull()
+                .contains("org.apache.tamaya.inject.spi.InjectionUtilsTest$1Klazz.val",
+                        "org.apache.tamaya.inject.spi.InjectionUtilsTest$1Klazz.val2",
+                        "Klazz.val",
+                        "Klazz.val2",
+                        "val",
+                        "val2",
+                        "vvv");
+    }
 
     @Test
     public void getKeysReturnsEmptyListForNonAnnotatedField() {
@@ -40,9 +64,62 @@ public class InjectionUtilsTest {
         List<String> foundKeys = InjectionUtils.getKeys(field);
 
         assertThat(foundKeys).isNotNull()
-                             .contains("org.apache.tamaya.inject.spi.InjectionUtilsTest$1Klazz.field",
+                             .contains("org.apache.tamaya.inject.spi.InjectionUtilsTest$2Klazz.field",
                                        "Klazz.field",
                                        "field");
     }
 
+    @Test
+    public void evaluateKeysWithSection() {
+        @ConfigDefaultSections("basic")
+        class Klazz {
+            public String field;
+            protected String protectedField;
+            private String privateField;
+        }
+
+        Field field = Klazz.class.getFields()[0];
+
+        List<String> foundKeys = InjectionUtils.evaluateKeys(field, Klazz.class.getAnnotation(ConfigDefaultSections.class));
+        assertThat(foundKeys).isNotNull()
+                .contains("basic.field",
+                        "field");
+    }
+
+    @Test
+    public void evaluateKeysWithSectionAndMemberAnnotation() {
+        @ConfigDefaultSections("basic")
+        class Klazz {
+            @Config({"val", "[absoluteVal]"})
+            public String field;
+            protected String protectedField;
+            private String privateField;
+        }
+
+        Field field = Klazz.class.getFields()[0];
+
+        List<String> foundKeys = InjectionUtils.evaluateKeys(field, Klazz.class.getAnnotation(ConfigDefaultSections.class),
+                field.getAnnotation(Config.class));
+        assertThat(foundKeys).isNotNull()
+                .contains("basic.val", "val",
+                        "absoluteVal");
+    }
+
+    @Test
+    public void evaluateKeysWithMemberAnnotation() {
+        class Klazz {
+            @Config({"val", "[absoluteVal]"})
+            public String field;
+            protected String protectedField;
+            private String privateField;
+        }
+
+        Field field = Klazz.class.getFields()[0];
+
+        List<String> foundKeys = InjectionUtils.evaluateKeys(field, null,
+                field.getAnnotation(Config.class));
+        assertThat(foundKeys).isNotNull()
+                .contains("Klazz.val", "val",
+                        "absoluteVal");
+    }
 }

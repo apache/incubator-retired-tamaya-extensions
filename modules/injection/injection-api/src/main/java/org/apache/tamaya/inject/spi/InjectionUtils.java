@@ -104,7 +104,7 @@ public final class InjectionUtils {
         for(String memberKey:memberKeys){
             if (memberKey.startsWith("[") && memberKey.endsWith("]")) {
                 // absolute key, strip away brackets, take key as is
-                result.add(memberKey);
+                result.add(memberKey.substring(1, memberKey.length()-1));
             }else{
                 for(String areaKey:areaKeys) {
                     result.add(areaKey + '.' + memberKey);
