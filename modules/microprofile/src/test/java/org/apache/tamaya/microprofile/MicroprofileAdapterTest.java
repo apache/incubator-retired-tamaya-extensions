@@ -18,13 +18,12 @@
  */
 package org.apache.tamaya.microprofile;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.*;
+import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spisupport.propertysource.BuildablePropertySource;
-import org.apache.tamaya.spisupport.BuildablePropertySource;
 import org.assertj.core.api.Assertions;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
@@ -33,10 +32,7 @@ import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.eclipse.microprofile.config.spi.Converter;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -238,16 +234,6 @@ public class MicroprofileAdapterTest {
 
         @Override
         public Map<String, String> getProperties() {
-            throw new RuntimeException("Not implemented yet!");
-        }
-
-        @Override
-        public Configuration with(ConfigOperator operator) {
-            throw new RuntimeException("Not implemented yet!");
-        }
-
-        @Override
-        public <T> T query(ConfigQuery<T> query) {
             throw new RuntimeException("Not implemented yet!");
         }
 
