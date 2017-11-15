@@ -18,10 +18,23 @@
  */
 package org.apache.tamaya.inject.spi;
 
+import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.Configuration;
+import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.inject.api.DynamicValue;
+import org.apache.tamaya.inject.api.UpdatePolicy;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.Serializable;
+import java.lang.reflect.Member;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Basic abstract implementation skeleton for a {@link DynamicValue}. This can be used to support values that may
@@ -43,6 +56,159 @@ import java.util.function.Supplier;
 public abstract class BaseDynamicValue<T> implements DynamicValue<T>, Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    private static final Logger LOG = Logger.getLogger(DynamicValue.class.getName());
+
+    private UpdatePolicy updatePolicy = UpdatePolicy.NEVER;
+    private TypeLiteral<T> targetType;
+    private T currentValue;
+    private T newValue;
+    private List<String> keys = new ArrayList<>();
+    private List<PropertyChangeListener> listeners = Collections.synchronizedList(new ArrayList<>());
+
+
+    public BaseDynamicValue(TypeLiteral targetType, List<String> keys){
+        if(keys == null || keys.isEmpty()){
+            throw new ConfigException("At least one key is required.");
+        }
+        this.targetType = Objects.requireNonNull(targetType);
+        this.keys.addAll(keys);
+        this.currentValue = evaluateValue();
+    }
+
+    /**
+     * Get the configuration to evaluate.
+     * @return the configuration, never null.
+     */
+    protected abstract Configuration getConfiguration();
+
+    /**
+     * Get the owner of this dynamic value instance.
+     * @return the owner, never null.
+     */
+    protected abstract Object getOwner();
+
+    /**
+     * Get the corresponding property name.
+     * @return
+     */
+    protected abstract String getPropertyName();
+
+    /**
+     * Get the targeted keys, in evaluation order.
+     * @return the keys evaluated.
+     */
+    public List<String> getKeys(){
+        return Collections.unmodifiableList(keys);
+    }
+
+    /**
+     * Get the target type.
+     * @return the target type, not null.
+     */
+    public TypeLiteral<T> getTargetType(){
+        return targetType;
+    }
+
+    @Override
+    public void commit() {
+        if(!Objects.equals(newValue, currentValue)) {
+            T oldValue = this.currentValue;
+            currentValue = newValue;
+            publishChangeEvent(this.currentValue, newValue);
+        }
+    }
+
+    @Override
+    public UpdatePolicy getUpdatePolicy() {
+        return updatePolicy;
+    }
+
+    @Override
+    public void addListener(PropertyChangeListener l) {
+        synchronized(listeners){
+            if(!listeners.contains(l)){
+                listeners.add(l);
+            }
+        }
+    }
+
+    @Override
+    public void removeListener(PropertyChangeListener l) {
+        synchronized(listeners){
+            listeners.remove(l);
+        }
+    }
+
+    @Override
+    public T get() {
+        return currentValue;
+    }
+
+    @Override
+    public boolean updateValue() {
+        Configuration config = getConfiguration();
+        T val = evaluateValue();
+        if(!Objects.equals(val, currentValue)){
+            switch (updatePolicy){
+                case EXPLICIT:
+                    newValue = val;
+                    break;
+                case IMMEDIATE:
+                    this.currentValue = val;
+                    publishChangeEvent(this.currentValue, val);
+                    break;
+                case LOG_ONLY:
+                    LOG.info("New config value for keys " + keys + " detected, but not yet applied.");
+                    break;
+                case NEVER:
+                    LOG.finest("New config value for keys " + keys + " detected, but ignored.");
+                    break;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Publishes a change event to all listeners.
+     * @param newValue the new value
+     * @param oldValue the new old value
+     */
+    protected void publishChangeEvent(T oldValue, T newValue) {
+        PropertyChangeEvent evt = new PropertyChangeEvent(getOwner(), getPropertyName(),oldValue, newValue);
+        synchronized (listeners){
+            listeners.parallelStream().forEach(l -> {
+                try{
+                    l.propertyChange(evt);
+                }catch(Exception e){
+                    LOG.log(Level.SEVERE, "Error in config change listener: " + l, e);
+                }
+            });
+        }
+    }
+
+    @Override
+    public T evaluateValue() {
+        Configuration config = getConfiguration();
+        for(String key:getKeys()){
+            T val = config.getOrDefault(key, targetType, null);
+           if(val!=null){
+               return val;
+           }
+        }
+        return null;
+    }
+
+    @Override
+    public void setUpdatePolicy(UpdatePolicy updatePolicy) {
+        this.updatePolicy = Objects.requireNonNull(updatePolicy);
+    }
+
+    @Override
+    public T getNewValue() {
+        return newValue;
+    }
 
     /**
      * Performs a commit, if necessary, and returns the current value.
