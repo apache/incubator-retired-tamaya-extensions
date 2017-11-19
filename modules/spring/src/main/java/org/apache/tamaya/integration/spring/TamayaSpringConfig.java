@@ -53,4 +53,9 @@ public class TamayaSpringConfig {
         cfgBean.setPropertySources(sources);
         return cfgBean;
     }
+
+    @Bean
+    public static SpringConfigInjectionPostProcessor tamayaConfigPostProcessor(){
+        return new SpringConfigInjectionPostProcessor();
+    }
  }

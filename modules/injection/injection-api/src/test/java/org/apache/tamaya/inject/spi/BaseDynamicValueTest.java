@@ -79,7 +79,7 @@ public class BaseDynamicValueTest {
     private static final class MyDynamicValue extends BaseDynamicValue{
 
         public MyDynamicValue(String... keys){
-            super(TypeLiteral.of(String.class), Arrays.asList(keys));
+            super(null, "test", TypeLiteral.of(String.class), Arrays.asList(keys));
         }
 
         @Override

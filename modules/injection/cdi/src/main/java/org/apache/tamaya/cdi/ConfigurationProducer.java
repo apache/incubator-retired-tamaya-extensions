@@ -45,9 +45,9 @@ public class ConfigurationProducer {
     private DynamicValue createDynamicValue(final InjectionPoint injectionPoint) {
         Member member = injectionPoint.getMember();
         if (member instanceof Field) {
-            return DefaultDynamicValue.of((Field) member, ConfigurationProvider.getConfiguration());
+            return DefaultDynamicValue.of(injectionPoint.getBean(), (Field) member, ConfigurationProvider.getConfiguration());
         } else if (member instanceof Method) {
-            return DefaultDynamicValue.of((Method) member, ConfigurationProvider.getConfiguration());
+            return DefaultDynamicValue.of(injectionPoint.getBean(), (Method) member, ConfigurationProvider.getConfiguration());
         }
         return null;
     }

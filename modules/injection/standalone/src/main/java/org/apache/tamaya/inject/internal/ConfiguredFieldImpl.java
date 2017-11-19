@@ -82,11 +82,11 @@ public class ConfiguredFieldImpl implements ConfiguredField{
                 @Override
                 public Object run() throws Exception {
                     annotatedField.setAccessible(true);
+                    annotatedField.set(target,
+                            DefaultDynamicValue.of(target, annotatedField, ConfigurationProvider.getConfiguration()));
                     return annotatedField;
                 }
             });
-            annotatedField.set(target,
-                    DefaultDynamicValue.of(annotatedField, ConfigurationProvider.getConfiguration()));
         } catch (Exception e) {
             throw new ConfigException("Failed to annotation configured field: " + this.annotatedField.getDeclaringClass()
                     .getName() + '.' + annotatedField.getName(), e);
@@ -118,12 +118,12 @@ public class ConfiguredFieldImpl implements ConfiguredField{
                 @Override
                 public Object run() throws Exception {
                     annotatedField.setAccessible(true);
+                    if(value!=null) {
+                        annotatedField.set(target, value);
+                    }
                     return annotatedField;
                 }
             });
-            if(value!=null) {
-                annotatedField.set(target, value);
-            }
         } catch (Exception e) {
             throw new ConfigException("Failed to evaluate annotated field: " + this.annotatedField.getDeclaringClass()
                     .getName() + '.' + annotatedField.getName(), e);

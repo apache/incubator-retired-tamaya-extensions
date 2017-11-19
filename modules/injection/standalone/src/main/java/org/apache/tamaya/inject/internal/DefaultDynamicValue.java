@@ -67,49 +67,19 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
     private static final long serialVersionUID = -2071172847144537443L;
 
     /**
-     * The property name of the entry.
-     */
-    private final String propertyName;
-    /**
-     * The keys to be resolved.
-     */
-    private final String[] keys;
-    /**
      * Back reference to the base configuration instance. This reference is used reevaluate the given property and
      * compare the result with the previous value after a configuration change was triggered.
      */
     private final Configuration configuration;
     /**
-     * The target type of the property used to lookup a matching {@link PropertyConverter}.
-     * If null, {@code propertyConverter} is set and used instead.
-     */
-    private final TypeLiteral<T> targetType;
-    /**
      * The property converter to be applied, may be null. In the ladder case targetType is not null.
      */
     private final PropertyConverter<T> propertyConverter;
-    /**
-     * Policy that defines how new values are applied, be default it is applied initially once, but never updated
-     * anymore.
-     */
-    private UpdatePolicy updatePolicy;
+
     /**
      * Load policy.
      */
     private final LoadPolicy loadPolicy;
-
-    /**
-     * The current value, never null.
-     */
-    private transient T value;
-    /**
-     * The new value, or null.
-     */
-    private transient Object[] newValue;
-    /**
-     * List of listeners that listen for changes.
-     */
-    private transient WeakList<PropertyChangeListener> listeners;
 
     /**
      * Constructor.
@@ -120,35 +90,33 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
      * @param targetType        the target type, not null.
      * @param propertyConverter the optional converter to be used.
      */
-    private DefaultDynamicValue(String propertyName, Configuration configuration, TypeLiteral<T> targetType,
+    private DefaultDynamicValue(Object owner, String propertyName, Configuration configuration, TypeLiteral<T> targetType,
                                 PropertyConverter<T> propertyConverter, List<String> keys, LoadPolicy loadPolicy,
                                 UpdatePolicy updatePolicy) {
-        this.propertyName = Objects.requireNonNull(propertyName);
-        this.keys = keys.toArray(new String[keys.size()]);
+        super(owner, propertyName, targetType, keys);
         this.configuration = Objects.requireNonNull(configuration);
         this.propertyConverter = propertyConverter;
-        this.targetType = targetType;
         this.loadPolicy = Objects.requireNonNull(loadPolicy);
-        this.updatePolicy = Objects.requireNonNull(updatePolicy);
+        setUpdatePolicy(updatePolicy);
         if(loadPolicy == LoadPolicy.INITIAL){
             this.value = evaluateValue();
         }
     }
 
-    public static DynamicValue<?> of(Field annotatedField, Configuration configuration) {
-        return of(annotatedField, configuration, LoadPolicy.ALWAYS, UpdatePolicy.IMMEDIATE);
+    public static DynamicValue<?> of(Object owner, Field annotatedField, Configuration configuration) {
+        return of(owner, annotatedField, configuration, LoadPolicy.ALWAYS, UpdatePolicy.IMMEDIATE);
     }
 
-    public static DynamicValue<?> of(Field annotatedField, Configuration configuration, LoadPolicy loadPolicy) {
-        return of(annotatedField, configuration, loadPolicy, UpdatePolicy.IMMEDIATE);
+    public static DynamicValue<?> of(Object owner, Field annotatedField, Configuration configuration, LoadPolicy loadPolicy) {
+        return of(owner, annotatedField, configuration, loadPolicy, UpdatePolicy.IMMEDIATE);
     }
 
-    public static DynamicValue<?> of(Field annotatedField, Configuration configuration, UpdatePolicy updatePolicy) {
-        return of(annotatedField, configuration, LoadPolicy.ALWAYS, updatePolicy);
+    public static DynamicValue<?> of(Object owner, Field annotatedField, Configuration configuration, UpdatePolicy updatePolicy) {
+        return of(owner, annotatedField, configuration, LoadPolicy.ALWAYS, updatePolicy);
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-	public static DynamicValue<?> of(Field annotatedField, Configuration configuration, LoadPolicy loadPolicy, UpdatePolicy updatePolicy) {
+	public static DynamicValue<?> of(Object owner, Field annotatedField, Configuration configuration, LoadPolicy loadPolicy, UpdatePolicy updatePolicy) {
         // Check for adapter/filter
         Type targetType = annotatedField.getGenericType();
         if (targetType == null) {
@@ -176,24 +144,24 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
             }
         }
         List<String> keys = InjectionUtils.getKeys(annotatedField);
-        return new DefaultDynamicValue(annotatedField.getName(), configuration,
+        return new DefaultDynamicValue(owner, annotatedField.getName(), configuration,
                 TypeLiteral.of(targetType), propertyConverter, keys, loadPolicy, updatePolicy);
     }
 
-    public static DynamicValue<?> of(Method method, Configuration configuration) {
-        return of(method, configuration, LoadPolicy.ALWAYS, UpdatePolicy.IMMEDIATE);
+    public static DynamicValue<?> of(Object owner, Method method, Configuration configuration) {
+        return of(owner, method, configuration, LoadPolicy.ALWAYS, UpdatePolicy.IMMEDIATE);
     }
 
-    public static DynamicValue<?> of(Method method, Configuration configuration, UpdatePolicy updatePolicy) {
-        return of(method, configuration, LoadPolicy.ALWAYS, updatePolicy);
+    public static DynamicValue<?> of(Object owner, Method method, Configuration configuration, UpdatePolicy updatePolicy) {
+        return of(owner, method, configuration, LoadPolicy.ALWAYS, updatePolicy);
     }
 
-    public static DynamicValue<?> of(Method method, Configuration configuration, LoadPolicy loadPolicy) {
-        return of(method, configuration, loadPolicy, UpdatePolicy.IMMEDIATE);
+    public static DynamicValue<?> of(Object owner, Method method, Configuration configuration, LoadPolicy loadPolicy) {
+        return of(owner, method, configuration, loadPolicy, UpdatePolicy.IMMEDIATE);
     }
 
     @SuppressWarnings("unchecked")
-	public static DynamicValue<?> of(Method method, Configuration configuration, LoadPolicy loadPolicy, UpdatePolicy updatePolicy) {
+	public static DynamicValue<?> of(Object owner, Method method, Configuration configuration, LoadPolicy loadPolicy, UpdatePolicy updatePolicy) {
         // Check for adapter/filter
         Type targetType = method.getGenericReturnType();
         if (targetType == null) {
@@ -220,82 +188,18 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
                         + '.' + method.getName(), e);
             }
         }
-        return new DefaultDynamicValue<>(method.getName(),
+        return new DefaultDynamicValue<>(owner, method.getName(),
                 configuration, TypeLiteral.of(targetType), propertyConverter, InjectionUtils.getKeys(method),
                 loadPolicy, updatePolicy);
     }
 
-
-    /**
-     * Commits a new value that has not been committed yet, make it the new value of the instance. On change any
-     * registered listeners will be triggered.
-     */
-    @SuppressWarnings("unchecked")
-	public void commit() {
-        T oldValue = value;
-        value = newValue==null?null:(T)newValue[0];
-        newValue = null;
-        informListeners(oldValue, value);
+    protected PropertyConverter getCustomConverter(){
+        return this.propertyConverter;
     }
 
-    private void informListeners(T value, T newValue) {
-        synchronized (this) {
-            PropertyChangeEvent evt = new PropertyChangeEvent(this, propertyName, value,
-                    newValue);
-            if (listeners != null) {
-                for (PropertyChangeListener consumer : listeners.get()) {
-                    consumer.propertyChange(evt);
-                }
-            }
-        }
-    }
-
-    /**
-     * Discards a new value that was published. No listeners will be informed.
-     */
-    public void discard() {
-        newValue = null;
-    }
-
-    /**
-     * Access the {@link UpdatePolicy} used for updating this value.
-     *
-     * @return the update policy, never null.
-     */
-    public UpdatePolicy getUpdatePolicy() {
-        return updatePolicy;
-    }
-
-    /**
-     * Sets a new {@link UpdatePolicy}.
-     *
-     * @param updatePolicy the new policy, not null.
-     */
-    public void setUpdatePolicy(UpdatePolicy updatePolicy) {
-        this.updatePolicy = Objects.requireNonNull(updatePolicy);
-    }
-
-    /**
-     * Add a listener to be called as weak reference, when this value has been changed.
-     *
-     * @param l the listener, not null
-     */
-    public void addListener(PropertyChangeListener l) {
-        if (listeners == null) {
-            listeners = new WeakList<>();
-        }
-        listeners.add(l);
-    }
-
-    /**
-     * Removes a listener to be called, when this value has been changed.
-     *
-     * @param l the listener to be removed, not null
-     */
-    public void removeListener(PropertyChangeListener l) {
-        if (listeners != null) {
-            listeners.remove(l);
-        }
+    @Override
+    protected Configuration getConfiguration() {
+        return configuration;
     }
 
     /**
@@ -314,17 +218,17 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
                 this.value = newLocalValue;
             }
             if(!Objects.equals(this.value, newLocalValue)){
-                switch (updatePolicy){
+                switch (getUpdatePolicy()){
                     case IMMEDEATE:
                     case IMMEDIATE:
                         commit();
                         break;
                     case EXPLCIT:
                     case EXPLICIT:
-                        this.newValue = new Object[]{newLocalValue};
+                        this.newValue = newLocalValue;
                         break;
                     case LOG_ONLY:
-                        informListeners(this.value, newLocalValue);
+                        publishChangeEvent(this.value, newLocalValue);
                         this.newValue = null;
                         break;
                     case NEVER:
@@ -355,10 +259,10 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
         if (Objects.equals(newValue, this.value)) {
             return false;
         }
-        switch (this.updatePolicy) {
+        switch (getUpdatePolicy()) {
             case LOG_ONLY:
                 Logger.getLogger(getClass().getName()).info("Discard change on " + this + ", newValue=" + newValue);
-                informListeners(value, newValue);
+                publishChangeEvent(value, newValue);
                 this.newValue = null;
                 break;
             case NEVER:
@@ -367,36 +271,11 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
             case EXPLCIT:
             case IMMEDEATE:
             default:
-                this.newValue = new Object[]{newValue};
+                this.newValue = newValue;
                 commit();
                 break;
         }
         return true;
-    }
-
-    /**
-     * Evaluates the current value dynamically from the underlying configuration.
-     *
-     * @return the current actual value, or null.
-     */
-    public T evaluateValue() {
-        T value = null;
-
-        for (String key : keys) {
-            ConversionContext ctx = new ConversionContext.Builder(key, targetType).build();
-            if (propertyConverter == null) {
-                value = configuration.get(key, targetType);
-            } else {
-                String source = configuration.get(key);
-                value = propertyConverter.convert(source, ctx);
-            }
-
-            if (value != null) {
-                break;
-            }
-        }
-
-        return value;
     }
 
     /**
@@ -406,28 +285,9 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
      */
     public T getNewValue() {
         @SuppressWarnings("unchecked")
-		T nv = newValue==null?null:(T)newValue[0];
+		T nv = newValue==null?null:(T)newValue;
         return nv;
     }
-
-    @Override
-    public T orElseGet(Supplier<? extends T> other) {
-        T t = evaluateValue();
-        if(t==null){
-            return other.get();
-        }
-        return t;
-    }
-
-    @Override
-    public <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X {
-        T t = evaluateValue();
-        if(t==null){
-            throw exceptionSupplier.get();
-        }
-        return t;
-    }
-
 
     /**
      * Serialization implementation that strips away the non serializable Optional part.
@@ -449,71 +309,11 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
      */
     @SuppressWarnings("unchecked")
 	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        this.updatePolicy = (UpdatePolicy) ois.readObject();
+        setUpdatePolicy((UpdatePolicy)ois.readObject());
         if (isPresent()) {
             this.value = (T) ois.readObject();
         }
         newValue = null;
-    }
-
-
-    /**
-     * Simple helper that allows keeping the listeners registered as weak references, hereby avoiding any
-     * memory leaks.
-     *
-     * @param <I> the type
-     */
-    private class WeakList<I> {
-        final List<WeakReference<I>> refs = new LinkedList<>();
-
-        /**
-         * Adds a new instance.
-         *
-         * @param t the new instance, not null.
-         */
-        void add(I t) {
-            refs.add(new WeakReference<>(t));
-        }
-
-        /**
-         * Removes a instance.
-         *
-         * @param t the instance to be removed.
-         */
-        void remove(I t) {
-            synchronized (refs) {
-                for (Iterator<WeakReference<I>> iterator = refs.iterator(); iterator.hasNext(); ) {
-                    WeakReference<I> ref = iterator.next();
-                    I instance = ref.get();
-                    if (instance == null || instance == t) {
-                        iterator.remove();
-                        break;
-                    }
-                }
-            }
-        }
-
-
-        /**
-         * Access a list (copy) of the current instances that were not discarded by the GC.
-         *
-         * @return the list of accessible items.
-         */
-        public List<I> get() {
-            synchronized (refs) {
-                List<I> res = new ArrayList<>();
-                for (Iterator<WeakReference<I>> iterator = refs.iterator(); iterator.hasNext(); ) {
-                    WeakReference<I> ref = iterator.next();
-                    I instance = ref.get();
-                    if (instance == null) {
-                        iterator.remove();
-                    } else {
-                        res.add(instance);
-                    }
-                }
-                return res;
-            }
-        }
     }
 
 }

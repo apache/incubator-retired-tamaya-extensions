@@ -59,6 +59,14 @@ public interface DynamicValue<T> {
     void commit();
 
     /**
+     * Discards a new value that has been published and ignore all future evaluations to the last discarded
+     * value. If a different new value than the discarded value will be evaluated a value change
+     * will be flagged and handled as defined by the {@link UpdatePolicy}.
+     * No listeners will be triggered.
+     */
+    void discard();
+
+    /**
      * Access the {@link UpdatePolicy} used for updating this value.
      * @return the update policy, never null.
      */
