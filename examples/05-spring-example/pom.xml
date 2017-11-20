@@ -47,12 +47,6 @@ under the License.
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-parent</artifactId>
-            <version>${spring.boot.version}</version>
-            <type>pom</type>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <version>${spring.boot.version}</version>
         </dependency>
@@ -61,11 +55,6 @@ under the License.
             <artifactId>spring-boot-starter-freemarker</artifactId>
             <version>${spring.boot.version}</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.apache.tamaya.ext</groupId>-->
-            <!--<artifactId>tamaya-mutable-config</artifactId>-->
-            <!--<version>${tamaya-apicore.version}</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.apache.tamaya</groupId>
             <artifactId>tamaya-core</artifactId>
@@ -76,11 +65,6 @@ under the License.
             <artifactId>tamaya-events</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.apache.tamaya.ext</groupId>-->
-            <!--<artifactId>tamaya-etcd_beta</artifactId>-->
-            <!--<version>${project.version}</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.apache.tamaya.ext</groupId>
             <artifactId>tamaya-spring</artifactId>
