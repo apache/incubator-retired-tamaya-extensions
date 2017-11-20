@@ -25,7 +25,6 @@ under the License.
         <groupId>org.apache.tamaya.ext</groupId>
         <artifactId>tamaya-extensions</artifactId>
         <version>0.4-incubating-SNAPSHOT</version>
-        <relativePath>..</relativePath>
     </parent>
 
     <artifactId>tamaya-resolver</artifactId>
