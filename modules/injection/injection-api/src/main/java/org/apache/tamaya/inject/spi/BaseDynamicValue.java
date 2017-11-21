@@ -129,7 +129,7 @@ public abstract class BaseDynamicValue<T> implements DynamicValue<T> {
 
     /**
      * Get the corresponding property name.
-     * @return
+     * @return the property name.
      */
     protected String getPropertyName(){
         return propertyName;
