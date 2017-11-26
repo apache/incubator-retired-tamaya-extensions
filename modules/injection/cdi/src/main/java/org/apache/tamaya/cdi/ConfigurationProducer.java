@@ -18,10 +18,7 @@ package org.apache.tamaya.cdi;
 
 import org.apache.tamaya.*;
 import org.apache.tamaya.inject.api.*;
-import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.ConfigurationContextBuilder;
-import org.apache.tamaya.spi.ConversionContext;
-import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.spi.*;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
@@ -191,9 +188,15 @@ public class ConfigurationProducer {
         return ConfigurationProvider.getConfiguration().getContext();
     }
 
+    @Deprecated
     @Produces
     public ConfigurationContextBuilder getConfigurationContextBuilder(){
         return ConfigurationProvider.getConfigurationContextBuilder();
+    }
+
+    @Produces
+    public ConfigurationBuilder getConfigurationBuilder(){
+        return ConfigurationProvider.getConfigurationBuilder();
     }
 
 }

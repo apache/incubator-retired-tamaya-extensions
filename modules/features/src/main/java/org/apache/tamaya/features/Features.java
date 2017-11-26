@@ -50,7 +50,7 @@ public final class Features {
      * @return true, if <i>tamaya-core</i> is on the classpath.
      */
     public static boolean tamayaCoreAvailable() {
-        return checkClassIsLoadable("org.apache.tamaya.core.internal.DefaultConfigurationProvider");
+        return checkClassIsLoadable("org.apache.tamaya.core.internal.CoreConfiguration");
     }
 
     /**

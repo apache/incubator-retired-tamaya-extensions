@@ -21,7 +21,7 @@ package org.apache.tamaya.cdi;
 
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.ConfigurationContextBuilder;
+import org.apache.tamaya.spi.ConfigurationBuilder;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -45,10 +45,10 @@ public class InjectedClass {
     ConfigurationContext configContext2;
 
     @Inject
-    ConfigurationContextBuilder builder1;
+    ConfigurationBuilder builder1;
 
     @Inject
-    ConfigurationContextBuilder builder2;
+    ConfigurationBuilder builder2;
 
     @Override
     public String toString() {
