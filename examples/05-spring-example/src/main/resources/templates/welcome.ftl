@@ -21,7 +21,7 @@
 
 <body>
     <h1>Tamaya - Spring Boot Example</h1>
-    This example show how Tamaya Configuration can be used with Spring Boot to enable Spring with Tamaya
+    This example shows how Tamaya Configuration can be used with Spring Boot to enable Spring with Tamaya
     dynamic configuration features and Tamaya Configuration Injection.
     <h2>Accessing properties programmatically</h2>
     Configuration properties can be easily accessed with Tamaya's Java API:<br/>

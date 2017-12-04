@@ -29,10 +29,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.websocket.server.PathParam;
-
 @Controller
 public class WelcomeController {
+	
+	private static final String FOREGROUND_DEFAULT = "#DDDDDD"; 
 
 	@Value("${application.message:Hello World}")
 	private String message = "Hello World";
@@ -40,7 +40,7 @@ public class WelcomeController {
 	@Config(value = "background.color", required = false)
 	private String backgroundColor = "#BBBBBB";
 
-	@Config(value = "foreground.color", required = false, defaultValue = "#DDDDDD")
+	@Config(value = "foreground.color", required = false, defaultValue = FOREGROUND_DEFAULT)
 	private DynamicValue<String> foregroundColor;
 
 	@Config(value = "background.color", required = false)
@@ -59,7 +59,7 @@ public class WelcomeController {
 	@GetMapping("/update")
 	public String update(@RequestParam("foreground") String newForeground, Map<String, Object> model) {
 		foregroundColor.setUpdatePolicy(UpdatePolicy.IMMEDIATE);
-		if(newForeground!=null){
+		if(newForeground!=null && !newForeground.isEmpty()){
 			System.out.println("Setting new foreground: " + newForeground+"...");
 			System.setProperty("foreground.color", newForeground);
 		}
