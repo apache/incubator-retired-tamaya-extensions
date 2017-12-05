@@ -86,8 +86,8 @@ private DynamicValue<String> foregroundColor;
 	</p>
 	</td></tr></table>
 	<h2>Configuration Data</h2>
-	Cou can access the current configuration using the following URL: <a href="/config">/config</a>. <br/>
-	Add	additional path parameter for filtering...
+	You can access the current configuration using the following URL: <a href="/config">/config</a>. <br/>
+	Add	additional path parameters for filtering...
 </body>
 
 </html>
