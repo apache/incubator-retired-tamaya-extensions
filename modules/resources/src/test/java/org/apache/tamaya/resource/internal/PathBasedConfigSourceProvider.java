@@ -18,10 +18,9 @@
  */
 package org.apache.tamaya.resource.internal;
 
-import org.apache.tamaya.resource.AbstractPathPropertySourceProvider;
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.resource.AbstractPathConfigSourceProvider;
 
+import javax.config.spi.ConfigSource;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
@@ -29,19 +28,19 @@ import java.util.*;
 /**
  * Created by Anatole on 03.03.2015.
  */
-public class PathBasedPropertySourceProvider extends AbstractPathPropertySourceProvider{
+public class PathBasedConfigSourceProvider extends AbstractPathConfigSourceProvider {
 
-    public PathBasedPropertySourceProvider() {
+    public PathBasedConfigSourceProvider() {
         super("META-INF/cfg/**/*.properties");
     }
 
     @Override
-    protected Collection<PropertySource> getPropertySources(URL url) {
-        List<PropertySource> list = new ArrayList<>();
+    protected Collection<ConfigSource> getConfigSources(URL url) {
+        List<ConfigSource> list = new ArrayList<>();
         Properties props = new Properties();
         try(InputStream is = url.openStream()){
             props.load(is);
-            list.add(new PropertiesBasedPropertySource(url.toString(), props));
+            list.add(new PropertiesBasedConfigSource(url.toString(), props));
         }
         catch(Exception e){
             e.printStackTrace();
@@ -51,18 +50,16 @@ public class PathBasedPropertySourceProvider extends AbstractPathPropertySourceP
     }
 
 
-    private final static class PropertiesBasedPropertySource implements PropertySource{
+    private final static class PropertiesBasedConfigSource implements ConfigSource{
 
         private final String name;
-        private final Map<String,PropertyValue> properties = new HashMap<>();
+        private final Map<String,String> properties = new HashMap<>();
 
-        public PropertiesBasedPropertySource(String name, Properties props) {
+        public PropertiesBasedConfigSource(String name, Properties props) {
             this.name = Objects.requireNonNull(name);
             for (Map.Entry en : props.entrySet()) {
                 this.properties.put(en.getKey().toString(),
-                        PropertyValue.of(en.getKey().toString(),
-                                String.valueOf(en.getValue()),
-                                name));
+                        String.valueOf(en.getValue()));
             }
         }
 
@@ -77,18 +74,14 @@ public class PathBasedPropertySourceProvider extends AbstractPathPropertySourceP
         }
 
         @Override
-        public PropertyValue get(String key) {
+        public String getValue(String key) {
             return properties.get(key);
         }
 
         @Override
-        public Map<String, PropertyValue> getProperties() {
+        public Map<String, String> getProperties() {
             return properties;
         }
 
-        @Override
-        public boolean isScannable() {
-            return false;
-        }
     }
 }

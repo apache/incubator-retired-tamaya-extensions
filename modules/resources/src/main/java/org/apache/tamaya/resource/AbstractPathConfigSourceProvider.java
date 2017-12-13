@@ -18,6 +18,8 @@
  */
 package org.apache.tamaya.resource;
 
+import org.apache.tamaya.spi.ServiceContext;
+
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -31,18 +33,18 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertySourceProvider;
-import org.apache.tamaya.spi.PropertyValue;
+
+import javax.config.spi.ConfigSource;
+import javax.config.spi.ConfigSourceProvider;
 
 /**
  * Abstract base class that uses a descriptive resource path to define the locations of configuration files to be
  * included into the configuration. This is especially useful, when the current configuration policy in place
  * does not define the exact file names, but the file locations, where configuration can be provided.
  */
-public abstract class AbstractPathPropertySourceProvider implements PropertySourceProvider{
+public abstract class AbstractPathConfigSourceProvider implements ConfigSourceProvider{
     /** The log used. */
-    private static final Logger LOG = Logger.getLogger(AbstractPathPropertySourceProvider.class.getName());
+    private static final Logger LOG = Logger.getLogger(AbstractPathConfigSourceProvider.class.getName());
     /** The resource paths. */
     private String[] resourcePaths;
 
@@ -51,7 +53,7 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
      * Creates a new instance using the given resource paths.
      * @param resourcePaths the resource paths, not null, not empty.
      */
-    public AbstractPathPropertySourceProvider(String... resourcePaths){
+    public AbstractPathConfigSourceProvider(String... resourcePaths){
         if(resourcePaths.length==0){
             throw new IllegalArgumentException("At least one resource path should be configured.");
         }
@@ -60,14 +62,18 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
     }
 
     @Override
-    public Collection<PropertySource> getPropertySources() {
-        List<PropertySource> propertySources = new ArrayList<>();
+    public Collection<ConfigSource> getConfigSources(ClassLoader classLoader) {
+        List<ConfigSource> propertySources = new ArrayList<>();
+        if(classLoader == null){
+            classLoader = ServiceContext.defaultClassLoader();
+        }
         for (String resource : getResourcePaths()) {
             try {
+                // TODO Get a resource resolver for a certain classloader
                 Collection<URL> resources = ConfigResources.getResourceResolver().getResources(resource);
                 for (URL url : resources) {
                     try {
-                        Collection<PropertySource>  propertySourcesToInclude = getPropertySources(url);
+                        Collection<ConfigSource>  propertySourcesToInclude = getConfigSources(url);
                         if(propertySourcesToInclude!=null){
                             propertySources.addAll(propertySourcesToInclude);
                         }
@@ -91,26 +97,26 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
     }
 
     /**
-     * Factory method that creates a {@link org.apache.tamaya.spi.PropertySource} based on the URL found by
+     * Factory method that creates a {@link ConfigSource} based on the URL found by
      * the resource locator.
      * @param url the URL, not null.
-     * @return the {@link org.apache.tamaya.spi.PropertySource}s to be included into the current provider's sources
+     * @return the {@link ConfigSource}s to be included into the current provider's sources
      * list. It is safe to return {@code null} here, in case the content of the URL has shown to be not relevant
      * as configuration input. In case the input is not valid or accessible an exception can be thrown or logged.
      */
-    protected abstract Collection<PropertySource> getPropertySources(URL url);
+    protected abstract Collection<ConfigSource> getConfigSources(URL url);
 
     /**
      * Utility method that reads a .properties file from the given url and creates a corresponding
-     * {@link org.apache.tamaya.spi.PropertySource}.
+     * {@link ConfigSource}.
      * @param url the url to read, not null.
      * @return the corresponding PropertySource, or null.
      */
-    public static PropertySource createPropertiesPropertySource(URL url) {
+    public static ConfigSource createConfigSource(URL url) {
         Properties props = new Properties();
         try (InputStream is = url.openStream()){
             props.load(is);
-            return new PropertiesBasedPropertySource(url.toString(), props);
+            return new PropertiesBasedConfigSource(url.toString(), props);
         }
         catch (Exception e){
             LOG.log(Level.WARNING, "Failed to read properties from " + url, e);
@@ -119,25 +125,25 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
     }
 
     /**
-     * Minimal {@link PropertySource} implementation based on {@link Properties} or
+     * Minimal {@link ConfigSource} implementation based on {@link Properties} or
      * {@link Map}.
      */
-    private final static class PropertiesBasedPropertySource implements PropertySource{
+    private final static class PropertiesBasedConfigSource implements ConfigSource{
         /** The property source's name. */
         private final String name;
         /** The properties. */
-        private final Map<String,PropertyValue> properties = new HashMap<>();
+        private final Map<String,String> properties = new HashMap<>();
 
         /**
          * Constructor for a simple properties configuration.
          * @param name the source's name, not null
          * @param props the properties, not null
          */
-        public PropertiesBasedPropertySource(String name, Properties props) {
+        public PropertiesBasedConfigSource(String name, Properties props) {
             this.name = Objects.requireNonNull(name);
             for (Entry<Object, Object> en : props.entrySet()) {
                 this.properties.put(en.getKey().toString(),
-                        PropertyValue.of(en.getKey().toString(), String.valueOf(en.getValue()), name));
+                        String.valueOf(en.getValue()));
             }
         }
 
@@ -146,19 +152,19 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
          * @param name the source's name, not null
          * @param props the properties, not null
          */
-        public PropertiesBasedPropertySource(String name, Map<String,String> props) {
+        public PropertiesBasedConfigSource(String name, Map<String,String> props) {
             this.name = Objects.requireNonNull(name);
             for (Entry<String, String> en : props.entrySet()) {
                 this.properties.put(en.getKey(),
-                        PropertyValue.of(en.getKey(), en.getValue(), name));
+                        en.getValue());
             }
         }
 
         public int getOrdinal() {
-            PropertyValue configuredOrdinal = get(TAMAYA_ORDINAL);
+            String configuredOrdinal = getValue(CONFIG_ORDINAL);
             if (configuredOrdinal != null) {
                 try {
-                    return Integer.parseInt(configuredOrdinal.getValue());
+                    return Integer.parseInt(configuredOrdinal);
                 } catch (Exception e) {
                     Logger.getLogger(getClass().getName()).log(Level.WARNING,
                             "Configured Ordinal is not an int number: " + configuredOrdinal, e);
@@ -182,23 +188,18 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
         }
 
         @Override
-        public PropertyValue get(String key) {
+        public String getValue(String key) {
             return this.properties.get(key);
         }
 
         @Override
-        public Map<String, PropertyValue> getProperties() {
+        public Map<String, String> getProperties() {
             return properties;
         }
 
         @Override
-        public boolean isScannable() {
-            return false;
-        }
-
-        @Override
         public String toString(){
-            return "PropertiesBasedPropertySource["+name+']';
+            return "PropertiesBasedConfigSource["+name+']';
         }
     }
 

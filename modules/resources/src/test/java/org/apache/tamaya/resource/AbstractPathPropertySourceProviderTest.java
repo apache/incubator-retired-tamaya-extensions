@@ -18,10 +18,9 @@
  */
 package org.apache.tamaya.resource;
 
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValue;
 import org.junit.Test;
 
+import javax.config.spi.ConfigSource;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,30 +35,30 @@ import static org.junit.Assert.assertTrue;
 
 public class AbstractPathPropertySourceProviderTest {
 
-    private final AbstractPathPropertySourceProvider myProvider = new AbstractPathPropertySourceProvider("*.properties") {
+    private final AbstractPathConfigSourceProvider myProvider = new AbstractPathConfigSourceProvider("*.properties") {
         @Override
-        protected Collection<PropertySource> getPropertySources(URL url) {
-            List<PropertySource> result = new ArrayList<>();
-            result.add(new EmptyPropertySource());
+        protected Collection<ConfigSource> getConfigSources(URL url) {
+            List<ConfigSource> result = new ArrayList<>();
+            result.add(new EmptyConfigSource());
             return result;
         }
     };
 
     @Test
-    public void testGetPropertySources() throws Exception {
-        assertNotNull(myProvider.getPropertySources());
+    public void testGetConfigSources() throws Exception {
+        assertNotNull(myProvider.getConfigSources((ClassLoader)null));
     }
 
     @Test
     public void testCreatePropertiesPropertySource() throws Exception {
-        PropertySource ps = AbstractPathPropertySourceProvider.createPropertiesPropertySource(
+        ConfigSource ps = AbstractPathConfigSourceProvider.createConfigSource(
                 ClassLoader.getSystemClassLoader().getResource("test.properties")
         );
         assertNotNull(ps);
         assertTrue(ps.getProperties().isEmpty());
     }
 
-    private static final class EmptyPropertySource implements PropertySource {
+    private static final class EmptyConfigSource implements ConfigSource {
         /**
          * Lookup order:
          * TODO rethink whole default PropertySources and ordering:
@@ -88,10 +87,10 @@ public class AbstractPathPropertySourceProviderTest {
          * @return the 'importance' aka ordinal of the configured values. The higher, the more important.
          */
         public int getOrdinal() {
-            PropertyValue configuredOrdinal = get(TAMAYA_ORDINAL);
+            String configuredOrdinal = getValue(CONFIG_ORDINAL);
             if (configuredOrdinal != null) {
                 try {
-                    return Integer.parseInt(configuredOrdinal.getValue());
+                    return Integer.parseInt(configuredOrdinal);
                 } catch (Exception e) {
                     Logger.getLogger(getClass().getName()).log(Level.WARNING,
                             "Configured Ordinal is not an int number: " + configuredOrdinal, e);
@@ -115,18 +114,14 @@ public class AbstractPathPropertySourceProviderTest {
         }
 
         @Override
-        public PropertyValue get(String key) {
+        public String getValue(String key) {
             return null;
         }
 
         @Override
-        public Map<String, PropertyValue> getProperties() {
+        public Map<String, String> getProperties() {
             return Collections.emptyMap();
         }
 
-        @Override
-        public boolean isScannable() {
-            return true;
-        }
     }
 }

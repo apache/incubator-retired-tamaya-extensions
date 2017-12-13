@@ -34,7 +34,7 @@ under the License.
     <dependencies>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
-            <artifactId>tamaya-api</artifactId>
+            <artifactId>tamaya-base</artifactId>
             <version>${tamaya-apicore.version}</version>
         </dependency>
         <dependency>

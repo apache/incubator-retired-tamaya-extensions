@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.resource;
 
-import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.ServiceContextManager;
 
 
@@ -35,14 +34,14 @@ public final class ConfigResources {
     /**
      * <p>Access the current ResourceResolver.</p>
      *
-     * @throws ConfigException if no ResourceResolver is available (should not happen).
+     * @throws IllegalStateException if no ResourceResolver is available (should not happen).
      *
      * @return the current ResourceResolver instance, never null.
      */
-    public static ResourceResolver getResourceResolver() throws ConfigException {
+    public static ResourceResolver getResourceResolver() {
         ResourceResolver resolver = ServiceContextManager.getServiceContext().getService(ResourceResolver.class);
         if (resolver == null) {
-            throw new ConfigException("ResourceResolver not available.");
+            throw new IllegalStateException("ResourceResolver not available.");
         }
         return resolver;
     }
