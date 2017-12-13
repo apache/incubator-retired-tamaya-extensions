@@ -18,11 +18,12 @@
  */
 package org.apache.tamaya.resolver;
 
-import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.resolver.internal.ResolvableConfig;
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
 import org.apache.tamaya.resolver.spi.ExpressionResolver;
 import org.apache.tamaya.spi.ServiceContextManager;
 
+import javax.config.Config;
 import java.util.Collection;
 
 /**
@@ -48,7 +49,7 @@ public final class Resolver {
     private static ExpressionEvaluator evaluator() {
         ExpressionEvaluator evaluator = ServiceContextManager.getServiceContext().getService(ExpressionEvaluator.class);
         if(evaluator==null){
-            throw new ConfigException("No ExpressionEvaluator registered.");
+            throw new IllegalStateException("No ExpressionEvaluator registered.");
         }
         return evaluator;
     }
@@ -79,5 +80,16 @@ public final class Resolver {
      */
     public static Collection<ExpressionResolver> getResolvers(){
         return evaluator().getResolvers();
+    }
+
+
+    /**
+     * Render the given Config instance into a resolvable instance.
+     * @param config the configuration to be rendered to be resolvable.
+     * @return the resolvable instance (wrapped or the same as passed), never null.
+     * @see ResolvableConfig
+     */
+    public static Config makeResolvable(Config config){
+        return ResolvableConfig.from(config);
     }
 }

@@ -18,8 +18,9 @@
  */
 package org.apache.tamaya.resolver;
 
-import org.apache.tamaya.ConfigurationProvider;
 import org.junit.Test;
+
+import javax.config.ConfigProvider;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -27,93 +28,93 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * Test class that test resolution of different values as configured within
- * {@link org.apache.tamaya.resolver.MyTestPropertySource} and on test resource path.
+ * {@link MyTestConfigSource} and on test resource path.
  */
 public class ConfigResolutionTest {
 
     @Test
     public void test_Prefix_Resolution() {
-        assertEquals(ConfigurationProvider.getConfiguration().get("Before Text (prefixed)"), "My Java version is " + System.getProperty("java.version"));
+        assertEquals(ConfigProvider.getConfig().getValue("Before Text (prefixed)", String.class), "My Java version is " + System.getProperty("java.version"));
     }
 
     @Test
     public void test_Midfix_Resolution() {
-        assertEquals(ConfigurationProvider.getConfiguration().get("Before and After Text (prefixed)"), "My Java version is " + System.getProperty("java.version") + ".");
+        assertEquals(ConfigProvider.getConfig().getValue("Before and After Text (prefixed)", String.class), "My Java version is " + System.getProperty("java.version") + ".");
     }
 
     @Test
     public void test_Prefix_Resolution_BadSyntax1() {
-        assertEquals(ConfigurationProvider.getConfiguration().get("Will fail1."), "V$java.version");
+        assertEquals(ConfigProvider.getConfig().getValue("Will fail1.", String.class), "V$java.version");
     }
 
     @Test
     public void test_Prefix_Resolution_BadSyntax2() {
-        assertEquals(ConfigurationProvider.getConfiguration().get("Will fail2."), "V$java.version}");
+        assertEquals(ConfigProvider.getConfig().getValue("Will fail2.", String.class), "V$java.version}");
     }
 
     @Test
     public void test_Prefix_Resolution_BadSyntax31() {
-        assertEquals(ConfigurationProvider.getConfiguration().get("Will not fail3."), "V${java.version");
+        assertEquals(ConfigProvider.getConfig().getValue("Will not fail3.", String.class), "V${java.version");
     }
 
     @Test
     public void test_Prefix_Resolution_Escaped1() {
-        assertEquals(ConfigurationProvider.getConfiguration().get("Will not fail1."), "V$\\{java.version");
+        assertEquals(ConfigProvider.getConfig().getValue("Will not fail1.", String.class), "V$\\{java.version");
     }
 
     @Test
     public void test_Prefix_Resolution_Escaped2() {
-        assertEquals(ConfigurationProvider.getConfiguration().get("Will not fail2."), "V\\${java.version");
+        assertEquals(ConfigProvider.getConfig().getValue("Will not fail2.", String.class), "V\\${java.version");
     }
 
     @Test
     public void test_Prefix_Resolution_EnvKeys() {
-        assertEquals(ConfigurationProvider.getConfiguration().get("env.keys"), System.getProperty("java.version") + " plus $java.version");
+        assertEquals(ConfigProvider.getConfig().getValue("env.keys", String.class), System.getProperty("java.version") + " plus $java.version");
     }
 
     @Test
     public void test_Prefix_ExpressionOnly_Resolution() {
-        assertEquals(ConfigurationProvider.getConfiguration().get("Expression Only"), System.getProperty("java.version"));
+        assertEquals(ConfigProvider.getConfig().getValue("Expression Only", String.class), System.getProperty("java.version"));
     }
 
     @Test
     public void testConfig_Refs() {
-        assertEquals(ConfigurationProvider.getConfiguration().get("config-ref"), "Expression Only -> " + System.getProperty("java.version"));
-        assertEquals(ConfigurationProvider.getConfiguration().get("config-ref3"), "Config Ref 3 -> Ref 2: Config Ref 2 -> Ref 1: Expression Only -> " + System.getProperty("java.version"));
-        assertEquals(ConfigurationProvider.getConfiguration().get("config-ref2"), "Config Ref 2 -> Ref 1: Expression Only -> " + System.getProperty("java.version"));
+        assertEquals(ConfigProvider.getConfig().getValue("config-ref", String.class), "Expression Only -> " + System.getProperty("java.version"));
+        assertEquals(ConfigProvider.getConfig().getValue("config-ref3", String.class), "Config Ref 3 -> Ref 2: Config Ref 2 -> Ref 1: Expression Only -> " + System.getProperty("java.version"));
+        assertEquals(ConfigProvider.getConfig().getValue("config-ref2", String.class), "Config Ref 2 -> Ref 1: Expression Only -> " + System.getProperty("java.version"));
     }
 
     @Test
     public void testClasspath_Refs() {
-        String value = ConfigurationProvider.getConfiguration().get("cp-ref");
+        String value = ConfigProvider.getConfig().getValue("cp-ref", String.class);
         assertNotNull(value);
         assertTrue(value.contains("This content comes from Testresource.txt!"));
     }
 
     @Test
     public void testResource_Refs() {
-        String value = ConfigurationProvider.getConfiguration().get("res-ref");
+        String value = ConfigProvider.getConfig().getValue("res-ref", String.class);
         assertNotNull(value);
         assertTrue(value.contains("This content comes from Testresource.txt!"));
     }
 
     @Test
     public void testFile_Refs() {
-        String value = ConfigurationProvider.getConfiguration().get("file-ref");
+        String value = ConfigProvider.getConfig().getValue("file-ref", String.class);
         assertNotNull(value);
         assertTrue(value.contains("This content comes from Testresource2.txt!"));
     }
 
     @Test
     public void testURL_Refs() {
-        String value = ConfigurationProvider.getConfiguration().get("url-ref");
+        String value = ConfigProvider.getConfig().getValue("url-ref", String.class);
         assertNotNull(value);
         assertTrue(value.contains("doctype html") || "[http://www.google.com]".equals(value));
     }
 
     @Test
     public void testEscaping(){
-        assertEquals(ConfigurationProvider.getConfiguration().get("escaped"),
+        assertEquals(ConfigProvider.getConfig().getValue("escaped", String.class),
                 "Config Ref 3 -> Ref 2: \\${conf:config-ref2 will not be evaluated and will not contain\\t tabs \\n " +
                 "newlines or \\r returns...YEP!");
     }

@@ -18,10 +18,10 @@
  */
 package org.apache.tamaya.resolver.internal;
 
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.resolver.spi.ExpressionResolver;
 
 import javax.annotation.Priority;
+import javax.config.ConfigProvider;
 
 /**
  * Property resolver implementation that interprets the resolver expression as a reference to another configuration
@@ -37,7 +37,8 @@ public final class ConfigResolver implements ExpressionResolver{
 
     @Override
     public String evaluate(String expression){
-        return ConfigurationProvider.getConfiguration().get(expression);
+        return ConfigProvider.getConfig().getOptionalValue(expression, String.class)
+                .orElse(expression);
     }
 
 }

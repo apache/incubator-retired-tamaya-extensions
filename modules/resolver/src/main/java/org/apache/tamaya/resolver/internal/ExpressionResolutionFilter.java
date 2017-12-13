@@ -18,11 +18,9 @@
  */
 package org.apache.tamaya.resolver.internal;
 
-import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
-import org.apache.tamaya.spi.FilterContext;
-import org.apache.tamaya.spi.PropertyFilter;
-import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.spi.ConfigValue;
+import org.apache.tamaya.spi.Filter;
 import org.apache.tamaya.spi.ServiceContextManager;
 
 import javax.annotation.Priority;
@@ -34,14 +32,14 @@ import java.util.logging.Logger;
  * has the advantage that different resolvers can be active in parallel.
  */
 @Priority(10000)
-public class ExpressionResolutionFilter implements PropertyFilter {
+public class ExpressionResolutionFilter implements Filter {
 
     private static final Logger LOG = Logger.getLogger(ExpressionResolutionFilter.class.getName());
 
     private final ExpressionEvaluator evaluator(){
         ExpressionEvaluator evaluator = ServiceContextManager.getServiceContext().getService(ExpressionEvaluator.class);
         if(evaluator==null){
-            throw new ConfigException("No ExpressionEvaluator registered.");
+            throw new IllegalStateException("No ExpressionEvaluator registered.");
         }
         return evaluator;
     }
@@ -80,12 +78,11 @@ public class ExpressionResolutionFilter implements PropertyFilter {
      * <li><code>\${resolverId:expression}foo${resolverId2:expression2}bar</code> (first expression is escaped).</li>
      * </ul>
      *
-     * @param context the filter context
      * @param valueToBeFiltered value to be analyzed for expressions
      * @return the resolved value, or the input in case where no expression was detected.
      */
     @Override
-    public PropertyValue filterProperty(PropertyValue valueToBeFiltered, FilterContext context){
+    public ConfigValue filterProperty(ConfigValue valueToBeFiltered){
         LOG.finest("Resolving " + valueToBeFiltered);
         String newVal = evaluator().evaluateExpression(valueToBeFiltered.getKey(), valueToBeFiltered.getValue(), true);
         if(newVal!=null){

@@ -18,9 +18,7 @@
  */
 package org.apache.tamaya.resolver;
 
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValue;
-
+import javax.config.spi.ConfigSource;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -30,11 +28,11 @@ import java.util.Map;
 /**
  * Created by Anatole on 04.01.2015.
  */
-public class MyTestPropertySource implements PropertySource{
+public class MyTestConfigSource implements ConfigSource{
 
     private final Map<String,String> properties = new HashMap<>();
 
-    public MyTestPropertySource(){
+    public MyTestConfigSource(){
         properties.put("Expression Only", "${java.version}");
         properties.put("Expression Only (prefixed)", "${sys:java.version}");
         properties.put("Before Text", "My Java version is ${java.version}");
@@ -86,21 +84,17 @@ public class MyTestPropertySource implements PropertySource{
     }
 
     @Override
-    public PropertyValue get(String key) {
-        return PropertyValue.of(key, properties.get(key), getName());
+    public String getValue(String key) {
+        return properties.get(key);
     }
 
     @Override
-    public Map<String, PropertyValue> getProperties() {
-        Map<String, PropertyValue> res = new HashMap<>();
+    public Map<String, String> getProperties() {
+        Map<String, String> res = new HashMap<>();
         for(Map.Entry<String,String> en:properties.entrySet()){
-            res.put(en.getKey(), PropertyValue.of(en.getKey(), en.getValue(), "test"));
+            res.put(en.getKey(), en.getValue());
         }
         return res;
     }
 
-    @Override
-    public boolean isScannable() {
-        return true;
-    }
 }
