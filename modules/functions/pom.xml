@@ -32,11 +32,6 @@ under the License.
     <packaging>jar</packaging>
 
     <dependencies>
-        <dependency>
-            <groupId>org.apache.tamaya</groupId>
-            <artifactId>tamaya-api</artifactId>
-            <version>${tamaya-apicore.version}</version>
-        </dependency>
         <!-- Test scope only, do not create a code dependency! -->
         <dependency>
             <groupId>org.apache.tamaya</groupId>

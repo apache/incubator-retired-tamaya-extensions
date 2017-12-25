@@ -18,19 +18,15 @@
  */
 package org.apache.tamaya.functions;
 
-import org.apache.tamaya.ConfigOperator;
-import org.apache.tamaya.ConfigQuery;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.spi.ConfigurationContext;
-
+import javax.config.Config;
+import javax.config.spi.ConfigSource;
 import java.util.*;
 
 /**
  * Combines a set of child configurations to a new one, by overriding the first entries with result from
  * later instances.
  */
-class CombinedConfiguration implements Configuration{
+class CombinedConfiguration implements Config{
     /** The name of the new configuration. */
     private final String name;
 
@@ -38,131 +34,70 @@ class CombinedConfiguration implements Configuration{
      * The configuration's in evaluation order. Instances with higher indices
      * override results with lower ones.
      */
-    private final ArrayList<Configuration> configurations = new ArrayList<>();
+    private final ArrayList<Config> configurations = new ArrayList<>();
 
     /**
      * Creates a combined configuration instance.
      * @param configName the name of the new config.
      * @param configs the configurations hereby instances with higher indices override results with lower ones.
      */
-    public CombinedConfiguration(String configName, Configuration... configs) {
+    public CombinedConfiguration(String configName, Config... configs) {
         this.name = configName;
 
         if (null != configs) {
-            for (Configuration config : configs) {
+            for (Config config : configs) {
                 if (config == null) {
                     continue;
                 }
-
-                addConfiguration(config);
+                configurations.add(config);
             }
         }
     }
 
 
     @Override
-    public String get(String key) {
-        String curValue = null;
-        for(Configuration config: getConfigurations()){
-            String value = config.get(key);
-            if(value!=null){
-                curValue = value;
-            }
-        }
-        return curValue;
-    }
-
-    @Override
-    public String getOrDefault(String key, String defaultValue) {
-        Objects.requireNonNull(key, "Key must be given.");
-        Objects.requireNonNull(defaultValue, "Value must be given.");
-
-        String val = get(key);
-
-        if (val == null) {
-            return defaultValue;
-        }
-
-        return val;
-    }
-
-    @Override
-    public <T> T getOrDefault(String key, Class<T> type, T defaultValue) {
-        Objects.requireNonNull(type, "Type must be given.");
-        Objects.requireNonNull(key, "Key must be given.");
-        Objects.requireNonNull(defaultValue, "Default value must be given.");
-
-        T val = get(key, type);
-        if(val==null){
-            return defaultValue;
-        }
-        return val;
-    }
-
-    @Override
-    public <T> T get(String key, Class<T> type) {
+    public <T> T getValue(String key, Class<T> type) {
         T curValue = null;
-        for(Configuration config: getConfigurations()){
-            T value = config.get(key, type);
-            if(value!=null){
-                curValue = value;
+        for(Config config: configurations){
+            Optional<T> value = config.getOptionalValue(key, type);
+            if(value.isPresent()){
+                curValue = value.get();
             }
         }
         return curValue;
     }
 
     @Override
-    public <T> T get(String key, TypeLiteral<T> type) {
-        T curValue = null;
-        for(Configuration config: getConfigurations()){
-            T value = config.get(key, type);
-            if(value!=null){
-                curValue = value;
-            }
-        }
-        return curValue;
-    }
-
-    @Override
-    public <T> T getOrDefault(String key, TypeLiteral<T> type, T defaultValue) {
+    public <T> Optional<T> getOptionalValue(String key, Class<T> type) {
         Objects.requireNonNull(key, "Key must be given.");
         Objects.requireNonNull(type, "Type must be given.");
-        Objects.requireNonNull(defaultValue, "Default value must be given.");
 
-        T val = get(key, type);
-        if(val==null){
-            return defaultValue;
+        Optional<T> curValue = Optional.empty();
+        for(Config config: configurations){
+            Optional<T> value = config.getOptionalValue(key, type);
+            if(value!=null && value.isPresent()){
+                curValue = value;
+            }
         }
-        return val;
+        return curValue;
     }
 
     @Override
-    public Map<String, String> getProperties() {
-        Map<String, String> result = new HashMap<>();
-        for(Configuration ps : getConfigurations()){
-            result.putAll(ps.getProperties());
+    public Iterable<String> getPropertyNames() {
+        Set<String> result = new HashSet<>();
+        for(Config ps : configurations){
+            ps.getPropertyNames().forEach(result::add);
         }
         return result;
     }
 
     @Override
-    public Configuration with(ConfigOperator operator) {
-        Objects.requireNonNull(operator, "Operator must be given.");
-
-        return operator.operate(this);
-    }
-
-    @Override
-    public <T> T query(ConfigQuery<T> query) {
-        Objects.requireNonNull(query, "Query must be given.");
-
-        return query.query(this);
-    }
-
-    @Override
-    public ConfigurationContext getContext() {
-        // TODO thjink on combining the participating contexts...
-        return configurations.get(0).getContext();
+    public Iterable<ConfigSource> getConfigSources() {
+        List<ConfigSource> configSources = new ArrayList<>();
+        for(Config ps : configurations){
+            ps.getConfigSources().forEach(configSources::add);
+        }
+        return configSources;
     }
 
     @Override
@@ -172,14 +107,5 @@ class CombinedConfiguration implements Configuration{
                 ", configurations=" + configurations +
                 '}';
     }
-
-    protected void addConfiguration(Configuration config) {
-        configurations.add(config);
-    }
-
-    protected List<Configuration> getConfigurations() {
-        return configurations;
-    }
-
 
 }

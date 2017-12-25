@@ -18,24 +18,20 @@
  */
 package org.apache.tamaya.functions;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValue;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import javax.config.Config;
+import javax.config.spi.ConfigSource;
+import java.util.*;
 
 /**
  * PropertySource that wraps a Configuration instance.
  */
-final class ConfigWrappingPropertySource implements PropertySource {
+final class ConfigWrappingConfigSource implements ConfigSource {
     /** The property source name. */
     private final String name;
     /** The ordinal. */
     private final int ordinal;
     /** The wrapped config. */
-    private final Configuration config;
+    private final Config config;
 
     /**
      * Constructor.
@@ -43,7 +39,7 @@ final class ConfigWrappingPropertySource implements PropertySource {
      * @param ordinal ths ordinal
      * @param config the wrapped config, not null.
      */
-    public ConfigWrappingPropertySource(String name, int ordinal, Configuration config){
+    public ConfigWrappingConfigSource(String name, int ordinal, Config config){
         this.name = Objects.requireNonNull(name);
         this.ordinal = ordinal;
         this.config = Objects.requireNonNull(config);
@@ -59,22 +55,15 @@ final class ConfigWrappingPropertySource implements PropertySource {
     }
 
     @Override
-    public PropertyValue get(String key) {
-        return PropertyValue.of(key, config.get(key), getName());
+    public String getValue(String key) {
+        return config.getOptionalValue(key, String.class).orElse(null);
     }
 
     @Override
-    public Map<String, PropertyValue> getProperties() {
-        Map<String,PropertyValue> result = new HashMap<>();
-        for(Map.Entry<String,String> en:config.getProperties().entrySet()){
-            result.put(en.getKey(), PropertyValue.of(en.getKey(), en.getValue(), getName()));
-        }
+    public Map<String,String> getProperties() {
+        Map<String,String> result = new HashMap<>();
+        config.getPropertyNames().forEach(key -> result.put(key, config.getValue(key, String.class)));
         return result;
-    }
-
-    @Override
-    public boolean isScannable() {
-        return true;
     }
 
     @Override

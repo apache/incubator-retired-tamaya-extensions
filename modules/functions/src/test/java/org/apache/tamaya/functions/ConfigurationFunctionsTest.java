@@ -18,16 +18,14 @@
  */
 package org.apache.tamaya.functions;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.spisupport.propertysource.EnvironmentPropertySource;
-import org.apache.tamaya.spisupport.propertysource.SystemPropertySource;
-import org.apache.tamaya.spi.ConfigurationContextBuilder;
+import org.apache.tamaya.base.configsource.EnvironmentConfigSource;
+import org.apache.tamaya.base.configsource.SystemConfigSource;
 import org.junit.Test;
 
+import javax.config.Config;
+import javax.config.spi.ConfigBuilder;
+import javax.config.spi.ConfigProviderResolver;
 import java.io.PrintStream;
-import java.util.Map;
-import java.util.TreeMap;
 
 import static org.junit.Assert.*;
 
@@ -146,32 +144,32 @@ public class ConfigurationFunctionsTest {
 
     @Test
     public void testEmptyConfiguration() throws Exception {
-        Configuration ps = ConfigurationFunctions.emptyConfiguration();
+        Config ps = ConfigurationFunctions.emptyConfig();
         assertNotNull(ps);
-        assertNotNull(ps.getProperties());
-        assertTrue(ps.getProperties().isEmpty());
+        assertNotNull(ps.getPropertyNames());
+        assertFalse(ps.getPropertyNames().iterator().hasNext());
     }
 
 
     private void testSection(boolean stripKeys){
-        ConfigurationContextBuilder b = ConfigurationProvider.getConfigurationContextBuilder();
-        b.addPropertySources(new EnvironmentPropertySource(), new SystemPropertySource());
-        Configuration cfg = ConfigurationProvider.createConfiguration(b.build()).with(
-                ConfigurationFunctions.section("java.", stripKeys));
+        ConfigBuilder b = ConfigProviderResolver.instance().getBuilder()
+                .withSources(new EnvironmentConfigSource(), new SystemConfigSource());
+        Config cfg = ConfigurationFunctions.section("java.", stripKeys)
+            .apply(b.build());
         System.out.println("*****************************************************");
         System.out.println("stripKeys: " + stripKeys);
         System.out.println("*****************************************************");
-        dump(cfg.getProperties(), System.out);
+        dump(cfg.getPropertyNames(), cfg, System.out);
         System.out.println();
         System.out.println("Example Metadata:");
-        System.out.println("\tjava.version         :  " + cfg.get("java.version"));
-        System.out.println("\tversion                 :  " + cfg.get("version"));
+        System.out.println("\tjava.version         :  " + cfg.getValue("java.version", String.class));
+        System.out.println("\tversion                 :  " + cfg.getValue("version", String.class));
     }
 
-    private void dump(Map<String, String> properties, PrintStream stream) {
+    private void dump(Iterable<String> keys, Config config, PrintStream stream) {
         stream.println("FULL DUMP:");
-        for (Map.Entry<String, String> en : new TreeMap<>(properties).entrySet()) {
-            stream.println("\t" + en.getKey() + " = " + en.getValue());
+        for (String key : keys) {
+            stream.println("\t" + key + " = " + config.getValue(key, String.class));
         }
     }
 }

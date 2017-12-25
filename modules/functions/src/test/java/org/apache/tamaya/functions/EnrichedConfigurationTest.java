@@ -25,13 +25,17 @@ import org.assertj.core.api.ThrowableAssert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Map;
+import javax.config.Config;
+import java.lang.reflect.Type;
+import java.util.*;
 
 import static java.util.Collections.EMPTY_MAP;
 import static org.apache.tamaya.functions.MethodNotMockedAnswer.NOT_MOCKED_ANSWER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -47,13 +51,13 @@ public class EnrichedConfigurationTest {
 
     @Test
     public void getKeyIsNull() throws Exception {
-        Configuration base = mock(Configuration.class, NOT_MOCKED_ANSWER);
+        Config base = mock(Config.class, NOT_MOCKED_ANSWER);
         final EnrichedConfiguration sut = new EnrichedConfiguration(base, EMPTY_MAP, true);
 
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                sut.get(null);
+                sut.getValue(null, String.class);
             }
         }).isInstanceOf(NullPointerException.class)
           .hasMessage("Key must be given.");
@@ -61,9 +65,9 @@ public class EnrichedConfigurationTest {
 
     @Test
     public void getKeyIsNotKownAndHasNotAnOverriderWithOverridingOn() throws Exception {
-        Configuration base = mock(Configuration.class, NOT_MOCKED_ANSWER);
-        doReturn("9").when(base).get(eq("b"));
-        doReturn(null).when(base).get(eq("y"));
+        Config base = mock(Config.class, NOT_MOCKED_ANSWER);
+        doReturn(Optional.of("9")).when(base).getOptionalValue(eq("b"), any());
+        doReturn(Optional.empty()).when(base).getOptionalValue(eq("y"), any());
 
         Map<String, Object> additions = new HashMap<>();
         additions.put("z0", "0");
@@ -71,7 +75,7 @@ public class EnrichedConfigurationTest {
 
         EnrichedConfiguration sut = new EnrichedConfiguration(base, additions, true);
 
-        String result = sut.get("y");
+        String result = sut.getValue("y", String.class);
 
         assertThat(result).isNull();
 
@@ -79,9 +83,9 @@ public class EnrichedConfigurationTest {
 
     @Test
     public void getKeyIsNotKownAndHasNotAnOverriderWithOverridingOff() throws Exception {
-        Configuration base = mock(Configuration.class, NOT_MOCKED_ANSWER);
-        doReturn("9").when(base).get(eq("b"));
-        doReturn(null).when(base).get(eq("y"));
+        Config base = mock(Config.class, NOT_MOCKED_ANSWER);
+        doReturn(Optional.of("9")).when(base).getOptionalValue(eq("b"), any());
+        doReturn(Optional.empty()).when(base).getOptionalValue(eq("y"), eq(String.class));
 
         Map<String, Object> additions = new HashMap<>();
         additions.put("z0", "0");
@@ -89,15 +93,15 @@ public class EnrichedConfigurationTest {
 
         EnrichedConfiguration sut = new EnrichedConfiguration(base, additions, false);
 
-        String result = sut.get("y");
+        String result = sut.getValue("y", String.class);
 
         assertThat(result).isNull();
     }
 
     @Test
     public void getKeyIsNotKownAndHasOverriderAndConfigurationIsOverridingIsOn() throws Exception {
-        Configuration base = mock(Configuration.class, NOT_MOCKED_ANSWER);
-        doReturn("9").when(base).get(eq("y"));
+        Config base = mock(Config.class, NOT_MOCKED_ANSWER);
+        doReturn("9").when(base).getValue(eq("y"),any() );
 
         Map<String, Object> additions = new HashMap<>();
         additions.put("z0", "0");
@@ -105,15 +109,16 @@ public class EnrichedConfigurationTest {
 
         EnrichedConfiguration sut = new EnrichedConfiguration(base, additions, true);
 
-        String result = sut.get("b");
+        String result = sut.getValue("b", String.class);
 
         assertThat(result).isNotNull().isEqualTo("1");
     }
 
     @Test
     public void getKeyIsNotKownAndHasOverriderAndConfigurationIsOverridingIsOff() throws Exception {
-        Configuration base = mock(Configuration.class, NOT_MOCKED_ANSWER);
-        doReturn(null).when(base).get(eq("b"));
+        Config base = mock(Config.class, NOT_MOCKED_ANSWER);
+        doReturn(Optional.empty()).when(base).getOptionalValue(eq("y"),any() );
+        doReturn(Optional.empty()).when(base).getOptionalValue(eq("b"),any() );
 
         Map<String, Object> additions = new HashMap<>();
         additions.put("z0", "0");
@@ -121,15 +126,15 @@ public class EnrichedConfigurationTest {
 
         EnrichedConfiguration sut = new EnrichedConfiguration(base, additions, false);
 
-        String result = sut.get("b");
+        String result = sut.getValue("b", String.class);
 
         assertThat(result).isNotNull().isEqualTo("1");
     }
 
     @Test
     public void getKeyIsKownAndHasOverriderAndConfigurationIsNotOverriding() throws Exception {
-        Configuration base = mock(Configuration.class, NOT_MOCKED_ANSWER);
-        doReturn("9").when(base).get(eq("b"));
+        Config base = mock(Config.class, NOT_MOCKED_ANSWER);
+        doReturn(Optional.of("9")).when(base).getOptionalValue(eq("b"),any() );
 
         Map<String, Object> additions = new HashMap<>();
         additions.put("z0", "0");
@@ -137,15 +142,15 @@ public class EnrichedConfigurationTest {
 
         EnrichedConfiguration sut = new EnrichedConfiguration(base, additions, false);
 
-        String result = sut.get("b");
+        String result = sut.getValue("b", String.class);
 
         assertThat(result).isNotNull().isEqualTo("9");
     }
 
     @Test
     public void getKeyIsKownAndHasOverriderAndConfigurationIsOverriding() throws Exception {
-        Configuration base = mock(Configuration.class, NOT_MOCKED_ANSWER);
-        doReturn("9").when(base).get(eq("b"));
+        Config base = mock(Config.class, NOT_MOCKED_ANSWER);
+        doReturn("9").when(base).getValue(eq("b"),any() );
 
         Map<String, Object> additions = new HashMap<>();
         additions.put("z0", "0");
@@ -153,22 +158,22 @@ public class EnrichedConfigurationTest {
 
         EnrichedConfiguration sut = new EnrichedConfiguration(base, additions, true);
 
-        String result = sut.get("b");
+        String result = sut.getValue("b", String.class);
 
         assertThat(result).isNotNull().isEqualTo("1");
     }
 
     @Test
     public void getKeyIsKnownAndHasNoOverrider() throws Exception {
-        Configuration base = mock(Configuration.class, NOT_MOCKED_ANSWER);
-        doReturn("9").when(base).get(eq("b"));
+        Config base = mock(Config.class, NOT_MOCKED_ANSWER);
+        doReturn(Optional.of("9")).when(base).getOptionalValue(eq("b"),any() );
 
         Map<String, Object> additions = new HashMap<>();
         additions.put("z0", "0");
 
         EnrichedConfiguration sut = new EnrichedConfiguration(base, additions, true);
 
-        String result = sut.get("b");
+        String result = sut.getValue("b", String.class);
 
         assertThat(result).isNotNull().isEqualTo("9");
     }
@@ -178,194 +183,156 @@ public class EnrichedConfigurationTest {
      */
 
     @Test
-    public void getOrDefaultStringStringWithKeyIsNull() throws Exception {
-        Configuration base = mock(Configuration.class, NOT_MOCKED_ANSWER);
+    public void getOptionalValueStringWithKeyIsNull() throws Exception {
+        Config base = mock(Config.class, NOT_MOCKED_ANSWER);
 
         final EnrichedConfiguration sut = new EnrichedConfiguration(base, EMPTY_MAP, true);
 
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                sut.getOrDefault(null, "v");
+                sut.getOptionalValue(null, String.class);
             }
         }).isInstanceOf(NullPointerException.class)
           .hasMessage("Key must be given.");
     }
 
     @Test
-    public void getOrDefaultStringStringWithDefaultValueIsNull() throws Exception {
-        Configuration base = mock(Configuration.class, NOT_MOCKED_ANSWER);
-
-        final EnrichedConfiguration sut = new EnrichedConfiguration(base, EMPTY_MAP, true);
-
-        assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
-            @Override
-            public void call() throws Throwable {
-                sut.getOrDefault("v", null);
-            }
-        }).isInstanceOf(NullPointerException.class)
-          .hasMessage("Default value must be given.");
-    }
-
-    @Test
-    public void getOrDefaultStringStringWithKeyIsOverriddenAndOverridingOn() throws Exception {
-        Configuration base = mock(Configuration.class, NOT_MOCKED_ANSWER);
-        doReturn("9").when(base).get(eq("b"));
+    public void getOptionalValueStringWithKeyIsOverriddenAndOverridingOn() throws Exception {
+        Config base = mock(Config.class, NOT_MOCKED_ANSWER);
+        doReturn(Optional.of("9")).when(base).getOptionalValue(eq("b"), eq(String.class));
 
         Map<String, Object> additions = new HashMap<>();
         additions.put("b", "0");
 
         EnrichedConfiguration sut = new EnrichedConfiguration(base, additions, true);
 
-        String result = sut.getOrDefault("b", "100");
-
-        assertThat(result).isNotNull().isEqualTo("0");
+        Optional<String> result = sut.getOptionalValue("b", String.class);
+        assertNotNull(result);
+        assertTrue(result.isPresent());
+        assertEquals("0", result.get());
     }
 
     @Test
-    public void getOrDefaultStringStringWithKeyIsOverriddenAndOverridingOff() throws Exception {
-        Configuration base = mock(Configuration.class, NOT_MOCKED_ANSWER);
-        doReturn("9").when(base).get(eq("b"));
+    public void getOptionalValueStringWithKeyIsOverriddenAndOverridingOff() throws Exception {
+        Config base = mock(Config.class, NOT_MOCKED_ANSWER);
+        doReturn(Optional.of("9")).when(base).getOptionalValue(eq("b"), any());
+        doReturn(Optional.of("9")).when(base).getOptionalValue(eq("b"), any());
 
         Map<String, Object> additions = new HashMap<>();
         additions.put("b", "0");
 
         EnrichedConfiguration sut = new EnrichedConfiguration(base, additions, false);
 
-        String result = sut.get("b");
+        String result = sut.getValue("b", String.class);
 
         assertThat(result).isNotNull().isEqualTo("9");
     }
 
     @Test
     public void getOrDefaultStringStringWithKeyIsKnownAndIsNotOverridden() throws Exception {
-        Configuration base = mock(Configuration.class, NOT_MOCKED_ANSWER);
-        doReturn("9").when(base).get(eq("b"));
+        Config base = mock(Config.class, NOT_MOCKED_ANSWER);
+        doReturn(Optional.of("9")).when(base).getOptionalValue(eq("b"), any());
 
         Map<String, Object> additions = new HashMap<>();
         additions.put("z0", "0");
 
         EnrichedConfiguration sut = new EnrichedConfiguration(base, additions, true);
 
-        String result = sut.getOrDefault("b", "100");
+        String result = sut.getOptionalValue("b", String.class).orElse("100");
 
         assertThat(result).isNotNull().isEqualTo("9");
     }
 
     @Test
     public void getOrDefaultStringStringWithKeyIsNotKnownButIsOverridden() throws Exception {
-        Configuration base = mock(Configuration.class, NOT_MOCKED_ANSWER);
-        doReturn(null).when(base).get(eq("b"));
+        Config base = mock(Config.class, NOT_MOCKED_ANSWER);
+        doReturn("9").when(base).getValue(eq("b"), any());
 
         Map<String, Object> additions = new HashMap<>();
         additions.put("b", "0");
 
         EnrichedConfiguration sut = new EnrichedConfiguration(base, additions, true);
 
-        String result = sut.get("b");
+        String result = sut.getValue("b", String.class);
 
         assertThat(result).isNotNull().isEqualTo("0");
     }
 
     @Test
     public void getOrDefaultStringStringWithKeyIsUnKnownAndIsNotOverridden() throws Exception {
-        Configuration base = mock(Configuration.class, NOT_MOCKED_ANSWER);
-        doReturn(null).when(base).get(eq("b"));
+        Config base = mock(Config.class, NOT_MOCKED_ANSWER);
+        doReturn(Optional.of("9")).when(base).getOptionalValue("b", String.class);
+        doReturn(Optional.empty()).when(base).getOptionalValue("z", String.class);
         EnrichedConfiguration sut = new EnrichedConfiguration(base, EMPTY_MAP, true);
 
-        String result = sut.getOrDefault("b", "1000");
+        String result = sut.getOptionalValue("z", String.class).orElse("1000");
 
         assertThat(result).isNotNull().isEqualTo("1000");
     }
 
     /*
-     * Tests for getOrDefault(String, Class<T>, T)
+     * Tests for getOptionalValue(String, Class<T>)
      */
 
+
     @Test
-    public void getOrDefaultStringClassTThrowsNPEIfKeyIsNull() throws Exception {
+    public void getOptionalValueStringClassTThrowsNPEIfClassIsNull() throws Exception {
         final EnrichedConfiguration sut = mock(EnrichedConfiguration.class, NOT_MOCKED_ANSWER);
-        doCallRealMethod().when(sut).getOrDefault(anyString(), any(Class.class), anyString());
+        doCallRealMethod().when(sut).getOptionalValue(anyString(), any(Class.class));
 
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                sut.getOrDefault("b", String.class, null);
+                sut.getOptionalValue("b", (Class<String>)null);
             }
         }).isInstanceOf(NullPointerException.class)
-          .hasMessage("Default value not given.");
+          .hasMessage("Type must be given.");
     }
 
     @Test
-    public void getOrDefaultStringClassTThrowsNPEIfClassIsNull() throws Exception {
-        final EnrichedConfiguration sut = mock(EnrichedConfiguration.class, NOT_MOCKED_ANSWER);
-        doCallRealMethod().when(sut).getOrDefault(anyString(), any(Class.class), anyString());
-
-        assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
-            @Override
-            public void call() throws Throwable {
-                sut.getOrDefault("b", (Class<String>)null, "20");
-            }
-        }).isInstanceOf(NullPointerException.class)
-          .hasMessage("Class not given.");
-    }
-
-    @Test
-    public void getOrDefaultStringClassTThrowsNPEIfDefaultValueIsNull() throws Exception {
-        final EnrichedConfiguration sut = mock(EnrichedConfiguration.class, NOT_MOCKED_ANSWER);
-        doCallRealMethod().when(sut).getOrDefault(anyString(), any(Class.class), anyString());
-
-        assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
-            @Override
-            public void call() throws Throwable {
-                sut.getOrDefault("b", String.class, null);
-            }
-        }).isInstanceOf(NullPointerException.class)
-          .hasMessage("Default value not given.");
-    }
-
-    @Test
-    public void getOrDefaultStringClassTKeyInBaseAndInAdditionsNotOverriding() throws Exception {
-        Configuration base = mock(Configuration.class, NOT_MOCKED_ANSWER);
-        doReturn("1").when(base).get(eq("b"), any(TypeLiteral.class));
+    public void getOptionalValueStringClassTKeyInBaseAndInAdditionsNotOverriding() throws Exception {
+        Config base = mock(Config.class, NOT_MOCKED_ANSWER);
+        doReturn(Optional.of("1")).when(base).getOptionalValue(eq("b"), any());
 
         Map<String, Object> additions = new HashMap<>();
         additions.put("b", "2");
 
         EnrichedConfiguration sut = new EnrichedConfiguration(base, additions, false);
 
-        String result = sut.getOrDefault("b", String.class, "3");
-
-        assertThat(result).isEqualTo("1");
+        Optional<String> result = sut.getOptionalValue("b", String.class);
+        assertNotNull(result);
+        assertTrue(result.isPresent());
+        assertEquals("1", result.get());
     }
 
 
     @Test
     public void getOrDefaultStringClassTKeyInBaseAndInAddtionsOverriding() throws Exception {
-        Configuration base = mock(Configuration.class, NOT_MOCKED_ANSWER);
-        doReturn("1").when(base).get(eq("b"), any(TypeLiteral.class));
+        Config base = mock(Config.class, NOT_MOCKED_ANSWER);
+        doReturn("1").when(base).getValue(eq("b"), any());
 
         Map<String, Object> additions = new HashMap<>();
         additions.put("b", "2");
 
         EnrichedConfiguration sut = new EnrichedConfiguration(base, additions, true);
 
-        String result = sut.getOrDefault("b", String.class, "3");
+        String result = sut.getOptionalValue("b", String.class).orElse("3");
 
         assertThat(result).isEqualTo("2");
     }
 
     @Test
     public void getOrDefaultStringClassTKeyNotInBaseInAdditionsNotOverriding() throws Exception {
-        Configuration base = mock(Configuration.class, NOT_MOCKED_ANSWER);
-        doReturn(null).when(base).get(eq("b"), any(TypeLiteral.class));
+        Config base = mock(Config.class, NOT_MOCKED_ANSWER);
+        doReturn(Optional.empty()).when(base).getOptionalValue(eq("b"), any());
 
         Map<String, Object> additions = new HashMap<>();
         additions.put("b", "20");
 
         EnrichedConfiguration sut = new EnrichedConfiguration(base, additions, false);
 
-        String result = sut.getOrDefault("b", String.class, "B");
+        String result = sut.getOptionalValue("b", String.class).orElse("B");
 
         assertThat(result).isEqualTo("20");
     }
@@ -374,15 +341,15 @@ public class EnrichedConfigurationTest {
 
     @Test
     public void getOrDefaultStringClassTKeyNotInBaseInAddtionsOverriding() throws Exception {
-        Configuration base = mock(Configuration.class, NOT_MOCKED_ANSWER);
-        doReturn(null).when(base).get(eq("b"), any(TypeLiteral.class));
+        Config base = mock(Config.class, NOT_MOCKED_ANSWER);
+        doReturn(null).when(base).getValue(eq("b"), any());
 
         Map<String, Object> additions = new HashMap<>();
         additions.put("b", "20");
 
         EnrichedConfiguration sut = new EnrichedConfiguration(base, additions, true);
 
-        String result = sut.getOrDefault("b", String.class, "B");
+        String result = sut.getOptionalValue("b", String.class).orElse("B");
 
         assertThat(result).isEqualTo("20");
     }
@@ -390,28 +357,28 @@ public class EnrichedConfigurationTest {
 
     @Test
     public void getOrDefaultStringClassTKeyNotInBaseNotInAdditionsAndNotOverrding() throws Exception {
-        Configuration base = mock(Configuration.class, NOT_MOCKED_ANSWER);
-        doReturn(null).when(base).get(eq("b"), any(TypeLiteral.class));
+        Config base = mock(Config.class, NOT_MOCKED_ANSWER);
+        doReturn(Optional.empty()).when(base).getOptionalValue(eq("b"), any());
 
         Map<String, Object> additions = new HashMap<>();
 
         EnrichedConfiguration sut = new EnrichedConfiguration(base, additions, false);
 
-        String result = sut.getOrDefault("b", String.class, "B");
+        String result = sut.getOptionalValue("b", String.class).orElse("B");
 
         assertThat(result).isEqualTo("B");
     }
 
     @Test
     public void getOrDefaultStringClassTKeyNotInBaseNotInAdditionsAndOverriding() throws Exception {
-        Configuration base = mock(Configuration.class, NOT_MOCKED_ANSWER);
-        doReturn(null).when(base).get(eq("b"), any(TypeLiteral.class));
+        Config base = mock(Config.class, NOT_MOCKED_ANSWER);
+        doReturn(null).when(base).getOptionalValue(eq("b"), any());
 
         Map<String, Object> additions = new HashMap<>();
 
         EnrichedConfiguration sut = new EnrichedConfiguration(base, additions, true);
 
-        String result = sut.getOrDefault("b", String.class, "3");
+        String result = sut.getOptionalValue("b", String.class).orElse("3");
 
         assertThat(result).isEqualTo("3");
     }
@@ -434,58 +401,43 @@ public class EnrichedConfigurationTest {
     @Test
     public void getOrDefaultStringTypeLiteralTThrowsNPEIfKeyIsNull() throws Exception {
         final EnrichedConfiguration sut = mock(EnrichedConfiguration.class, NOT_MOCKED_ANSWER);
-        doCallRealMethod().when(sut).getOrDefault(anyString(), any(TypeLiteral.class), anyString());
+        doCallRealMethod().when(sut).getOptionalValue(anyString(), any(Class.class));
 
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                sut.getOrDefault("b", TypeLiteral.<String>of(String.class), null);
+                sut.getOptionalValue(null,String.class);
             }
-        }).isInstanceOf(NullPointerException.class)
-          .hasMessage("Default value not given.");
+        }).isInstanceOf(NullPointerException.class);
 
     }
 
     @Test
     public void getOrDefaultStringLiteralTThrowsNPEIfClassIsNull() throws Exception {
         final EnrichedConfiguration sut = mock(EnrichedConfiguration.class, NOT_MOCKED_ANSWER);
-        doCallRealMethod().when(sut).getOrDefault(anyString(), any(TypeLiteral.class), anyString());
+        doCallRealMethod().when(sut).getOptionalValue(anyString(), any(Class.class));
 
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                sut.getOrDefault("b", (TypeLiteral<String>)null, "20");
+                sut.getOptionalValue("b", (Class)null).orElse("20");
             }
         }).isInstanceOf(NullPointerException.class)
-          .hasMessage("Type not given.");
+          .hasMessage("Type must be given.");
 
-    }
-
-    @Test
-    public void getOrDefaultStringTypeLiteralThrowsNPEIfDefaultValueIsNull() throws Exception {
-        final EnrichedConfiguration sut = mock(EnrichedConfiguration.class, NOT_MOCKED_ANSWER);
-        doCallRealMethod().when(sut).getOrDefault(anyString(), any(TypeLiteral.class), anyString());
-
-        assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
-            @Override
-            public void call() throws Throwable {
-                sut.getOrDefault("b", TypeLiteral.<String>of(String.class), null);
-            }
-        }).isInstanceOf(NullPointerException.class)
-          .hasMessage("Default value not given.");
     }
 
     @Test
     public void getOrDefaultStringTypeLiteralTKeyInBaseAndInAdditionsNotOverriding() throws Exception {
-        Configuration base = mock(Configuration.class, NOT_MOCKED_ANSWER);
-        doReturn("1").when(base).get(eq("b"), any(TypeLiteral.class));
+        Config base = mock(Config.class, NOT_MOCKED_ANSWER);
+        doReturn(Optional.of("1")).when(base).getOptionalValue(eq("b"), any(Class.class));
 
         Map<String, Object> additions = new HashMap<>();
         additions.put("b", "2");
 
         EnrichedConfiguration sut = new EnrichedConfiguration(base, additions, false);
 
-        String result = sut.getOrDefault("b", TypeLiteral.<String>of(String.class), "3");
+        String result = sut.getOptionalValue("b", String.class).orElse("3");
 
         assertThat(result).isEqualTo("1");
     }
@@ -493,47 +445,48 @@ public class EnrichedConfigurationTest {
 
     @Test
     public void getOrDefaultStringTypeLiteralTKeyInBaseAndInAddtionsOverriding() throws Exception {
-        Configuration base = mock(Configuration.class, NOT_MOCKED_ANSWER);
-        doReturn("1").when(base).get(eq("b"), any(TypeLiteral.class));
+        Config base = mock(Config.class, NOT_MOCKED_ANSWER);
+        doReturn("1").when(base).getValue(eq("b"), any(Class.class));
 
         Map<String, Object> additions = new HashMap<>();
         additions.put("b", "2");
 
         EnrichedConfiguration sut = new EnrichedConfiguration(base, additions, true);
 
-        String result = sut.getOrDefault("b", TypeLiteral.<String>of(String.class), "3");
+        String result = sut.getOptionalValue("b", String.class).orElse("3");
 
         assertThat(result).isEqualTo("2");
     }
 
     @Test
     public void getOrDefaultStringTypeLiteralTKeyNotInBaseInAdditionsNotOverriding() throws Exception {
-        Configuration base = mock(Configuration.class, NOT_MOCKED_ANSWER);
-        doReturn(null).when(base).get(eq("b"), any(TypeLiteral.class));
+        Config base = mock(Config.class, NOT_MOCKED_ANSWER);
+        doReturn(Optional.empty()).when(base).getOptionalValue(eq("b"), any());
 
         Map<String, Object> additions = new HashMap<>();
         additions.put("b", "20");
 
         EnrichedConfiguration sut = new EnrichedConfiguration(base, additions, false);
 
-        String result = sut.getOrDefault("b", TypeLiteral.<String>of(String.class), "B");
-
-        assertThat(result).isEqualTo("20");
+        Optional<String> result = sut.getOptionalValue("b", String.class);
+        assertNotNull(result);
+        assertTrue(result.isPresent());
+        assertEquals("20", result.get());
     }
 
 
 
     @Test
     public void getOrDefaultStringTypeLiteralTKeyNotInBaseInAddtionsOverriding() throws Exception {
-        Configuration base = mock(Configuration.class, NOT_MOCKED_ANSWER);
-        doReturn(null).when(base).get(eq("b"), any(TypeLiteral.class));
+        Config base = mock(Config.class, NOT_MOCKED_ANSWER);
+        doReturn(null).when(base).getValue(eq("b"), any(Class.class));
 
         Map<String, Object> additions = new HashMap<>();
         additions.put("b", "20");
 
         EnrichedConfiguration sut = new EnrichedConfiguration(base, additions, true);
 
-        String result = sut.getOrDefault("b", TypeLiteral.<String>of(String.class), "B");
+        String result = sut.getOptionalValue("b", String.class).orElse("B");
 
         assertThat(result).isEqualTo("20");
     }
@@ -541,28 +494,28 @@ public class EnrichedConfigurationTest {
 
     @Test
     public void getOrDefaultStringTypeLiteralTKeyNotInBaseNotInAdditionsAndNotOverrding() throws Exception {
-        Configuration base = mock(Configuration.class, NOT_MOCKED_ANSWER);
-        doReturn(null).when(base).get(eq("b"), any(TypeLiteral.class));
+        Config base = mock(Config.class, NOT_MOCKED_ANSWER);
+        doReturn(Optional.empty()).when(base).getOptionalValue(eq("b"), any(Class.class));
 
         Map<String, Object> additions = new HashMap<>();
 
         EnrichedConfiguration sut = new EnrichedConfiguration(base, additions, false);
 
-        String result = sut.getOrDefault("b", TypeLiteral.<String>of(String.class), "B");
+        String result = sut.getOptionalValue("b", String.class).orElse("B");
 
         assertThat(result).isEqualTo("B");
     }
 
     @Test
     public void getOrDefaultStringTypeLiteralTKeyNotInBaseNotInAdditionsAndOverriding() throws Exception {
-        Configuration base = mock(Configuration.class, NOT_MOCKED_ANSWER);
-        doReturn(null).when(base).get(eq("b"), any(TypeLiteral.class));
+        Config base = mock(Config.class, NOT_MOCKED_ANSWER);
+        doReturn(null).when(base).getOptionalValue("b", String.class);
 
         Map<String, Object> additions = new HashMap<>();
 
         EnrichedConfiguration sut = new EnrichedConfiguration(base, additions, true);
 
-        String result = sut.getOrDefault("b", TypeLiteral.<String>of(String.class), "3");
+        String result = sut.getOptionalValue("b", String.class).orElse("3");
 
         assertThat(result).isEqualTo("3");
     }
@@ -579,18 +532,21 @@ public class EnrichedConfigurationTest {
         baseProps.put("b", "B");
         baseProps.put("c", "C");
 
-        Configuration base = mock(Configuration.class, NOT_MOCKED_ANSWER);
-        doReturn(baseProps).when(base).getProperties();
+        Config base = mock(Config.class, NOT_MOCKED_ANSWER);
+        doReturn(baseProps.keySet()).when(base).getPropertyNames();
+        doReturn(Optional.of("A")).when(base).getOptionalValue("a", String.class);
+        doReturn(Optional.of("B")).when(base).getOptionalValue("b", String.class);
+        doReturn(Optional.of("C")).when(base).getOptionalValue("c", String.class);
 
         EnrichedConfiguration enrichedConfiguration = new EnrichedConfiguration(base, EMPTY_MAP, true);
 
-        Map<String, String> result = enrichedConfiguration.getProperties();
+        Iterable<String> result = enrichedConfiguration.getPropertyNames();
 
         assertThat(result).isNotEmpty()
-                          .hasSize(3)
-                          .containsEntry("a", "A")
-                          .containsEntry("b", "B")
-                          .containsEntry("c", "C");
+                          .hasSize(3);
+        assertEquals("A", enrichedConfiguration.getValue("a", String.class));
+        assertEquals("B", enrichedConfiguration.getValue("b", String.class));
+        assertEquals("C", enrichedConfiguration.getValue("c", String.class));
 
     }
 
@@ -601,21 +557,22 @@ public class EnrichedConfigurationTest {
         baseProps.put("b", "B");
         baseProps.put("c", "C");
 
-        Configuration base = mock(Configuration.class, NOT_MOCKED_ANSWER);
-        doReturn(baseProps).when(base).getProperties();
+        Config base = mock(Config.class, NOT_MOCKED_ANSWER);
+        doReturn(baseProps.keySet()).when(base).getPropertyNames();
+        doReturn(Optional.empty()).when(base).getOptionalValue(any(), any());
 
         Map<String, Object> additionalProps = new HashMap<>();
-        additionalProps.put("b", "b");
+        additionalProps.put("b", "B");
 
         EnrichedConfiguration enrichedConfiguration = new EnrichedConfiguration(base, additionalProps, true);
 
-        Map<String, String> result = enrichedConfiguration.getProperties();
+        Iterable<String> result = enrichedConfiguration.getPropertyNames();
 
         assertThat(result).isNotEmpty()
                           .hasSize(3)
-                          .containsEntry("a", "A")
-                          .containsEntry("b", "b")
-                          .containsEntry("c", "C");
+                .contains("a").contains("b").contains("c");
+        assertEquals(null, enrichedConfiguration.getValue("a", String.class));
+        assertEquals("B", enrichedConfiguration.getValue("b", String.class));
     }
 
     @Test
@@ -625,23 +582,24 @@ public class EnrichedConfigurationTest {
         baseProps.put("b", "B");
         baseProps.put("c", "C");
 
-        Configuration base = mock(Configuration.class, NOT_MOCKED_ANSWER);
-        doReturn(baseProps).when(base).getProperties();
+        Config base = mock(Config.class, NOT_MOCKED_ANSWER);
+        doReturn(baseProps.keySet()).when(base).getPropertyNames();
+        doReturn(Optional.empty()).when(base).getOptionalValue(any(), any());
 
         Map<String, Object> additionalProps = new HashMap<>();
         additionalProps.put("e", "E");
 
         EnrichedConfiguration enrichedConfiguration = new EnrichedConfiguration(base, additionalProps, true);
 
-        Map<String, String> result = enrichedConfiguration.getProperties();
+        Iterable<String> result = enrichedConfiguration.getPropertyNames();
 
-        assertThat(result).isNotEmpty()
-                          .hasSize(4)
-                          .containsEntry("a", "A")
-                          .containsEntry("b", "B")
-                          .containsEntry("c", "C")
-                          .containsEntry("e", "E");
-
+        assertThat(result)
+                .isNotEmpty()
+                .hasSize(4)
+                .contains("a")
+                .contains("b")
+                .contains("c")
+                .contains("e");
     }
 
     @Test
@@ -651,22 +609,26 @@ public class EnrichedConfigurationTest {
         baseProps.put("b", "B");
         baseProps.put("c", "C");
 
-        Configuration base = mock(Configuration.class, NOT_MOCKED_ANSWER);
-        doReturn(baseProps).when(base).getProperties();
+        Config base = mock(Config.class, NOT_MOCKED_ANSWER);
+        doReturn(baseProps.keySet()).when(base).getPropertyNames();
+        doReturn(Optional.of("A")).when(base).getOptionalValue(eq("a"), any());
+        doReturn(Optional.of("B")).when(base).getOptionalValue(eq("b"), any());
+        doReturn(Optional.of("C")).when(base).getOptionalValue(eq("c"), any());
+        doReturn(Optional.empty()).when(base).getOptionalValue(eq("e"), any());
 
         Map<String, Object> additionalProps = new HashMap<>();
         additionalProps.put("e", "E");
 
         EnrichedConfiguration enrichedConfiguration = new EnrichedConfiguration(base, additionalProps, false);
 
-        Map<String, String> result = enrichedConfiguration.getProperties();
+        Iterable<String> result = enrichedConfiguration.getPropertyNames();
 
         assertThat(result).isNotEmpty()
-                          .hasSize(4)
-                          .containsEntry("a", "A")
-                          .containsEntry("b", "B")
-                          .containsEntry("c", "C")
-                          .containsEntry("e", "E");
+                          .hasSize(4);
+        assertEquals("A", enrichedConfiguration.getValue("a", String.class));
+        assertEquals("B", enrichedConfiguration.getValue("b", String.class));
+        assertEquals("C", enrichedConfiguration.getValue("c", String.class));
+        assertEquals("E", enrichedConfiguration.getValue("e", String.class));
 
     }
 
@@ -677,21 +639,22 @@ public class EnrichedConfigurationTest {
         baseProps.put("b", "B");
         baseProps.put("c", "C");
 
-        Configuration base = mock(Configuration.class, NOT_MOCKED_ANSWER);
-        doReturn(baseProps).when(base).getProperties();
+        Config base = mock(Config.class, NOT_MOCKED_ANSWER);
+        doReturn(baseProps.keySet()).when(base).getPropertyNames();
+        doReturn(Optional.empty()).when(base).getOptionalValue(any(), any());
 
         Map<String, Object> additionalProps = new HashMap<>();
         additionalProps.put("b", "b");
 
         EnrichedConfiguration enrichedConfiguration = new EnrichedConfiguration(base, additionalProps, false);
 
-        Map<String, String> result = enrichedConfiguration.getProperties();
+        Iterable<String> result = enrichedConfiguration.getPropertyNames();
 
         assertThat(result).isNotEmpty()
                           .hasSize(3)
-                          .containsEntry("a", "A")
-                          .containsEntry("b", "B")
-                          .containsEntry("c", "C");
+                            .contains("a")
+                            .contains("b")
+                            .contains("c");
     }
 
 

@@ -18,22 +18,16 @@
  */
 package org.apache.tamaya.functions;
 
-import org.apache.tamaya.ConfigOperator;
-import org.apache.tamaya.ConfigQuery;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.spi.ConfigurationContext;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import javax.config.Config;
+import javax.config.spi.ConfigSource;
+import java.util.*;
 
 /**
  * Configuration, that has values added or overridden.
  */
-class EnrichedConfiguration implements Configuration {
+class EnrichedConfiguration implements Config {
 
-    private final Configuration baseConfiguration;
+    private final Config baseConfiguration;
 
     private final Map<String, Object> addedProperties = new HashMap<>();
 
@@ -46,127 +40,59 @@ class EnrichedConfiguration implements Configuration {
      * @param properties the properties to be added, not null.
      * @param overriding true, if existing keys should be overriden, or config should be extended only.
      */
-    EnrichedConfiguration(Configuration configuration, Map<String, Object> properties, boolean overriding) {
+    EnrichedConfiguration(Config configuration, Map<String, Object> properties, boolean overriding) {
         this.baseConfiguration = Objects.requireNonNull(configuration);
         this.addedProperties.putAll(properties);
         this.overriding = overriding;
     }
 
     @Override
-    public String get(String key) {
-        Objects.requireNonNull(key, "Key must be given.");
+    public <T> T getValue(String key, Class<T> type) {
+        return getOptionalValue(key, type).orElse(null);
+    }
 
+    @Override
+    public <T> Optional<T> getOptionalValue(String key, Class<T> type) {
+        Objects.requireNonNull(key, "Key must be given.");
+        Objects.requireNonNull(type, "Type must be given.");
         if (overriding) {
             Object val = addedProperties.get(key);
-            if (val != null) {
-                return val.toString();
+            if (val != null){
+                if(type.isAssignableFrom(type)){
+                    return Optional.of((T)val);
+                }else if(type == String.class) {
+                    return Optional.of((T)val.toString());
+                }
+                return baseConfiguration.getOptionalValue(key, type);
             }
-            return baseConfiguration.get(key);
         }
-        String val = baseConfiguration.get(key);
-        if (val != null) {
+        Optional<T> val = baseConfiguration.getOptionalValue(key, type);
+        if (val !=null && val.isPresent()) {
             return val;
         }
         Object val2 = addedProperties.get(key);
-        if (val2 != null) {
-            return val2.toString();
-        }
-        return null;
-    }
-
-    @Override
-    public String getOrDefault(String key, String defaultValue) {
-        Objects.requireNonNull(key, "Key must be given.");
-        Objects.requireNonNull(defaultValue, "Default value must be given.");
-
-        String val = get(key);
-        if (val == null) {
-            return defaultValue;
-        }
-        return val;
-    }
-
-    @Override
-    public <T> T getOrDefault(String key, Class<T> type, T defaultValue) {
-        Objects.requireNonNull(key, "Key not given.");
-        Objects.requireNonNull(type, "Class not given.");
-        Objects.requireNonNull(defaultValue, "Default value not given.");
-
-        T val = get(key, type);
-        if (val == null) {
-            return defaultValue;
-        }
-        return val;
-    }
-
-    @Override
-    public <T> T get(String key, Class<T> type) {
-        return (T) get(key, TypeLiteral.of(type));
-    }
-
-    @Override
-    public <T> T get(String key, TypeLiteral<T> type) {
-        if (overriding) {
-            Object val = addedProperties.get(key);
-            if (val != null && type.getRawType().isAssignableFrom(val.getClass())) {
-                return (T) val;
+        if (val2 != null){
+            if(type.isAssignableFrom(val2.getClass())) {
+                return Optional.of((T) val2);
+            }else if(type == String.class) {
+                return Optional.of((T)val2.toString());
             }
-            return baseConfiguration.get(key, type);
         }
-        T val = baseConfiguration.get(key, type);
-        if (val != null) {
-            return val;
-        }
-        Object val2 = addedProperties.get(key);
-        if (val2 != null && type.getRawType().isAssignableFrom(val2.getClass())) {
-            return (T) val2;
-        }
-        return null;
+        return Optional.empty();
+    }
+
+
+    @Override
+    public Iterable<String> getPropertyNames() {
+        Set<String> allKeys = new HashSet<>();
+        baseConfiguration.getPropertyNames().forEach(allKeys::add);
+        addedProperties.keySet().forEach(allKeys::add);
+        return allKeys;
     }
 
     @Override
-    public <T> T getOrDefault(String key, TypeLiteral<T> type, T defaultValue) {
-        Objects.requireNonNull(key, "Key not given.");
-        Objects.requireNonNull(type, "Type not given.");
-        Objects.requireNonNull(defaultValue, "Default value not given.");
-
-        T val = get(key, type);
-        if (val == null) {
-            return defaultValue;
-        }
-        return val;
-    }
-
-    @Override
-    public Map<String, String> getProperties() {
-        Map<String, String> allProps = new HashMap<>();
-        if (overriding) {
-            allProps.putAll(baseConfiguration.getProperties());
-            for (Map.Entry<String, Object> en : addedProperties.entrySet()) {
-                allProps.put(en.getKey(), en.getValue().toString());
-            }
-        } else {
-            for (Map.Entry<String, Object> en : addedProperties.entrySet()) {
-                allProps.put(en.getKey(), en.getValue().toString());
-            }
-            allProps.putAll(baseConfiguration.getProperties());
-        }
-        return allProps;
-    }
-
-    @Override
-    public Configuration with(ConfigOperator operator) {
-        return operator.operate(this);
-    }
-
-    @Override
-    public <T> T query(ConfigQuery<T> query) {
-        return query.query(this);
-    }
-
-    @Override
-    public ConfigurationContext getContext() {
-        return baseConfiguration.getContext();
+    public Iterable<ConfigSource> getConfigSources() {
+        return baseConfiguration.getConfigSources();
     }
 
 }

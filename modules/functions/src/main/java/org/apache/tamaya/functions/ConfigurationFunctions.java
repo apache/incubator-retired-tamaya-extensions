@@ -18,26 +18,12 @@
  */
 package org.apache.tamaya.functions;
 
-import org.apache.tamaya.ConfigOperator;
-import org.apache.tamaya.ConfigQuery;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.ConfigurationContextBuilder;
-import org.apache.tamaya.spi.PropertyConverter;
-import org.apache.tamaya.spi.PropertyFilter;
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValueCombinationPolicy;
-
+import javax.config.Config;
+import javax.config.spi.ConfigSource;
 import java.net.Inet4Address;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
+import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -54,113 +40,31 @@ public final class ConfigurationFunctions {
     /**
      * Implementation of an empty propertySource.
      */
-    private static final Configuration EMPTY_CONFIGURATION = new Configuration() {
+    private static final Config EMPTY_CONFIGURATION = new Config() {
 
         @Override
-        public String get(String key) {
+        public <T> T getValue(String key, Class<T> type) {
             return null;
         }
 
         @Override
-        public String getOrDefault(String key, String defaultValue) {
-            return defaultValue;
+        public <T> Optional<T> getOptionalValue(String key, Class<T> type) {
+            return Optional.empty();
         }
 
         @Override
-        public <T> T getOrDefault(String key, Class<T> type, T defaultValue) {
-            return defaultValue;
+        public Iterable<String> getPropertyNames() {
+            return Collections.emptySet();
         }
 
         @Override
-        public <T> T get(String key, Class<T> type) {
-            return null;
-        }
-
-        @Override
-        public <T> T get(String key, TypeLiteral<T> type) {
-            return null;
-        }
-
-        @Override
-        public <T> T getOrDefault(String key, TypeLiteral<T> type, T defaultValue) {
-            return defaultValue;
-        }
-
-        @Override
-        public Map<String, String> getProperties() {
-            return Collections.emptyMap();
-        }
-
-        @Override
-        public Configuration with(ConfigOperator operator) {
-            return operator.operate(this);
-        }
-
-        @Override
-        public <T> T query(ConfigQuery<T> query) {
-            return query.query(this);
-        }
-
-        @Override
-        public ConfigurationContext getContext() {
-            return EMPTY_CONFIGURATION_CONTEXT;
+        public Iterable<ConfigSource> getConfigSources() {
+            return Collections.emptySet();
         }
 
         @Override
         public String toString(){
             return "Configuration<empty>";
-        }
-    };
-
-    private static final ConfigurationContext EMPTY_CONFIGURATION_CONTEXT = new ConfigurationContext() {
-        @Override
-        public void addPropertySources(PropertySource... propertySourcesToAdd) {
-            // ignore
-        }
-
-        @Override
-        public List<PropertySource> getPropertySources() {
-            return Collections.emptyList();
-        }
-
-        @Override
-        public PropertySource getPropertySource(String name) {
-            return null;
-        }
-
-        @Override
-        public <T> void addPropertyConverter(TypeLiteral<T> typeToConvert, PropertyConverter<T> propertyConverter) {
-            // ignore
-        }
-
-        @Override
-        public Map<TypeLiteral<?>, List<PropertyConverter<?>>> getPropertyConverters() {
-            return Collections.emptyMap();
-        }
-
-        @Override
-        public <T> List<PropertyConverter<T>> getPropertyConverters(TypeLiteral<T> type) {
-            return Collections.emptyList();
-        }
-
-        @Override
-        public List<PropertyFilter> getPropertyFilters() {
-            return Collections.emptyList();
-        }
-
-        @Override
-        public PropertyValueCombinationPolicy getPropertyValueCombinationPolicy() {
-            return PropertyValueCombinationPolicy.DEFAULT_OVERRIDING_COLLECTOR;
-        }
-
-        @Override
-        public ConfigurationContextBuilder toBuilder() {
-            throw new UnsupportedOperationException("Cannot build from ConfigurationContext.EMPTY.");
-        }
-
-        @Override
-        public String toString(){
-            return "ConfigurationContext.EMPTY";
         }
     };
 
@@ -177,13 +81,8 @@ public final class ConfigurationFunctions {
      * @param filter the filter, not null
      * @return the section configuration, with the areaKey stripped away.
      */
-    public static ConfigOperator filter(final PropertyMatcher filter) {
-        return new ConfigOperator() {
-            @Override
-            public Configuration operate(Configuration config) {
-                return new FilteredConfiguration(config, filter, "FilterClass: " + filter.getClass().getName());
-            }
-        };
+    public static UnaryOperator<Config> filter(final PropertyMatcher filter) {
+        return config -> new FilteredConfiguration(config, filter, "FilterClass: " + filter.getClass().getName());
     }
 
     /**
@@ -193,13 +92,8 @@ public final class ConfigurationFunctions {
      * @param keyMapper the keyMapper, not null
      * @return the section configuration, with the areaKey stripped away.
      */
-    public static ConfigOperator map(final KeyMapper keyMapper) {
-        return new ConfigOperator() {
-            @Override
-            public Configuration operate(Configuration config) {
-                return new MappedConfiguration(config, keyMapper, null);
-            }
-        };
+    public static UnaryOperator<Config> map(final KeyMapper keyMapper) {
+        return config -> new MappedConfiguration(config, keyMapper, null);
     }
 
     /**
@@ -210,7 +104,7 @@ public final class ConfigurationFunctions {
      * @param areaKey the section key, not null
      * @return the section configuration, with the areaKey stripped away.
      */
-    public static ConfigOperator section(String areaKey) {
+    public static UnaryOperator<Config> section(String areaKey) {
         return section(areaKey, false);
     }
 
@@ -222,30 +116,24 @@ public final class ConfigurationFunctions {
      * @param stripKeys if set to true, the section key is stripped away fromMap the resulting key.
      * @return the section configuration, with the areaKey stripped away.
      */
-    public static ConfigOperator section(final String areaKey, final boolean stripKeys) {
-        return new ConfigOperator() {
-            @Override
-            public Configuration operate(Configuration config) {
-                Configuration filtered = new FilteredConfiguration(config,
-                        new PropertyMatcher() {
-                            @Override
-                            public boolean test(String k, String v) {
-                                return isKeyInSection(k, areaKey);
-                            }
-                        }, "section: " + areaKey);
+    public static UnaryOperator<Config> section(final String areaKey, final boolean stripKeys) {
+        return config -> {
+                Config filtered = new FilteredConfiguration(
+                        config,
+                        (k, v) -> isKeyInSection(k, areaKey),
+                        "section: " + areaKey);
                 if (stripKeys) {
-                    return new MappedConfiguration(filtered, new KeyMapper(){
-                        @Override
-                        public String mapKey(String key) {
-                            if(key.startsWith(areaKey)) {
-                                return key.substring(areaKey.length());
-                            }
-                            return areaKey + key;
-                        }
-                    }, "stripped");
+                    return new MappedConfiguration(
+                            filtered,
+                            key -> {
+                                if(key.startsWith(areaKey)) {
+                                    return key.substring(areaKey.length());
+                                }
+                                return areaKey + key;
+                            },
+                            "stripped");
                 }
                 return filtered;
-            }
         };
     }
 
@@ -283,19 +171,16 @@ public final class ConfigurationFunctions {
      *
      * @return s set with all sections, never {@code null}.
      */
-    public static ConfigQuery<Set<String>> sections() {
-        return new ConfigQuery<Set<String>>() {
-            @Override
-            public Set<String> query(Configuration config) {
+    public static Function<Config,Set<String>> sections() {
+        return config -> {
                 final Set<String> areas = new TreeSet<>();
-                for (String s : config.getProperties().keySet()) {
+                for (String s : config.getPropertyNames()) {
                     int index = s.lastIndexOf('.');
                     if (index > 0) {
                         areas.add(s.substring(0, index));
                     }
                 }
                 return areas;
-            }
         };
     }
 
@@ -307,12 +192,10 @@ public final class ConfigurationFunctions {
      *
      * @return s set with all transitive sections, never {@code null}.
      */
-    public static ConfigQuery<Set<String>> transitiveSections() {
-        return new ConfigQuery<Set<String>>() {
-            @Override
-            public Set<String> query(Configuration config) {
+    public static Function<Config,Set<String>> transitiveSections() {
+        return config -> {
                 final Set<String> transitiveAreas = new TreeSet<>();
-                for (String s : config.query(sections())) {
+                for (String s : sections().apply(config)) {
                     transitiveAreas.add(s);
                     int index = s.lastIndexOf('.');
                     while (index > 0) {
@@ -322,7 +205,6 @@ public final class ConfigurationFunctions {
                     }
                 }
                 return transitiveAreas;
-            }
         };
     }
 
@@ -335,20 +217,16 @@ public final class ConfigurationFunctions {
      * @param predicate A predicate to deternine, which sections should be returned, not {@code null}.
      * @return s set with all sections, never {@code null}.
      */
-    public static ConfigQuery<Set<String>> sections(final Predicate<String> predicate) {
-        return new ConfigQuery<Set<String>>() {
-            @Override
-            public Set<String> query(Configuration config) {
+    public static Function<Config,Set<String>> sections(final Predicate<String> predicate) {
+        return config -> {
                 Set<String> result = new TreeSet<>();
-                for (String s : sections().query(config)) {
+                for (String s : sections().apply(config)) {
                     if (predicate.test(s)) {
                         result.add(s);
                     }
                 }
                 return result;
-            }
         };
-
     }
 
     /**
@@ -360,18 +238,15 @@ public final class ConfigurationFunctions {
      * @param predicate A predicate to deternine, which sections should be returned, not {@code null}.
      * @return s set with all transitive sections, never {@code null}.
      */
-    public static ConfigQuery<Set<String>> transitiveSections(final Predicate<String> predicate) {
-        return new ConfigQuery<Set<String>>() {
-            @Override
-            public Set<String> query(Configuration config) {
+    public static Function<Config,Set<String>> transitiveSections(final Predicate<String> predicate) {
+        return config -> {
                 Set<String> result = new TreeSet<>();
-                for (String s : transitiveSections().query(config)) {
+                for (String s : transitiveSections().apply(config)) {
                     if (predicate.test(s)) {
                         result.add(s);
                     }
                 }
                 return result;
-            }
         };
     }
 
@@ -382,7 +257,7 @@ public final class ConfigurationFunctions {
      * @param sectionKeys the section keys, not null
      * @return the section configuration, with the areaKey stripped away.
      */
-    public static ConfigOperator sectionsRecursive(String... sectionKeys) {
+    public static UnaryOperator<Config> sectionsRecursive(String... sectionKeys) {
         return sectionRecursive(false, sectionKeys);
     }
 
@@ -395,20 +270,20 @@ public final class ConfigurationFunctions {
      *                   by entries of the later instances.
      * @return the resulting configuration instance.
      */
-    public static Configuration combine(String configName, Configuration... configs) {
+    public static Config combine(String configName, Config... configs) {
         return new CombinedConfiguration(configName, configs);
     }
 
     /**
-     * Creates a {@link PropertySource}, based on the given {@link Configuration}. The keys and propertx map
+     * Creates a {@link ConfigSource}, based on the given {@link Config}. The keys and propertx map
      * are dynamically calculated, so the returned PropertySource is a real dynamic wrapper.
      * @param name the name of the property source, not null.
      * @param ordinal ordinal of the property source.
      * @param config the config to be mapped, not null.
      * @return a property source wrapping the configuration.
      */
-    public static PropertySource propertySourceFrom(final String name, final int ordinal, final Configuration config){
-        return new ConfigWrappingPropertySource(name, ordinal, config);
+    public static ConfigSource propertySourceFrom(final String name, final int ordinal, final Config config){
+        return new ConfigWrappingConfigSource(name, ordinal, config);
     }
 
     /**
@@ -419,26 +294,19 @@ public final class ConfigurationFunctions {
      * @param stripKeys   if set to true, the section key is stripped away fromMap the resulting key.
      * @return the section configuration, with the areaKey stripped away.
      */
-    public static ConfigOperator sectionRecursive(final boolean stripKeys, final String... sectionKeys) {
-        return new ConfigOperator() {
-            @Override
-            public Configuration operate(Configuration config) {
-                Configuration filtered = new FilteredConfiguration(config, new PropertyMatcher() {
-                    @Override
-                    public boolean test(final String k, String v) {
-                        return isKeyInSections(k, sectionKeys);
-                    }
-                }, "sections: " + Arrays.toString(sectionKeys));
-                if (stripKeys) {
-                    return new MappedConfiguration(filtered, new KeyMapper() {
-                        @Override
-                        public String mapKey(String key) {
-                            return PropertySourceFunctions.stripSectionKeys(key, sectionKeys);
-                        }
-                    }, "stripped");
-                }
-                return filtered;
+    public static UnaryOperator<Config> sectionRecursive(final boolean stripKeys, final String... sectionKeys) {
+        return (config) -> {
+            Config filtered = new FilteredConfiguration(
+                    config,
+                    (k,v) -> isKeyInSections(k, sectionKeys),
+                    "sections: " + Arrays.toString(sectionKeys));
+            if (stripKeys) {
+                return new MappedConfiguration(
+                        filtered,
+                        k -> PropertySourceFunctions.stripSectionKeys(k, sectionKeys),
+                        "stripped");
             }
+            return filtered;
         };
     }
 
@@ -447,7 +315,7 @@ public final class ConfigurationFunctions {
      *
      * @return the given query.
      */
-    public static ConfigQuery<String> jsonInfo() {
+    public static Function<Config,String> jsonInfo() {
         return jsonInfo(null);
     }
 
@@ -458,29 +326,27 @@ public final class ConfigurationFunctions {
      *             parameters.
      * @return the given query.
      */
-    public static ConfigQuery<String> jsonInfo(final Map<String, String> info) {
-        return new ConfigQuery<String>() {
-            @Override
-            public String query(Configuration config) {
-                Map<String, String> props = new TreeMap<>(config.getProperties());
-                props.put("__timestamp", String.valueOf(System.currentTimeMillis()));
-                if(info!=null) {
-                    for (Map.Entry<String, String> en : info.entrySet()) {
-                        props.put("__" + escape(en.getKey()), escape(en.getValue()));
-                    }
+    public static Function<Config,String> jsonInfo(final Map<String, String> info) {
+        return config -> {
+            Map<String, String> props = new TreeMap<>();
+            config.getPropertyNames().forEach(key -> props.put(key, config.getValue(key, String.class)));
+            props.put("__timestamp", String.valueOf(System.currentTimeMillis()));
+            if(info!=null) {
+                for (Map.Entry<String, String> en : info.entrySet()) {
+                    props.put("__" + escape(en.getKey()), escape(en.getValue()));
                 }
-                StringBuilder builder = new StringBuilder(400).append("{\n");
-                for (Map.Entry<String, String> en : props.entrySet()) {
-                    builder.append("  \"").append(escape(en.getKey())).append("\": \"" )
-                            .append(escape(en.getValue())).append("\",\n");
-                }
-                if(builder.toString().endsWith(",\n")){
-                    builder.setLength(builder.length()-2);
-                    builder.append('\n');
-                }
-                builder.append("}\n");
-                return builder.toString();
             }
+            StringBuilder builder = new StringBuilder(400).append("{\n");
+            for (Map.Entry<String, String> en : props.entrySet()) {
+                builder.append("  \"").append(escape(en.getKey())).append("\": \"" )
+                        .append(escape(en.getValue())).append("\",\n");
+            }
+            if(builder.toString().endsWith(",\n")){
+                builder.setLength(builder.length()-2);
+                builder.append('\n');
+            }
+            builder.append("}\n");
+            return builder.toString();
         };
     }
 
@@ -489,7 +355,7 @@ public final class ConfigurationFunctions {
      *
      * @return the given query.
      */
-    public static ConfigQuery<String> xmlInfo() {
+    public static Function<Config,String> xmlInfo() {
         return xmlInfo(null);
     }
 
@@ -500,25 +366,23 @@ public final class ConfigurationFunctions {
      *             parameters.
      * @return the given query.
      */
-    public static ConfigQuery<String> xmlInfo(final Map<String, String> info) {
-        return new ConfigQuery<String>() {
-            @Override
-            public String query(Configuration config) {
-                Map<String, String> props = new TreeMap<>(config.getProperties());
-                props.put("__timestamp", String.valueOf(System.currentTimeMillis()));
-                if(info!=null) {
-                    for (Map.Entry<String, String> en : info.entrySet()) {
-                        props.put("__" + escape(en.getKey()), escape(en.getValue()));
-                    }
+    public static Function<Config,String> xmlInfo(final Map<String, String> info) {
+        return config -> {
+            Map<String, String> props = new TreeMap<>();
+            config.getPropertyNames().forEach(key -> props.put(key, config.getValue(key, String.class)));
+            props.put("__timestamp", String.valueOf(System.currentTimeMillis()));
+            if(info!=null) {
+                for (Map.Entry<String, String> en : info.entrySet()) {
+                    props.put("__" + escape(en.getKey()), escape(en.getValue()));
                 }
-                StringBuilder builder = new StringBuilder(400);
-                builder.append("<configuration>\n");
-                for (Map.Entry<String, String> en : props.entrySet()) {
-                    builder.append("  <entry key=\"" + escape(en.getKey()) + "\">" + escape(en.getValue()) + "</entry>\n");
-                }
-                builder.append("</configuration>\n");
-                return builder.toString();
             }
+            StringBuilder builder = new StringBuilder(400);
+            builder.append("<configuration>\n");
+            for (Map.Entry<String, String> en : props.entrySet()) {
+                builder.append("  <entry key=\"" + escape(en.getKey()) + "\">" + escape(en.getValue()) + "</entry>\n");
+            }
+            builder.append("</configuration>\n");
+            return builder.toString();
         };
     }
 
@@ -527,7 +391,7 @@ public final class ConfigurationFunctions {
      *
      * @return the given query.
      */
-    public static ConfigQuery<String> textInfo() {
+    public static Function<Config,String> textInfo() {
         return textInfo(null);
     }
 
@@ -536,27 +400,25 @@ public final class ConfigurationFunctions {
      * @param info configuration values to use for filtering.
      * @return the given query.
      */
-    public static ConfigQuery<String> textInfo(final Map<String, String> info) {
-        return new ConfigQuery<String>() {
-            @Override
-            public String query(Configuration config) {
-                Map<String, String> props = new TreeMap<>(config.getProperties());
-                props.put("__timestamp", String.valueOf(System.currentTimeMillis()));
-                if(info!=null) {
-                    for (Map.Entry<String, String> en : info.entrySet()) {
-                        props.put("__" + escape(en.getKey()), escape(en.getValue()));
-                    }
+    public static Function<Config,String> textInfo(final Map<String, String> info) {
+        return config -> {
+            Map<String, String> props = new TreeMap<>();
+            config.getPropertyNames().forEach(key -> props.put(key, config.getValue(key, String.class)));
+            props.put("__timestamp", String.valueOf(System.currentTimeMillis()));
+            if(info!=null) {
+                for (Map.Entry<String, String> en : info.entrySet()) {
+                    props.put("__" + escape(en.getKey()), escape(en.getValue()));
                 }
-                StringBuilder builder = new StringBuilder(400).append("Configuration:\n");
-                for (Map.Entry<String, String> en : props.entrySet()) {
-                    builder.append("  " + escape(en.getKey()) + ": " + escape(en.getValue()).replace("\n", "\n     ") + ",\n");
-                }
-                if(builder.toString().endsWith(",\n")){
-                    builder.setLength(builder.length() - 2);
-                }
-                builder.append("\n");
-                return builder.toString();
             }
+            StringBuilder builder = new StringBuilder(400).append("Configuration:\n");
+            for (Map.Entry<String, String> en : props.entrySet()) {
+                builder.append("  " + escape(en.getKey()) + ": " + escape(en.getValue()).replace("\n", "\n     ") + ",\n");
+            }
+            if(builder.toString().endsWith(",\n")){
+                builder.setLength(builder.length() - 2);
+            }
+            builder.append("\n");
+            return builder.toString();
         };
     }
 
@@ -566,13 +428,8 @@ public final class ConfigurationFunctions {
      * @param override if true, all items existing are overridden by the new ones passed.
      * @return the ConfigOperator, never null.
      */
-    public static ConfigOperator addItems(final Map<String,Object> items, final boolean override){
-        return new ConfigOperator() {
-            @Override
-            public Configuration operate(Configuration config) {
-                return new EnrichedConfiguration(config,items, override);
-            }
-        };
+    public static UnaryOperator<Config> addItems(final Map<String,Object> items, final boolean override){
+        return config -> new EnrichedConfiguration(config,items, override);
     }
 
     /**
@@ -580,7 +437,7 @@ public final class ConfigurationFunctions {
      * @param items the items, not null.
      * @return the operator, never null.
      */
-    public static ConfigOperator addItems(Map<String,Object> items){
+    public static UnaryOperator<Config> addItems(Map<String,Object> items){
         return addItems(items, false);
     }
 
@@ -589,7 +446,7 @@ public final class ConfigurationFunctions {
      * @param items the items.
      * @return the operator for replacing the items.
      */
-    public static ConfigOperator replaceItems(Map<String,Object> items){
+    public static UnaryOperator<Config> replaceItems(Map<String,Object> items){
         return addItems(items, true);
     }
 
@@ -598,7 +455,7 @@ public final class ConfigurationFunctions {
      *
      * @return the given query.
      */
-    public static ConfigQuery<String> htmlInfo() {
+    public static Function<Config,String> htmlInfo() {
         return htmlInfo(null);
     }
 
@@ -607,16 +464,13 @@ public final class ConfigurationFunctions {
      * @param info configuration values to use for filtering.
      * @return the given query.
      */
-    public static ConfigQuery<String> htmlInfo(final Map<String, String> info) {
-        return new ConfigQuery<String>() {
-            @Override
-            public String query(Configuration config) {
-                StringBuilder builder = new StringBuilder();
-                addHeader(builder);
-                builder.append("<pre>\n").append(textInfo(info).query(config)).append("</pre>\n");
-                addFooter(builder);
-                return builder.toString();
-            }
+    public static Function<Config,String> htmlInfo(final Map<String, String> info) {
+        return config -> {
+            StringBuilder builder = new StringBuilder();
+            addHeader(builder);
+            builder.append("<pre>\n").append(textInfo(info).apply(config)).append("</pre>\n");
+            addFooter(builder);
+            return builder.toString();
         };
     }
 
@@ -649,19 +503,12 @@ public final class ConfigurationFunctions {
     }
 
     /**
-     * Accesses an empty {@link Configuration}.
-     * @return an empty {@link Configuration}, never null.
+     * Accesses an empty {@link Config}.
+     * @return an empty {@link Config}, never null.
      */
-    public static Configuration emptyConfiguration(){
+    public static Config emptyConfig(){
         return EMPTY_CONFIGURATION;
     }
 
-    /**
-     * Accesses an empty {@link ConfigurationContext}.
-     * @return an empty {@link ConfigurationContext}, never null.
-     */
-    public static ConfigurationContext emptyConfigurationContext(){
-        return EMPTY_CONFIGURATION_CONTEXT;
-    }
 
 }

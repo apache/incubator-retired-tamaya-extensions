@@ -18,21 +18,15 @@
  */
 package org.apache.tamaya.functions;
 
-import org.apache.tamaya.ConfigOperator;
-import org.apache.tamaya.ConfigQuery;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.base.DefaultConfigBuilder;
+import org.apache.tamaya.base.configsource.SimpleConfigSource;
 import org.apache.tamaya.spisupport.DefaultConfiguration;
-import org.apache.tamaya.core.internal.CoreConfigurationBuilder;
-import org.apache.tamaya.spisupport.propertysource.SimplePropertySource;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import javax.config.Config;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
@@ -40,53 +34,43 @@ import static org.apache.tamaya.functions.MethodNotMockedAnswer.NOT_MOCKED_ANSWE
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.within;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 
 public class CombinedConfigurationTest {
-    private Configuration configWithA1;
-    private Configuration configWithA2;
-    private Configuration configWithB;
-    private Configuration configWithC;
-    private Configuration configWithoutEntries;
+    private Config configWithA1;
+    private Config configWithA2;
+    private Config configWithB;
+    private Config configWithC;
+    private Config configWithoutEntries;
 
     {
-        SimplePropertySource sourceWithKeyA1 = new SimplePropertySource("A", singletonMap("a", "a1"));
-        SimplePropertySource sourceWithKeyA2 = new SimplePropertySource("A", singletonMap("a", "a2"));
-        SimplePropertySource sourceWithKeyB = new SimplePropertySource("B", singletonMap("b", "b"));
-        SimplePropertySource sourceWithKeyC = new SimplePropertySource("C", singletonMap("c", "c"));
-        SimplePropertySource sourceWithoutKeys = new SimplePropertySource("NONE", Collections.<String, String>emptyMap());
+        SimpleConfigSource sourceWithKeyA1 = new SimpleConfigSource("A", singletonMap("a", "a1"));
+        SimpleConfigSource sourceWithKeyA2 = new SimpleConfigSource("A", singletonMap("a", "a2"));
+        SimpleConfigSource sourceWithKeyB = new SimpleConfigSource("B", singletonMap("b", "b"));
+        SimpleConfigSource sourceWithKeyC = new SimpleConfigSource("C", singletonMap("c", "c"));
+        SimpleConfigSource sourceWithoutKeys = new SimpleConfigSource("NONE", Collections.<String, String>emptyMap());
 
-        Configuration ccWithA1 = new CoreConfigurationBuilder().addPropertySources(sourceWithKeyA1)
-                                                                                .build();
-        Configuration ccWithA2 = new CoreConfigurationBuilder().addPropertySources(sourceWithKeyA2)
-                                                                                .build();
-        Configuration ccWithB = new CoreConfigurationBuilder().addPropertySources(sourceWithKeyB)
-                                                                               .build();
-        Configuration ccWithC = new CoreConfigurationBuilder().addPropertySources(sourceWithKeyC)
-                                                                               .build();
-        Configuration ccWithoutEntries = new CoreConfigurationBuilder().addPropertySources(sourceWithoutKeys)
-                                                                                        .build();
-
-        configWithA1 = new DefaultConfiguration(ccWithA1.getContext());
-        configWithA2 = new DefaultConfiguration(ccWithA2.getContext());
-        configWithB = new DefaultConfiguration(ccWithB.getContext());
-        configWithC = new DefaultConfiguration(ccWithC.getContext());
-        configWithoutEntries = new DefaultConfiguration(ccWithoutEntries.getContext());
+        configWithA1 = new DefaultConfigBuilder().withSources(sourceWithKeyA1).build();
+        configWithA2 = new DefaultConfigBuilder().withSources(sourceWithKeyA2).build();
+        configWithB = new DefaultConfigBuilder().withSources(sourceWithKeyB).build();
+        configWithC = new DefaultConfigBuilder().withSources(sourceWithKeyC).build();
+        configWithoutEntries = new DefaultConfigBuilder().withSources(sourceWithoutKeys).build();
     }
 
     @Test
     public void createCombinedConfigurationWithNullAsSingleConfiguration() {
         CombinedConfiguration cc = new CombinedConfiguration("abc", null);
 
-        assertThat(cc.get("nil")).isNull();
+        assertThat(cc.getValue("nil", String.class)).isNull();
     }
 
     @Test
     public void createCombinedConfigurationWithNullNullAsSingleConfiguration() {
         CombinedConfiguration cc = new CombinedConfiguration("abc", null, null);
 
-        assertThat(cc.get("nil")).isNull();
+        assertThat(cc.getValue("nil", String.class)).isNull();
     }
 
     @Test
@@ -94,21 +78,21 @@ public class CombinedConfigurationTest {
 
         CombinedConfiguration cc = new CombinedConfiguration("abc", configWithA1, configWithB, configWithC);
 
-        assertThat(cc.get("key")).isNull();
+        assertThat(cc.getValue("key", String.class)).isNull();
     }
 
     @Test
     public void requestedEntryIsInTheFirstAndThridConfiguration() {
         CombinedConfiguration cc = new CombinedConfiguration("abc", configWithA1, configWithB, configWithA2);
 
-        assertThat(cc.get("a")).isEqualTo("a2");
+        assertThat(cc.getValue("a", String.class)).isEqualTo("a2");
     }
 
     @Test
     public void requestedEntryIsOnlyInOneConfiguration() {
         CombinedConfiguration cc = new CombinedConfiguration("abc", configWithA1, configWithB, configWithC);
 
-        assertThat(cc.get("b")).isEqualTo("b");
+        assertThat(cc.getValue("b", String.class)).isEqualTo("b");
     }
 
     /*
@@ -116,49 +100,25 @@ public class CombinedConfigurationTest {
      */
 
     @Test
-    public void getOrDefaultWithSignatureStringStringThrowsNPEIfKeyIsNull() {
+    public void getOptionalValueWithSignatureStringStringThrowsNPEIfKeyIsNull() {
         final CombinedConfiguration cc = mock(CombinedConfiguration.class, CALLS_REAL_METHODS);
 
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                cc.getOrDefault(null, "d");
+                cc.getOptionalValue(null, String.class).orElse("d");
             }
         }).isInstanceOf(NullPointerException.class)
           .hasMessage("Key must be given.");
     }
 
     @Test
-    public void getOrDefaultWithSignatureStringStringThrowsNPEIfValueIsNull() {
-        final CombinedConfiguration cc = mock(CombinedConfiguration.class, CALLS_REAL_METHODS);
+    public void getOptionalValueWithSignatureStringStringReturnsFoundValueIfKeyIsKnown() {
+        Config cfg = mock(Config.class);
+        doReturn(Optional.of("b")).when(cfg).getOptionalValue("a", String.class);
 
-        assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
-            @Override
-            public void call() throws Throwable {
-                cc.getOrDefault("key", (String)null);
-            }
-        }).isInstanceOf(NullPointerException.class)
-          .hasMessage("Value must be given.");
-    }
-
-    @Test
-    public void getOrDefaultWithSignatureStringStringReturnsDefaultIfKeyIsUnknown() {
-        CombinedConfiguration cc = mock(CombinedConfiguration.class);
-        doReturn(null).when(cc).get("a");
-        doCallRealMethod().when(cc).getOrDefault(anyString(), anyString());
-
-        String result = cc.getOrDefault("a", "tzui");
-
-        assertThat(result).isEqualTo("tzui");
-    }
-
-    @Test
-    public void getOrDefaultWithSignatureStringStringReturnsFoundValueIfKeyIsKnown() {
-        CombinedConfiguration cc = mock(CombinedConfiguration.class);
-        doReturn("b").when(cc).get(Mockito.eq("a"));
-        doCallRealMethod().when(cc).getOrDefault(anyString(), anyString());
-
-        String result = cc.getOrDefault("a", "z");
+        String result =  new CombinedConfiguration("test", cfg)
+                .getOptionalValue("a", String.class).get();
 
         assertThat(result).isEqualTo("b");
     }
@@ -168,15 +128,15 @@ public class CombinedConfigurationTest {
      */
 
     @Test
-    public void getOrDefaultStringTypeLiteralTThrowsNPEIfKeyIsNull() throws Exception {
-        final CombinedConfiguration cc = mock(CombinedConfiguration.class);
-        doCallRealMethod().when(cc).getOrDefault(anyString(), eq(TypeLiteral.of(Integer.class)),
-                                                 Mockito.any(Integer.class));
+    public void getOptionalValueStringTypeTThrowsNPEIfKeyIsNull() throws Exception {
+        final Config cfg = mock(Config.class);
+        doReturn(Optional.of(Integer.valueOf(67))).when(cfg).getOptionalValue("a", Integer.class);
 
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                cc.getOrDefault(null, TypeLiteral.of(Integer.class), 1);
+                new CombinedConfiguration("test", cfg)
+                        .getOptionalValue(null, Integer.class).orElse(1);
             }
         }).isInstanceOf(NullPointerException.class)
           .hasMessage("Key must be given.");
@@ -184,59 +144,40 @@ public class CombinedConfigurationTest {
     }
 
     @Test
-    public void getOrDefaultStringTypeLiteralTThrowsNPEIfTypeIsNull() throws Exception {
+    public void getOptionalValueStringTypeThrowsNPEIfTypeIsNull() throws Exception {
         final CombinedConfiguration cc = mock(CombinedConfiguration.class, NOT_MOCKED_ANSWER);
-        doCallRealMethod().when(cc).getOrDefault(anyString(), eq((TypeLiteral<Integer>)null),
-                                                 Mockito.any(Integer.class));
+        doCallRealMethod().when(cc).getOptionalValue(eq("a"), any(Class.class));
 
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                cc.<Integer>getOrDefault("a", (TypeLiteral<Integer>)null, 1);
+                cc.<Integer>getOptionalValue("a", (Class)null);
             }
         }).isInstanceOf(NullPointerException.class)
           .hasMessage("Type must be given.");
     }
 
     @Test
-    public void getOrDefaultStringTypeLiteralTThrowsNPEIfDefaultValueIsNull() throws Exception {
-        final CombinedConfiguration cc = mock(CombinedConfiguration.class, NOT_MOCKED_ANSWER);
-        doCallRealMethod().when(cc).getOrDefault(anyString(), eq(TypeLiteral.of(Integer.class)),
-                                                 Mockito.any(Integer.class));
-
-        assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
-            @Override
-            public void call() throws Throwable {
-                cc.getOrDefault("a", TypeLiteral.of(Integer.class), null);
-            }
-        }).isInstanceOf(NullPointerException.class)
-          .hasMessage("Default value must be given.");
-    }
-
-    @Test
-    public void getOrDefaultStringTypeLiteralTReturnsDefaultValueIfKeyIsUnknown() throws Exception {
-        final CombinedConfiguration cc = mock(CombinedConfiguration.class, NOT_MOCKED_ANSWER);
-        doReturn(null).when(cc).get(eq("a"), eq(TypeLiteral.<Integer>of(Integer.class)));
-        doCallRealMethod().when(cc).getOrDefault(anyString(), eq(TypeLiteral.of(Integer.class)),
-                                                 Mockito.any(Integer.class));
-
-        TypeLiteral<Integer> typeLiteral = TypeLiteral.of(Integer.class);
-        Integer result = cc.<Integer>getOrDefault("a", typeLiteral, 789);
-
-        assertThat(result).isEqualTo(789);
+    public void getOptionalValueStringTypeTReturnsEmptyOptionalIfKeyIsUnknown() throws Exception {
+        final Config cfg = mock(Config.class);
+        doReturn(null).when(cfg).getOptionalValue(any(), any(Class.class));
+        Optional<Integer> val = new CombinedConfiguration("test", cfg)
+                .getOptionalValue("b", Integer.class);
+        assertNotNull(val);
+        assertFalse(val.isPresent());
     }
 
 
     @Test
-    public void getOrDefaultStringTypeLiteralTReturnsFoundValueIfKeyIsKnown() throws Exception {
-        final CombinedConfiguration cc = mock(CombinedConfiguration.class, NOT_MOCKED_ANSWER);
-        doReturn(999).when(cc).get(eq("a"), eq(TypeLiteral.<Integer>of(Integer.class)));
-        doCallRealMethod().when(cc).getOrDefault(anyString(), eq(TypeLiteral.of(Integer.class)),
-                                                 Mockito.anyInt());
+    public void getOptionalValueStringTypeReturnsFoundValueIfKeyIsKnown() throws Exception {
+        final Config cfg = mock(Config.class);
+        doReturn(Optional.of(Integer.valueOf(768))).when(cfg).getOptionalValue("a", Integer.class);
 
-        Integer result = cc.<Integer>getOrDefault("a", TypeLiteral.<Integer>of(Integer.class), 789);
-
-        assertThat(result).isEqualTo(999);
+        Optional<Integer> val = new CombinedConfiguration("test", cfg)
+                .getOptionalValue("a", Integer.class);
+        assertNotNull(val);
+        assertTrue(val.isPresent());
+        assertEquals(Integer.valueOf(768), val.get());
     }
 
     /*
@@ -244,72 +185,38 @@ public class CombinedConfigurationTest {
      */
 
     @Test
-    public void getOrDefaultStringClassTThrowsNPEIfKeyIsNull() throws Exception {
-        final CombinedConfiguration cc = mock(CombinedConfiguration.class);
-        doCallRealMethod().when(cc).getOrDefault(anyString(), Mockito.any(Class.class),
-                                                 Mockito.any(Integer.class));
-
+    public void getOptionalValueStringClassTThrowsNPEIfKeyIsNull() throws Exception {
+        final Config cfg = mock(Config.class,NOT_MOCKED_ANSWER);
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                cc.getOrDefault(null, Integer.class, 1);
+                new CombinedConfiguration("test", cfg).getOptionalValue(null, Integer.class);
             }
         }).isInstanceOf(NullPointerException.class)
           .hasMessage("Key must be given.");
     }
 
     @Test
-    public void getOrDefaultStringClassTThrowsNPEIfTypeIsNull() throws Exception {
-        final CombinedConfiguration cc = mock(CombinedConfiguration.class);
-        doCallRealMethod().when(cc).getOrDefault(anyString(), Mockito.any(Class.class), Mockito.anyInt());
+    public void getOptionalValueStringClassTThrowsNPEIfTypeIsNull() throws Exception {
+        final Config cfg = mock(Config.class,NOT_MOCKED_ANSWER);
 
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                cc.getOrDefault("a", (Class<Integer>) null, 1);
+                new CombinedConfiguration("test", cfg)
+                        .getOptionalValue("a", (Class<Integer>) null);
             }
         }).isInstanceOf(NullPointerException.class)
           .hasMessage("Type must be given.");
     }
 
     @Test
-    public void getOrDefaultStringClassTThrowsNPEIfDefaultValueIsNull() throws Exception {
-        final CombinedConfiguration cc = mock(CombinedConfiguration.class, NOT_MOCKED_ANSWER);
-        doCallRealMethod().when(cc).getOrDefault(anyString(), any(Class.class),
-                                                 Mockito.any(Integer.class));
-
-        assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
-            @Override
-            public void call() throws Throwable {
-                cc.getOrDefault("a", Integer.class, null);
-            }
-        }).isInstanceOf(NullPointerException.class)
-          .hasMessage("Default value must be given.");
-    }
-
-    @Test
-    public void getOrDefaultStringClassTReturnsDefaultValueIfKeyIsUnknown() throws Exception {
-        final CombinedConfiguration cc = mock(CombinedConfiguration.class, NOT_MOCKED_ANSWER);
-        doReturn(null).when(cc).get(eq("a"), any(Class.class));
-        doCallRealMethod().when(cc).getOrDefault(anyString(), any(Class.class),
-                                                 Mockito.any(Integer.class));
-
-        TypeLiteral<Integer> typeLiteral = TypeLiteral.of(Integer.class);
-        Integer result = cc.<Integer>getOrDefault("a", Integer.class, 789);
-
-        assertThat(result).isEqualTo(789);
-    }
-
-
-    @Test
-    public void getOrDefaultStringClassTReturnsFoundValueIfKeyIsKnown() throws Exception {
-        final CombinedConfiguration cc = mock(CombinedConfiguration.class, NOT_MOCKED_ANSWER);
-        doReturn(999).when(cc).get(eq("a"), any(Class.class));
-        doCallRealMethod().when(cc).getOrDefault(anyString(), any(Class.class),
-                                                 Mockito.anyInt());
-
-        Integer result = cc.<Integer>getOrDefault("a", Integer.class, 789);
-
+    public void getOptionalValueStringClassTReturnsFoundValueIfKeyIsKnown() throws Exception {
+        final Config cfg = mock(Config.class);
+        doReturn(Optional.of(Integer.valueOf(999))).when(cfg).getOptionalValue(eq("a"), any(Class.class));
+        doReturn(Optional.of(Integer.valueOf(999))).when(cfg).getOptionalValue(eq("a"), any(Class.class));
+        Integer result = new CombinedConfiguration("test", cfg)
+                .getOptionalValue("a", Integer.class).orElse(789);
         assertThat(result).isEqualTo(999);
     }
 
@@ -319,152 +226,79 @@ public class CombinedConfigurationTest {
 
     @Test
     public void getPropertiesReturnsEmptyMapIfAllConfigurationsAreEmpty() throws Exception {
-        Map<String, String> propsOfA = new HashMap<>();
-        Map<String, String> propsOfB = new HashMap<>();
-        Map<String, String> propsOfC = new HashMap<>();
+        Iterable<String> namesOfA = new HashSet<>();
+        Iterable<String> namesOfB = new HashSet<>();
+        Iterable<String> namesOfC = new HashSet<>();
 
-        Configuration configA = Mockito.mock(Configuration.class, NOT_MOCKED_ANSWER);
-        Configuration configB = Mockito.mock(Configuration.class, NOT_MOCKED_ANSWER);
-        Configuration configC = Mockito.mock(Configuration.class, NOT_MOCKED_ANSWER);
+        Config configA = Mockito.mock(Config.class, NOT_MOCKED_ANSWER);
+        Config configB = Mockito.mock(Config.class, NOT_MOCKED_ANSWER);
+        Config configC = Mockito.mock(Config.class, NOT_MOCKED_ANSWER);
 
-        doReturn(propsOfA).when(configA).getProperties();
-        doReturn(propsOfB).when(configB).getProperties();
-        doReturn(propsOfC).when(configC).getProperties();
+        doReturn(namesOfA).when(configA).getPropertyNames();
+        doReturn(namesOfB).when(configB).getPropertyNames();
+        doReturn(namesOfC).when(configC).getPropertyNames();
 
-        CombinedConfiguration cc = mock(CombinedConfiguration.class, NOT_MOCKED_ANSWER);
-
-        doReturn(asList(configA, configB, configC)).when(cc).getConfigurations();
-        doCallRealMethod().when(cc).getProperties();
-
-        Map<String, String> result = cc.getProperties();
-
+        CombinedConfiguration cc = new CombinedConfiguration("test", configA, configB, configC);
+        Iterable<String> result = cc.getPropertyNames();
         assertThat(result).isEmpty();
     }
 
     @Test
-    public void getPropertiesReturnsLastValueOfManyForAGivenKey() throws Exception {
-        Map<String, String> propsOfA = new HashMap<String, String>() {{ put("a", "A"); }};
-        Map<String, String> propsOfB = new HashMap<String, String>() {{ put("b", "B"); }};
-        Map<String, String> propsOfC = new HashMap<String, String>() {{ put("a", "Z"); }};
+    public void getPropertyValueReturnsLastValueOfManyForAGivenKey() throws Exception {
+        Set<String> propsOfA = new HashSet<String>() {{ add("a"); }};
+        Set<String> propsOfB = new HashSet<String>() {{ add("a"); }};
+        Set<String> propsOfC = new HashSet<String>() {{ add("a"); }};
 
-        Configuration configA = Mockito.mock(Configuration.class, NOT_MOCKED_ANSWER);
-        Configuration configB = Mockito.mock(Configuration.class, NOT_MOCKED_ANSWER);
-        Configuration configC = Mockito.mock(Configuration.class, NOT_MOCKED_ANSWER);
+        Config configA = Mockito.mock(Config.class, NOT_MOCKED_ANSWER);
+        Config configB = Mockito.mock(Config.class, NOT_MOCKED_ANSWER);
+        Config configC = Mockito.mock(Config.class, NOT_MOCKED_ANSWER);
 
-        doReturn(propsOfA).when(configA).getProperties();
-        doReturn(propsOfB).when(configB).getProperties();
-        doReturn(propsOfC).when(configC).getProperties();
+        doReturn(Optional.of("A")).when(configA).getOptionalValue(eq("a"), any());
+        doReturn(Optional.of("B")).when(configB).getOptionalValue(eq("a"), any());
+        doReturn(Optional.of("C")).when(configC).getOptionalValue(eq("a"), any());
+        doReturn(Optional.empty()).when(configA).getOptionalValue(eq("foo"), any());
+        doReturn(Optional.empty()).when(configB).getOptionalValue(eq("foo"), any());
+        doReturn(Optional.empty()).when(configC).getOptionalValue(eq("foo"), any());
+        doReturn(propsOfA).when(configA).getPropertyNames();
+        doReturn(propsOfB).when(configB).getPropertyNames();
+        doReturn(propsOfC).when(configC).getPropertyNames();
 
-        CombinedConfiguration cc = mock(CombinedConfiguration.class, NOT_MOCKED_ANSWER);
+        CombinedConfiguration cc = new CombinedConfiguration("test", configA, configB, configC);
+        Iterable<String> result = cc.getPropertyNames();
 
-        doReturn(asList(configA, configB, configC)).when(cc).getConfigurations();
-        doCallRealMethod().when(cc).getProperties();
-
-        Map<String, String> result = cc.getProperties();
-
-        assertThat(result).containsEntry("a", "Z")
-                          .doesNotContainEntry("a", "A");
+        assertThat(result).hasSize(1)
+                .contains("a");
+        assertThat(cc.getValue("a", String.class))
+                .isEqualTo("C");
+        assertThat(cc.getValue("foo", String.class))
+                .isNull();
     }
 
     @Test
-    public void getPropertiesReturnsAllProperties() throws Exception {
-        Map<String, String> propsOfA = new HashMap<String, String>() {{ put("a", "A"); }};
-        Map<String, String> propsOfB = new HashMap<String, String>() {{ put("b", "B"); }};
-        Map<String, String> propsOfC = new HashMap<String, String>() {{ put("c", "C"); }};
+    public void getPropertyNamesReturnsAllProperties() throws Exception {
+        Set<String> propsOfA = new HashSet<String>() {{ add("a"); }};
+        Set<String> propsOfB = new HashSet<String>() {{ add("b"); }};
+        Set<String> propsOfC = new HashSet<String>() {{ add("c"); }};
 
-        Configuration configA = Mockito.mock(Configuration.class, NOT_MOCKED_ANSWER);
-        Configuration configB = Mockito.mock(Configuration.class, NOT_MOCKED_ANSWER);
-        Configuration configC = Mockito.mock(Configuration.class, NOT_MOCKED_ANSWER);
+        Config configA = Mockito.mock(Config.class, NOT_MOCKED_ANSWER);
+        Config configB = Mockito.mock(Config.class, NOT_MOCKED_ANSWER);
+        Config configC = Mockito.mock(Config.class, NOT_MOCKED_ANSWER);
 
-        doReturn(propsOfA).when(configA).getProperties();
-        doReturn(propsOfB).when(configB).getProperties();
-        doReturn(propsOfC).when(configC).getProperties();
+        doReturn("A").when(configA).getValue("a", String.class);
+        doReturn("B").when(configB).getValue("b", String.class);
+        doReturn("C").when(configC).getValue("c", String.class);
+        doReturn(propsOfA).when(configA).getPropertyNames();
+        doReturn(propsOfB).when(configB).getPropertyNames();
+        doReturn(propsOfC).when(configC).getPropertyNames();
 
-        CombinedConfiguration cc = mock(CombinedConfiguration.class, NOT_MOCKED_ANSWER);
-
-        doReturn(asList(configA, configB, configC)).when(cc).getConfigurations();
-        doCallRealMethod().when(cc).getProperties();
-
-        Map<String, String> result = cc.getProperties();
+        CombinedConfiguration cc = new CombinedConfiguration("test", configA, configB, configC);
+        Iterable<String> result = cc.getPropertyNames();
 
         assertThat(result).hasSize(3)
-                          .containsEntry("a", "A")
-                          .containsEntry("b", "B")
-                          .containsEntry("c", "C");
+                          .contains("a")
+                          .contains("b")
+                          .contains("c");
     }
 
-    /*
-     * Tests for with(ConfigOperator)
-     */
-
-    @Test
-    public void withWithIndentityOperatorReturnsEqualConfiguration() throws Exception {
-        class IdentityOpr implements ConfigOperator {
-            @Override
-            public Configuration operate(Configuration config) {
-                return config;
-            }
-        }
-
-        final CombinedConfiguration cc = mock(CombinedConfiguration.class, NOT_MOCKED_ANSWER);
-        doCallRealMethod().when(cc).with(Mockito.any(ConfigOperator.class));
-
-        Configuration result = cc.with(new IdentityOpr());
-
-        assertThat(result).isNotNull()
-                          .isEqualTo(result);
-    }
-
-    @Test
-    public void withWithNullAsOperatorParmeterThrowsNPE() throws Exception {
-        final CombinedConfiguration cc = mock(CombinedConfiguration.class, NOT_MOCKED_ANSWER);
-        doCallRealMethod().when(cc).with(Mockito.any(ConfigOperator.class));
-
-        assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
-            @Override
-            public void call() throws Throwable {
-                cc.with(null);
-            }
-        }).isInstanceOf(NullPointerException.class)
-          .hasMessage("Operator must be given.");
-    }
-
-    /*
-     * Tests for query(ConfigQuery)
-     */
-
-    @Test
-    public void queryWithNullAsQueryParameterThrowsNPE() throws Exception {
-        final CombinedConfiguration cc = mock(CombinedConfiguration.class, NOT_MOCKED_ANSWER);
-        doCallRealMethod().when(cc).query(Mockito.any(ConfigQuery.class));
-
-        assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
-            @Override
-            public void call() throws Throwable {
-                cc.query(null);
-            }
-        }).isInstanceOf(NullPointerException.class)
-          .hasMessage("Query must be given.");
-    }
-
-    @Test
-    public void queryWithRealQueryReturnsCorrectResult() throws Exception {
-        class GetZahl implements ConfigQuery<Integer> {
-            @Override
-            public Integer query(Configuration config) {
-                return config.get("zahl", Integer.class);
-            }
-        }
-
-        final CombinedConfiguration cc = mock(CombinedConfiguration.class, NOT_MOCKED_ANSWER);
-        doCallRealMethod().when(cc).query(Mockito.any(ConfigQuery.class));
-        doReturn(1).when(cc).<Integer>get(eq("zahl"), eq(Integer.class));
-
-        Integer result = cc.query(new GetZahl());
-
-        assertThat(result).isEqualTo(1);
-    }
-
-    // ConfigurationContext getContext();  none one three
 
 }

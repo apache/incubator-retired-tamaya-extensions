@@ -18,110 +18,66 @@
  */
 package org.apache.tamaya.functions;
 
-import org.apache.tamaya.ConfigOperator;
-import org.apache.tamaya.ConfigQuery;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.spi.ConfigurationContext;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import javax.config.Config;
+import javax.config.spi.ConfigSource;
+import java.util.*;
 import java.util.logging.Logger;
 
 
 /**
  * Configuration that filters part of the entries defined by a filter predicate.
  */
-class MappedConfiguration implements Configuration {
+class MappedConfiguration implements Config {
 
     private static final Logger LOG = Logger.getLogger(MappedConfiguration.class.getName());
-    private final Configuration baseConfiguration;
+    private final Config baseConfiguration;
     private final KeyMapper keyMapper;
     private final String mapType;
 
-    MappedConfiguration(Configuration baseConfiguration, KeyMapper keyMapper, String mapType) {
+    MappedConfiguration(Config baseConfiguration, KeyMapper keyMapper, String mapType) {
         this.baseConfiguration = Objects.requireNonNull(baseConfiguration);
         this.keyMapper = Objects.requireNonNull(keyMapper);
         this.mapType = mapType!=null?mapType:this.keyMapper.toString();
     }
 
     @Override
-    public String get(String key) {
-        return get(key, String.class);
-    }
-
-    @Override
-    public String getOrDefault(String key, String defaultValue) {
-        Objects.requireNonNull(key, "Key must be given");
-        Objects.requireNonNull(defaultValue, "DefaultValue must be given.");
-        String val = get(key);
-
-        if(val==null){
-            return defaultValue;
-        }
-        return val;
-    }
-
-    @Override
-    public <T> T getOrDefault(String key, Class<T> type, T defaultValue) {
-        T val = get(key, type);
-        if(val==null){
-            return defaultValue;
-        }
-        return val;
-    }
-
-    @Override
-    public <T> T get(String key, Class<T> type) {
-        return (T)get(key, TypeLiteral.of(type));
-    }
-
-    @Override
-    public <T> T get(String key, TypeLiteral<T> type) {
+    public <T> T getValue(String key, Class<T> type) {
         String targetKey = keyMapper.mapKey(key);
         if (targetKey != null) {
-            return baseConfiguration.get(targetKey, type);
+            return baseConfiguration.getValue(targetKey, type);
         }
         LOG.finest("Configuration property hidden by KeyMapper, key="+key+", mapper="+keyMapper+", config="+this);
         return null;
+
     }
 
     @Override
-    public <T> T getOrDefault(String key, TypeLiteral<T> type, T defaultValue) {
-        T val = get(key, type);
-        if(val==null){
-            return defaultValue;
+    public <T> Optional<T> getOptionalValue(String key, Class<T> type) {
+        String targetKey = keyMapper.mapKey(key);
+        if (targetKey != null) {
+            return baseConfiguration.getOptionalValue(targetKey, type);
         }
-        return val;
+        LOG.finest("Configuration property hidden by KeyMapper, key="+key+", mapper="+keyMapper+", config="+this);
+        return Optional.empty();
     }
 
+
     @Override
-    public Map<String, String> getProperties() {
-        Map<String, String> baseProps = baseConfiguration.getProperties();
-        Map<String, String> props = new HashMap<>(baseProps.size());
-        for(Map.Entry<String,String> en:baseProps.entrySet()){
-            String targetKey = keyMapper.mapKey(en.getKey());
+    public Iterable<String> getPropertyNames() {
+        Iterable<String> propertyNames = baseConfiguration.getPropertyNames();
+        Set<String> result = new HashSet<>();
+        for(String key:propertyNames){
+            String targetKey = keyMapper.mapKey(key);
             if (targetKey != null) {
-                props.put(targetKey, en.getValue());
+                result.add(targetKey);
             }
         }
-        return props;
+        return result;
     }
 
     @Override
-    public Configuration with(ConfigOperator operator) {
-        return operator.operate(this);
-    }
-
-    @Override
-    public <T> T query(ConfigQuery<T> query) {
-        return query.query(this);
-    }
-
-    @Override
-    public ConfigurationContext getContext() {
-        return baseConfiguration.getContext();
+    public Iterable<ConfigSource> getConfigSources() {
+        return baseConfiguration.getConfigSources();
     }
 
     @Override

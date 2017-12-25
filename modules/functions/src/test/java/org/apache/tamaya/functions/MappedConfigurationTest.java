@@ -20,6 +20,7 @@ package org.apache.tamaya.functions;
 
 import org.junit.Test;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doCallRealMethod;
@@ -34,18 +35,18 @@ public class MappedConfigurationTest {
     @Test(expected = NullPointerException.class)
     public void getOrDefaultWithTwoStringParametersThrowsNPEIfValueIsNull() throws Exception {
         MappedConfiguration mc = mock(MappedConfiguration.class);
-        doReturn("z").when(mc).get(eq("a)"));
-        doCallRealMethod().when(mc).getOrDefault(anyString(), anyString());
+        doReturn("z").when(mc).getValue(eq("a)"), any());
+        doCallRealMethod().when(mc).getOptionalValue(anyString(), any());
 
-        mc.getOrDefault("a", (String)null);
+        mc.getOptionalValue("a", String.class);
     }
 
     @Test(expected = NullPointerException.class)
     public void getOrDefaultWithTwoStringParametersThrowsNPEIfKeyIsNull() throws Exception {
         MappedConfiguration mc = mock(MappedConfiguration.class);
-        doCallRealMethod().when(mc).getOrDefault(anyString(), anyString());
+        doCallRealMethod().when(mc).getOptionalValue(anyString(), any());
 
-        mc.getOrDefault(null, "z");
+        mc.getOptionalValue(null, String.class);
     }
 
 }
