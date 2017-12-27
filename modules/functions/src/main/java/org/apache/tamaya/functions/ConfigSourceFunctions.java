@@ -18,22 +18,19 @@
  */
 package org.apache.tamaya.functions;
 
-import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValue;
-
+import javax.config.ConfigProvider;
+import javax.config.spi.ConfigSource;
 import java.util.*;
-
-import static java.lang.System.arraycopy;
+import java.util.function.Function;
 
 /**
  * Accessor that provides useful functions along with configuration.
  */
-public final class PropertySourceFunctions {
+public final class ConfigSourceFunctions {
     /**
      * Implementation of an empty propertySource.
      */
-    private static final PropertySource EMPTY_PROPERTYSOURCE = new PropertySource() {
+    private static final ConfigSource EMPTY_PROPERTYSOURCE = new ConfigSource() {
 
         @Override
         public int getOrdinal() {
@@ -46,30 +43,29 @@ public final class PropertySourceFunctions {
         }
 
         @Override
-        public PropertyValue get(String key) {
+        public String getValue(String key) {
             return null;
         }
 
         @Override
-        public Map<String, PropertyValue> getProperties() {
+        public Map<String, String> getProperties() {
             return Collections.emptyMap();
         }
 
         @Override
-        public boolean isScannable() {
-            return true;
-        }
-
-        @Override
         public String toString() {
-            return "PropertySource<empty>";
+            return "ConfigSource<empty>";
         }
     };
+
+
+    private static final Function<String,Integer> DEFAULT_AREA_CALCULATOR =
+                                            s -> s.lastIndexOf('.');
 
     /**
      * Private singleton constructor.
      */
-    private PropertySourceFunctions() {
+    private ConfigSourceFunctions() {
     }
 
     /**
@@ -77,33 +73,61 @@ public final class PropertySourceFunctions {
      *
      * @param key        the fully qualified entry key, not null
      * @param sectionKey the section key, not null
-     *
+     * @param sectionCalculator function to calculate the split point of a key's section, e.g. {@code key.lastIndexOf('.')},
+     *                          not null.
+     * @param directChildrenOnly if true, only keys with the same area match. Otherwise also containing super-areas can
+     *                           match.
      * @return true, if the entry is exact in this section
      */
-    public static boolean isKeyInSection(String key, String sectionKey) {
+    private static boolean isKeyInSection(String key, String sectionKey,
+                                          Function<String,Integer> sectionCalculator, boolean directChildrenOnly) {
         Objects.requireNonNull(key, "Key must be given.");
+        Objects.requireNonNull(sectionCalculator, "Section calculator must be given.");
         Objects.requireNonNull(sectionKey, "Section key must be given.");
 
         sectionKey = normalizeSectionKey(sectionKey);
 
-        int lastIndex = key.lastIndexOf('.');
+        int lastIndex = sectionCalculator.apply(key);
         String curAreaKey = lastIndex > 0 ? key.substring(0, lastIndex) : "";
-        return curAreaKey.equals(sectionKey);
+        if(directChildrenOnly) {
+            return curAreaKey.equals(sectionKey);
+        }else{
+            return curAreaKey.startsWith(sectionKey);
+        }
     }
 
     private static String normalizeKey(String key) {
-        return key.startsWith(".") ? key.substring(1)
-                                   : key;
+        return normalizeKey(key, DEFAULT_AREA_CALCULATOR);
     }
 
-    static String normalizeSectionKey(String sectionKey) {
-        // Ignore unneeded and trailing dot at the end of the section key
+    private static String normalizeKey(String key, Function<String,Integer> sectionCalculator) {
+        if(key.isEmpty()){
+            return key;
+        }
+        int index = sectionCalculator.apply(key.substring(0,1));
+        if(index==0){
+            return key.substring(1);
+        }
+        return key;
+    }
 
-        String normalizedKey = sectionKey.endsWith(".")
+    private static String normalizeSectionKey(String sectionKey) {
+        return normalizeSectionKey(sectionKey, DEFAULT_AREA_CALCULATOR);
+    }
+
+    private static String normalizeSectionKey(String sectionKey, Function<String,Integer> areaCalculator) {
+        // Ignore unneeded and trailing dot at the end of the section key
+        if(sectionKey.isEmpty()){
+            return sectionKey;
+        }
+        int lastIndex = areaCalculator.apply(sectionKey);
+        int firstIndex = areaCalculator.apply(sectionKey.substring(0,1));
+
+        String normalizedKey = lastIndex==(sectionKey.length()-1)
                    ? sectionKey.substring(0, sectionKey.length() - 1)
                    : sectionKey;
 
-        normalizedKey = sectionKey.startsWith(".") ? sectionKey.length() == 1 ? ""
+        normalizedKey = firstIndex==0 ? sectionKey.length() == 1 ? ""
                                                                               : normalizedKey.substring(1)
                                                    : normalizedKey;
 
@@ -111,55 +135,51 @@ public final class PropertySourceFunctions {
     }
 
     /**
-     * Calculates the current section key and compares it to the given section keys.
+     * Checks if the given key is <i>directly</i> included in one of the given sections.
      *
      * @param key             the fully qualified entry key, not {@code null}
-     * @param sectionKey      the section keys, not {@code null}
-     * @param moreSectionKeys the more section keys, not {@code null}
-     *
+     * @param sectionKeys      the section keys, not {@code null}
      * @return true, if the entry is in one of the given sections
      */
-    public static boolean isKeyInSections(String key, String sectionKey, String... moreSectionKeys) {
-        Objects.requireNonNull(key, "Key must be given.");
-        Objects.requireNonNull(sectionKey, "At least one section key must be given.");
-        Objects.requireNonNull(moreSectionKeys, "Additional section keys must not be null.");
-
-        String[] sectionKeys = new String[moreSectionKeys.length + 1];
-        sectionKeys[0] = sectionKey;
-
-        if (moreSectionKeys.length > 0) {
-            arraycopy(moreSectionKeys, 0, sectionKeys, 1, moreSectionKeys.length);
-        }
-
-        return isKeyInSections(key, sectionKeys);
+    public static boolean isKeyInSection(String key, String... sectionKeys) {
+        return isKeyInSection(key, true, DEFAULT_AREA_CALCULATOR, sectionKeys);
     }
 
     /**
-     * Calculates the current section key and compares it to the given section keys.
+     * Checks if the given key is included in one of the given sections.
+     *
+     * @param key             the fully qualified entry key, not {@code null}
+     * @param sectionKeys      the section keys, not {@code null}
+     * @param directChildrenOnly if true, then only keys match, which are a direct child of the given section.
+     * @return true, if the entry is in one of the given sections
+     */
+    public static boolean isKeyInSection(String key, boolean directChildrenOnly, String... sectionKeys) {
+        return isKeyInSection(key, directChildrenOnly, DEFAULT_AREA_CALCULATOR, sectionKeys);
+    }
+
+    /**
+     * Checks if the given key is included in one of the given sections, using the given separator to identify sections.
      *
      * @param key             the fully qualified entry key, not {@code null}
      * @param sectionKeys     the section keys, not {@code null}
-     *
-     *  @return true, if the entry is in one of the given sections
+     * @param areaCalculator  the function to calculate the split point to identify the section of a key.
+     * @param directChildrenOnly if true, then only keys match, which are a direct child of the given section.
+     * @return true, if the entry is in one of the given sections
      */
-    public static boolean isKeyInSections(String key, String[] sectionKeys) {
+    public static boolean isKeyInSection(String key, boolean directChildrenOnly,
+                                         Function<String,Integer> areaCalculator, String... sectionKeys) {
         Objects.requireNonNull(key, "Key must be given.");
         Objects.requireNonNull(sectionKeys, "Section keys must be given.");
-
-        boolean result = false;
 
         for (String areaKey : sectionKeys) {
             if (areaKey == null) {
                 continue;
             }
-
-            if (isKeyInSection(key, areaKey)) {
-                result = true;
-                break;
+            if (isKeyInSection(key, areaKey, areaCalculator, directChildrenOnly)) {
+                return true;
             }
         }
-
-        return result;
+        return false;
     }
 
     /**
@@ -171,11 +191,23 @@ public final class PropertySourceFunctions {
      * @return set with all sections, never {@code null}.
      */
     public static Set<String> sections(Map<String, String> properties) {
+        return sections(properties, DEFAULT_AREA_CALCULATOR);
+    }
+
+    /**
+     * Return a query to evaluate the set with all fully qualified section names. This method should return the sections as accurate as possible,
+     * but may not provide a complete set of sections that are finally accessible, especially when the underlying storage
+     * does not support key iteration.
+     *
+     * @param properties properties to find sections in.
+     * @return set with all sections, never {@code null}.
+     */
+    public static Set<String> sections(Map<String, String> properties, Function<String,Integer> areaCalculator) {
         final Set<String> areas = new HashSet<>();
         for (String key : properties.keySet()) {
-            String normalizedKey = normalizeKey(key);
+            String normalizedKey = normalizeKey(key, areaCalculator);
 
-            int index = normalizedKey.lastIndexOf('.');
+            int index = areaCalculator.apply(normalizedKey);
             if (index > 0) {
                 areas.add(normalizedKey.substring(0, index));
             } else {
@@ -190,16 +222,29 @@ public final class PropertySourceFunctions {
      * subarea names, regardless if properties are accessible or not. This method should return the sections as accurate
      * as possible, but may not provide a complete set of sections that are finally accessible, especially when the
      * underlying storage does not support key iteration.
-     * 
+     *
      * @param properties properties to find transitive sections in.
      * @return s set with all transitive sections, never {@code null}.
      */
     public static Set<String> transitiveSections(Map<String, String> properties) {
-        final Set<String> transitiveAreas = new HashSet<>();
-        for (String section : sections(properties)) {
-            section = normalizeSectionKey(section);
+        return transitiveSections(properties, DEFAULT_AREA_CALCULATOR);
+    }
 
-            int index = section.lastIndexOf('.');
+    /**
+     * Return a query to evaluate the set with all fully qualified section names, containing the transitive closure also including all
+     * subarea names, regardless if properties are accessible or not. This method should return the sections as accurate
+     * as possible, but may not provide a complete set of sections that are finally accessible, especially when the
+     * underlying storage does not support key iteration.
+     * 
+     * @param properties properties to find transitive sections in.
+     * @return s set with all transitive sections, never {@code null}.
+     */
+    public static Set<String> transitiveSections(Map<String, String> properties, Function<String,Integer> areaCalculator) {
+        final Set<String> transitiveAreas = new HashSet<>();
+        for (String section : sections(properties, areaCalculator)) {
+            section = normalizeSectionKey(section, areaCalculator);
+
+            int index = areaCalculator.apply(section);
             if (index < 0 && section.isEmpty()) {
                 transitiveAreas.add("<root>");
             } if (index < 0) {
@@ -257,8 +302,8 @@ public final class PropertySourceFunctions {
 
 
     /**
-     * Creates a ConfigOperator that creates a Configuration containing only keys
-     * that are contained in the given section (recursive). Hereby
+     *Extracts the submap containing only entries with keys
+     * that are contained in the given sections. Hereby
      * the section key is stripped away from the Map of the resulting keys.
      *
      * @param properties properties to find recursive sections in.
@@ -266,30 +311,26 @@ public final class PropertySourceFunctions {
      * @return the section configuration, with the areaKey stripped away.
      */
     public static Map<String, String> sectionsRecursive(Map<String, String> properties, String... sectionKeys) {
-        return sectionRecursive(properties, true, sectionKeys);
+        return sectionsRecursive(properties, true, sectionKeys);
     }
 
     /**
-     * Creates a ConfigOperator that creates a Configuration containing only keys
-     * that are contained in the given section (recursive).
+     * Extracts the submap containing only entries with keys
+     * that are contained in the given section and it's subsections.
      *
      * @param properties properties to find sections in.
      * @param sectionKeys the section keys, not null
      * @param stripKeys   if set to true, the section key is stripped away fromMap the resulting key.
      * @return the section configuration, with the areaKey stripped away.
      */
-    public static Map<String, String> sectionRecursive(Map<String, String> properties, boolean stripKeys, String... sectionKeys) {
+    public static Map<String, String> sectionsRecursive(Map<String, String> properties, boolean stripKeys, String... sectionKeys) {
         Map<String, String> result = new HashMap<>(properties.size());
-        if (stripKeys) {
-            for (Map.Entry<String, String> en : properties.entrySet()) {
-                if (isKeyInSections(en.getKey(), sectionKeys)) {
-                    result.put(en.getKey(), en.getValue());
-                }
-            }
-        } else {
-            for (Map.Entry<String, String> en : properties.entrySet()) {
-                if (isKeyInSections(en.getKey(), sectionKeys)) {
+        for (Map.Entry<String, String> en : properties.entrySet()) {
+            if (isKeyInSection(en.getKey(), false,DEFAULT_AREA_CALCULATOR, sectionKeys)) {
+                if (stripKeys) {
                     result.put(stripSectionKeys(en.getKey(), sectionKeys), en.getValue());
+                }else {
+                    result.put(en.getKey(), en.getValue());
                 }
             }
         }
@@ -320,18 +361,18 @@ public final class PropertySourceFunctions {
      * @param override if true, all items existing are overridden by the new ones passed.
      * @return the ConfigOperator, never null.
      */
-    public static PropertySource addItems(PropertySource propertySource, final Map<String, String> items, final boolean override) {
-        return new EnrichedPropertySource(propertySource, items, override);
+    public static ConfigSource addItems(ConfigSource propertySource, final Map<String, String> items, final boolean override) {
+        return new EnrichedConfigSource(propertySource, items, override);
     }
 
     /**
-     * Creates an operator that adds items to the instance.
+     * Creates an operator that adds items to the instance (existing items will not be overridden).
      *
      * @param propertySource source property source that is changed.
      * @param items the items, not null.
      * @return the operator, never null.
      */
-    public static PropertySource addItems(PropertySource propertySource, Map<String, String> items) {
+    public static ConfigSource addItems(ConfigSource propertySource, Map<String, String> items) {
         return addItems(propertySource, items, false);
     }
 
@@ -342,7 +383,7 @@ public final class PropertySourceFunctions {
      * @param items the items.
      * @return the operator for replacing the items.
      */
-    public static PropertySource replaceItems(PropertySource propertySource, Map<String, String> items) {
+    public static ConfigSource replaceItems(ConfigSource propertySource, Map<String, String> items) {
         return addItems(propertySource, items, true);
     }
 
@@ -351,20 +392,20 @@ public final class PropertySourceFunctions {
      *
      * @return an empty PropertySource, never null.
      */
-    public static PropertySource emptyPropertySource() {
+    public static ConfigSource emptyConfigSource() {
         return EMPTY_PROPERTYSOURCE;
     }
 
     /**
-     * Find all {@link PropertySource} instances managed by the current
-     * {@link org.apache.tamaya.spi.ConfigurationContext} that are assignable to the given type.
+     * Find all {@link ConfigSource} instances managed by the current
+     * {@link javax.config.Config} that are assignable to the given type.
      *
      * @param expression the regular expression to match the source's name.
-     * @return the list of all {@link PropertySource} instances matching, never null.
+     * @return the list of all {@link ConfigSource} instances matching, never null.
      */
-    public static Collection<? extends PropertySource> findPropertySourcesByName(String expression) {
+    public static Collection<? extends ConfigSource> findPropertySourcesByName(String expression) {
         List result = new ArrayList<>();
-        for (PropertySource src : ConfigurationProvider.getConfigurationContext().getPropertySources()) {
+        for (ConfigSource src : ConfigProvider.getConfig().getConfigSources()) {
             if (src.getName().matches(expression)) {
                 result.add(src);
             }
@@ -373,16 +414,16 @@ public final class PropertySourceFunctions {
     }
 
     /**
-     * Get a list of all {@link PropertySource} instances managed by the current
-     * {@link org.apache.tamaya.spi.ConfigurationContext} that are assignable to the given type.
+     * Get a list of all {@link ConfigSource} instances managed by the current
+     * {@link javax.config.Config} that are assignable to the given type.
      *
      * @param <T> the type of the property source instances requested 
      * @param type target type to filter for property sources. 
-     * @return the list of all {@link PropertySource} instances matching, never null.
+     * @return the list of all {@link ConfigSource} instances matching, never null.
      */
     public static <T> Collection<T> getPropertySources(Class<T> type) {
         List<T> result = new ArrayList<>();
-        for (PropertySource src : ConfigurationProvider.getConfigurationContext().getPropertySources()) {
+        for (ConfigSource src : ConfigProvider.getConfig().getConfigSources()) {
             if (type.isAssignableFrom(src.getClass())) {
                 result.add((T) src);
             }
@@ -391,15 +432,15 @@ public final class PropertySourceFunctions {
     }
 
     /**
-     * Get a list of all {@link PropertySource} instances managed by the current
-     * {@link org.apache.tamaya.spi.ConfigurationContext} that are assignable to the given type.
+     * Get a list of all {@link ConfigSource} instances managed by the current
+     * {@link javax.config.Config} that are assignable to the given type.
      *
      * @param <T> the type of the property source instances requested
      * @param type target type to filter for property sources. 
-     * @return the list of all {@link PropertySource} instances matching, never null.
+     * @return the list of all {@link ConfigSource} instances matching, never null.
      */
     public static <T> T getPropertySource(Class<T> type) {
-        for (PropertySource src : ConfigurationProvider.getConfigurationContext().getPropertySources()) {
+        for (ConfigSource src : ConfigProvider.getConfig().getConfigSources()) {
             if (type.isAssignableFrom(src.getClass())) {
                 return (T) src;
             }

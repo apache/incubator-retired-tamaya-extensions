@@ -18,18 +18,17 @@
  */
 package org.apache.tamaya.functions;
 
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValue;
 import org.junit.Test;
 
+import javax.config.spi.ConfigSource;
+
 import static org.apache.tamaya.functions.MethodNotMockedAnswer.NOT_MOCKED_ANSWER;
-import static org.apache.tamaya.spi.PropertyValue.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
-public class FilteredPropertySourceTest {
+public class FilteredConfigSourceTest {
 
     /*
      * Tests for getName()
@@ -37,7 +36,7 @@ public class FilteredPropertySourceTest {
 
     @Test
     public void getNameReturnsTheNameOfTheBaseConfiguration() {
-        PropertySource propertySource = mock(PropertySource.class, NOT_MOCKED_ANSWER);
+        ConfigSource propertySource = mock(ConfigSource.class, NOT_MOCKED_ANSWER);
         doReturn("abc").when(propertySource).getName();
 
         Predicate<String> filter = new Predicate<String>() {
@@ -47,34 +46,11 @@ public class FilteredPropertySourceTest {
             }
         };
 
-        FilteredPropertySource sut = new FilteredPropertySource(propertySource, filter);
+        FilteredConfigSource sut = new FilteredConfigSource(propertySource, filter);
 
         String name = sut.getName();
 
         assertThat(name).isEqualTo("abc");
-    }
-
-    /*
-     * Tests for isScannable()
-     */
-
-    @Test
-    public void isScannableReturnsTheValueOfTheBaseConfiguration() {
-        PropertySource propertySource = mock(PropertySource.class, NOT_MOCKED_ANSWER);
-        doReturn(true).when(propertySource).isScannable();
-
-        Predicate<String> filter = new Predicate<String>() {
-            @Override
-            public boolean test(String s) {
-                return false;
-            }
-        };
-
-        FilteredPropertySource sut = new FilteredPropertySource(propertySource, filter);
-
-        boolean isScannable = sut.isScannable();
-
-        assertThat(isScannable).isEqualTo(true);
     }
 
     /*
@@ -83,7 +59,7 @@ public class FilteredPropertySourceTest {
 
     @Test
     public void getOrdinalReturnsTheValueOfTheBaseConfiguration() {
-        PropertySource propertySource = mock(PropertySource.class, NOT_MOCKED_ANSWER);
+        ConfigSource propertySource = mock(ConfigSource.class, NOT_MOCKED_ANSWER);
         doReturn(13).when(propertySource).getOrdinal();
 
         Predicate<String> filter = new Predicate<String>() {
@@ -93,7 +69,7 @@ public class FilteredPropertySourceTest {
             }
         };
 
-        FilteredPropertySource sut = new FilteredPropertySource(propertySource, filter);
+        FilteredConfigSource sut = new FilteredConfigSource(propertySource, filter);
 
         int ordinal = sut.getOrdinal();
 
@@ -106,9 +82,8 @@ public class FilteredPropertySourceTest {
 
     @Test
     public void getReturnsNullInsteadOfValueBecausOfFilter() {
-        PropertyValue pv = of("abc", "000", "UT");
-        PropertySource propertySource = mock(PropertySource.class, NOT_MOCKED_ANSWER);
-        doReturn(pv).when(propertySource).get(eq("abc"));
+        ConfigSource propertySource = mock(ConfigSource.class, NOT_MOCKED_ANSWER);
+        doReturn("000").when(propertySource).getValue(eq("abc"));
 
         Predicate<String> filter = new Predicate<String>() {
             @Override
@@ -117,18 +92,17 @@ public class FilteredPropertySourceTest {
             }
         };
 
-        FilteredPropertySource sut = new FilteredPropertySource(propertySource, filter);
+        FilteredConfigSource sut = new FilteredConfigSource(propertySource, filter);
 
-        PropertyValue result = sut.get("abc");
+        String result = sut.getValue("abc");
 
         assertThat(result).isNull();
     }
 
     @Test
     public void getReturnsValueBecauseItIsNotFiltered() {
-        PropertyValue pv = of("abc", "000", "UT");
-        PropertySource propertySource = mock(PropertySource.class, NOT_MOCKED_ANSWER);
-        doReturn(pv).when(propertySource).get(eq("abc"));
+        ConfigSource propertySource = mock(ConfigSource.class, NOT_MOCKED_ANSWER);
+        doReturn("000").when(propertySource).getValue(eq("abc"));
 
         Predicate<String> filter = new Predicate<String>() {
             @Override
@@ -137,9 +111,9 @@ public class FilteredPropertySourceTest {
             }
         };
 
-        FilteredPropertySource sut = new FilteredPropertySource(propertySource, filter);
+        FilteredConfigSource sut = new FilteredConfigSource(propertySource, filter);
 
-        PropertyValue result = sut.get("abc");
+        String result = sut.getValue("abc");
 
         assertThat(result).isNotNull();
     }
@@ -150,7 +124,7 @@ public class FilteredPropertySourceTest {
 
     @Test
     public void getPropertiesAndFilterRemovesAllProperties() {
-        InMemoryPropertySource imps = new InMemoryPropertySource();
+        InMemoryConfigSource imps = new InMemoryConfigSource();
         imps.add("a", "1").add("b", "2").add("c", "3");
         imps.setName("s");
 
@@ -161,14 +135,14 @@ public class FilteredPropertySourceTest {
             }
         };
 
-        FilteredPropertySource fps = new FilteredPropertySource(imps, filter);
+        FilteredConfigSource fps = new FilteredConfigSource(imps, filter);
 
         assertThat(fps.getProperties()).isEmpty();;
     }
 
     @Test
     public void getPropertiesAndFilterRemovesNoProperties() {
-        InMemoryPropertySource imps = new InMemoryPropertySource();
+        InMemoryConfigSource imps = new InMemoryConfigSource();
         imps.add("a", "1").add("b", "2").add("c", "3");
         imps.setName("s");
 
@@ -179,18 +153,18 @@ public class FilteredPropertySourceTest {
             }
         };
 
-        FilteredPropertySource fps = new FilteredPropertySource(imps, filter);
+        FilteredConfigSource fps = new FilteredConfigSource(imps, filter);
 
         assertThat(fps.getProperties()).isNotEmpty()
-                                       .containsEntry("a", of("a", "1", "s"))
-                                       .containsEntry("b", of("b", "2", "s"))
-                                       .containsEntry("c", of("c", "3", "s"))
+                                       .containsEntry("a", "1")
+                                       .containsEntry("b", "2")
+                                       .containsEntry("c","3")
                                        .hasSize(3);
     }
 
     @Test
     public void getPropertiesAndFilterRemovesSomeProperties() {
-        InMemoryPropertySource imps = new InMemoryPropertySource();
+        InMemoryConfigSource imps = new InMemoryConfigSource();
         imps.add("a", "1").add("b", "2").add("c", "3");
         imps.setName("s");
 
@@ -201,11 +175,11 @@ public class FilteredPropertySourceTest {
             }
         };
 
-        FilteredPropertySource fps = new FilteredPropertySource(imps, filter);
+        FilteredConfigSource fps = new FilteredConfigSource(imps, filter);
 
         assertThat(fps.getProperties()).isNotEmpty()
-                                       .containsEntry("b", of("b", "2", "s"))
-                                       .containsEntry("c", of("c", "3", "s"))
+                                       .containsEntry("b", "2")
+                                       .containsEntry("c", "3")
                                        .hasSize(2);
 
     }

@@ -18,11 +18,7 @@
  */
 package org.apache.tamaya.functions;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.TypeLiteral;
-import org.assertj.core.api.Assertions;
 import org.assertj.core.api.ThrowableAssert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.config.Config;

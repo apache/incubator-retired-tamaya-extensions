@@ -18,13 +18,12 @@
  */
 package org.apache.tamaya.functions;
 
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValue;
-
+import javax.config.spi.ConfigSource;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class InMemoryPropertySource implements PropertySource {
+public class InMemoryConfigSource implements ConfigSource {
     private int ordinal;
     private String name;
     private Map<String, String> properties = new HashMap<>();
@@ -44,43 +43,26 @@ public class InMemoryPropertySource implements PropertySource {
         return name;
     }
 
-    public InMemoryPropertySource setName(String name) {
+    public InMemoryConfigSource setName(String name) {
         this.name = name;
 
         return this;
     }
 
     @Override
-    public PropertyValue get(String key) {
-        String value = properties.get(key);
-
-        return PropertyValue.of(key, value, getName());
+    public String getValue(String key) {
+        return properties.get(key);
     }
 
-    public InMemoryPropertySource add(String key, String value) {
+    public InMemoryConfigSource add(String key, String value) {
         properties.put(key, value);
 
         return this;
     }
 
     @Override
-    public Map<String, PropertyValue> getProperties() {
-        Map<String, PropertyValue> result = new HashMap<>();
-
-        for (Map.Entry<String, String> entry : properties.entrySet()) {
-            PropertyValue value = PropertyValue.of(entry.getKey(), entry.getValue(), getName());
-            result.put(entry.getKey(), value);
-        }
-
-        return result;
+    public Map<String, String> getProperties() {
+        return Collections.unmodifiableMap(properties);
     }
 
-    @Override
-    public boolean isScannable() {
-        return isScannable;
-    }
-
-    public void setScannable(boolean scannable) {
-        isScannable = scannable;
-    }
 }

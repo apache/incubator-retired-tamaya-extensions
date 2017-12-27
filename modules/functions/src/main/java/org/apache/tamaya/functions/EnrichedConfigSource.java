@@ -18,20 +18,19 @@
  */
 package org.apache.tamaya.functions;
 
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValue;
-import org.apache.tamaya.spisupport.PropertySourceComparator;
+import org.apache.tamaya.base.configsource.ConfigSourceComparator;
 
+import javax.config.spi.ConfigSource;
 import java.util.*;
 
 /**
  * PropertySource, that has values added or overridden.
  */
-class EnrichedPropertySource implements PropertySource {
+class EnrichedConfigSource implements ConfigSource {
 
-    private final PropertySource basePropertySource;
+    private final ConfigSource basePropertySource;
 
-    private final Map<String, PropertyValue> addedProperties = new HashMap<>();
+    private final Map<String, String> addedProperties = new HashMap<>();
 
     private final boolean overriding;
 
@@ -42,10 +41,10 @@ class EnrichedPropertySource implements PropertySource {
      * @param properties the properties to be added.
      * @param overriding flag if existing properties are overridden.
      */
-    EnrichedPropertySource(PropertySource propertySource, Map<String, String> properties, boolean overriding) {
+    EnrichedConfigSource(ConfigSource propertySource, Map<String, String> properties, boolean overriding) {
         this.basePropertySource = Objects.requireNonNull(propertySource);
         for(Map.Entry<String,String> en:properties.entrySet()){
-            this.addedProperties.put(en.getKey(), PropertyValue.of(en.getKey(), en.getValue(), propertySource.getName()));
+            this.addedProperties.putAll(properties);
         }
         this.overriding = overriding;
     }
@@ -53,7 +52,7 @@ class EnrichedPropertySource implements PropertySource {
 
     @Override
     public int getOrdinal() {
-        return PropertySourceComparator.getOrdinal(basePropertySource);
+        return ConfigSourceComparator.getOrdinal(basePropertySource);
     }
 
     @Override
@@ -62,15 +61,15 @@ class EnrichedPropertySource implements PropertySource {
     }
 
     @Override
-    public PropertyValue get(String key) {
+    public String getValue(String key) {
         if (overriding) {
-            PropertyValue val = addedProperties.get(key);
+            String val = addedProperties.get(key);
             if (val != null) {
                 return val;
             }
-            return basePropertySource.get(key);
+            return basePropertySource.getValue(key);
         }
-        PropertyValue val = basePropertySource.get(key);
+        String val = basePropertySource.getValue(key);
         if (val != null) {
             return val;
         }
@@ -79,25 +78,16 @@ class EnrichedPropertySource implements PropertySource {
     }
 
     @Override
-    public Map<String, PropertyValue> getProperties() {
-        Map<String, PropertyValue> allProps;
+    public Map<String, String> getProperties() {
+        Map<String, String> allProps = new HashMap<>();
         if (overriding) {
-            allProps = new HashMap<>();
-            for(PropertyValue val:basePropertySource.getProperties().values()){
-                allProps.put(val.getKey(), val);
-            }
+            allProps.putAll(basePropertySource.getProperties());
             allProps.putAll(addedProperties);
         } else {
-            allProps = new HashMap<>(addedProperties);
-            for(PropertyValue val:basePropertySource.getProperties().values()){
-                allProps.put(val.getKey(), val);
-            }
+            allProps.putAll(addedProperties);
+            allProps.putAll(basePropertySource.getProperties());
         }
         return allProps;
     }
 
-    @Override
-    public boolean isScannable() {
-        return basePropertySource.isScannable();
-    }
 }

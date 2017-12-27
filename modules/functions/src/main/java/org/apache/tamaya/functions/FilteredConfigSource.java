@@ -18,10 +18,10 @@
  */
 package org.apache.tamaya.functions;
 
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValue;
-import org.apache.tamaya.spisupport.PropertySourceComparator;
 
+import org.apache.tamaya.base.configsource.ConfigSourceComparator;
+
+import javax.config.spi.ConfigSource;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -29,9 +29,9 @@ import java.util.Objects;
 /**
  * PropertySource that on the fly filters out part of the key/values of the underlying PropertySource.
  */
-class FilteredPropertySource implements PropertySource {
+class FilteredConfigSource implements ConfigSource {
 
-    private final PropertySource baseSource;
+    private final ConfigSource baseSource;
     private final Predicate<String> filter;
 
     /**
@@ -39,14 +39,14 @@ class FilteredPropertySource implements PropertySource {
      * @param baseSource the underlying PropertySource
      * @param filter the filter to be applied.
      */
-    public FilteredPropertySource(PropertySource baseSource, Predicate<String> filter){
+    public FilteredConfigSource(ConfigSource baseSource, Predicate<String> filter){
         this.baseSource = Objects.requireNonNull(baseSource);
         this.filter = Objects.requireNonNull(filter);
     }
 
     @Override
     public int getOrdinal(){
-        return PropertySourceComparator.getOrdinal(getBaseSource());
+        return ConfigSourceComparator.getOrdinal(getBaseSource());
     }
 
     @Override
@@ -55,28 +55,27 @@ class FilteredPropertySource implements PropertySource {
     }
 
     @Override
-    public PropertyValue get(String key) {
-        PropertyValue val = this.getBaseSource().get(key);
-        if(val!=null && filter.test(val.getKey())) {
+    public String getValue(String key) {
+        String val = this.getBaseSource().getValue(key);
+        if(val!=null && filter.test(key)) {
             return val;
         }
         return null;
     }
 
     @Override
-    public Map<String, PropertyValue> getProperties(){
-        final Map<String,PropertyValue> result = new HashMap<>();
-        for(PropertyValue val: this.getBaseSource().getProperties().values()) {
-            if (filter.test(val.getKey())) {
-                result.put(val.getKey(), val);
+    public Map<String, String> getProperties(){
+        final Map<String,String> result = new HashMap<>();
+        for(Map.Entry<String,String> en: this.getBaseSource().getProperties().entrySet()) {
+            if (filter.test(en.getKey())) {
+                result.put(en.getKey(), en.getValue());
             }
         }
         return result;
     }
 
-    @Override
-    public boolean isScannable() {
-        return getBaseSource().isScannable();
+    protected ConfigSource getBaseSource() {
+        return baseSource;
     }
 
     @Override
@@ -87,7 +86,4 @@ class FilteredPropertySource implements PropertySource {
                 '}';
     }
 
-    protected PropertySource getBaseSource() {
-        return baseSource;
-    }
 }

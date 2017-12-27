@@ -18,23 +18,22 @@
  */
 package org.apache.tamaya.functions;
 
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValue;
-import org.apache.tamaya.spisupport.PropertySourceComparator;
+import org.apache.tamaya.base.configsource.ConfigSourceComparator;
 
+import javax.config.spi.ConfigSource;
 import java.util.*;
 
 
 /**
  * Property source which filters any key/values dynamically.
  */
-class ValueMappedPropertySource implements PropertySource{
+class ValueMappedConfigSource implements ConfigSource{
 
     private final String name;
     private final PropertyMapper valueFilter;
-    private final PropertySource source;
+    private final ConfigSource source;
 
-    public ValueMappedPropertySource(String name, PropertyMapper valueFilter, PropertySource current) {
+    public ValueMappedConfigSource(String name, PropertyMapper valueFilter, ConfigSource current) {
         this.name =  name!=null?name:"<valueFiltered> -> name="+current.getName()+", valueFilter="+valueFilter.toString();
         this.valueFilter = valueFilter;
         this.source = Objects.requireNonNull(current);
@@ -42,7 +41,7 @@ class ValueMappedPropertySource implements PropertySource{
 
     @Override
     public int getOrdinal() {
-        return PropertySourceComparator.getOrdinal(source);
+        return ConfigSourceComparator.getOrdinal(source);
     }
 
     @Override
@@ -51,33 +50,23 @@ class ValueMappedPropertySource implements PropertySource{
     }
 
     @Override
-    public PropertyValue get(String key) {
-        PropertyValue value = this.source.get(key);
-        if(value!=null) {
-            return PropertyValue.of(key, valueFilter.mapProperty(key, value.getValue()), getName());
-        }
-        return null;
+    public String getValue(String key) {
+        return this.source.getValue(key);
     }
 
     @Override
-    public Map<String, PropertyValue> getProperties() {
-        Map<String,PropertyValue> result = new HashMap<>();
-        for(PropertyValue val : source.getProperties().values()) {
-            String mappedValue = valueFilter.mapProperty(val.getKey(), val.getValue());
-            PropertyValue value = val.toBuilder().setValue(mappedValue).build();
-            result.put(val.getKey(), value);
+    public Map<String, String> getProperties() {
+        Map<String,String> result = new HashMap<>();
+        for(Map.Entry<String,String> en: source.getProperties().entrySet()) {
+            String mappedValue = valueFilter.mapProperty(en.getKey(), en.getValue());
+            result.put(en.getKey(), mappedValue);
         }
         return result;
     }
 
     @Override
-    public boolean isScannable() {
-        return source.isScannable();
-    }
-
-    @Override
     public String toString() {
-        return "ValueMappedPropertySource{" +
+        return "ValueMappedConfigSource{" +
                 "source=" + source.getName() +
                 ", name='" + name + '\'' +
                 ", valueFilter=" + valueFilter +

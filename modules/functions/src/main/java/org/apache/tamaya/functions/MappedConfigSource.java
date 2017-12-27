@@ -18,16 +18,16 @@
  */
 package org.apache.tamaya.functions;
 
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValue;
-import org.apache.tamaya.spisupport.PropertySourceComparator;
 
+import org.apache.tamaya.base.configsource.ConfigSourceComparator;
+
+import javax.config.spi.ConfigSource;
 import java.util.*;
 
 /**
  * PropertySource implementation that maps certain parts (defined by an {@code UnaryOperator<String>}) to alternate sections.
  */
-class MappedPropertySource implements PropertySource {
+class MappedConfigSource implements ConfigSource {
 
     private static final long serialVersionUID = 8690637705511432083L;
 
@@ -39,7 +39,7 @@ class MappedPropertySource implements PropertySource {
     /**
      * The base configuration.
      */
-    private final PropertySource propertySource;
+    private final ConfigSource propertySource;
 
     /**
      * Creates a new instance.
@@ -47,14 +47,14 @@ class MappedPropertySource implements PropertySource {
      * @param config    the base configuration, not null
      * @param keyMapper The mapping operator, not null
      */
-    public MappedPropertySource(PropertySource config, KeyMapper keyMapper) {
+    public MappedConfigSource(ConfigSource config, KeyMapper keyMapper) {
         this.propertySource = Objects.requireNonNull(config);
         this.keyMapper = Objects.requireNonNull(keyMapper);
     }
 
     @Override
     public int getOrdinal() {
-        return PropertySourceComparator.getOrdinal(this.propertySource);
+        return ConfigSourceComparator.getOrdinal(this.propertySource);
     }
 
     @Override
@@ -63,22 +63,16 @@ class MappedPropertySource implements PropertySource {
     }
 
     @Override
-    public Map<String, PropertyValue> getProperties() {
-        Map<String,PropertyValue> result = new HashMap<>();
-        for (PropertyValue en : this.propertySource.getProperties().values()) {
+    public Map<String, String> getProperties() {
+        Map<String,String> result = new HashMap<>();
+        for (Map.Entry<String,String> en : this.propertySource.getProperties().entrySet()) {
             String targetKey = keyMapper.mapKey(en.getKey());
             if (targetKey != null) {
-                result.put(targetKey, PropertyValue.of(targetKey, en.getValue(), getName()));
+                result.put(targetKey, en.getValue());
             }
         }
         return result;
     }
-
-    @Override
-    public boolean isScannable() {
-        return propertySource.isScannable();
-    }
-
 
     /**
      * <p>Access a property by its key.</p>
@@ -95,24 +89,20 @@ class MappedPropertySource implements PropertySource {
      *         simply return {@code null}.
      */
     @Override
-    public PropertyValue get(String key) {
+    public String getValue(String key) {
         Objects.requireNonNull(key, "Key must be given.");
 
         String mappedKey = keyMapper.mapKey(key);
-        PropertyValue result = null;
+        String result = null;
 
         if (mappedKey != null) {
-            for (PropertyValue property : propertySource.getProperties().values()) {
-                String newKey = keyMapper.mapKey(property.getKey());
-
+            for (Map.Entry<String,String> en : propertySource.getProperties().entrySet()) {
+                String newKey = keyMapper.mapKey(en.getKey());
                 if (mappedKey.equals(newKey)) {
-                    String mappedName = getName();
-                    return property.toBuilder().mapKey(newKey)
-                                   .setSource(mappedName).build();
+                    return en.getValue();
                 }
             }
         }
-
         return result;
     }
 

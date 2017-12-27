@@ -303,7 +303,7 @@ public final class ConfigurationFunctions {
             if (stripKeys) {
                 return new MappedConfiguration(
                         filtered,
-                        k -> PropertySourceFunctions.stripSectionKeys(k, sectionKeys),
+                        k -> ConfigSourceFunctions.stripSectionKeys(k, sectionKeys),
                         "stripped");
             }
             return filtered;

@@ -20,7 +20,6 @@ package org.apache.tamaya.functions;
 
 import org.apache.tamaya.base.DefaultConfigBuilder;
 import org.apache.tamaya.base.configsource.SimpleConfigSource;
-import org.apache.tamaya.spisupport.DefaultConfiguration;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.Test;
 import org.mockito.Mockito;
