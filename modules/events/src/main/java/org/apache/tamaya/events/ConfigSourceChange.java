@@ -18,8 +18,7 @@
  */
 package org.apache.tamaya.events;
 
-import org.apache.tamaya.spi.PropertySource;
-
+import javax.config.spi.ConfigSource;
 import java.beans.PropertyChangeEvent;
 import java.io.Serializable;
 import java.util.Collection;
@@ -31,15 +30,15 @@ import java.util.UUID;
 /**
  * Event that contains a set current changes that were applied or could be applied.
  * This class is immutable and thread-safe. To create instances use
- * {@link PropertySourceChangeBuilder}.
+ * {@link ConfigSourceChangeBuilder}.
  *
  * Created by Anatole on 22.10.2014.
  */
-public final class PropertySourceChange implements ConfigEvent<PropertySource>, Serializable{
+public final class ConfigSourceChange implements ConfigEvent<ConfigSource>, Serializable{
 
     private static final long serialVersionUID = 1L;
     /** The base property provider/configuration. */
-    private final FrozenPropertySource propertySource;
+    private final FrozenConfigSource configSource;
     /** The base version, usable for optimistic locking. */
     private String version = UUID.randomUUID().toString();
     /** The timestamp of the change set in millis from the epoch. */
@@ -48,11 +47,11 @@ public final class PropertySourceChange implements ConfigEvent<PropertySource>, 
     private final Map<String,PropertyChangeEvent> changes = new HashMap<>();
 
     /**
-     * Constructor used by {@link PropertySourceChangeBuilder}.
+     * Constructor used by {@link ConfigSourceChangeBuilder}.
      * @param builder The builder used, not null.
      */
-    PropertySourceChange(PropertySourceChangeBuilder builder) {
-        this.propertySource = FrozenPropertySource.of(builder.source);
+    ConfigSourceChange(ConfigSourceChangeBuilder builder) {
+        this.configSource = FrozenConfigSource.of(builder.source);
         for (PropertyChangeEvent c : builder.delta.values()) {
             this.changes.put(c.getPropertyName(), c);
         }
@@ -65,8 +64,8 @@ public final class PropertySourceChange implements ConfigEvent<PropertySource>, 
     }
 
     @Override
-    public Class<PropertySource> getResourceType() {
-        return PropertySource.class;
+    public Class<ConfigSource> getResourceType() {
+        return ConfigSource.class;
     }
 
     /**
@@ -74,8 +73,8 @@ public final class PropertySourceChange implements ConfigEvent<PropertySource>, 
      * @return the underlying property provider/configuration, or null, if the change instance was deserialized.
      */
     @Override
-    public PropertySource getResource(){
-        return this.propertySource;
+    public ConfigSource getResource(){
+        return this.configSource;
     }
 
     /**
@@ -203,8 +202,8 @@ public final class PropertySourceChange implements ConfigEvent<PropertySource>, 
 
     @Override
     public String toString() {
-        return "PropertySourceChange{" +
-                ", propertySource=" + propertySource +
+        return "ConfigSourceChange{" +
+                ", configSource=" + configSource +
                 ", version='" + version + '\'' +
                 ", timestamp=" + timestamp +
                 '}';

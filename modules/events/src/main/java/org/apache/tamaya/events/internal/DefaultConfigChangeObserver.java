@@ -18,12 +18,12 @@
  */
 package org.apache.tamaya.events.internal;
 
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.events.ConfigEventManager;
-import org.apache.tamaya.events.ConfigurationChange;
-import org.apache.tamaya.events.ConfigurationChangeBuilder;
-import org.apache.tamaya.events.FrozenConfiguration;
+import org.apache.tamaya.events.ConfigChange;
+import org.apache.tamaya.events.ConfigChangeBuilder;
+import org.apache.tamaya.events.FrozenConfig;
 
+import javax.config.ConfigProvider;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -40,7 +40,7 @@ public class DefaultConfigChangeObserver {
 
     private long checkPeriod = 2000L;
 
-    private volatile FrozenConfiguration lastConfig;
+    private volatile FrozenConfig lastConfig;
 
     private volatile boolean running;
 
@@ -61,11 +61,11 @@ public class DefaultConfigChangeObserver {
 
     public void checkConfigurationUpdate() {
         LOG.finest("Checking configuration for changes...");
-        FrozenConfiguration frozenConfig = FrozenConfiguration.of(ConfigurationProvider.getConfiguration());
-        ConfigurationChange changes;
+        FrozenConfig frozenConfig = FrozenConfig.of(ConfigProvider.getConfig());
+        ConfigChange changes;
 
         if (getLastConfig() != null) {
-            changes = ConfigurationChangeBuilder.of(getLastConfig()).addChanges(frozenConfig)
+            changes = ConfigChangeBuilder.of(getLastConfig()).addChanges(frozenConfig)
                                                 .build();
             if(!changes.isEmpty()) {
                 LOG.info("Identified configuration changes, publishing changes:\n" + changes);
@@ -77,11 +77,11 @@ public class DefaultConfigChangeObserver {
 
     }
 
-    protected FrozenConfiguration getLastConfig() {
+    protected FrozenConfig getLastConfig() {
         return lastConfig;
     }
 
-    protected void setLastConfig(FrozenConfiguration newConfiguration) {
+    protected void setLastConfig(FrozenConfig newConfiguration) {
         lastConfig = newConfiguration;
     }
 

@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.events.spi;
 
+import org.apache.tamaya.events.ConfigChange;
 import org.apache.tamaya.events.ConfigEvent;
 import org.apache.tamaya.events.ConfigEventListener;
 
@@ -119,7 +120,7 @@ public interface ConfigEventManagerSpi {
      * and trigger ConfigurationChange events if something is changed. This is quite handy for publishing
      * configuration changes to whatever systems are interested in. Hereby the origin of a configuration change
      * can be on this machine, or also remotely. For handling corresponding {@link ConfigEventListener} have
-     * to be registered, e.g. listening on {@link org.apache.tamaya.events.ConfigurationChange} events.
+     * to be registered, e.g. listening on {@link ConfigChange} events.
      * 
      * @param enable whether to enable or disable the change monitoring.
      */

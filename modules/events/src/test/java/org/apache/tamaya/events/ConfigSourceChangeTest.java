@@ -18,76 +18,76 @@
  */
 package org.apache.tamaya.events;
 
-import org.apache.tamaya.spisupport.propertysource.EnvironmentPropertySource;
-import org.apache.tamaya.spisupport.propertysource.SimplePropertySource;
-import org.apache.tamaya.spisupport.propertysource.SystemPropertySource;
-import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.base.configsource.EnvironmentConfigSource;
+import org.apache.tamaya.base.configsource.SimpleConfigSource;
+import org.apache.tamaya.base.configsource.SystemConfigSource;
 import org.junit.Test;
 
+import javax.config.spi.ConfigSource;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.*;
 
 /**
- * Tests for {@link PropertySourceChange} and its builder.
+ * Tests for {@link ConfigSourceChange} and its builder.
  */
-public class PropertySourceChangeTest {
+public class ConfigSourceChangeTest {
 
-    private static final PropertySource myPS = new SystemPropertySource();
+    private static final ConfigSource myPS = new SystemConfigSource();
 
     @Test
     public void testGetPropertySource() throws Exception {
-        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS).build();
+        ConfigSourceChange change = ConfigSourceChangeBuilder.of(myPS).build();
         assertEquals(change.getResource().getName(), myPS.getName());
     }
 
     @Test
     public void testGetVersion() throws Exception {
-        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS)
+        ConfigSourceChange change = ConfigSourceChangeBuilder.of(myPS)
                 .setVersion("myVersion1").build();
         assertEquals(change.getVersion(), "myVersion1");
     }
 
     @Test
     public void testGetTimestamp() throws Exception {
-        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS)
+        ConfigSourceChange change = ConfigSourceChangeBuilder.of(myPS)
                 .setTimestamp(111L).build();
         assertEquals(change.getTimestamp(), 111L);
     }
 
     @Test
     public void testGetEvents() throws Exception {
-        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS)
+        ConfigSourceChange change = ConfigSourceChangeBuilder.of(myPS)
                 .addChanges(
-                        new EnvironmentPropertySource()
+                        new EnvironmentConfigSource()
                 ).build();
         assertTrue(change.getChanges().size()>0);
     }
 
     @Test
     public void testGetRemovedSize() throws Exception {
-        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS)
+        ConfigSourceChange change = ConfigSourceChangeBuilder.of(myPS)
                 .addChanges(
-                        new EnvironmentPropertySource()
+                        new EnvironmentConfigSource()
                 ).build();
         assertTrue(change.getRemovedSize()>0);
     }
 
     @Test
     public void testGetAddedSize() throws Exception {
-        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS)
+        ConfigSourceChange change = ConfigSourceChangeBuilder.of(myPS)
                 .addChanges(
-                        new EnvironmentPropertySource()
+                        new EnvironmentConfigSource()
                 ).build();
         assertTrue(change.getAddedSize()>0);
     }
 
     @Test
     public void testGetUpdatedSize() throws Exception {
-        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS)
+        ConfigSourceChange change = ConfigSourceChangeBuilder.of(myPS)
                 .addChanges(
-                        new EnvironmentPropertySource()
+                        new EnvironmentConfigSource()
                 ).build();
         assertTrue(change.getUpdatedSize()==0);
     }
@@ -97,12 +97,12 @@ public class PropertySourceChangeTest {
         Map<String, String> testData = new HashMap<>();
         testData.put("key1", "value1");
         testData.put("key2", "value2");
-        PropertySource ps1 = new SimplePropertySource("test", testData);
+        SimpleConfigSource ps1 = new SimpleConfigSource("test", testData);
         testData = new HashMap<>();
         testData.put("key1", "value2");
         testData.put("key3", "value3");
-        PropertySource ps2 = new SimplePropertySource("test", testData);
-        PropertySourceChange change = PropertySourceChangeBuilder.of(ps1)
+        SimpleConfigSource ps2 = new SimpleConfigSource("test", testData);
+        ConfigSourceChange change = ConfigSourceChangeBuilder.of(ps1)
                 .addChanges(
                         ps2
                 ).build();
@@ -116,12 +116,12 @@ public class PropertySourceChangeTest {
         Map<String, String> testData = new HashMap<>();
         testData.put("key1", "value1");
         testData.put("key2", "value2");
-        PropertySource ps1 = new SimplePropertySource("test", testData);
+        ConfigSource ps1 = new SimpleConfigSource("test", testData);
         testData = new HashMap<>();
         testData.put("key1", "value2");
         testData.put("key3", "value3");
-        PropertySource ps2 = new SimplePropertySource("test", testData);
-        PropertySourceChange change = PropertySourceChangeBuilder.of(ps1)
+        ConfigSource ps2 = new SimpleConfigSource("test", testData);
+        ConfigSourceChange change = ConfigSourceChangeBuilder.of(ps1)
                 .addChanges(
                         ps2
                 ).build();
@@ -135,12 +135,12 @@ public class PropertySourceChangeTest {
         Map<String, String> testData = new HashMap<>();
         testData.put("key1", "value1");
         testData.put("key2", "value2");
-        PropertySource ps1 = new SimplePropertySource("test", testData);
+        SimpleConfigSource ps1 = new SimpleConfigSource("test", testData);
         testData = new HashMap<>();
         testData.put("key1", "value2");
         testData.put("key3", "value3");
-        PropertySource ps2 = new SimplePropertySource("test", testData);
-        PropertySourceChange change = PropertySourceChangeBuilder.of(ps1)
+        SimpleConfigSource ps2 = new SimpleConfigSource("test", testData);
+        ConfigSourceChange change = ConfigSourceChangeBuilder.of(ps1)
                 .addChanges(
                         ps2
                 ).build();
@@ -151,7 +151,7 @@ public class PropertySourceChangeTest {
 
     @Test
     public void testContainsKey() throws Exception {
-        PropertySourceChange change = PropertySourceChangeBuilder.of(new EnvironmentPropertySource())
+        ConfigSourceChange change = ConfigSourceChangeBuilder.of(new EnvironmentConfigSource())
                 .addChanges(
                         myPS
                 ).build();
@@ -160,10 +160,10 @@ public class PropertySourceChangeTest {
 
     @Test
     public void testIsEmpty() throws Exception {
-        PropertySourceChange change = PropertySourceChangeBuilder.of(new EnvironmentPropertySource())
+        ConfigSourceChange change = ConfigSourceChangeBuilder.of(new EnvironmentConfigSource())
                 .build();
         assertTrue(change.isEmpty());
-        change = PropertySourceChangeBuilder.of(new EnvironmentPropertySource())
+        change = ConfigSourceChangeBuilder.of(new EnvironmentConfigSource())
                 .addChanges(
                         myPS
                 ).build();
@@ -172,7 +172,7 @@ public class PropertySourceChangeTest {
 
     @Test
     public void testToString() throws Exception {
-        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS).build();
+        ConfigSourceChange change = ConfigSourceChangeBuilder.of(myPS).build();
         String toString = change.toString();
         assertNotNull(toString);
         assertTrue(toString.contains(myPS.getName()));

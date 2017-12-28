@@ -18,139 +18,61 @@
  */
 package org.apache.tamaya.events;
 
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.ConfigOperator;
-import org.apache.tamaya.ConfigQuery;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.ConversionContext;
-import org.apache.tamaya.spi.PropertyConverter;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.config.Config;
+import javax.config.spi.ConfigSource;
+import java.util.*;
+import java.util.function.UnaryOperator;
+
 
 /**
  * Created by Anatole on 24.03.2015.
  */
-public class TestConfigView implements ConfigOperator{
+public class TestConfigView implements UnaryOperator<Config>{
 
     private static final TestConfigView INSTANCE = new TestConfigView();
 
     private TestConfigView(){}
 
-    public static ConfigOperator of(){
+    public static TestConfigView of(){
         return INSTANCE;
     }
 
     @Override
-    public Configuration operate(final Configuration config) {
-        return new Configuration() {
+    public Config apply(final Config config) {
+        return new Config() {
             @Override
-            public Map<String, String> getProperties() {
-                Map<String, String> result = new HashMap<>();
-                for (Map.Entry<String, String> en : config.getProperties().entrySet()) {
-                    if (en.getKey().startsWith("test")) {
-                        result.put(en.getKey(), en.getValue());
+            public Iterable<String> getPropertyNames() {
+                Set<String> result = new HashSet<>();
+                for (String key: config.getPropertyNames()) {
+                    if (key.startsWith("test")) {
+                        result.add(key);
                     }
                 }
                 return result;
-//                return config.getProperties().entrySet().stream().filter(e -> e.getKey().startsWith("test")).collect(
-//                        Collectors.toMap(en -> en.getKey(), en -> en.getProperty()));
             }
 
             @Override
-            public Configuration with(ConfigOperator operator) {
-                return null;
+            public Iterable<ConfigSource> getConfigSources() {
+                return config.getConfigSources();
             }
 
             @Override
-            public <T> T query(ConfigQuery<T> query) {
-                return null;
-            }
-
-            @Override
-            public ConfigurationContext getContext() {
-                return config.getContext();
-            }
-
-            @Override
-            public String get(String key) {
-                return getProperties().get(key);
-            }
-
-            @Override
-            public String getOrDefault(String key, String defaultValue) {
-                String val = get(key);
-                if(val==null){
-                    return defaultValue;
+            public <T> T getValue(String key, Class<T> type) {
+                if (key.startsWith("test")) {
+                    return config.getValue(key, type);
                 }
-                return val;
+                throw new NoSuchElementException(key);
             }
 
             @Override
-            public <T> T getOrDefault(String key, Class<T> type, T defaultValue) {
-                T val = get(key, type);
-                if(val==null){
-                    return defaultValue;
+            public <T> Optional<T> getOptionalValue(String key, Class<T> type) {
+                if (key.startsWith("test")) {
+                    return config.getOptionalValue(key, type);
                 }
-                return val;
+                return Optional.empty();
             }
 
-            @SuppressWarnings("unchecked")
-			@Override
-            public <T> T get(String key, Class<T> type) {
-                return (T) get(key, TypeLiteral.of(type));
-            }
-
-            /**
-             * Accesses the current String value for the given key and tries to convert it
-             * using the {@link org.apache.tamaya.spi.PropertyConverter} instances provided by the current
-             * {@link org.apache.tamaya.spi.ConfigurationContext}.
-             *
-             * @param key  the property's absolute, or relative path, e.g. @code
-             *             a/b/c/d.myProperty}.
-             * @param type The target type required, not null.
-             * @param <T>  the value type
-             * @return the converted value, never null.
-             */
-            @Override
-            public <T> T get(String key, TypeLiteral<T> type) {
-                String value = get(key);
-                if (value != null) {
-                    List<PropertyConverter<T>> converters = getContext()
-                            .getPropertyConverters(type);
-                    ConversionContext context = new ConversionContext.Builder(
-                            key,type).build();
-                    for (PropertyConverter<T> converter : converters) {
-                        try {
-                            T t = converter.convert(value, context);
-                            if (t != null) {
-                                return t;
-                            }
-                        } catch (Exception e) {
-                            Logger.getLogger(getClass().getName())
-                                    .log(Level.FINEST, "PropertyConverter: " + converter + " failed to convert value: "
-                                            + value, e);
-                        }
-                    }
-                    throw new ConfigException("Unparseable config value for type: " + type.getRawType().getName() + ": "
-                            + key + ", supportedFormats: " + context.getSupportedFormats());
-                }
-                return null;
-            }
-
-            @Override
-            public <T> T getOrDefault(String key, TypeLiteral<T> type, T defaultValue) {
-                T val = get(key, type);
-                if(val==null){
-                    return defaultValue;
-                }
-                return val;
-            }
         };
     }
 }

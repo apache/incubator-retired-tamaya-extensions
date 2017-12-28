@@ -18,17 +18,16 @@
  */
 package org.apache.tamaya.events;
 
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.ConfigOperator;
-import org.apache.tamaya.ConfigQuery;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.functions.ConfigurationFunctions;
-import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.ConversionContext;
-import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.base.convert.ConversionContext;
+import org.apache.tamaya.base.convert.ConverterManager;
+import org.apache.tamaya.spi.ConfigContext;
+import org.apache.tamaya.spi.ConfigContextSupplier;
 
+import javax.config.Config;
+import javax.config.spi.ConfigSource;
+import javax.config.spi.Converter;
 import java.io.Serializable;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,7 +37,7 @@ import java.util.logging.Logger;
  * Configuration implementation that stores all current values of a given (possibly dynamic, contextual and non server
  * capable instance) and is fully serializable. Note that hereby only the scannable key/value pairs are considered.
  */
-public final class FrozenConfiguration implements Configuration, Serializable {
+public final class FrozenConfig implements Config, Serializable {
     private static final long serialVersionUID = -6373137316556444171L;
 
     /**
@@ -47,15 +46,24 @@ public final class FrozenConfiguration implements Configuration, Serializable {
     private Map<String, String> properties = new HashMap<>();
     private long frozenAt = System.nanoTime();
     private UUID id = UUID.randomUUID();
+    private ConverterManager converterManager = new ConverterManager();
 
     /**
      * Constructor.
      *
      * @param config The base configuration.
      */
-    private FrozenConfiguration(Configuration config) {
-        this.properties.putAll(config.getProperties());
+    private FrozenConfig(Config config) {
+        for(String key:config.getPropertyNames()) {
+            this.properties.put(key, config.getValue(key, String.class));
+        }
         this.properties = Collections.unmodifiableMap(this.properties);
+        if(config instanceof ConfigContextSupplier){
+            ConfigContext ctx = ((ConfigContextSupplier)config).getConfigContext();
+            for(Map.Entry<Type, List<Converter>> en:ctx.getConverters().entrySet()) {
+                this.converterManager.addConverter(en.getKey(), en.getValue());
+            }
+        }
     }
 
     /**
@@ -64,107 +72,69 @@ public final class FrozenConfiguration implements Configuration, Serializable {
      * @param config the configuration to be frozen, not null.
      * @return the frozen Configuration.
      */
-    public static FrozenConfiguration of(Configuration config) {
-        if (config instanceof FrozenConfiguration) {
-            return (FrozenConfiguration) config;
+    public static FrozenConfig of(Config config) {
+        if (config instanceof FrozenConfig) {
+            return (FrozenConfig) config;
         }
-        return new FrozenConfiguration(config);
+        return new FrozenConfig(config);
     }
 
-    @Override
-    public String get(String key) {
-        return this.properties.get(key);
-    }
-
-    @Override
-    public String getOrDefault(String key, String defaultValue) {
-        String val = get(key);
+    public String getValue(String key) {
+        String val = this.properties.get(key);
         if(val==null){
-            return defaultValue;
+            throw new NoSuchElementException("No such config found: " + key);
         }
         return val;
     }
 
     @Override
-    public <T> T getOrDefault(String key, Class<T> type, T defaultValue) {
-        T val = get(key, type);
-        if(val==null){
-            return defaultValue;
+    public <T> Optional<T> getOptionalValue(String key, Class<T> type) {
+        String value = this.properties.get(key);
+        if (value != null) {
+            List<Converter> converters = converterManager.getConverters(type);
+            ConversionContext context = new ConversionContext.Builder(this, key,type).build();
+            ConversionContext.setContext(context);
+            try {
+                for (Converter<T> converter : converters) {
+                    try {
+                        T t = converter.convert(value);
+                        if (t != null) {
+                            return Optional.of((T) t);
+                        }
+                    } catch (Exception e) {
+                        Logger.getLogger(getClass().getName())
+                                .log(Level.FINEST, "PropertyConverter: " + converter + " failed to convert value: " + value,
+                                        e);
+                    }
+                }
+            }finally{
+                ConversionContext.reset();
+            }
+            if(String.class==type){
+                return Optional.of((T)value);
+            }
+            throw new IllegalArgumentException("Unparseable config value for type: " + type.getName() + ": " + key
+                    + ", supported formats: " + context.getSupportedFormats());
         }
-        return val;
+        return Optional.empty();
     }
+
 
     @SuppressWarnings("unchecked")
 	@Override
-    public <T> T get(String key, Class<T> type) {
-        return (T) get(key, TypeLiteral.of(type));
-    }
-
-    /**
-     * Accesses the current String value for the given key and tries to convert it
-     * using the {@link org.apache.tamaya.spi.PropertyConverter} instances provided by the current
-     * {@link org.apache.tamaya.spi.ConfigurationContext}.
-     *
-     * @param key  the property's absolute, or relative path, e.g. @code
-     *             a/b/c/d.myProperty}.
-     * @param type The target type required, not null.
-     * @param <T>  the value type
-     * @return the converted value, never null.
-     */
-    @Override
-    public <T> T get(String key, TypeLiteral<T> type) {
-        String value = get(key);
-        if (value != null) {
-            List<PropertyConverter<T>> converters = getContext()
-                    .getPropertyConverters(type);
-            ConversionContext context = new ConversionContext.Builder(this,
-                    getContext(), key,type).build();
-            for (PropertyConverter<T> converter : converters) {
-                try {
-                    T t = converter.convert(value, context);
-                    if (t != null) {
-                        return t;
-                    }
-                } catch (Exception e) {
-                    Logger.getLogger(getClass().getName())
-                            .log(Level.FINEST, "PropertyConverter: " + converter + " failed to convert value: " + value,
-                                    e);
-                }
-            }
-            throw new ConfigException("Unparseable config value for type: " + type.getRawType().getName() + ": " + key
-                    + ", supported formats: " + context.getSupportedFormats());
-        }
-
-        return null;
+    public <T> T getValue(String key, Class<T> type) {
+        return getOptionalValue(key, type)
+                .orElseThrow(() -> new NoSuchElementException("No such config found: " + key));
     }
 
     @Override
-    public <T> T getOrDefault(String key, TypeLiteral<T> type, T defaultValue) {
-        T val = get(key, type);
-        if(val==null){
-            return defaultValue;
-        }
-        return val;
+    public Iterable<String> getPropertyNames() {
+        return properties.keySet();
     }
 
     @Override
-    public Map<String, String> getProperties() {
-        return properties;
-    }
-
-    @Override
-    public Configuration with(ConfigOperator operator) {
-        return operator.operate(this);
-    }
-
-    @Override
-    public <T> T query(ConfigQuery<T> query) {
-        return query.query(this);
-    }
-
-    @Override
-    public ConfigurationContext getContext() {
-        return ConfigurationFunctions.emptyConfigurationContext();
+    public List<ConfigSource> getConfigSources() {
+        return Collections.emptyList();
     }
 
     @Override
@@ -176,7 +146,7 @@ public final class FrozenConfiguration implements Configuration, Serializable {
             return false;
         }
 
-        FrozenConfiguration that = (FrozenConfiguration) o;
+        FrozenConfig that = (FrozenConfig) o;
 
         if (frozenAt != that.frozenAt) {
             return false;

@@ -18,10 +18,9 @@
  */
 package org.apache.tamaya.events;
 
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValue;
-import org.apache.tamaya.spisupport.PropertySourceComparator;
+import org.apache.tamaya.base.configsource.ConfigSourceComparator;
 
+import javax.config.spi.ConfigSource;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,7 +30,7 @@ import java.util.Map;
  * PropertySource implementation that stores all current values of a given (possibly dynamic, contextual and non server
  * capable instance) and is fully serializable. Note that hereby only the scannable key/value pairs are considered.
  */
-public final class FrozenPropertySource implements PropertySource, Serializable {
+public final class FrozenConfigSource implements ConfigSource, Serializable {
     private static final long serialVersionUID = -6373137316556444171L;
     /**
      * The ordinal.
@@ -40,7 +39,7 @@ public final class FrozenPropertySource implements PropertySource, Serializable 
     /**
      * The properties read.
      */
-    private Map<String, PropertyValue> properties = new HashMap<>();
+    private Map<String, String> properties = new HashMap<>();
     /**
      * The PropertySource's name.
      */
@@ -51,26 +50,26 @@ public final class FrozenPropertySource implements PropertySource, Serializable 
     /**
      * Constructor.
      *
-     * @param propertySource The base PropertySource.
+     * @param configSource The base ConfigSource.
      */
-    private FrozenPropertySource(PropertySource propertySource) {
-        this.properties.putAll(propertySource.getProperties());
+    private FrozenConfigSource(ConfigSource configSource) {
+        this.properties.putAll(configSource.getProperties());
         this.properties = Collections.unmodifiableMap(this.properties);
-        this.ordinal = PropertySourceComparator.getOrdinal(propertySource);
-        this.name = propertySource.getName();
+        this.ordinal = ConfigSourceComparator.getOrdinal(configSource);
+        this.name = configSource.getName();
     }
 
     /**
      * Creates a new FrozenPropertySource instance based on a PropertySource given.
      *
-     * @param propertySource the property source to be frozen, not null.
+     * @param configSource the config source to be frozen, not null.
      * @return the frozen property source.
      */
-    public static FrozenPropertySource of(PropertySource propertySource) {
-        if (propertySource instanceof FrozenPropertySource) {
-            return (FrozenPropertySource) propertySource;
+    public static FrozenConfigSource of(ConfigSource configSource) {
+        if (configSource instanceof FrozenConfigSource) {
+            return (FrozenConfigSource) configSource;
         }
-        return new FrozenPropertySource(propertySource);
+        return new FrozenConfigSource(configSource);
     }
 
     @Override
@@ -91,18 +90,13 @@ public final class FrozenPropertySource implements PropertySource, Serializable 
     }
 
     @Override
-    public PropertyValue get(String key) {
+    public String getValue(String key) {
         return this.properties.get(key);
     }
 
     @Override
-    public Map<String, PropertyValue> getProperties() {
-        return properties;
-    }
-
-    @Override
-    public boolean isScannable() {
-        return true;
+    public Map<String,String> getProperties() {
+        return Collections.unmodifiableMap(properties);
     }
 
     @Override
@@ -110,10 +104,10 @@ public final class FrozenPropertySource implements PropertySource, Serializable 
         if (this == o) {
             return true;
         }
-        if (!(o instanceof FrozenPropertySource)) {
+        if (!(o instanceof FrozenConfigSource)) {
             return false;
         }
-        FrozenPropertySource that = (FrozenPropertySource) o;
+        FrozenConfigSource that = (FrozenConfigSource) o;
         return ordinal == that.ordinal && properties.equals(that.properties);
     }
 

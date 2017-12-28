@@ -18,8 +18,7 @@
  */
 package org.apache.tamaya.events;
 
-import org.apache.tamaya.Configuration;
-
+import javax.config.Config;
 import java.beans.PropertyChangeEvent;
 import java.io.Serializable;
 import java.util.Collection;
@@ -31,15 +30,15 @@ import java.util.UUID;
 /**
  * Event that contains a set current changes that were applied or could be applied.
  * This class is immutable and thread-safe. To create instances use
- * {@link PropertySourceChangeBuilder}.
+ * {@link ConfigSourceChangeBuilder}.
  *
  * Created by Anatole on 22.10.2014.
  */
-public final class ConfigurationChange implements ConfigEvent<Configuration>, Serializable{
+public final class ConfigChange implements ConfigEvent<Config>, Serializable{
 
     private static final long serialVersionUID = 1L;
     /** The base property provider/configuration. */
-    private final FrozenConfiguration configuration;
+    private final FrozenConfig configuration;
     /** The base version, usable for optimistic locking. */
     private String version = UUID.randomUUID().toString();
     /** The timestamp of the change set in millis from the epoch. */
@@ -52,16 +51,16 @@ public final class ConfigurationChange implements ConfigEvent<Configuration>, Se
      * @param configuration The configuration changed, not null.
      * @return an empty ConfigurationChangeSet instance.
      */
-    public static ConfigurationChange emptyChangeSet(Configuration configuration){
-        return ConfigurationChangeBuilder.of(configuration).build();
+    public static ConfigChange emptyChangeSet(Config configuration){
+        return ConfigChangeBuilder.of(configuration).build();
     }
 
     /**
-     * Constructor used by {@link PropertySourceChangeBuilder}.
+     * Constructor used by {@link ConfigSourceChangeBuilder}.
      * @param builder The builder used, not null.
      */
-    ConfigurationChange(ConfigurationChangeBuilder builder) {
-        this.configuration = FrozenConfiguration.of(builder.source);
+    ConfigChange(ConfigChangeBuilder builder) {
+        this.configuration = FrozenConfig.of(builder.source);
         for(PropertyChangeEvent ev:builder.delta.values()){
             this.changes.put(ev.getPropertyName(), ev);
         }
@@ -74,8 +73,8 @@ public final class ConfigurationChange implements ConfigEvent<Configuration>, Se
     }
 
     @Override
-    public Class<Configuration> getResourceType() {
-        return Configuration.class;
+    public Class<Config> getResourceType() {
+        return Config.class;
     }
 
     /**
@@ -83,7 +82,7 @@ public final class ConfigurationChange implements ConfigEvent<Configuration>, Se
      * @return the underlying property provider/configuration, never null.
      */
     @Override
-    public Configuration getResource(){
+    public Config getResource(){
         return this.configuration;
     }
 
@@ -219,7 +218,7 @@ public final class ConfigurationChange implements ConfigEvent<Configuration>, Se
     @Override
     public String toString() {
         return "ConfigurationChange{" +
-                "\n configuration-id = " + configuration.getOrDefault("_id", "-") +
+                "\n config-id = " + configuration.getOptionalValue("_id",String.class).orElse("-") +
                 "\n change-id        = " + version +
                 "\n timestamp        = " + timestamp +
                 "\n added            = " + this.getAddedSize() +

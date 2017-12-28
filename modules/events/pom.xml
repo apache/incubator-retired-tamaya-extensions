@@ -34,25 +34,20 @@ under the License.
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.tamaya</groupId>
-            <artifactId>tamaya-api</artifactId>
-            <version>${tamaya-apicore.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.tamaya.ext</groupId>
             <artifactId>tamaya-functions</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
-            <artifactId>tamaya-spisupport</artifactId>
-            <version>${project.version}</version>
+            <artifactId>tamaya-core</artifactId>
+            <version>${tamaya-apicore.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
-            <artifactId>tamaya-core</artifactId>
-            <version>${tamaya-apicore.version}</version>
-            <scope>runtime</scope>
+            <artifactId>tamaya-base</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>

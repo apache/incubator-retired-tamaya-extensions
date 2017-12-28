@@ -18,10 +18,11 @@
  */
 package org.apache.tamaya.events;
 
-import org.apache.tamaya.Configuration;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import javax.config.Config;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,11 +33,11 @@ public class FrozenConfigurationTest {
 
     @Test
     public void getFrozenAtReturnsTheCorrectTimestamp() {
-        Configuration source = Mockito.mock(Configuration.class);
-
+        Config source = Mockito.mock(Config.class);
+        doReturn(Collections.emptySet()).when(source).getPropertyNames();
         long poiStart = System.nanoTime();
 
-        FrozenConfiguration fc = FrozenConfiguration.of(source);
+        FrozenConfig fc = FrozenConfig.of(source);
 
         long poiEnd = System.nanoTime();
 
@@ -47,9 +48,9 @@ public class FrozenConfigurationTest {
 
     @Test
     public void idMustBeNotNull() {
-        Configuration source = Mockito.mock(Configuration.class);
-
-        FrozenConfiguration fc = FrozenConfiguration.of(source);
+        Config source = Mockito.mock(Config.class);
+        doReturn(Collections.emptySet()).when(source).getPropertyNames();
+        FrozenConfig fc = FrozenConfig.of(source);
 
         assertThat(fc.getId()).isNotNull();
     }
@@ -62,11 +63,11 @@ public class FrozenConfigurationTest {
         Map<String, String> properties = new HashMap<>();
         properties.put("key", "value");
 
-        Configuration configuration = Mockito.mock(Configuration.class);
-        doReturn(properties).when(configuration).getProperties();
+        Config configuration = Mockito.mock(Config.class);
+        doReturn(properties.keySet()).when(configuration).getPropertyNames();
 
-        FrozenConfiguration fcA = FrozenConfiguration.of(configuration);
-        FrozenConfiguration fcB = FrozenConfiguration.of(configuration);
+        FrozenConfig fcA = FrozenConfig.of(configuration);
+        FrozenConfig fcB = FrozenConfig.of(configuration);
 
         assertThat(fcA.getId()).isNotEqualTo(fcB.getId());
         assertThat(fcA).isNotEqualTo(fcB);

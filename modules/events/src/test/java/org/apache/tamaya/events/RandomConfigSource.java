@@ -18,18 +18,16 @@
  */
 package org.apache.tamaya.events;
 
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValue;
-
+import javax.config.spi.ConfigSource;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * PropertySource that provides a random entry, different on each access!
  */
-public class RandomPropertySource implements PropertySource{
+public class RandomConfigSource implements ConfigSource{
 
-    private Map<String, PropertyValue> data = new HashMap<>();
+    private Map<String, String> data = new HashMap<>();
 
     @Override
     public int getOrdinal() {
@@ -42,24 +40,20 @@ public class RandomPropertySource implements PropertySource{
     }
 
     @Override
-    public PropertyValue get(String key) {
+    public String getValue(String key) {
         if(key.equals("random.new")){
-            return PropertyValue.of(key, String.valueOf(Math.random()),getName());
+            return String.valueOf(Math.random());
         }
-        return null;
+        return data.get(key);
     }
 
     @Override
-    public Map<String, PropertyValue> getProperties() {
+    public Map<String, String> getProperties() {
         synchronized(data) {
-            data.put("random.new", PropertyValue.builder("random.new", String.valueOf(Math.random()), getName())
-            .addMetaEntry("_random.new.timestamp", String.valueOf(System.currentTimeMillis())).build());
+            data.put("random.new", String.valueOf(Math.random()));
+            data.put("_random.new.timestamp", String.valueOf(System.currentTimeMillis()));
             return new HashMap<>(data);
         }
     }
 
-    @Override
-    public boolean isScannable() {
-        return true;
-    }
 }

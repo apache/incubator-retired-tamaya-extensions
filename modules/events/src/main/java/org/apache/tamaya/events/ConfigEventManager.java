@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.events;
 
-import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.events.spi.ConfigEventManagerSpi;
 import org.apache.tamaya.spi.ServiceContextManager;
 
@@ -37,7 +36,7 @@ public final class ConfigEventManager {
         ConfigEventManagerSpi spi = ServiceContextManager.getServiceContext()
                 .getService(ConfigEventManagerSpi.class);
         if(spi==null){
-            throw new ConfigException("No SPI registered for " +
+            throw new IllegalStateException("No SPI registered for " +
                     ConfigEventManager.class.getName());
         }
         return spi;
@@ -110,7 +109,7 @@ public final class ConfigEventManager {
     }
 
     /**
-     * Publishes a {@link ConfigurationChange} synchronously to all interested listeners.
+     * Publishes a {@link ConfigChange} synchronously to all interested listeners.
      * 
      * @param <T> the type of the event.
      * @param event the event, not null.
@@ -120,7 +119,7 @@ public final class ConfigEventManager {
     }
 
     /**
-     * Publishes a {@link ConfigurationChange} asynchronously/multithreaded to all interested listeners.
+     * Publishes a {@link ConfigChange} asynchronously/multithreaded to all interested listeners.
      *
      * @param <T> the type of the event.
      * @param event the event, not null.
@@ -134,7 +133,7 @@ public final class ConfigEventManager {
      * and trigger ConfigurationChange events if something changed. This is quite handy for publishing
      * configuration changes to whatever systems are interested in. Hereby the origin of a configuration change
      * can be on this machine, or also remotely. For handling corresponding {@link ConfigEventListener} have
-     * to be registered, e.g. listening on {@link org.apache.tamaya.events.ConfigurationChange} events.
+     * to be registered, e.g. listening on {@link ConfigChange} events.
      * 
      * @param enable whether to enable or disable the change monitoring.
      * 

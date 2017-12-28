@@ -18,16 +18,16 @@
  */
 package org.apache.tamaya.events;
 
-import org.apache.tamaya.spisupport.propertysource.BasePropertySource;
-import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.base.configsource.BaseConfigSource;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * PropertySource implementation that accesses properties that are statically stored.
  */
-public class ChangeableGlobalPropertySource extends BasePropertySource{
+public class ChangeableGlobalConfigSource extends BaseConfigSource{
 
     private static final Map<String,String> STORED_ENTRIES = new ConcurrentHashMap<>();
 
@@ -37,8 +37,8 @@ public class ChangeableGlobalPropertySource extends BasePropertySource{
     }
 
     @Override
-    public Map<String, PropertyValue> getProperties() {
-        return null;
+    public Map<String, String> getProperties() {
+        return Collections.emptyMap();
     }
 
     /**

@@ -18,11 +18,11 @@
  */
 package org.apache.tamaya.events.internal;
 
-import org.apache.tamaya.Configuration;
 import org.apache.tamaya.events.ConfigEvent;
 import org.apache.tamaya.events.ConfigEventListener;
 import org.osgi.service.component.annotations.Component;
 
+import javax.config.Config;
 import java.util.logging.Logger;
 
 /**
@@ -35,7 +35,7 @@ public class LoggingConfigListener implements ConfigEventListener {
 
     @Override
     public void onConfigEvent(ConfigEvent<?> event) {
-        if(event.getResourceType()== Configuration.class) {
+        if(event.getResourceType()== Config.class) {
             LOG.info("Configuration changed: " + event);
         }
     }

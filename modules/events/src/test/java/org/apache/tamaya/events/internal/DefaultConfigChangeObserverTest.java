@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.events.internal;
 
-import org.apache.tamaya.events.FrozenConfiguration;
+import org.apache.tamaya.events.FrozenConfig;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -67,9 +67,9 @@ public class DefaultConfigChangeObserverTest {
 
         observer.checkConfigurationUpdate();
 
-        FrozenConfiguration config1 = observer.getLastConfig();
+        FrozenConfig config1 = observer.getLastConfig();
         observer.checkConfigurationUpdate();
-        FrozenConfiguration config2 = observer.getLastConfig();
+        FrozenConfig config2 = observer.getLastConfig();
 
         assertThat(config1).describedAs("After the firt check last configuration must be set.")
                                             .isNotEqualTo(config2);

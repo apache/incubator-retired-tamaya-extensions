@@ -39,21 +39,21 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertySourceProvider;
-import org.apache.tamaya.spi.PropertyValue;
-import org.apache.tamaya.spisupport.propertysource.BasePropertySource;
+import org.apache.tamaya.base.configsource.BaseConfigSource;
+import org.apache.tamaya.events.ConfigSourceChange;
+
+import javax.config.spi.ConfigSource;
+import javax.config.spi.ConfigSourceProvider;
 
 /**
  * This implementation runs in a folder taking up all files compatible with the given
  * ConfigurationFormats. When a file is added, deleted or modified the PropertySourceProvider
  * will adapt the changes automatically and trigger according
- * {@link org.apache.tamaya.events.PropertySourceChange} events.
+ * {@link ConfigSourceChange} events.
  * The default folder is META-INF/config, but you can change it via an absolute path in the
  * "-Dtamaya.configdir" parameter.
  */
-public class ObservingPropertySourceProvider implements PropertySourceProvider, FileChangeObserver {
+public class ObservingPropertySourceProvider implements ConfigSourceProvider, FileChangeObserver {
     /**
      * The logger.
      */
@@ -61,7 +61,7 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
     /**
      * The current active property sources of this provider.
      */
-    private final List<PropertySource> propertySources = Collections.synchronizedList(new LinkedList<PropertySource>());
+    private final List<ConfigSource> configSources = Collections.synchronizedList(new LinkedList<ConfigSource>());
     /**
      * The thread pool used.
      */
@@ -77,8 +77,8 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
             directory = getDirectory();
         }
         if (directory!=null){
-            synchronized (this.propertySources) {
-                this.propertySources.addAll(readConfiguration(directory));
+            synchronized (this.configSources) {
+                this.configSources.addAll(readConfiguration(directory));
             }
             final Runnable runnable = new FileChangeListener(directory, this);
             executor.execute(runnable);
@@ -92,12 +92,12 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
      *
      * @param directory the target directory, not null.
      */
-    private List<PropertySource> readConfiguration(Path directory) {
-        final List<PropertySource> result = new ArrayList<>();
+    private List<ConfigSource> readConfiguration(Path directory) {
+        final List<ConfigSource> result = new ArrayList<>();
         try {
-            synchronized (propertySources) {
+            synchronized (configSources) {
                 for (final Path path : Files.newDirectoryStream(directory, "*")) {
-                    result.addAll(getPropertySources(path));
+                    result.addAll(getConfigSources(path));
                 }
                 return result;
             }
@@ -113,12 +113,12 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
      * @param file source of the property sources.
      * @return property sources from the given file.
      */
-    protected Collection<PropertySource> getPropertySources(final Path file) {
-        return Arrays.asList(new PropertySource[]{new BasePropertySource(file.toString()) {
-            private final Map<String,PropertyValue> props = readProperties(file);
+    protected Collection<ConfigSource> getConfigSources(final Path file) {
+        return Arrays.asList(new ConfigSource[]{new BaseConfigSource(file.toString()) {
+            private final Map<String,String> props = readProperties(file);
 
             @Override
-            public Map<String, PropertyValue> getProperties() {
+            public Map<String, String> getProperties() {
                 return props;
             }
         }});
@@ -130,14 +130,14 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
      * @param file the file, not null.
      * @return properties as read from the given file.
      */
-    protected static Map<String,PropertyValue> readProperties(Path file) {
+    protected static Map<String,String> readProperties(Path file) {
         try (InputStream is = file.toUri().toURL().openStream()){
             final Properties props = new Properties();
                 props.load(is);
-            final Map<String,PropertyValue> result = new HashMap<>();
+            final Map<String,String> result = new HashMap<>();
             for(final Map.Entry<Object,Object> en:props.entrySet()){
                 String key = String.valueOf(en.getKey());
-                result.put(key, PropertyValue.of(key, String.valueOf(en.getValue()), file.toString()));
+                result.put(key, en.getValue().toString());
             }
             return result;
         } catch (final Exception e) {
@@ -166,7 +166,7 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
             try {
                 return Paths.get(resource.toURI());
             } catch (final URISyntaxException e) {
-                throw new ConfigException("An error to find the directory to watch", e);
+                throw new IllegalArgumentException("An error to find the directory to watch", e);
             }
         }
         return null;
@@ -175,17 +175,17 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
 
     @Override
     public void directoryChanged(Path directory) {
-        synchronized (this.propertySources) {
-            propertySources.clear();
-            final Collection<PropertySource> sourcesRead = readConfiguration(directory);
-            this.propertySources.addAll(sourcesRead);
+        synchronized (this.configSources) {
+            configSources.clear();
+            final Collection<ConfigSource> sourcesRead = readConfiguration(directory);
+            this.configSources.addAll(sourcesRead);
         }
     }
 
     @Override
-    public Collection<PropertySource> getPropertySources() {
-        synchronized (propertySources) {
-            return new ArrayList<>(this.propertySources);
+    public Collection<ConfigSource> getConfigSources(ClassLoader classLoader) {
+        synchronized (configSources) {
+            return new ArrayList<>(this.configSources);
         }
     }
 }

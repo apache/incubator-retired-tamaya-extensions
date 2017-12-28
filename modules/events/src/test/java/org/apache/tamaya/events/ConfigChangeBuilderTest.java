@@ -18,48 +18,49 @@
  */
 package org.apache.tamaya.events;
 
-import org.apache.tamaya.Configuration;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import javax.config.Config;
 import java.beans.PropertyChangeEvent;
 import java.util.*;
 
-import static java.util.Collections.emptyMap;
+import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 
-public class ConfigurationChangeBuilderTest {
+public class ConfigChangeBuilderTest {
 
 	@Test
-	public void compareReturnAnEmptyListOfChangesForTwoEmptyConfigurations() {
-		Configuration oc = Mockito.mock(Configuration.class, new MethodNotMockedAnswer());
-		Configuration nc = Mockito.mock(Configuration.class, new MethodNotMockedAnswer());
+	public void compareReturnAnEmptyListOfChangesForTwoEmptyConfigs() {
+		Config oc = Mockito.mock(Config.class, new MethodNotMockedAnswer());
+		Config nc = Mockito.mock(Config.class, new MethodNotMockedAnswer());
 
-		doReturn(emptyMap()).when(oc).getProperties();
-		doReturn(emptyMap()).when(nc).getProperties();
+		doReturn(emptySet()).when(oc).getPropertyNames();
+		doReturn(emptySet()).when(nc).getPropertyNames();
 
-		Collection<PropertyChangeEvent> diff = ConfigurationChangeBuilder.compare(oc, nc);
+		Collection<PropertyChangeEvent> diff = ConfigChangeBuilder.compare(oc, nc);
 
 		assertThat(diff).isNotNull().isEmpty();
 	}
 
 	@Test
-	public void compareReturnsAChangeEventIfThereIsANewKeyInTheNewVersionOfTheConfiguration() {
-		Configuration oc = Mockito.mock(Configuration.class, new MethodNotMockedAnswer());
-		Configuration nc = Mockito.mock(Configuration.class, new MethodNotMockedAnswer());
+	public void compareReturnsAChangeEventIfThereIsANewKeyInTheNewVersionOfTheConfig() {
+		Config oc = Mockito.mock(Config.class, new MethodNotMockedAnswer());
+		Config nc = Mockito.mock(Config.class, new MethodNotMockedAnswer());
 
-		doReturn(emptyMap()).when(oc).getProperties();
-		doReturn(null).when(oc).get(eq("a"));
+		doReturn(emptySet()).when(oc).getPropertyNames();
+		doThrow(new NoSuchElementException()).when(oc).getValue("a", String.class);
+		doReturn(Optional.empty()).when(oc).getOptionalValue("a", String.class);
 
 		Map<String, String> valuesNC = new HashMap<String, String>();
 		valuesNC.put("a", "19");
 
-		doReturn(valuesNC).when(nc).getProperties();
-		doReturn("19").when(nc).get(eq("a"));
+		doReturn(valuesNC.keySet()).when(nc).getPropertyNames();
+		doReturn(Optional.of("19")).when(nc).getOptionalValue("a", String.class);
 
-		Collection<PropertyChangeEvent> diff = ConfigurationChangeBuilder.compare(oc, nc);
+		Collection<PropertyChangeEvent> diff = ConfigChangeBuilder.compare(oc, nc);
 
 		assertThat(diff).isNotNull().isNotEmpty().hasSize(1);
 
@@ -72,20 +73,20 @@ public class ConfigurationChangeBuilderTest {
 	}
 
 	@Test
-	public void compareReturnsAChangeEventIfAKeyHasBeenRemovedInTheNewVersionOfTheConfiguration() {
-		Configuration oc = Mockito.mock(Configuration.class, new MethodNotMockedAnswer());
-		Configuration nc = Mockito.mock(Configuration.class, new MethodNotMockedAnswer());
+	public void compareReturnsAChangeEventIfAKeyHasBeenRemovedInTheNewVersionOfTheConfig() {
+		Config oc = Mockito.mock(Config.class, new MethodNotMockedAnswer());
+		Config nc = Mockito.mock(Config.class, new MethodNotMockedAnswer());
 
 		Map<String, String> valuesOC = new HashMap<String, String>();
 		valuesOC.put("a", "19");
 
-		doReturn(valuesOC).when(oc).getProperties();
-		doReturn("19").when(oc).get(eq("a"));
+		doReturn(valuesOC.keySet()).when(oc).getPropertyNames();
+		doReturn("19").when(oc).getValue("a", String.class);
 
-		doReturn(emptyMap()).when(nc).getProperties();
-		doReturn(null).when(nc).get(eq("a"));
+		doReturn(emptySet()).when(nc).getPropertyNames();
+		doReturn(Optional.empty()).when(nc).getOptionalValue("a", String.class);
 
-		Collection<PropertyChangeEvent> diff = ConfigurationChangeBuilder.compare(oc, nc);
+		Collection<PropertyChangeEvent> diff = ConfigChangeBuilder.compare(oc, nc);
 
 		assertThat(diff).isNotNull().isNotEmpty().hasSize(1);
 
@@ -99,24 +100,26 @@ public class ConfigurationChangeBuilderTest {
 
 	@Test
 	public void compareReturnsAChangeEventIfValueOfExistingKeyHasChanged() {
-		Configuration oc = Mockito.mock(Configuration.class, new MethodNotMockedAnswer());
-		Configuration nc = Mockito.mock(Configuration.class, new MethodNotMockedAnswer());
+		Config oc = Mockito.mock(Config.class, new MethodNotMockedAnswer());
+		Config nc = Mockito.mock(Config.class, new MethodNotMockedAnswer());
 
 		Map<String, String> valuesOC = new HashMap<String, String>();
 		valuesOC.put("a", "91");
 
-		doReturn(valuesOC).when(oc).getProperties();
-		doReturn("91").when(oc).get(eq("a"));
-		doReturn("old configuration").when(oc).toString();
+		doReturn(valuesOC.keySet()).when(oc).getPropertyNames();
+		doReturn(Optional.of("91")).when(oc).getOptionalValue("a", String.class);
+		doReturn("91").when(oc).getValue("a",String.class);
+		doReturn("old Config").when(oc).toString();
 
 		Map<String, String> valuesNC = new HashMap<String, String>();
 		valuesNC.put("a", "19");
 
-		doReturn(valuesNC).when(nc).getProperties();
-		doReturn("19").when(nc).get(eq("a"));
-		doReturn("new configuration").when(nc).toString();
+		doReturn(valuesNC.keySet()).when(nc).getPropertyNames();
+		doReturn(Optional.of("19")).when(nc).getOptionalValue("a",String.class);
+		doReturn("19").when(nc).getValue("a",String.class);
+		doReturn("new Config").when(nc).toString();
 
-		Collection<PropertyChangeEvent> diff = ConfigurationChangeBuilder.compare(oc, nc);
+		Collection<PropertyChangeEvent> diff = ConfigChangeBuilder.compare(oc, nc);
 
 		assertThat(diff).isNotNull().isNotEmpty().hasSize(1);
 

@@ -18,9 +18,7 @@
  */
 package org.apache.tamaya.events;
 
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValue;
-
+import javax.config.spi.ConfigSource;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,18 +29,18 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 /**
- * Models a set current changes applied to a {@link org.apache.tamaya.spi.PropertySource}. Consumers of these events
+ * Models a set current changes applied to a {@link ConfigSource}. Consumers of these events
  * can observing changes to property sources and
  * <ol>
- *     <li>Check if their current configuration instance ({@link org.apache.tamaya.spi.ConfigurationContext}
- *     contains the changed {@link org.apache.tamaya.spi.PropertySource} (Note: the reference tova property source is never affected by a
+ *     <li>Check if their current configuration instance ({@link javax.config.Config}
+ *     contains the changed {@link ConfigSource} (Note: the reference tova property source is never affected by a
  *     change, its only the data of the property source).</li>
  *     <li>If so corresponding action may be taken, such as reevaluating the configuration values (depending on
- *     the update policy) or reevaluating the complete {@link org.apache.tamaya.Configuration} to create a change
+ *     the update policy) or reevaluating the complete {@link javax.config.Config} to create a change
  *     event on configuration level.
  * </ol>
  */
-public final class PropertySourceChangeBuilder {
+public final class ConfigSourceChangeBuilder {
     /**
      * The recorded changes.
      */
@@ -50,7 +48,7 @@ public final class PropertySourceChangeBuilder {
     /**
      * The underlying configuration/provider.
      */
-    final PropertySource source;
+    final ConfigSource source;
     /**
      * The version configured, or null, for generating a default.
      */
@@ -65,7 +63,7 @@ public final class PropertySourceChangeBuilder {
      *
      * @param source the underlying configuration/provider, not null.
      */
-    private PropertySourceChangeBuilder(PropertySource source) {
+    private ConfigSourceChangeBuilder(ConfigSource source) {
         this.source = Objects.requireNonNull(source);
     }
 
@@ -75,8 +73,8 @@ public final class PropertySourceChangeBuilder {
      * @param source the underlying property provider/configuration, not null.
      * @return the builder for chaining.
      */
-    public static PropertySourceChangeBuilder of(PropertySource source) {
-        return new PropertySourceChangeBuilder(source);
+    public static ConfigSourceChangeBuilder of(ConfigSource source) {
+        return new ConfigSourceChangeBuilder(source);
     }
 
     /**
@@ -87,22 +85,22 @@ public final class PropertySourceChangeBuilder {
      * @param map2 the target map, not null.
      * @return a collection current change events, never null.
      */
-    public static Collection<PropertyChangeEvent> compare(PropertySource map1, PropertySource map2) {
+    public static Collection<PropertyChangeEvent> compare(ConfigSource map1, ConfigSource map2) {
         List<PropertyChangeEvent> changes = new ArrayList<>();
-        for (Map.Entry<String, PropertyValue> en : map1.getProperties().entrySet()) {
-            PropertyValue val = map2.get(en.getKey());
+        for (Map.Entry<String, String> en : map1.getProperties().entrySet()) {
+            String val = map2.getValue(en.getKey());
             if (val == null) {
-                changes.add(new PropertyChangeEvent(map1, en.getKey(), null, en.getValue().getValue()));
+                changes.add(new PropertyChangeEvent(map1, en.getKey(), null, en.getValue()));
             } else if (!val.equals(en.getValue())) {
-                changes.add(new PropertyChangeEvent(map1, en.getKey(), val.getValue(), en.getValue().getValue()));
+                changes.add(new PropertyChangeEvent(map1, en.getKey(), val, en.getValue()));
             }
         }
-        for (Map.Entry<String, PropertyValue> en : map2.getProperties().entrySet()) {
-            PropertyValue val = map1.get(en.getKey());
+        for (Map.Entry<String, String> en : map2.getProperties().entrySet()) {
+            String val = map1.getValue(en.getKey());
             if (val == null) {
-                changes.add(new PropertyChangeEvent(map1, en.getKey(), en.getValue().getValue(), null));
+                changes.add(new PropertyChangeEvent(map1, en.getKey(), en.getValue(), null));
             } else if (!val.equals(en.getValue())) {
-                changes.add(new PropertyChangeEvent(map1, en.getKey(), en.getValue().getValue(), val.getValue()));
+                changes.add(new PropertyChangeEvent(map1, en.getKey(), en.getValue(), val));
             }
         }
         return changes;
@@ -113,7 +111,7 @@ public final class PropertySourceChangeBuilder {
      * @param version the version to apply, or null, to let the system generate a version for you.
      * @return the builder for chaining.
      */
-    public PropertySourceChangeBuilder setVersion(String version) {
+    public ConfigSourceChangeBuilder setVersion(String version) {
         this.version = version;
         return this;
     }
@@ -123,7 +121,7 @@ public final class PropertySourceChangeBuilder {
      * @param version the version to apply, or null, to let the system generate a version for you.
      * @return the builder for chaining.
      */
-    public PropertySourceChangeBuilder setTimestamp(long timestamp) {
+    public ConfigSourceChangeBuilder setTimestamp(long timestamp) {
         this.timestamp = timestamp;
         return this;
     }
@@ -135,8 +133,8 @@ public final class PropertySourceChangeBuilder {
      * @param newState the new target state, not null.
      * @return the builder for chaining.
      */
-    public PropertySourceChangeBuilder addChanges(PropertySource newState) {
-        Collection<PropertyChangeEvent> events = PropertySourceChangeBuilder.compare(newState, this.source);
+    public ConfigSourceChangeBuilder addChanges(ConfigSource newState) {
+        Collection<PropertyChangeEvent> events = ConfigSourceChangeBuilder.compare(newState, this.source);
         for (PropertyChangeEvent c : events) {
             this.delta.put(c.getPropertyName(), c);
         }
@@ -164,14 +162,14 @@ public final class PropertySourceChangeBuilder {
      * @param otherKeys additional keys to be removed (convenience), not null.
      * @return the builder for chaining.
      */
-    public PropertySourceChangeBuilder remove(String key, String... otherKeys) {
-        PropertyValue oldValue = this.source.get(key);
+    public ConfigSourceChangeBuilder remove(String key, String... otherKeys) {
+        String oldValue = this.source.getValue(key);
         if (oldValue == null) {
             this.delta.remove(key);
         }
         this.delta.put(key, new PropertyChangeEvent(this.source, key, oldValue, null));
         for (String addKey : otherKeys) {
-            oldValue = this.source.get(addKey);
+            oldValue = this.source.getValue(addKey);
             if (oldValue == null) {
                 this.delta.remove(addKey);
             }
@@ -192,8 +190,8 @@ public final class PropertySourceChangeBuilder {
      * @param changes the changes to be applied, not null.
      * @return the builder for chaining.
      */
-    public PropertySourceChangeBuilder putAll(Map<String, String> changes) {
-        for (Map.Entry<String, PropertyValue> en : this.source.getProperties().entrySet()) {
+    public ConfigSourceChangeBuilder putAll(Map<String, String> changes) {
+        for (Map.Entry<String, String> en : this.source.getProperties().entrySet()) {
             this.delta.put(en.getKey(), new PropertyChangeEvent(this.source, en.getKey(), null, en.getValue()));
         }
         return this;
@@ -204,10 +202,10 @@ public final class PropertySourceChangeBuilder {
      *
      * @return the builder for chaining.
      */
-    public PropertySourceChangeBuilder deleteAll() {
+    public ConfigSourceChangeBuilder deleteAll() {
         this.delta.clear();
-        for (Map.Entry<String, PropertyValue> en : this.source.getProperties().entrySet()) {
-            this.delta.put(en.getKey(), new PropertyChangeEvent(this.source, en.getKey(), en.getValue().getValue(), null));
+        for (Map.Entry<String, String> en : this.source.getProperties().entrySet()) {
+            this.delta.put(en.getKey(), new PropertyChangeEvent(this.source, en.getKey(), en.getValue(), null));
         }
         return this;
     }
@@ -235,8 +233,8 @@ public final class PropertySourceChangeBuilder {
      *
      * @return the new change set, never null.
      */
-    public PropertySourceChange build() {
-        return new PropertySourceChange(this);
+    public ConfigSourceChange build() {
+        return new ConfigSourceChange(this);
     }
 
     /*
@@ -245,7 +243,7 @@ public final class PropertySourceChangeBuilder {
      */
     @Override
     public String toString() {
-        return "PropertiesChangeBuilder [source=" + source + ", " +
+        return "ConfigSourceChangeBuilder [source=" + source + ", " +
                 ", delta=" + delta + "]";
     }
 

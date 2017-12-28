@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.events.folderobserver;
 
-import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.events.ConfigSourceChange;
 
 import java.io.IOException;
 import java.nio.file.FileSystem;
@@ -35,7 +35,7 @@ import java.util.logging.Logger;
 
 /**
  * Class that has the responsibility to watch the folder and then publish the changes to a
- * {@link org.apache.tamaya.events.PropertySourceChange}.
+ * {@link ConfigSourceChange}.
  * @see ObservingPropertySourceProvider
  * This listener will wait to events and wait to one second to watch again.
  * <p>If new file was created or modified will commit from this file.</p>
@@ -128,7 +128,7 @@ class FileChangeListener implements Runnable {
     /**
      * Exception if file listening fails.
      */
-    static class FileChangeListenerException extends ConfigException {
+    static class FileChangeListenerException extends IllegalStateException {
         /** Serialversion UID. */
         private static final long serialVersionUID = -8965486770881001513L;
 

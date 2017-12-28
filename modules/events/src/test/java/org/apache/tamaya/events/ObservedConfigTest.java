@@ -40,8 +40,8 @@ public class ObservedConfigTest {
             }
             ConfigEvent<?> event = MyConfigObserver.event;
             if(event!=null) {
-                assertTrue(event instanceof ConfigurationChange);
-                ConfigurationChange cChange = (ConfigurationChange) event;
+                assertTrue(event instanceof ConfigChange);
+                ConfigChange cChange = (ConfigChange) event;
                 if(cChange.isAdded("random.new")){
                     MyConfigObserver.event=null;
                 }else {

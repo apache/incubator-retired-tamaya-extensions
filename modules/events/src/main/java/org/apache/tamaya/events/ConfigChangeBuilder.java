@@ -18,15 +18,10 @@
  */
 package org.apache.tamaya.events;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
-
+import javax.config.Config;
+import javax.config.ConfigProvider;
 import java.beans.PropertyChangeEvent;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Objects;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * Models a set current changes applied to a {@link org.apache.tamaya.spi.PropertySource}. Consumers of these events
@@ -40,7 +35,7 @@ import java.util.TreeMap;
  * event on configuration level.
  * </ol>
  */
-public final class ConfigurationChangeBuilder {
+public final class ConfigChangeBuilder {
     /**
      * The recorded changes.
      */
@@ -48,7 +43,7 @@ public final class ConfigurationChangeBuilder {
     /**
      * The underlying configuration/provider.
      */
-    final Configuration source;
+    final Config source;
     /**
      * The version configured, or null, for generating a default.
      */
@@ -63,7 +58,7 @@ public final class ConfigurationChangeBuilder {
      *
      * @param configuration the underlying configuration, not null.
      */
-    private ConfigurationChangeBuilder(Configuration configuration) {
+    private ConfigChangeBuilder(Config configuration) {
         this.source = Objects.requireNonNull(configuration);
     }
 
@@ -72,8 +67,8 @@ public final class ConfigurationChangeBuilder {
      *
      * @return the builder for chaining.
      */
-    public static ConfigurationChangeBuilder of() {
-        return new ConfigurationChangeBuilder(ConfigurationProvider.getConfiguration());
+    public static ConfigChangeBuilder of() {
+        return new ConfigChangeBuilder(ConfigProvider.getConfig());
     }
 
     /**
@@ -82,8 +77,8 @@ public final class ConfigurationChangeBuilder {
      * @param configuration the configuration changed, not null.
      * @return the builder for chaining.
      */
-    public static ConfigurationChangeBuilder of(Configuration configuration) {
-        return new ConfigurationChangeBuilder(configuration);
+    public static ConfigChangeBuilder of(Config configuration) {
+        return new ConfigChangeBuilder(configuration);
     }
 
     /**
@@ -94,29 +89,27 @@ public final class ConfigurationChangeBuilder {
      * @param current the target map, not null.
      * @return a collection current change events, never {@code null}.
      */
-    public static Collection<PropertyChangeEvent> compare(Configuration previous, Configuration current) {
+    public static Collection<PropertyChangeEvent> compare(Config previous, Config current) {
         TreeMap<String, PropertyChangeEvent> events = new TreeMap<>();
 
-        for (Map.Entry<String, String> en : previous.getProperties().entrySet()) {
-            String key = en.getKey();
-            String previousValue = en.getValue();
-            String currentValue = current.get(en.getKey());
-            if(Objects.equals(currentValue, previousValue)){
+        for (String key : previous.getPropertyNames()) {
+            String previousValue = previous.getValue(key, String.class);
+            Optional<String> currentValue = current.getOptionalValue(key, String.class);
+            if(Objects.equals(currentValue.orElse(null), previousValue)){
                 continue;
             }else {
-                PropertyChangeEvent event = new PropertyChangeEvent(previous, key, previousValue, currentValue);
+                PropertyChangeEvent event = new PropertyChangeEvent(previous, key, previousValue, currentValue.orElse(null));
                 events.put(key, event);
             }
         }
 
-        for (Map.Entry<String, String> en : current.getProperties().entrySet()) {
-            String key = en.getKey();
-            String previousValue = previous.get(en.getKey());
-            String currentValue = en.getValue();
-            if(Objects.equals(currentValue, previousValue)){
+        for (String key : current.getPropertyNames()){
+            Optional<String> previousValue = previous.getOptionalValue(key, String.class);
+            String currentValue = current.getOptionalValue(key, String.class).orElse(null);
+            if(Objects.equals(currentValue, previousValue.orElse(null))){
                 continue;
             }else{
-                if (previousValue == null) {
+                if (!previousValue.isPresent()) {
                     PropertyChangeEvent event = new PropertyChangeEvent(current, key, null, currentValue);
                     events.put(key, event);
                 }
@@ -131,7 +124,7 @@ public final class ConfigurationChangeBuilder {
      * @param version the version to apply, or null, to let the system generate a version for you.
      * @return the builder for chaining.
      */
-    public ConfigurationChangeBuilder setVersion(String version) {
+    public ConfigChangeBuilder setVersion(String version) {
         this.version = version;
         return this;
     }
@@ -141,7 +134,7 @@ public final class ConfigurationChangeBuilder {
      * @param version the version to apply, or null, to let the system generate a version for you.
      * @return the builder for chaining.
      */
-    public ConfigurationChangeBuilder setTimestamp(long timestamp) {
+    public ConfigChangeBuilder setTimestamp(long timestamp) {
         this.timestamp = timestamp;
         return this;
     }
@@ -153,7 +146,7 @@ public final class ConfigurationChangeBuilder {
      * @param newState the new target state, not null.
      * @return the builder for chaining.
      */
-    public ConfigurationChangeBuilder addChanges(Configuration newState) {
+    public ConfigChangeBuilder addChanges(Config newState) {
         for (PropertyChangeEvent c : compare(this.source, newState)) {
             this.delta.put(c.getPropertyName(), c);
         }
@@ -167,8 +160,10 @@ public final class ConfigurationChangeBuilder {
      * @param value the new value.
      * @return this instance for chaining.
      */
-    public ConfigurationChangeBuilder addChange(String key, String value) {
-        this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.get(key), value));
+    public ConfigChangeBuilder addChange(String key, String value) {
+        this.delta.put(key, new PropertyChangeEvent(this.source, key,
+                this.source.getOptionalValue(key, String.class).orElse(null),
+                value));
         return this;
     }
 
@@ -193,15 +188,15 @@ public final class ConfigurationChangeBuilder {
      * @param otherKeys additional keys to be removed (convenience), not null.
      * @return the builder for chaining.
      */
-    public ConfigurationChangeBuilder removeKey(String key, String... otherKeys) {
-        String oldValue = this.source.get(key);
-        if (oldValue == null) {
+    public ConfigChangeBuilder removeKey(String key, String... otherKeys) {
+        Optional<String> oldValue = this.source.getOptionalValue(key, String.class);
+        if (!oldValue.isPresent()) {
             this.delta.remove(key);
         }
         this.delta.put(key, new PropertyChangeEvent(this.source, key, oldValue, null));
         for (String addKey : otherKeys) {
-            oldValue = this.source.get(addKey);
-            if (oldValue == null) {
+            oldValue = this.source.getOptionalValue(key, String.class);
+            if (!oldValue.isPresent()) {
                 this.delta.remove(addKey);
             }
             this.delta.put(addKey, new PropertyChangeEvent(this.source, addKey, oldValue, null));
@@ -221,7 +216,7 @@ public final class ConfigurationChangeBuilder {
      * @param changes the changes to be applied, not null.
      * @return the builder for chaining.
      */
-    public ConfigurationChangeBuilder putAll(Map<String, String> changes) {
+    public ConfigChangeBuilder putAll(Map<String, String> changes) {
         for (Map.Entry<String, String> en : changes.entrySet()) {
             this.delta.put(en.getKey(), new PropertyChangeEvent(this.source, en.getKey(), null, en.getValue()));
         }
@@ -233,10 +228,11 @@ public final class ConfigurationChangeBuilder {
      *
      * @return the builder for chaining.
      */
-    public ConfigurationChangeBuilder removeAllKeys() {
+    public ConfigChangeBuilder removeAllKeys() {
         this.delta.clear();
-        for (Map.Entry<String, String> en : this.source.getProperties().entrySet()) {
-            this.delta.put(en.getKey(), new PropertyChangeEvent(this.source, en.getKey(), en.getValue(), null));
+        for (String key : this.source.getPropertyNames()) {
+            this.delta.put(key, new PropertyChangeEvent(this.source, key, this.source.getValue(key, String.class),
+                    null));
         }
 //        this.source.getProperties().forEach((k, v) ->
 //                this.delta.put(k, new PropertyChangeEvent(this.source, k, v, null)));
@@ -265,8 +261,8 @@ public final class ConfigurationChangeBuilder {
      *
      * @return the new change set, never null.
      */
-    public ConfigurationChange build() {
-        return new ConfigurationChange(this);
+    public ConfigChange build() {
+        return new ConfigChange(this);
     }
 
     @Override

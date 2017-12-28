@@ -18,8 +18,7 @@
  */
 package org.apache.tamaya.events;
 
-import org.apache.tamaya.spisupport.propertysource.BasePropertySource;
-import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.base.configsource.BaseConfigSource;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +28,7 @@ import java.util.Map;
  * PropertySource implementation that accesses properties that are stored on ThreadLocal level, e.g. good to use for
  * testing..
  */
-public class ChangeableThreadLocalPropertySource extends BasePropertySource{
+public class ChangeableThreadLocalPropertySource extends BaseConfigSource{
 
     private static final ThreadLocal<Map<String,String>> STORED_ENTRIES = new ThreadLocal<Map<String,String>>(){
         protected Map<String,String> initialValue(){
@@ -43,7 +42,7 @@ public class ChangeableThreadLocalPropertySource extends BasePropertySource{
     }
 
     @Override
-    public Map<String, PropertyValue> getProperties() {
+    public Map<String, String> getProperties() {
         return null;
     }
 
