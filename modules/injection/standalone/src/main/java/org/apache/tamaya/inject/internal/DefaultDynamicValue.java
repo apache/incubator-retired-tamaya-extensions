@@ -18,34 +18,26 @@
  */
 package org.apache.tamaya.inject.internal;
 
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.inject.api.DynamicValue;
-import org.apache.tamaya.inject.spi.InjectionUtils;
+import org.apache.tamaya.inject.spi.InjectionEvaluator;
 import org.apache.tamaya.inject.api.LoadPolicy;
 import org.apache.tamaya.inject.api.UpdatePolicy;
-import org.apache.tamaya.inject.api.WithPropertyConverter;
+import org.apache.tamaya.inject.api.WithConverter;
 import org.apache.tamaya.inject.spi.BaseDynamicValue;
-import org.apache.tamaya.spi.ConversionContext;
-import org.apache.tamaya.spi.PropertyConverter;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import javax.config.Config;
+import javax.config.spi.Converter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.function.Supplier;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
@@ -70,11 +62,11 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
      * Back reference to the base configuration instance. This reference is used reevaluate the given property and
      * compare the result with the previous value after a configuration change was triggered.
      */
-    private final Configuration configuration;
+    private final Config configuration;
     /**
      * The property converter to be applied, may be null. In the ladder case targetType is not null.
      */
-    private final PropertyConverter<T> propertyConverter;
+    private final Converter<T> propertyConverter;
 
     /**
      * Load policy.
@@ -90,8 +82,8 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
      * @param targetType        the target type, not null.
      * @param propertyConverter the optional converter to be used.
      */
-    private DefaultDynamicValue(Object owner, String propertyName, Configuration configuration, TypeLiteral<T> targetType,
-                                PropertyConverter<T> propertyConverter, List<String> keys, LoadPolicy loadPolicy,
+    private DefaultDynamicValue(Object owner, String propertyName, Config configuration, Type targetType,
+                                Converter<T> propertyConverter, List<String> keys, LoadPolicy loadPolicy,
                                 UpdatePolicy updatePolicy) {
         super(owner, propertyName, targetType, keys);
         this.configuration = Objects.requireNonNull(configuration);
@@ -103,102 +95,102 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
         }
     }
 
-    public static DynamicValue<?> of(Object owner, Field annotatedField, Configuration configuration) {
+    public static DynamicValue<?> of(Object owner, Field annotatedField, Config configuration) {
         return of(owner, annotatedField, configuration, LoadPolicy.ALWAYS, UpdatePolicy.IMMEDIATE);
     }
 
-    public static DynamicValue<?> of(Object owner, Field annotatedField, Configuration configuration, LoadPolicy loadPolicy) {
+    public static DynamicValue<?> of(Object owner, Field annotatedField, Config configuration, LoadPolicy loadPolicy) {
         return of(owner, annotatedField, configuration, loadPolicy, UpdatePolicy.IMMEDIATE);
     }
 
-    public static DynamicValue<?> of(Object owner, Field annotatedField, Configuration configuration, UpdatePolicy updatePolicy) {
+    public static DynamicValue<?> of(Object owner, Field annotatedField, Config configuration, UpdatePolicy updatePolicy) {
         return of(owner, annotatedField, configuration, LoadPolicy.ALWAYS, updatePolicy);
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-	public static DynamicValue<?> of(Object owner, Field annotatedField, Configuration configuration, LoadPolicy loadPolicy, UpdatePolicy updatePolicy) {
+	public static DynamicValue<?> of(Object owner, Field annotatedField, Config configuration, LoadPolicy loadPolicy, UpdatePolicy updatePolicy) {
         // Check for adapter/filter
         Type targetType = annotatedField.getGenericType();
         if (targetType == null) {
-            throw new ConfigException("Failed to evaluate target type for " + annotatedField.getDeclaringClass().getName()
+            throw new IllegalArgumentException("Failed to evaluate target type for " + annotatedField.getDeclaringClass().getName()
                     + '.' + annotatedField.getName());
         }
         if (targetType instanceof ParameterizedType) {
             ParameterizedType pt = (ParameterizedType) targetType;
             Type[] types = pt.getActualTypeArguments();
             if (types.length != 1) {
-                throw new ConfigException("Failed to evaluate target type for " + annotatedField.getDeclaringClass().getName()
+                throw new IllegalArgumentException("Failed to evaluate target type for " + annotatedField.getDeclaringClass().getName()
                         + '.' + annotatedField.getName());
             }
             targetType = types[0];
         }
-        PropertyConverter<?> propertyConverter = null;
-        WithPropertyConverter annot = annotatedField.getAnnotation(WithPropertyConverter.class);
+        Converter<?> propertyConverter = null;
+        WithConverter annot = annotatedField.getAnnotation(WithConverter.class);
         if (annot != null) {
             try {
                 propertyConverter = annot.value().newInstance();
             } catch (Exception e) {
-                throw new ConfigException("Failed to instantiate annotated PropertyConverter on " +
+                throw new IllegalArgumentException("Failed to instantiate annotated PropertyConverter on " +
                         annotatedField.getDeclaringClass().getName()
                         + '.' + annotatedField.getName(), e);
             }
         }
-        List<String> keys = InjectionUtils.getKeys(annotatedField);
+        List<String> keys = InjectionEvaluator.getKeys(annotatedField);
         return new DefaultDynamicValue(owner, annotatedField.getName(), configuration,
-                TypeLiteral.of(targetType), propertyConverter, keys, loadPolicy, updatePolicy);
+                targetType, propertyConverter, keys, loadPolicy, updatePolicy);
     }
 
-    public static DynamicValue<?> of(Object owner, Method method, Configuration configuration) {
+    public static DynamicValue<?> of(Object owner, Method method, Config configuration) {
         return of(owner, method, configuration, LoadPolicy.ALWAYS, UpdatePolicy.IMMEDIATE);
     }
 
-    public static DynamicValue<?> of(Object owner, Method method, Configuration configuration, UpdatePolicy updatePolicy) {
+    public static DynamicValue<?> of(Object owner, Method method, Config configuration, UpdatePolicy updatePolicy) {
         return of(owner, method, configuration, LoadPolicy.ALWAYS, updatePolicy);
     }
 
-    public static DynamicValue<?> of(Object owner, Method method, Configuration configuration, LoadPolicy loadPolicy) {
+    public static DynamicValue<?> of(Object owner, Method method, Config configuration, LoadPolicy loadPolicy) {
         return of(owner, method, configuration, loadPolicy, UpdatePolicy.IMMEDIATE);
     }
 
     @SuppressWarnings("unchecked")
-	public static DynamicValue<?> of(Object owner, Method method, Configuration configuration, LoadPolicy loadPolicy, UpdatePolicy updatePolicy) {
+	public static DynamicValue<?> of(Object owner, Method method, Config configuration, LoadPolicy loadPolicy, UpdatePolicy updatePolicy) {
         // Check for adapter/filter
         Type targetType = method.getGenericReturnType();
         if (targetType == null) {
-            throw new ConfigException("Failed to evaluate target type for " + method.getDeclaringClass()
+            throw new IllegalArgumentException("Failed to evaluate target type for " + method.getDeclaringClass()
                     .getName() + '.' + method.getName());
         }
         if (targetType instanceof ParameterizedType) {
             ParameterizedType pt = (ParameterizedType) targetType;
             Type[] types = pt.getActualTypeArguments();
             if (types.length != 1) {
-                throw new ConfigException("Failed to evaluate target type for " + method.getDeclaringClass()
+                throw new IllegalArgumentException("Failed to evaluate target type for " + method.getDeclaringClass()
                         .getName() + '.' + method.getName());
             }
             targetType = types[0];
         }
-        PropertyConverter<Object> propertyConverter = null;
-        WithPropertyConverter annot = method.getAnnotation(WithPropertyConverter.class);
+        Converter<Object> propertyConverter = null;
+        WithConverter annot = method.getAnnotation(WithConverter.class);
         if (annot != null) {
             try {
-                propertyConverter = (PropertyConverter<Object>) annot.value().newInstance();
+                propertyConverter = (Converter<Object>) annot.value().newInstance();
             } catch (Exception e) {
-                throw new ConfigException("Failed to instantiate annotated PropertyConverter on " +
+                throw new IllegalArgumentException("Failed to instantiate annotated PropertyConverter on " +
                         method.getDeclaringClass().getName()
                         + '.' + method.getName(), e);
             }
         }
-        return new DefaultDynamicValue<>(owner, method.getName(),
-                configuration, TypeLiteral.of(targetType), propertyConverter, InjectionUtils.getKeys(method),
+        return new DefaultDynamicValue(owner, method.getName(),
+                configuration, targetType, propertyConverter, InjectionEvaluator.getKeys(method),
                 loadPolicy, updatePolicy);
     }
 
-    protected PropertyConverter getCustomConverter(){
+    protected Converter getCustomConverter(){
         return this.propertyConverter;
     }
 
     @Override
-    protected Configuration getConfiguration() {
+    protected Config getConfiguration() {
         return configuration;
     }
 
@@ -207,10 +199,23 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
      * otherwise throws {@code ConfigException}.
      *
      * @return the non-null value held by this {@code Optional}
-     * @throws ConfigException if there is no value present
+     * @throws java.util.NoSuchElementException if there is no value present
      * @see DefaultDynamicValue#isPresent()
      */
-    public T get() {
+    public T getValue() {
+        return getOptionalValue()
+                .orElseThrow(() -> new NoSuchElementException("No config value for: " + getKeys()));
+    }
+
+    /**
+     * If a value is present in this {@code DynamicValue}, returns the value,
+     * otherwise throws {@code ConfigException}.
+     *
+     * @return the non-null value held by this {@code Optional}
+     * @throws java.util.NoSuchElementException if there is no value present
+     * @see DefaultDynamicValue#isPresent()
+     */
+    public Optional<T> getOptionalValue() {
         T newLocalValue;
         if(loadPolicy!=LoadPolicy.INITIAL) {
             newLocalValue = evaluateValue();
@@ -219,11 +224,9 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
             }
             if(!Objects.equals(this.value, newLocalValue)){
                 switch (getUpdatePolicy()){
-                    case IMMEDEATE:
                     case IMMEDIATE:
                         commit();
                         break;
-                    case EXPLCIT:
                     case EXPLICIT:
                         this.newValue = newLocalValue;
                         break;
@@ -240,7 +243,7 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
                 }
             }
         }
-        return value;
+        return Optional.ofNullable(value);
     }
 
     /**
@@ -268,8 +271,9 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
             case NEVER:
                 this.newValue = null;
                 break;
-            case EXPLCIT:
-            case IMMEDEATE:
+            case EXPLICIT:
+                this.newValue = newValue;
+                break;
             default:
                 this.newValue = newValue;
                 commit();

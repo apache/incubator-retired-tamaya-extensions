@@ -18,9 +18,8 @@
  */
 package org.apache.tamaya.ext.examples.resources;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
-
+import javax.config.Config;
+import javax.config.ConfigProvider;
 import java.io.PrintStream;
 import java.util.Map;
 import java.util.TreeMap;
@@ -43,7 +42,7 @@ public class Main {
     }
 
     public static void main(String[] args){
-        Configuration cfg = ConfigurationProvider.getConfiguration();
+        Config cfg = ConfigProvider.getConfig();
 
         System.out.println("****************************************************");
         System.out.println("Example for an property sources using a ");
@@ -51,23 +50,23 @@ public class Main {
         System.out.println("****************************************************");
         System.out.println();
         System.out.println("Example Metadata:");
-        System.out.println("\tType        :  " + cfg.get("example.type"));
-        System.out.println("\tName        :  " + cfg.get("example.name"));
-        System.out.println("\tDescription :  " + cfg.get("example.description"));
-        System.out.println("\tVersion     :  " + cfg.get("example.version"));
-        System.out.println("\tAuthor      :  " + cfg.get("example.author"));
+        System.out.println("\tType        :  " + cfg.getValue("example.type", String.class));
+        System.out.println("\tName        :  " + cfg.getValue("example.name", String.class));
+        System.out.println("\tDescription :  " + cfg.getValue("example.description", String.class));
+        System.out.println("\tVersion     :  " + cfg.getValue("example.version", String.class));
+        System.out.println("\tAuthor      :  " + cfg.getValue("example.author", String.class));
         System.out.println();
-        System.out.println("\tPath        :  " + cfg.get("Path"));
-        System.out.println("\taProp       :  " + cfg.get("aProp"));
+        System.out.println("\tPath        :  " + cfg.getValue("Path", String.class));
+        System.out.println("\taProp       :  " + cfg.getValue("aProp", String.class));
         System.out.println();
 
-        dump(cfg.getProperties(), System.out);
+        dump(cfg.getPropertyNames(), System.out, cfg);
     }
-    private static void dump(Map<String, String> properties, PrintStream stream) {
+    private static void dump(Iterable<String> properties, PrintStream stream, Config config) {
         stream.println("FULL DUMP:\n\n");
 
-        for (Map.Entry<String, String> en : new TreeMap<>(properties).entrySet()) {
-            stream.println(format("\t%s = %s", en.getKey(), en.getValue()));
+        for (String en : properties) {
+            stream.println(format("\t%s = %s", en, config.getValue(en, String.class)));
         }
     }
 }

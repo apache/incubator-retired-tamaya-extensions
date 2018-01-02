@@ -18,8 +18,10 @@
  */
 package annottext;
 
+import org.apache.tamaya.inject.api.ConfigFallbackKeys;
 import org.apache.tamaya.inject.api.DynamicValue;
-import org.apache.tamaya.inject.api.Config;
+
+import javax.config.inject.ConfigProperty;
 
 /**
  * An example showing some basic annotations, using an interface to be proxied by the
@@ -28,20 +30,20 @@ import org.apache.tamaya.inject.api.Config;
  */
 public interface AnnotatedConfigTemplate {
 
-    @Config(value = {"foo.bar.myprop", "mp","common.testdata.myProperty"}, defaultValue = "ET")
-    // @ConfigLoadPolicy(listener = MyListener.class)
+    @ConfigProperty(name = "foo.bar.myprop", defaultValue = "ET")
+    @ConfigFallbackKeys({"mp","common.testdata.myProperty"})
     String myParameter();
 
-    @Config("simple_value")
+    @ConfigProperty(name="simple_value")
     String simpleValue();
 
-    @Config
+    @ConfigProperty
     String simplestValue();
 
-    @Config("host.name")
+    @ConfigProperty(name="host.name")
     String hostName();
 
-    @Config("host.name")
+    @ConfigProperty(name="host.name")
     DynamicValue<String> getDynamicValue();
 
 }

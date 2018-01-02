@@ -20,7 +20,7 @@ limitations under the License.
         <features name="org-apache-tamaya-configadmin" version="0.4-incubating">
             <bundle>mvn:org.apache.tamaya.ext/tamaya-osgi_alpha/0.4-incubating/jar</bundle>
             <bundle>mvn:org.apache.tamaya.ext/tamaya-functions/0.4-incubating/jar</bundle>
-            <bundle>mvn:org.apache.tamaya/tamaya-spisupport/0.4-incubating/jar</bundle>
+            <bundle>mvn:org.apache.tamaya/tamaya-base/0.4-incubating/jar</bundle>
             <bundle>mvn:org.apache.tamaya.ext/tamaya-osgi-karaf_alpha/0.4-incubating/jar</bundle>
             <features name="org-apache-tamaya-minimal" version="0.4-incubating">
                 <feature name="org-apache-tamaya-api" version="0.4-incubating">

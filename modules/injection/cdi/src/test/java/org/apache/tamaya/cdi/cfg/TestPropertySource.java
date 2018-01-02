@@ -19,9 +19,7 @@
  */
 package org.apache.tamaya.cdi.cfg;
 
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValue;
-
+import javax.config.spi.ConfigSource;
 import javax.inject.Singleton;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +28,7 @@ import java.util.Map;
  * Created by Anatole on 17.09.2015.
  */
 @Singleton
-public class TestPropertySource implements PropertySource{
+public class TestPropertySource implements ConfigSource{
 
     final Map<String,String> config = new HashMap<>();
 
@@ -62,21 +60,13 @@ public class TestPropertySource implements PropertySource{
     }
 
     @Override
-    public PropertyValue get(String key) {
-        String val = this.config.get(key);
-        if(val!=null) {
-            return PropertyValue.of(key, val, getName());
-        }
-        return null;
+    public String getValue(String key) {
+        return this.config.get(key);
     }
 
     @Override
-    public Map<String, PropertyValue> getProperties() {
-        return PropertyValue.map(config ,getName());
+    public Map<String, String> getProperties() {
+        return config;
     }
 
-    @Override
-    public boolean isScannable() {
-        return true;
-    }
 }

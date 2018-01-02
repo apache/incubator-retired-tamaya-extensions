@@ -18,11 +18,12 @@
  */
 package annottext;
 
-import org.apache.tamaya.inject.api.Config;
+
+import javax.config.inject.ConfigProperty;
 
 public class InheritedAnnotatedConfigBean extends AnnotatedConfigBean {
 
-    @Config("someMoreValue")
+    @ConfigProperty(name="someMoreValue")
     public String someMoreValue;
     
     public String notConfigured;

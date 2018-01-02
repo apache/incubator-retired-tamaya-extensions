@@ -20,7 +20,7 @@ package org.apache.tamaya.osgi.updater;
 
 import org.apache.tamaya.events.ConfigEvent;
 import org.apache.tamaya.events.ConfigEventListener;
-import org.apache.tamaya.events.ConfigurationChange;
+import org.apache.tamaya.events.ConfigChange;
 import org.apache.tamaya.osgi.Policy;
 import org.apache.tamaya.osgi.commands.TamayaConfigService;
 import org.osgi.framework.*;
@@ -47,7 +47,7 @@ final class EventListener implements ConfigEventListener{
     public void onConfigEvent(ConfigEvent<?> event) {
         LOG.finest("Tamya Config change triggered: " + event);
         Set<String> changedPids = new HashSet<>();
-        ConfigurationChange cc = (ConfigurationChange)event;
+        ConfigChange cc = (ConfigChange)event;
         for(PropertyChangeEvent evt: cc.getChanges()){
             String key = evt.getPropertyName();
             String pid = getPid(key);

@@ -18,10 +18,11 @@
  */
 package org.apache.tamaya.inject.spi;
 
-import org.apache.tamaya.inject.api.Config;
 import org.apache.tamaya.inject.api.ConfigDefaultSections;
+import org.apache.tamaya.inject.api.ConfigFallbackKeys;
 import org.junit.Test;
 
+import javax.config.inject.ConfigProperty;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -33,13 +34,14 @@ public class InjectionUtilsTest {
     @Test
     public void getKeysMethod() {
         class Klazz {
-            @Config({"val", "val2", "[vvv]"})
+            @ConfigProperty(name="val")
+            @ConfigFallbackKeys({"val2", "[vvv]"})
             public void setValue(String field){}
         }
 
         Method method = Klazz.class.getMethods()[0];
 
-        List<String> foundKeys = InjectionUtils.getKeys(method);
+        List<String> foundKeys = InjectionEvaluator.getKeys(method);
 
         assertThat(foundKeys).isNotNull()
                 .contains("org.apache.tamaya.inject.spi.InjectionUtilsTest$1Klazz.val",
@@ -61,7 +63,7 @@ public class InjectionUtilsTest {
 
         Field field = Klazz.class.getFields()[0];
 
-        List<String> foundKeys = InjectionUtils.getKeys(field);
+        List<String> foundKeys = InjectionEvaluator.getKeys(field);
 
         assertThat(foundKeys).isNotNull()
                              .contains("org.apache.tamaya.inject.spi.InjectionUtilsTest$2Klazz.field",
@@ -80,7 +82,7 @@ public class InjectionUtilsTest {
 
         Field field = Klazz.class.getFields()[0];
 
-        List<String> foundKeys = InjectionUtils.evaluateKeys(field, Klazz.class.getAnnotation(ConfigDefaultSections.class));
+        List<String> foundKeys = InjectionEvaluator.getKeys(field);
         assertThat(foundKeys).isNotNull()
                 .contains("basic.field",
                         "field");
@@ -90,7 +92,8 @@ public class InjectionUtilsTest {
     public void evaluateKeysWithSectionAndMemberAnnotation() {
         @ConfigDefaultSections("basic")
         class Klazz {
-            @Config({"val", "[absoluteVal]"})
+            @ConfigProperty(name="val")
+            @ConfigFallbackKeys({"absoluteVal"})
             public String field;
             protected String protectedField;
             private String privateField;
@@ -98,8 +101,7 @@ public class InjectionUtilsTest {
 
         Field field = Klazz.class.getFields()[0];
 
-        List<String> foundKeys = InjectionUtils.evaluateKeys(field, Klazz.class.getAnnotation(ConfigDefaultSections.class),
-                field.getAnnotation(Config.class));
+        List<String> foundKeys = InjectionEvaluator.getKeys(field);
         assertThat(foundKeys).isNotNull()
                 .contains("basic.val", "val",
                         "absoluteVal");
@@ -108,7 +110,8 @@ public class InjectionUtilsTest {
     @Test
     public void evaluateKeysWithMemberAnnotation() {
         class Klazz {
-            @Config({"val", "[absoluteVal]"})
+            @ConfigProperty(name="val")
+            @ConfigFallbackKeys("[absoluteVal]")
             public String field;
             protected String protectedField;
             private String privateField;
@@ -116,8 +119,7 @@ public class InjectionUtilsTest {
 
         Field field = Klazz.class.getFields()[0];
 
-        List<String> foundKeys = InjectionUtils.evaluateKeys(field, null,
-                field.getAnnotation(Config.class));
+        List<String> foundKeys = InjectionEvaluator.getKeys(field);
         assertThat(foundKeys).isNotNull()
                 .contains("Klazz.val", "val",
                         "absoluteVal");

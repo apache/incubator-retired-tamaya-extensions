@@ -17,6 +17,6 @@
  * under the License.
  */
 /**
- * Common njection API.
+ * Common injection API.
  */
 package org.apache.tamaya.inject.api;

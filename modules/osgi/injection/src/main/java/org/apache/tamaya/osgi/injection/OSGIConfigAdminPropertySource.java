@@ -18,8 +18,7 @@
  */
 package org.apache.tamaya.osgi.injection;
 
-import org.apache.tamaya.spi.PropertyValue;
-import org.apache.tamaya.spisupport.propertysource.BasePropertySource;
+import org.apache.tamaya.base.configsource.BaseConfigSource;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 
@@ -32,7 +31,7 @@ import java.util.logging.Logger;
  * This is a Tamaya PropertySource, which internally wraps the OSGI ConfigAdmin service, preconfigured
  * for a PID and (optionally) location.
  */
-public class OSGIConfigAdminPropertySource extends BasePropertySource{
+public class OSGIConfigAdminPropertySource extends BaseConfigSource{
 
     private static final Logger LOG = Logger.getLogger(OSGIConfigAdminPropertySource.class.getName());
     private ConfigurationAdmin configurationAdmin;
@@ -67,14 +66,14 @@ public class OSGIConfigAdminPropertySource extends BasePropertySource{
     }
 
     @Override
-    public PropertyValue get(String key) {
+    public String getValue(String key) {
         try {
             Configuration osgiConfig = configurationAdmin.getConfiguration(pid, location);
             Dictionary<String,Object> props = osgiConfig.getProperties();
             if(props!=null){
                 Object value = props.get(key);
                 if(value!=null) {
-                    return PropertyValue.of(key, String.valueOf(value), "OSGI ConfigAdmin: " + pid);
+                    return String.valueOf(value);
                 }
             }
         } catch (IOException e) {
@@ -84,17 +83,17 @@ public class OSGIConfigAdminPropertySource extends BasePropertySource{
     }
 
     @Override
-    public Map<String, PropertyValue> getProperties() {
+    public Map<String, String> getProperties() {
         try {
             Configuration osgiConfig = configurationAdmin.getConfiguration(pid);
             Dictionary<String,Object> props = osgiConfig.getProperties();
             if(props!=null){
-                Map<String, PropertyValue> result = new HashMap<>();
+                Map<String, String> result = new HashMap<>();
                 Enumeration<String> keys = props.keys();
                 while(keys.hasMoreElements()){
                     String key = keys.nextElement();
                     Object value = props.get(key);
-                    result.put(key, PropertyValue.of(key, String.valueOf(value), "OSGI ConfigAdmin: " + pid));
+                    result.put(key, String.valueOf(value));
                 }
                 return result;
             }

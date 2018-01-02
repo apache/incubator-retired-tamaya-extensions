@@ -18,9 +18,8 @@
  */
 package org.apache.tamaya.cdi.cfg;
 
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertySourceProvider;
-
+import javax.config.spi.ConfigSource;
+import javax.config.spi.ConfigSourceProvider;
 import javax.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,16 +29,16 @@ import java.util.List;
  * Created by Anatole on 29.09.2014.
  */
 @ApplicationScoped
-public class TestConfigProvider implements PropertySourceProvider {
+public class TestConfigProvider implements ConfigSourceProvider {
 
-    private List<PropertySource> configs = new ArrayList<>();
+    private List<ConfigSource> configs = new ArrayList<>();
 
     public TestConfigProvider(){
-        configs.add(new ProvidedPropertySource());
+        configs.add(new ProvidedConfigSource());
     }
 
     @Override
-    public Collection<PropertySource> getPropertySources() {
+    public Collection<ConfigSource> getConfigSources(ClassLoader cl) {
         return configs;
     }
 }

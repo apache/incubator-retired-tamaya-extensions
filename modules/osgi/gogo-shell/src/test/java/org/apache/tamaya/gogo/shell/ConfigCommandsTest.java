@@ -56,8 +56,8 @@ public class ConfigCommandsTest extends AbstractOSGITest{
             commands.tm_propertysources();
             return null;
         });
-        assertTrue(out.startsWith("Property Sources"));
-        assertTrue(out.contains(  "----------------"));
+        assertTrue(out.startsWith("Config Sources"));
+        assertTrue(out.contains(  "--------------"));
         assertTrue(out.contains("ID"));
         assertTrue(out.contains("Ordinal"));
         assertTrue(out.contains("Class"));
@@ -83,7 +83,7 @@ public class ConfigCommandsTest extends AbstractOSGITest{
             return null;
         });
         assertTrue(out.contains(System.getProperty("java.version")));
-        assertTrue(out.contains("Property Source"));
+        assertTrue(out.contains("Config Source"));
         assertTrue(out.contains("Value"));
         assertTrue(out.contains("system-properties"));
     }
@@ -94,13 +94,13 @@ public class ConfigCommandsTest extends AbstractOSGITest{
             commands.tm_propertysource("system-properties");
             return null;
         });
-        assertTrue(out.startsWith("Property Source"));
+        assertTrue(out.startsWith("Config Source"));
         assertTrue(out.contains("ID"));
         assertTrue(out.contains("system-properties"));
         assertTrue(out.contains("Ordinal"));
         assertTrue(out.contains("1000"));
         assertTrue(out.contains("Class"));
-        assertTrue(out.contains("SystemPropertySource"));
+        assertTrue(out.contains("SystemConfigSource"));
         assertTrue(out.contains("Properties"));
         assertTrue(out.contains("Key"));
         assertTrue(out.contains("Value"));

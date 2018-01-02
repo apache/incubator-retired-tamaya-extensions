@@ -11,7 +11,7 @@ javac.target: 1.8
 
 Bundle-Version: ${version}.${tstamp}
 Bundle-Name: Apache Tamaya - Filter
-Bundle-SymbolicName: org.apache.tamaya.filter
+Bundle-SymbolicName: org.apache.tamaya.spisupport.filter
 Bundle-Description: Apacha Tamaya Config - Filtered Config Access
 Bundle-Category: Implementation
 Bundle-Copyright: (C) Apache Foundation
@@ -23,6 +23,6 @@ Export-Package: \
 	org.apache.tamaya.filter
 Import-Package: \
 	org.apache.tamaya,\
-	org.apache.tamaya.spi
+	org.apache.tamaya.base
 Export-Service: \
-    org.apache.tamaya.spi.PropertyFilter
+    org.apache.tamaya.spi.Filter

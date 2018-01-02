@@ -16,9 +16,9 @@
  */
 package org.apache.tamaya.cdi;
 
-import org.apache.tamaya.Configuration;
 import org.apache.tamaya.inject.spi.ConfiguredMethod;
 
+import javax.config.Config;
 import javax.enterprise.inject.spi.InjectionPoint;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -79,7 +79,7 @@ public class CDIConfiguredMethod implements ConfiguredMethod{
     }
 
     @Override
-    public void configure(Object instance, Configuration config) {
+    public void configure(Object instance, Config config) {
         throw new UnsupportedOperationException("Use CDI annotations for configuration injection.");
     }
 

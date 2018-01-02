@@ -18,30 +18,27 @@
  */
 package org.apache.tamaya.inject.internal;
 
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Field;
-import java.lang.reflect.Member;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.base.convert.ConversionContext;
 import org.apache.tamaya.events.ConfigEventManager;
 import org.apache.tamaya.events.spi.BaseConfigEvent;
-import org.apache.tamaya.inject.api.Config;
-import org.apache.tamaya.inject.api.ConfigDefaultSections;
-import org.apache.tamaya.inject.spi.InjectionUtils;
-import org.apache.tamaya.inject.api.WithPropertyConverter;
+import org.apache.tamaya.inject.spi.InjectionEvaluator;
+import org.apache.tamaya.inject.api.WithConverter;
 import org.apache.tamaya.inject.spi.ConfiguredType;
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
-import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.ConversionContext;
-import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.spi.ConfigContext;
+import org.apache.tamaya.spi.ConfigContextSupplier;
 import org.apache.tamaya.spi.ServiceContextManager;
+
+import javax.config.Config;
+import javax.config.inject.ConfigProperty;
+import javax.config.spi.Converter;
 
 
 /**
@@ -58,7 +55,7 @@ final class InjectionHelper {
 
     private static boolean checkForEvents() {
         try{
-            Class.forName("org.apache.tamaya.events.FrozenConfiguration");
+            Class.forName("org.apache.tamaya.events.FrozenConfig");
             LOG.info("Detected tamaya-events is loaded, will trigger ConfigEvents...");
             return true;
         } catch(Exception e){
@@ -81,123 +78,134 @@ final class InjectionHelper {
 
     /**
      * Internally evaluated the current valid configuration keys based on the given annotations present.
-     * @param method the method
+     * @param method the method, not null.
+     * @param config the config, not null.
      * @return the keys to be returned, or null.
      */
-    public static String getConfigValue(Method method, Configuration config) {
-        return getConfigValue(method, null, config);
+    public static <T> T getConfigValue(Method method, Class<T> type, javax.config.Config config) {
+        return getConfigValue(method, type, null, config);
     }
 
     /**
      * Internally evaluated the current valid configuration keys based on the given annotations present.
-     * @param method the method
+     * @param field the field, not null.
+     * @param config the config, not null.
+     * @return the keys to be returned, or null.
+     */
+    public static <T> T getConfigValue(Field field, Class<T> type, javax.config.Config config) {
+        return getConfigValue(field, type, null, config);
+    }
+
+
+    /**
+     * Internally evaluated the current valid configuration keys based on the given annotations present.
+     * @param member the member, not null.
      * @param retKey the array to return the key found, or null.
      * @return the keys to be returned, or null.
      */
-    public static String getConfigValue(Method method, String[] retKey, Configuration config) {
-        ConfigDefaultSections areasAnnot = method.getDeclaringClass().getAnnotation(ConfigDefaultSections.class);
-        return getConfigValueInternal(method, areasAnnot, retKey, config);
-    }
+    private static <T> T getConfigValue(AccessibleObject member, Class<T> targetType,
+                                        String[] retKey,
+                                        javax.config.Config config) {
+        Objects.requireNonNull(targetType);
+        targetType = unboxType(targetType);
+        List<String> keys = InjectionEvaluator.getKeys(member);
 
-    /**
-     * Internally evaluated the current valid configuration keys based on the given annotations present.
-     * @param field the field
-     * @return the keys to be returned, or null.
-     */
-    public static String getConfigValue(Field field, Configuration config) {
-        return getConfigValue(field, null, config);
-    }
-
-    /**
-     * Internally evaluated the current valid configuration keys based on the given annotations present.
-     * @param field the field
-     * @param retKey the array to return the key found, or null.
-     * @return the keys to be returned, or null.
-     */
-    public static String getConfigValue(Field field, String[] retKey, Configuration config) {
-        ConfigDefaultSections areasAnnot = field.getDeclaringClass().getAnnotation(ConfigDefaultSections.class);
-        return getConfigValueInternal(field, areasAnnot, retKey, config);
-    }
-
-    /**
-     * Internally evaluated the current valid configuration keys based on the given annotations present.
-     *
-     * @return the keys to be returned, or null.
-     */
-    private static String getConfigValueInternal(AnnotatedElement element, ConfigDefaultSections areasAnnot, String[] retKey, Configuration config) {
-        Config prop = element.getAnnotation(Config.class);
-        List<String> keys;
-        if (prop == null) {
-            keys = InjectionUtils.evaluateKeys((Member) element, areasAnnot);
-        } else {
-            keys = InjectionUtils.evaluateKeys((Member) element, areasAnnot, prop);
+        WithConverter converterAnnot = member.getAnnotation(WithConverter.class);
+        if(converterAnnot!=null && !converterAnnot.value().getName().equals(WithConverter.class.getName())){
+            return getCustomConvertedConfigValue(member, converterAnnot, targetType, keys, config);
         }
-        String configValue = evaluteConfigValue(keys, retKey, config);
-        if (configValue == null) {
-            if(prop!=null && !prop.defaultValue().equals(Config.UNCONFIGURED_VALUE)){
-                return prop.defaultValue();
-            }
-        }
-        return configValue;
-    }
 
-    private static String evaluteConfigValue(List<String> keys, String[] retKey, Configuration config) {
-        String configValue = null;
-        for (String key : keys) {
-            configValue = config.get(key);
-            if (configValue != null) {
-                if(retKey!=null && retKey.length>0){
+        Optional<T> result = null;
+        for(String key:keys) {
+            result = config.getOptionalValue(key, targetType);
+            if (result.isPresent()) {
+                if (retKey != null) {
                     retKey[0] = key;
                 }
-                break;
+                return result.get();
             }
         }
-        return configValue;
+        ConfigProperty prop = member.getAnnotation(ConfigProperty.class);
+        if(prop!=null && !prop.defaultValue().equals(ConfigProperty.UNCONFIGURED_VALUE)){
+            String textValue = prop.defaultValue();
+            // How tp convert the default value in a portable way?
+            if(config instanceof ConfigContextSupplier){
+                ConfigContext ctx = ((ConfigContextSupplier)config).getConfigContext();
+                for(Converter converter:ctx.getConverters(targetType)){
+                    try{
+                        Object o = converter.convert(textValue);
+                        if(o!=null){
+                            return (T)o;
+                        }
+                    }catch(Exception e){
+                        LOG.log(Level.SEVERE, "Failed to convert using Converter on " +
+                                converter.getClass().getName(), e);
+                    }
+                }
+                if(String.class.equals(targetType) || CharSequence.class.equals(targetType)){
+                    return (T)textValue;
+                }
+                throw new IllegalArgumentException("Non convertible value: " + textValue + ", target: " + targetType.getName());
+            }
+        }
+        return null;
     }
 
-    public static <T> T adaptValue(AnnotatedElement element, TypeLiteral<T> targetType, String key, String configValue) {
-        // Check for adapter/filter
-        T adaptedValue = null;
-        WithPropertyConverter converterAnnot = element.getAnnotation(WithPropertyConverter.class);
-        Class<? extends PropertyConverter<T>> converterType;
-        if (converterAnnot != null) {
-            converterType = (Class<? extends PropertyConverter<T>>) converterAnnot.value();
-            if (!converterType.getName().equals(WithPropertyConverter.class.getName())) {
-                try {
-                    // TODO cache here...
-                    ConversionContext ctx = new ConversionContext.Builder(key,targetType)
-                            .setAnnotatedElement(element).build();
+    private static Class unboxType(Class targetType) {
+        switch(targetType.getName()){
+            case "byte":
+                return Byte.class;
+            case "char":
+                return Character.class;
+            case "boolean":
+                return Boolean.class;
+            case "int":
+                return Integer.class;
+            case "short":
+                return Short.class;
+            case "long":
+                return Long.class;
+            case "float":
+                return Float.class;
+            case "double":
+                return Double.class;
+            default:
+                return targetType;
 
-                    PropertyConverter<T> converter = PropertyConverter.class.cast(converterType.newInstance());
-                    adaptedValue = converter.convert(configValue, ctx);
+        }
+    }
+
+    public static <T> T getCustomConvertedConfigValue(AccessibleObject element, WithConverter converterAnnot,
+                                   Class<T> targetType, List<String> keys, Config config) {
+        // Check for adapter/filter
+        Class<? extends Converter<T>> converterType = (Class<? extends Converter<T>>) converterAnnot.value();
+        if (!converterType.getName().equals(WithConverter.class.getName())) {
+            Converter<T> converter = null;
+            try {
+                converter = Converter.class.cast(converterType.newInstance());
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Failed to instantiate converter: " + converterType.getName(), e);
+            }
+            for (String key : keys) {
+                try {
+                    ConversionContext ctx = new ConversionContext.Builder(key, targetType)
+                            .setAnnotatedElement(element).build();
+                    ConversionContext.setContext(ctx);
+                    Optional<String> textValue = config.getOptionalValue(key, String.class);
+                    if (textValue.isPresent()) {
+                        T adaptedValue = converter.convert(textValue.get());
+                        if (adaptedValue != null) {
+                            return adaptedValue;
+                        }
+                    }
                 } catch (Exception e) {
-                    LOG.log(Level.SEVERE, "Failed to convert using explicit PropertyConverter on " + element +
-                            ", trying default conversion.", e);
+                    LOG.log(Level.SEVERE, "Failed to convert using explicit PropertyConverter on " + element, e);
+                } finally {
+                    ConversionContext.reset();
                 }
             }
         }
-        if (adaptedValue != null) {
-            return adaptedValue;
-        }
-        if (String.class == targetType.getType()) {
-            return (T) configValue;
-        } else{
-            if(configValue==null) {
-                return null;
-            }
-            ConfigurationContext configContext = ConfigurationProvider.getConfiguration().getContext();
-            List<PropertyConverter<T>> converters = configContext
-                    .getPropertyConverters(targetType);
-            ConversionContext ctx = new ConversionContext.Builder(ConfigurationProvider.getConfiguration(),
-                    configContext, key, targetType).setAnnotatedElement(element).build();
-            for (PropertyConverter<T> converter : converters) {
-                adaptedValue = converter.convert(configValue, ctx);
-                if (adaptedValue != null) {
-                    return adaptedValue;
-                }
-            }
-        }
-        throw new ConfigException("Non convertible property type: " + element);
+        return null;
     }
 
     /**

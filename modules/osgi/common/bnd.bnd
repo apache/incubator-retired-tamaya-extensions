@@ -29,5 +29,5 @@ Import-Package: \
     org.apache.tamaya,\
     org.apache.tamaya.spi,\
     org.apache.tamaya.functions,\
-    org.apache.tamaya.spisupport
+    org.apache.tamaya.base
 Export-Service:   org.apache.tamaya.osgi.commands.TamayaConfigService

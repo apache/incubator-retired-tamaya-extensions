@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.format.formats;
 
-import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.format.ConfigurationData;
 import org.apache.tamaya.format.ConfigurationDataBuilder;
 import org.apache.tamaya.format.ConfigurationFormat;
@@ -65,7 +64,7 @@ public class IniConfigurationFormat implements ConfigurationFormat {
                 if (line.startsWith("[")) {
                     int end = line.indexOf(']');
                     if (end < 0) {
-                        throw new ConfigException(
+                        throw new IllegalArgumentException(
                                 "Invalid INI-Format, ']' expected, at " + lineNum + " in " + resource);
                     }
                     section = line.substring(1, end);

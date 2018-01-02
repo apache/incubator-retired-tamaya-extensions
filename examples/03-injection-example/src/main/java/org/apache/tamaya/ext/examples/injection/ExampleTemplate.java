@@ -18,8 +18,8 @@
  */
 package org.apache.tamaya.ext.examples.injection;
 
-import org.apache.tamaya.inject.api.Config;
 import org.apache.tamaya.inject.api.ConfigDefaultSections;
+import javax.config.inject.ConfigProperty;
 
 /**
  * Simple example bean, mapped by default names mostly.
@@ -31,12 +31,12 @@ public interface ExampleTemplate {
 
     String getName();
 
-    @Config(defaultValue = "No description available.")
+    @ConfigProperty(defaultValue = "No description available.")
     String getDescription();
 
     int getVersion();
 
-    @Config("author")
+    @ConfigProperty(name="author")
     String getExampleAuthor();
 
 }

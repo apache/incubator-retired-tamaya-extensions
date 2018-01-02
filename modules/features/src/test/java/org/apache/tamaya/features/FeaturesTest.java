@@ -72,8 +72,13 @@ public class FeaturesTest {
     }
 
     @Test
-    public void spiSupportAvailable() throws Exception {
-        assertTrue(Features.spiSupportAvailable());
+    public void baseSupportAvailable() throws Exception {
+        assertTrue(Features.baseSupportAvailable());
+    }
+
+    @Test
+    public void compatSupportAvailable() throws Exception {
+        assertTrue(Features.compatSupportAvailable());
     }
 
     @Test

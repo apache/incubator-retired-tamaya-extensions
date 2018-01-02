@@ -18,16 +18,16 @@
  */
 package org.apache.tamaya.inject.internal;
 
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.inject.spi.InjectionUtils;
+import org.apache.tamaya.inject.spi.InjectionEvaluator;
 import org.apache.tamaya.inject.spi.ConfiguredMethod;
 
+import javax.config.Config;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
 import java.util.Collection;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 /**
@@ -55,20 +55,11 @@ public class ConfiguredSetterMethod implements ConfiguredMethod {
     }
 
     @Override
-    public void configure(Object target, Configuration config) throws ConfigException {
-        String[] retKey = new String[1];
-        String configValue = InjectionHelper.getConfigValue(this.setterMethod, retKey, config);
+    public void configure(Object target, Config config) {
+        Class targetType = this.setterMethod.getParameterTypes()[0];
+        Object configValue = InjectionHelper.getConfigValue(this.setterMethod, targetType, config);
         Objects.requireNonNull(target);
         try {
-            String evaluatedString = configValue != null
-                    ? InjectionHelper.evaluateValue(configValue)
-                    : configValue;
-
-            // Check for adapter/filter
-            Object value = InjectionHelper.adaptValue(
-                    this.setterMethod, TypeLiteral.of(this.setterMethod.getParameterTypes()[0]),
-                    retKey[0], evaluatedString);
-
             AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
                 @Override
                 public Object run() throws Exception {
@@ -76,11 +67,10 @@ public class ConfiguredSetterMethod implements ConfiguredMethod {
                     return setterMethod;
                 }
             });
-
-            setterMethod.invoke(target, value);
+            setterMethod.invoke(target, configValue);
         } catch (Exception e) {
-            throw new ConfigException("Failed to annotation configured method: " + this.setterMethod.getDeclaringClass()
-                    .getName() + '.' + setterMethod.getName(), e);
+            throw new NoSuchElementException("Failed to annotation configured method: " + this.setterMethod.getDeclaringClass()
+                    .getName() + '.' + setterMethod.getName()+": "+ e);
         }
     }
 
@@ -92,7 +82,7 @@ public class ConfiguredSetterMethod implements ConfiguredMethod {
      */
     @Override
     public Collection<String> getConfiguredKeys() {
-        return InjectionUtils.getKeys(this.setterMethod);
+        return InjectionEvaluator.getKeys(this.setterMethod);
     }
 
     /**

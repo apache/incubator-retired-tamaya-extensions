@@ -44,7 +44,8 @@ under the License.
 
     <properties>
         <!-- Used version of Tamaya API&Core -->
-        <tamaya-apicore.version>0.4-incubating-SNAPSHOT</tamaya-apicore.version>
+        <javaconfig.version>1.0-SNAPSHOT</javaconfig.version>
+        <tamaya-apicore.version>${project.version}</tamaya-apicore.version>
 
         <commons-io.version>2.5</commons-io.version>
         <findbugs.skip>false</findbugs.skip>
@@ -332,14 +333,27 @@ under the License.
                 <artifactId>johnzon-core</artifactId>
                 <version>${johnzon.version}</version>
             </dependency>
+            <dependency>
+                <groupId>javax.config</groupId>
+                <artifactId>javaconfig-api</artifactId>
+                <version>${javaconfig.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-annotation_1.2_spec</artifactId>
+                <version>1.0-alpha-1</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
         <dependency>
+            <groupId>javax.config</groupId>
+            <artifactId>javaconfig-api</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-annotation_1.2_spec</artifactId>
-            <version>1.0-alpha-1</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -385,7 +399,7 @@ under the License.
                         <dependency>
                             <groupId>org.apache.tamaya</groupId>
                             <artifactId>buildconfigurations</artifactId>
-                            <version>${tamaya-apicore.version}</version>
+                            <version>${tamaya.version}</version>
                         </dependency>
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
@@ -437,7 +451,7 @@ under the License.
                         <dependency>
                             <groupId>org.apache.tamaya</groupId>
                             <artifactId>buildconfigurations</artifactId>
-                            <version>${tamaya-apicore.version}</version>
+                            <version>${tamaya.version}</version>
                         </dependency>
                     </dependencies>
                 </plugin>

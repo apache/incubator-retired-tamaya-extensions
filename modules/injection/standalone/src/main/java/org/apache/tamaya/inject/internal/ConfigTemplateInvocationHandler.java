@@ -18,12 +18,10 @@
  */
 package org.apache.tamaya.inject.internal;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.inject.api.DynamicValue;
 import org.apache.tamaya.inject.spi.ConfiguredType;
 
+import javax.config.ConfigProvider;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Objects;
@@ -53,7 +51,7 @@ public final class ConfigTemplateInvocationHandler implements InvocationHandler 
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        javax.config.Config config = ConfigProvider.getConfig();
         if ("toString".equals(method.getName())) {
             return "Configured Proxy -> " + this.type.getType().getName();
         } else if ("hashCode".equals(method.getName())) {
@@ -66,8 +64,6 @@ public final class ConfigTemplateInvocationHandler implements InvocationHandler 
         if (method.getReturnType() == DynamicValue.class) {
             return DefaultDynamicValue.of(proxy, method, config);
         }
-        String[] retKey = new String[1];
-        String configValue = InjectionHelper.getConfigValue(method, retKey, config);
-        return InjectionHelper.adaptValue(method, TypeLiteral.of(method.getReturnType()), retKey[0], configValue);
+        return InjectionHelper.getConfigValue(method, method.getReturnType(), config);
     }
 }

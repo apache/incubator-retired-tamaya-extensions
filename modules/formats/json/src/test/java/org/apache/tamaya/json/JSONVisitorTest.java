@@ -26,7 +26,6 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 
-import org.apache.tamaya.ConfigException;
 import org.junit.Test;
 
 public class JSONVisitorTest {
@@ -67,7 +66,7 @@ public class JSONVisitorTest {
 		assertThat(targetStore).isEmpty();
 	}
 
-	@Test(expected = ConfigException.class)
+	@Test
 	public void arraysAreNotSupported() {
 		JsonObject startNode = Json.createObjectBuilder().//
 				add("arrayKey", Json.createArrayBuilder().build()).//

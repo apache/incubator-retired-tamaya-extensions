@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.inject.api;
 
+import javax.inject.Provider;
 import java.beans.PropertyChangeListener;
 import java.util.function.Supplier;
 
@@ -40,13 +41,13 @@ import java.util.function.Supplier;
  *
  * @param <T> The type of the value.
  */
-public interface DynamicValue<T> {
+public interface DynamicValue<T>{
 
     /**
      * Performs a commit, if necessary, and returns the current value.
      *
      * @return the non-null value held by this {@code DynamicValue}
-     * @throws org.apache.tamaya.ConfigException if there is no value present
+     * @throws java.util.NoSuchElementException if there is no value present
      *
      * @see DynamicValue#isPresent()
      */
@@ -89,7 +90,7 @@ public interface DynamicValue<T> {
      * otherwise throws {@code ConfigException}.
      *
      * @return the non-null value held by this {@code Optional}
-     * @throws org.apache.tamaya.ConfigException if there is no value present
+     * @throws java.util.NoSuchElementException if there is no value present
      *
      * @see DynamicValue#isPresent()
      */

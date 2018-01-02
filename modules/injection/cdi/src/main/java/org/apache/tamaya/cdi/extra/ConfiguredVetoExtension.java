@@ -18,8 +18,7 @@
  */
 package org.apache.tamaya.cdi.extra;
 
-import org.apache.tamaya.ConfigurationProvider;
-
+import javax.config.ConfigProvider;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
@@ -31,7 +30,7 @@ import javax.enterprise.inject.spi.ProcessAnnotatedType;
 public class ConfiguredVetoExtension implements Extension {
 
     public void observesBean(@Observes ProcessAnnotatedType<?> type) {
-        String vetoedTypesVal = ConfigurationProvider.getConfiguration().get("javax.enterprise.inject.vetoed");
+        String vetoedTypesVal = ConfigProvider.getConfig().getValue("javax.enterprise.inject.vetoed", String.class);
         String[] vetoedTypes = vetoedTypesVal.split(",");
         for (String typeExpr : vetoedTypes) {
             String typeExprTrimmed = typeExpr.trim();

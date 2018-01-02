@@ -18,9 +18,10 @@
  */
 package org.apache.tamaya.filter;
 
-import org.apache.tamaya.spi.PropertyFilter;
-import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.spi.Filter;
 import org.osgi.service.component.annotations.Component;
+
+import java.util.*;
 
 
 /**
@@ -40,28 +41,11 @@ import org.osgi.service.component.annotations.Component;
  *     active.
  */
 @Component
-public final class ConfigurationFilter implements PropertyFilter{
+public final class ConfigurationFilter implements Filter{
 
-    static final ThreadLocal<Boolean> THREADED_METADATA_FILTERED = new ThreadLocal<Boolean>(){
-        @Override
-        protected Boolean initialValue() {
-            return Boolean.TRUE;
-        }
-    };
+    private static final ThreadLocal<Boolean> THREADED_METADATA_FILTERED = ThreadLocal.withInitial(() -> Boolean.TRUE);
 
-    private static final ThreadLocal<FilterContext> THREADED_MAP_FILTERS = new ThreadLocal<FilterContext>(){
-        @Override
-        protected FilterContext initialValue() {
-            return new FilterContext();
-        }
-    };
-
-    private static final ThreadLocal<FilterContext> THREADED_VALUE_FILTERS = new ThreadLocal<FilterContext>(){
-        @Override
-        protected FilterContext initialValue() {
-            return new FilterContext();
-        }
-    };
+    private static final ThreadLocal<List<Filter>> THREADED_FILTERS = ThreadLocal.withInitial(ArrayList::new);
 
     /**
      * Flag if metadata entries (starting with an '_') are filtered out on when accessing multiple properties, default
@@ -82,44 +66,88 @@ public final class ConfigurationFilter implements PropertyFilter{
     }
 
     /**
-     * Access the filtering configuration that is used on the current thread for
-     * filtering single property values accessed.
+     * Access the filtering configuration that is used on the current thread.
      *
      * @return the filtering config, never null.
      */
-    public static FilterContext getSingleValueFilterContext(){
-        return THREADED_VALUE_FILTERS.get();
+    public static List<Filter> getFilters(){
+        return Collections.unmodifiableList(THREADED_FILTERS.get());
     }
 
     /**
-     * Access the filtering configuration that is used used on the current thread
-     * for filtering configuration properties accessed as full
-     * map.
-     * @return the filtering config, never null.
+     * Add a filter.
+     * @param filter the filter.
      */
-    public static FilterContext getMapFilterContext(){
-        return THREADED_MAP_FILTERS.get();
+    public static void addFilter(Filter filter){
+        if(!THREADED_FILTERS.get().contains(filter)) {
+            THREADED_FILTERS.get().add(filter);
+        }
+    }
+
+    /**
+     * Adds a filter at given position.
+     * @param pos the position.
+     * @param filter the filter.
+     */
+    public static void addFilter(int pos, Filter filter){
+        if(!THREADED_FILTERS.get().contains(filter)) {
+            THREADED_FILTERS.get().add(pos, filter);
+        }
+    }
+
+    /**
+     * Removes a filter at a given position.
+     * @param pos the position.
+     * @return the filter removed, or null.
+     */
+    public static Filter removeFilter(int pos){
+        return THREADED_FILTERS.get().remove(pos);
+    }
+
+    /**
+     * Removes a filter.
+     * @param filter the filter to be removed, not null.
+     */
+    public static void removeFilter(Filter filter) {
+        THREADED_FILTERS.get().remove(filter);
+    }
+
+    /**
+     * Clears all filters.
+     */
+    public static void clearFilters(){
+        THREADED_FILTERS.get().clear();
+    }
+
+    /**
+     * Set the filters.
+     * @param filters the filters to be applied.
+     */
+    public static void setFilters(Filter... filters){
+        setFilters(Arrays.asList(filters));
+    }
+
+    /**
+     * Set the filters.
+     * @param filters the filters to be applied.
+     */
+    public static void setFilters(Collection<Filter> filters) {
+        THREADED_FILTERS.get().clear();
+        THREADED_FILTERS.get().addAll(filters);
     }
 
     /**
      * Removes all programmable filters active on the current thread.
      */
     public static void cleanupFilterContext(){
-        THREADED_MAP_FILTERS.get().clearFilters();
-        THREADED_VALUE_FILTERS.get().clearFilters();
+        THREADED_FILTERS.get().clear();
         THREADED_METADATA_FILTERED.set(true);
     }
 
     @Override
-    public PropertyValue filterProperty(PropertyValue valueToBeFiltered, org.apache.tamaya.spi.FilterContext context) {
-        if(context.isSinglePropertyScoped()){
-            for(PropertyFilter pred: THREADED_VALUE_FILTERS.get().getFilters()){
-                valueToBeFiltered = pred.filterProperty(valueToBeFiltered, context);
-            }
-        }else{
-            for(PropertyFilter pred: THREADED_MAP_FILTERS.get().getFilters()){
-                valueToBeFiltered = pred.filterProperty(valueToBeFiltered, context);
-            }
+    public String filterProperty(String key, String valueToBeFiltered) {
+        for(Filter pred: THREADED_FILTERS.get()){
+            valueToBeFiltered = pred.filterProperty(key, valueToBeFiltered);
         }
         return valueToBeFiltered;
     }

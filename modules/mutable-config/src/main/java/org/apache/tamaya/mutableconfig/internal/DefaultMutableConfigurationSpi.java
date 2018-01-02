@@ -18,22 +18,23 @@
  */
 package org.apache.tamaya.mutableconfig.internal;
 
-import org.apache.tamaya.Configuration;
 import org.apache.tamaya.mutableconfig.ChangePropagationPolicy;
 import org.apache.tamaya.mutableconfig.MutableConfiguration;
 import org.apache.tamaya.mutableconfig.spi.MutableConfigurationProviderSpi;
 import org.osgi.service.component.annotations.Component;
 
+import javax.config.Config;
+
 
 /**
  * SPI implementation that creates instances of {@link DefaultMutableConfiguration}, hereby for
- * each instance of {@link Configuration} a new instance has to be returned.
+ * each instance of {@link Config} a new instance has to be returned.
  */
 @Component
 public class DefaultMutableConfigurationSpi implements MutableConfigurationProviderSpi {
 
     @Override
-    public MutableConfiguration createMutableConfiguration(Configuration configuration,
+    public MutableConfiguration createMutableConfiguration(Config configuration,
                                                     ChangePropagationPolicy propagationPolicy){
         return new DefaultMutableConfiguration(configuration, propagationPolicy);
     }

@@ -18,6 +18,8 @@
  */
 package org.apache.tamaya.mutableconfig;
 
+import org.apache.tamaya.mutableconfig.spi.MutableConfigSource;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,7 +30,7 @@ import java.util.Set;
 
 /**
  * Change context used for managing configuration changes within an
- * {@link org.apache.tamaya.mutableconfig.spi.MutablePropertySource}.
+ * {@link MutableConfigSource}.
  */
 public final class ConfigChangeRequest {
     /**

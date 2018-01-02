@@ -20,11 +20,11 @@ package org.apache.tamaya.yaml;
 
 
 import org.apache.tamaya.format.ConfigurationData;
-import org.apache.tamaya.format.MappedConfigurationDataPropertySource;
+import org.apache.tamaya.format.MappedConfigurationDataConfigSource;
 import org.apache.tamaya.json.JSONFormat;
-import org.apache.tamaya.spi.PropertySource;
 import org.junit.Test;
 
+import javax.config.spi.ConfigSource;
 import java.io.InputStream;
 import java.net.URL;
 
@@ -67,10 +67,10 @@ public class JSONFormatTest extends CommonJSONTestCaseCollection {
     }
 
     @Override
-    PropertySource getPropertiesFrom(URL source) throws Exception {
+    ConfigSource getPropertiesFrom(URL source) throws Exception {
         try (InputStream is = source.openStream()) {
             ConfigurationData data = format.readConfiguration(source.toString(), is);
-            return new MappedConfigurationDataPropertySource(data);
+            return new MappedConfigurationDataConfigSource(data);
         }
     }
 }

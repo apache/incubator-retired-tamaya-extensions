@@ -16,8 +16,7 @@
  */
 package org.apache.tamaya.cdi;
 
-import org.apache.tamaya.inject.api.Config;
-
+import javax.config.inject.ConfigProperty;
 import javax.enterprise.inject.Alternative;
 import javax.inject.Inject;
 import java.io.File;
@@ -28,23 +27,23 @@ import java.time.Duration;
 public class NotFoundNoDefault {
 
         @Inject
-        @Config("string.bla")
+        @ConfigProperty(name="string.bla")
         private String string;
 
         @Inject
-        @Config("file.bla")
+        @ConfigProperty(name="file.bla")
         private File file;
 
         @Inject
-        @Config("duration.bla")
+        @ConfigProperty(name="duration.bla")
         private Duration duration;
 
         @Inject
-        @Config("boolean.bla")
+        @ConfigProperty(name="boolean.bla")
         private Boolean aBoolean;
 
         @Inject
-        @Config("integer.bla")
+        @ConfigProperty(name="integer.bla")
         private Integer integer;
 
         public String getString() {

@@ -18,18 +18,18 @@ package org.apache.tamaya.springexample;
 import java.awt.*;
 import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.functions.ConfigurationFunctions;
-import org.apache.tamaya.inject.api.Config;
 import org.apache.tamaya.inject.api.DynamicValue;
 import org.apache.tamaya.inject.api.UpdatePolicy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.websocket.server.PathParam;
+import javax.config.Config;
+import javax.config.ConfigProvider;
+import javax.config.inject.ConfigProperty;
 
 @Controller
 public class WelcomeController {
@@ -37,14 +37,14 @@ public class WelcomeController {
 	@Value("${application.message:Hello World}")
 	private String message = "Hello World";
 
-	@Config(value = "background.color", required = false)
-	private String backgroundColor = "#BBBBBB";
+	@ConfigProperty(name = "background.color", defaultValue = "#BBBBBB")
+	private Optional<String> backgroundColor;
 
-	@Config(value = "foreground.color", required = false, defaultValue = "#DDDDDD")
+	@ConfigProperty(name = "foreground.color", defaultValue = "#DDDDDD")
 	private DynamicValue<String> foregroundColor;
 
-	@Config(value = "background.color", required = false)
-	private Color bgColor;
+	@ConfigProperty(name = "background.color")
+	private Optional<Color> bgColor;
 
 	@GetMapping("/")
 	public String welcome(Map<String, Object> model) {
@@ -72,19 +72,18 @@ public class WelcomeController {
 
     @GetMapping("/config")
     public String config(Map<String, Object> model) {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Config config = ConfigProvider.getConfig();
         model.put("filter", "NO FILTER");
-        model.put("config", config
-                    .query(ConfigurationFunctions.textInfo()));
+        model.put("config", ConfigurationFunctions.textInfo().apply(config));
         return "config";
     }
 
     @GetMapping(value="/config/{path}")
 	public String config(@PathVariable("path") String path, Map<String, Object> model) {
-        Configuration config = ConfigurationProvider.getConfiguration();
+		Config config = ConfigProvider.getConfig();
         model.put("filter", path);
-        model.put("config", config.with(ConfigurationFunctions.section(path))
-					.query(ConfigurationFunctions.textInfo()));
+        model.put("config", ConfigurationFunctions.textInfo()
+				.apply(ConfigurationFunctions.section(path).apply(config)));
 		return "config";
 	}
 

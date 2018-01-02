@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import javax.config.Config;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -78,10 +79,10 @@ public class TamayaConfigPluginTest extends  AbstractOSGITest{
 
     @Test
     public void getTMUpdateConfig() throws Exception {
-        org.apache.tamaya.Configuration config = ((TamayaConfigPlugin)tamayaConfigPlugin).getTamayaConfiguration("java.");
+        Config config = ((TamayaConfigPlugin)tamayaConfigPlugin).getJavaConfiguration("java.");
         assertNotNull(config);
-        assertNull(config.get("jlkjllj"));
-        assertEquals(System.getProperty("java.home"), config.get("home"));
+        assertNull(config.getOptionalValue("jlkjllj", String.class).orElse(null));
+        assertEquals(System.getProperty("java.home"), config.getValue("home", String.class));
     }
 
     @Test

@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 /**
- * Spring Configuration Bean adding {@link TamayaSpringPropertySource} to the current
+ * Spring Configuration Bean adding {@link TamayaSpringConfigSource} to the current
  * {@link org.springframework.core.env.Environment}.
  */
 @Component
@@ -42,14 +42,14 @@ public class TamayaSpringConfig {
 
     @PostConstruct
     public void init() {
-        env.getPropertySources().addFirst(new TamayaSpringPropertySource());
+        env.getPropertySources().addFirst(new TamayaSpringConfigSource());
     }
 
     @Bean
     public static PropertySourcesPlaceholderConfigurer placeHolderConfigurer() {
         PropertySourcesPlaceholderConfigurer cfgBean = new PropertySourcesPlaceholderConfigurer();
         MutablePropertySources sources = new MutablePropertySources();
-        sources.addFirst(new TamayaSpringPropertySource());
+        sources.addFirst(new TamayaSpringConfigSource());
         cfgBean.setPropertySources(sources);
         return cfgBean;
     }

@@ -28,6 +28,6 @@ public class TamayaEnvironment extends StandardEnvironment{
 
     protected void customizePropertySources(MutablePropertySources propertySources) {
         super.customizePropertySources(propertySources);
-        propertySources.addLast(new TamayaSpringPropertySource());
+        propertySources.addLast(new TamayaSpringConfigSource());
     }
 }

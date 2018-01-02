@@ -41,7 +41,7 @@ import java.util.Collection;
  *     Also multiple expressions are supported, e.g. ${resource:META-INF/version.conf}, ${file:C:/temp/version.txt},
  *     ${url:http://configserver/name}.
  * </pre>
- * Basically this service is consumed by an instance of {@link org.apache.tamaya.spi.PropertyFilter}, which
+ * Basically this service is consumed by an instance of {@link org.apache.tamaya.spi.Filter}, which
  * takes the configuration values found and passes them to this evaluator, when expressions are detected. This
  * also done iteratively, so also multi-stepped references (references, which themselves must be evaluated as well)
  * are supported.

@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.osgi.injection;
 
-import org.apache.tamaya.Configuration;
 import org.apache.tamaya.osgi.TamayaConfigPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;

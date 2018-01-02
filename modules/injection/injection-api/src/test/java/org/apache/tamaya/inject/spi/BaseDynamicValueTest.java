@@ -18,13 +18,11 @@
  */
 package org.apache.tamaya.inject.spi;
 
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.inject.api.UpdatePolicy;
 import org.junit.Test;
 
+import javax.config.Config;
+import javax.config.ConfigProvider;
 import java.util.Arrays;
 
 import static org.junit.Assert.*;
@@ -36,7 +34,7 @@ public class BaseDynamicValueTest {
         new MyDynamicValue("a", "b");
     }
 
-    @Test(expected = ConfigException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void create_nokeys(){
         new MyDynamicValue();
     }
@@ -79,12 +77,12 @@ public class BaseDynamicValueTest {
     private static final class MyDynamicValue extends BaseDynamicValue{
 
         public MyDynamicValue(String... keys){
-            super(null, "test", TypeLiteral.of(String.class), Arrays.asList(keys));
+            super(null, "test", String.class, Arrays.asList(keys));
         }
 
         @Override
-        protected Configuration getConfiguration() {
-            return ConfigurationProvider.getConfiguration();
+        protected Config getConfiguration() {
+            return ConfigProvider.getConfig();
         }
 
         @Override

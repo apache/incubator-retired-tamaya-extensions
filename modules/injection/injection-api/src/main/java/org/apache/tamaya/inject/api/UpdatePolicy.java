@@ -22,11 +22,6 @@ package org.apache.tamaya.inject.api;
  * Policy to control how new values are applied to a {@link DynamicValue}.
  */
 public enum UpdatePolicy {
-    /**
-     * @deprecated Use {@link #IMMEDIATE} instead of.
-     */
-    @Deprecated
-    IMMEDEATE,
     /** New values are applied immediately and registered listeners are informed about the change. */
     IMMEDIATE,
     /** New values or not applied, but stored in the newValue property. Explicit call to DynamicValue#commit
@@ -34,11 +29,6 @@ public enum UpdatePolicy {
      * Registered listeners will be informed, when the commit was performed explicitly.
      */
     EXPLICIT,
-    /**
-     * @deprecated Use {@link #EXPLICIT} instead of.
-     */
-    @Deprecated
-    EXPLCIT,
     /**
      * New values are always immediately discarded, listeners are not triggered.
      */

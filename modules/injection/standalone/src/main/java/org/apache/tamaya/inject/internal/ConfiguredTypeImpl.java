@@ -24,16 +24,16 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.logging.Logger;
 
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.inject.api.ConfigAutoInject;
+import org.apache.tamaya.inject.api.ConfigAutoDetect;
+import org.apache.tamaya.inject.api.ConfigFallbackKeys;
 import org.apache.tamaya.inject.api.NoConfig;
-import org.apache.tamaya.inject.api.Config;
 import org.apache.tamaya.inject.api.ConfigDefaultSections;
 import org.apache.tamaya.inject.spi.ConfiguredField;
 import org.apache.tamaya.inject.spi.ConfiguredMethod;
 import org.apache.tamaya.inject.spi.ConfiguredType;
+
+import javax.config.ConfigProvider;
+import javax.config.inject.ConfigProperty;
 
 /**
  * Structure that contains and manages configuration related things for a configured type registered.
@@ -69,7 +69,7 @@ public class ConfiguredTypeImpl implements ConfiguredType{
             initFields(type, true);
             initMethods(type, true);
         }else {
-            ConfigAutoInject autoInject = (ConfigAutoInject) type.getAnnotation(ConfigAutoInject.class);
+            ConfigAutoDetect autoInject = (ConfigAutoDetect) type.getAnnotation(ConfigAutoDetect.class);
             if (autoInject != null) {
                 initFields(type, autoInject != null);
                 initMethods(type, autoInject != null);
@@ -108,8 +108,8 @@ public class ConfiguredTypeImpl implements ConfiguredType{
                             f.toGenericString());
                 }
             } catch (Exception e) {
-                throw new ConfigException("Failed to initialized configured field: " +
-                        f.getDeclaringClass().getName() + '.' + f.getName(), e);
+                throw new NoSuchElementException("Failed to initialized configured field: " +
+                        f.getDeclaringClass().getName() + '.' + f.getName()+": "+ e);
             }
         }
     }
@@ -131,8 +131,10 @@ public class ConfiguredTypeImpl implements ConfiguredType{
                 continue;
             }
             if(isConfiguredMethod(m) || autoConfigure) {
-                Config propAnnot = m.getAnnotation(Config.class);
-                if (addPropertySetter(m, propAnnot)) {
+                if (addPropertySetter(
+                        m,
+                        m.getAnnotation(ConfigProperty.class),
+                        m.getAnnotation(ConfigFallbackKeys.class))) {
                     LOG.finer("Added configured setter: " + m.getClass().getName() + "#" +
                             m.toGenericString());
                 }
@@ -140,7 +142,7 @@ public class ConfiguredTypeImpl implements ConfiguredType{
         }
     }
 
-    private boolean addPropertySetter(Method m, Config prop) {
+    private boolean addPropertySetter(Method m, ConfigProperty prop, ConfigFallbackKeys fallbackKeys) {
         if (prop!=null) {
             if (m.getParameterTypes().length == 1) {
                 // getter method
@@ -150,8 +152,8 @@ public class ConfiguredTypeImpl implements ConfiguredType{
                         configuredSetterMethods.add(new ConfiguredSetterMethod(m));
                         return true;
                     } catch (Exception e) {
-                        throw new ConfigException("Failed to initialize configured setter method: " +
-                                m.getDeclaringClass().getName() + '.' + m.getName(), e);
+                        throw new NoSuchElementException("Failed to initialize configured setter method: " +
+                                m.getDeclaringClass().getName() + '.' + m.getName()+": "+ e);
                     }
                 }
             }
@@ -166,11 +168,11 @@ public class ConfiguredTypeImpl implements ConfiguredType{
      * @param instance       The instance to be configured.
      */
     public void configure(Object instance) {
-        configure(instance, ConfigurationProvider.getConfiguration());
+        configure(instance, ConfigProvider.getConfig());
     }
 
     @Override
-    public void configure(Object instance, Configuration config) {
+    public void configure(Object instance, javax.config.Config config) {
         for (ConfiguredField field : configuredFields) {
             field.configure(instance, config);
         }
@@ -204,11 +206,11 @@ public class ConfiguredTypeImpl implements ConfiguredType{
     }
 
     public static boolean isConfiguredField(Field field) {
-        return field.isAnnotationPresent(Config.class);
+        return field.isAnnotationPresent(ConfigProperty.class);
     }
 
     public static boolean isConfiguredMethod(Method method) {
-        return method.isAnnotationPresent(Config.class);
+        return method.isAnnotationPresent(ConfigProperty.class);
     }
 
     @Override

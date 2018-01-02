@@ -92,8 +92,8 @@ public class FeaturesTestNoOnly {
     }
 
     @Test
-    public void spiSupportAvailable() throws Exception {
-        assertFalse(Features.spiSupportAvailable());
+    public void baseSupportAvailable() throws Exception {
+        assertFalse(Features.baseSupportAvailable());
     }
 
     @Test

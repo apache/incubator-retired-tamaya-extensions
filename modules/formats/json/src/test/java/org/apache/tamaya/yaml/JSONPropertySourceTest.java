@@ -24,10 +24,11 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.net.URL;
 
-import org.apache.tamaya.json.JSONPropertySource;
-import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.json.JSONConfigSource;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
+
+import javax.config.spi.ConfigSource;
 
 public class JSONPropertySourceTest extends CommonJSONTestCaseCollection {
 
@@ -37,7 +38,7 @@ public class JSONPropertySourceTest extends CommonJSONTestCaseCollection {
 
         assertThat(configURL, CoreMatchers.notNullValue());
 
-        JSONPropertySource source = new JSONPropertySource(configURL, 4);
+        JSONConfigSource source = new JSONConfigSource(configURL, 4);
         assertEquals(source.getOrdinal(), 16784);
     }
     
@@ -47,11 +48,11 @@ public class JSONPropertySourceTest extends CommonJSONTestCaseCollection {
 
         assertThat(configURL, CoreMatchers.notNullValue());
 
-        new JSONPropertySource(configURL);
+        new JSONConfigSource(configURL);
     }
 
     @Override
-    PropertySource getPropertiesFrom(URL source) throws Exception {
-        return new JSONPropertySource(source);
+    ConfigSource getPropertiesFrom(URL source) throws Exception {
+        return new JSONConfigSource(source);
     }
 }

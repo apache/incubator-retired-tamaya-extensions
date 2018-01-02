@@ -18,8 +18,7 @@
  */
 package org.apache.tamaya.inject.spi;
 
-import org.apache.tamaya.Configuration;
-
+import javax.config.Config;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
@@ -64,7 +63,7 @@ public interface ConfiguredMethod {
      *
      * @param instance the target instance, not null.
      * @param config the configuration, not null.
-     * @throws org.apache.tamaya.ConfigException if evaluation or conversion failed.
+     * @throws IllegalArgumentException if evaluation or conversion failed.
      */
-    void configure(Object instance, Configuration config);
+    void configure(Object instance, Config config);
 }

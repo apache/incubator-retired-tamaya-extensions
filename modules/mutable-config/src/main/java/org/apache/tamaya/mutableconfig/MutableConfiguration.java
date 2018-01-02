@@ -18,8 +18,9 @@
  */
 package org.apache.tamaya.mutableconfig;
 
-import org.apache.tamaya.Configuration;
+import org.apache.tamaya.mutableconfig.spi.MutableConfigSource;
 
+import javax.config.Config;
 import java.util.Collection;
 import java.util.Map;
 
@@ -34,26 +35,26 @@ import java.util.Map;
  * As a consequence clients should first check, using the corresponding methods, if entries can be added/updated or
  * removed.
  *
- * This class should only used in a single threaded context, though all methods inherited from {@link Configuration}
+ * This class should only used in a single threaded context, though all methods inherited from {@link Config}
  * must be thread-safe. Methods handling configuration changes are expected to be used in a single threaded environment
  * only. For multi-threaded us create a new instance of {@link MutableConfiguration} for each thread.
  */
-public interface MutableConfiguration extends Configuration {
+public interface MutableConfiguration extends Config {
 
     /**
      * Storesd the changes. After a commit the change is not editable anymore. All changes applied will be written to
      * the corresponding configuration backend.
      *
-     * NOTE that changes applied must not necessarily be visible in the current {@link Configuration} instance,
-     * since visibility of changes also depends on the ordinals set on the {@link org.apache.tamaya.spi.PropertySource}s
+     * NOTE that changes applied must not necessarily be visible in the current {@link Config} instance,
+     * since visibility of changes also depends on the ordinals set on the {@link javax.config.spi.ConfigSource}s
      * configured.
-     * @throws org.apache.tamaya.ConfigException if the request already has been committed or cancelled, or the commit fails.
+     * @throws IllegalStateException if the request already has been committed or cancelled, or the commit fails.
      */
     void store();
 
     /**
      * Access the current configuration change context, built up on all the change context of the participating
-     * {@link org.apache.tamaya.mutableconfig.spi.MutablePropertySource} instances.
+     * {@link MutableConfigSource} instances.
      * @return the colleted changes as one single config change for the current transaction, or null, if no transaction
      * is active.
      */
@@ -61,7 +62,7 @@ public interface MutableConfiguration extends Configuration {
 
     /**
      * Access the active {@link ChangePropagationPolicy}.This policy controls how configuration changes are written/published
-     * to the known {@link org.apache.tamaya.mutableconfig.spi.MutablePropertySource} instances of a {@link Configuration}.
+     * to the known {@link MutableConfigSource} instances of a {@link Config}.
      * @return he active {@link ChangePropagationPolicy}, never null.
      */
     ChangePropagationPolicy getChangePropagationPolicy();
@@ -72,7 +73,7 @@ public interface MutableConfiguration extends Configuration {
      * @param key   the property's key, not null.
      * @param value the property's value, not null.
      * @return the former property value, or null.
-     * @throws org.apache.tamaya.ConfigException if the key/value cannot be added, or the request is read-only.
+     * @throws IllegalStateException if the key/value cannot be added, or the request is read-only.
      */
     MutableConfiguration put(String key, String value);
 
@@ -80,14 +81,14 @@ public interface MutableConfiguration extends Configuration {
      * Puts all given configuration entries. This method should check that all given properties are
      * basically removable, as defined by #isWritable. If any of the passed keys is not writable during this initial
      * check, the operation should not perform any configuration changes and throw a
-     * {@link org.apache.tamaya.ConfigException}. If errors occur afterwards, when the properties are effectively
+     * {@link IllegalArgumentException}. If errors occur afterwards, when the properties are effectively
      * written back to the backends, the errors should be collected and returned as part of the ConfigException
      * payload. Nevertheless the operation should in that case remove all entries as far as possible and abort the
      * writing operation.
      *
      * @param properties the properties tobe written, not null.
      * @return the config change request
-     * @throws org.apache.tamaya.ConfigException if any of the given properties could not be written, or the request
+     * @throws IllegalStateException if any of the given properties could not be written, or the request
      * is read-only.
      */
     MutableConfiguration putAll(Map<String, String> properties);
@@ -96,14 +97,14 @@ public interface MutableConfiguration extends Configuration {
      * Removes all given configuration entries. This method should check that all given properties are
      * basically removable, as defined by #isRemovable. If any of the passed keys is not removable during this initial
      * check, the operation should not perform any configuration changes and throw a
-     * {@link org.apache.tamaya.ConfigException}. If errors
+     * {@link IllegalArgumentException}. If errors
      * occur afterwards, when the properties are effectively written back to the backends, the errors should be
      * collected and returned as part of the ConfigException payload. Nevertheless the operation should in that case
      * remove all entries as far as possible and abort the writing operation.
      *
      * @param keys the property's keys to be removedProperties, not null.
      * @return the config change request
-     * @throws org.apache.tamaya.ConfigException if any of the given keys could not be removedProperties, or the
+     * @throws IllegalStateException if any of the given keys could not be removedProperties, or the
      * request is read-only.
      */
     MutableConfiguration remove(Collection<String> keys);
@@ -111,14 +112,14 @@ public interface MutableConfiguration extends Configuration {
     /**
      * Removes all given configuration entries. This method should check that all given properties are
      * basically removable, as defined by #isRemovable. If any of the passed keys is not removable during this initial
-     * check, the operation should not perform any configuration changes and throw a {@link org.apache.tamaya.ConfigException}. If errors
+     * check, the operation should not perform any configuration changes and throw a {@link IllegalArgumentException}. If errors
      * occur afterwards, when the properties are effectively written back to the backends, the errors should be
      * collected and returned as part of the ConfigException payload. Nevertheless the operation should in that case
      * remove all entries as far as possible and abort the writing operation.
      *
      * @param keys the property's keys to be removedProperties, not null.
      * @return the config change request
-     * @throws org.apache.tamaya.ConfigException if any of the given keys could not be removedProperties, or the request is read-only.
+     * @throws IllegalStateException if any of the given keys could not be removedProperties, or the request is read-only.
      */
     MutableConfiguration remove(String... keys);
 

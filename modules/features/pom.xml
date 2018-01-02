@@ -35,12 +35,6 @@ under the License.
     <dependencies>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
-            <artifactId>tamaya-api</artifactId>
-            <version>${tamaya-apicore.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tamaya</groupId>
             <artifactId>tamaya-core</artifactId>
             <version>${tamaya-apicore.version}</version>
             <scope>provided</scope>
@@ -52,6 +46,12 @@ under the License.
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tamaya</groupId>
+            <artifactId>tamaya-compat</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.tamaya.ext</groupId>
@@ -109,7 +109,7 @@ under the License.
         </dependency>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
-            <artifactId>tamaya-spisupport</artifactId>
+            <artifactId>tamaya-base</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>

@@ -27,7 +27,7 @@ Import-Package: \
     org.apache.tamaya,\
     org.apache.tamaya.spi,\
     org.apache.tamaya.functions,\
-    org.apache.tamaya.spisupport,\
+    org.apache.tamaya.base,\
     org.apache.tamaya.osgi,\
     org.apache.tamaya.inject.api,\
     org.apache.tamaya.inject.spi,\

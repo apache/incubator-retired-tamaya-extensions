@@ -18,15 +18,15 @@
  */
 package org.apache.tamaya.ext.examples.events;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.events.ConfigEvent;
 import org.apache.tamaya.events.ConfigEventListener;
 import org.apache.tamaya.events.ConfigEventManager;
-import org.apache.tamaya.events.ConfigurationChange;
+import org.apache.tamaya.events.ConfigChange;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 
+import javax.config.Config;
+import javax.config.ConfigProvider;
 import java.beans.PropertyChangeEvent;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -64,10 +64,10 @@ public class Main {
         ConfigEventManager.addListener(new ConfigurationChangeListener());
         ConfigEventManager.setChangeMonitoringPeriod(1_000L);
         ConfigEventManager.enableChangeMonitoring(true);
-        Configuration configuration = ConfigurationProvider.getConfiguration();
+        Config config = ConfigProvider.getConfig();
 
-        for (Map.Entry<String, String> e : configuration.getProperties().entrySet()) {
-            System.out.println(e.getKey() + ": " + e.getValue());
+        for (String key : config.getPropertyNames()) {
+            System.out.println(key + ": " + config.getValue(key, String.class));
         }
 
 
@@ -108,7 +108,7 @@ public class Main {
         @Override
         public void onConfigEvent(ConfigEvent<?> event) {
 
-            ConfigurationChange c = (ConfigurationChange) event;
+            ConfigChange c = (ConfigChange) event;
 
             if (c.isKeyAffected("a")) {
                 // Looking for the change event of property a. Not recomanded

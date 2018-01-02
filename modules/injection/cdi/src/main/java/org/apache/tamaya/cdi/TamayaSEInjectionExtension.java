@@ -20,9 +20,9 @@ package org.apache.tamaya.cdi;
 
 
 import org.apache.tamaya.inject.ConfigurationInjection;
-import org.apache.tamaya.inject.api.Config;
 import org.apache.tamaya.inject.api.ConfigDefaultSections;
 
+import javax.config.inject.ConfigProperty;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Vetoed;
@@ -92,13 +92,13 @@ public final class TamayaSEInjectionExtension implements Extension {
         }
         // if no class level annotation is there we might have field level annotations only
         for (Field field : type.getDeclaredFields()) {
-            if (field.isAnnotationPresent(Config.class) && !field.isAnnotationPresent(Inject.class)) {
+            if (field.isAnnotationPresent(ConfigProperty.class) && !field.isAnnotationPresent(Inject.class)) {
                 return true;
             }
         }
         // if no class level annotation is there we might have method level annotations only
         for (Method method : type.getDeclaredMethods()) {
-            if(method.isAnnotationPresent(Config.class)) {
+            if(method.isAnnotationPresent(ConfigProperty.class)) {
                 return true;
             }
         }

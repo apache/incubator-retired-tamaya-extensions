@@ -20,8 +20,9 @@
  */
 package org.apache.tamaya.cdi;
 
-import org.apache.tamaya.inject.api.Config;
+import org.apache.tamaya.inject.api.ConfigFallbackKeys;
 
+import javax.config.inject.ConfigProperty;
 import javax.inject.Singleton;
 import java.math.BigDecimal;
 
@@ -31,34 +32,36 @@ import java.math.BigDecimal;
 @Singleton
 public class ConfiguredClass{
 
-    @Config
+    @ConfigProperty
     private String testProperty;
 
-    @Config(value = {"a.b.c.key1","a.b.c.key2","a.b.c.key3"}, defaultValue = "The current \\${JAVA_HOME} env property is ${env:JAVA_HOME}.")
+    @ConfigProperty(name = "a.b.c.key1", defaultValue = "The current \\${JAVA_HOME} env property is ${env:JAVA_HOME}.")
+    @ConfigFallbackKeys({"a.b.c.key2","a.b.c.key3"})
     String value1;
 
-    @Config({"foo","a.b.c.key2"})
+    @ConfigProperty(name="foo")
+    @ConfigFallbackKeys({"a.b.c.key2"})
     private String value2;
 
-    @Config(defaultValue = "N/A")
+    @ConfigProperty(defaultValue = "N/A")
     private String runtimeVersion;
 
-    @Config(defaultValue = "${sys:java.version}")
+    @ConfigProperty(defaultValue = "${sys:java.version}")
     private String javaVersion2;
 
-    @Config(defaultValue = "5")
+    @ConfigProperty(defaultValue = "5")
     private Integer int1;
 
-    @Config
+    @ConfigProperty
     private int int2;
 
-    @Config
+    @ConfigProperty
     private boolean booleanT;
 
-    @Config("BD")
+    @ConfigProperty(name="BD")
     private BigDecimal bigNumber;
 
-    @Config("double1")
+    @ConfigProperty(name="double1")
     private double doubleValue;
 
     public String getTestProperty() {

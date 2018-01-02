@@ -43,7 +43,7 @@ under the License.
         <module>spring</module>
         <module>jndi</module>
         <module>osgi</module>
-        <module>microprofile</module>
+        <!--<module>microprofile</module>-->
         <module>injection</module>
     </modules>
 

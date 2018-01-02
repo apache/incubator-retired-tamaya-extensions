@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.osgi.injection;
 
-import org.apache.tamaya.spi.PropertyValue;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -62,27 +61,20 @@ public class OSGIConfigAdminPropertySourceTest extends AbstractOSGITest{
     }
 
     @Test
-    public void isScannable() throws Exception {
-        assertEquals(true, propertySource.isScannable());
-    }
-
-    @Test
-    public void get() throws Exception {
-        PropertyValue val = propertySource.get("java.home");
+    public void getValue() throws Exception {
+        String val = propertySource.getValue("java.home");
         assertNotNull(val);
-        assertEquals(val.getKey(), "java.home");
-        assertEquals(val.getValue(), System.getProperty("java.home"));
-        val = propertySource.get("foo.bar");
+        assertEquals(val, System.getProperty("java.home"));
+        val = propertySource.getValue("foo.bar");
         assertNull(val);
     }
 
     @Test
     public void getProperties() throws Exception {
-        Map<String,PropertyValue> props = propertySource.getProperties();
+        Map<String,String> props = propertySource.getProperties();
         assertNotNull(props);
-        PropertyValue val = props.get("java.home");
-        assertEquals(val.getKey(), "java.home");
-        assertEquals(val.getValue(), System.getProperty("java.home"));
+        String val = props.get("java.home");
+        assertEquals(val, System.getProperty("java.home"));
         val = props.get("foo.bar");
         assertNull(val);
     }

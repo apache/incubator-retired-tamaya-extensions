@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.cdi;
 
-import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.spi.ServiceContext;
 
 import javax.annotation.Priority;
@@ -57,13 +56,17 @@ public class CDIAwareServiceContext implements ServiceContext {
 
     private ServiceContext defaultServiceContext = new ServiceLoaderServiceContext();
 
-
     @Override
     public <T> T getService(Class<T> serviceType) {
+        return getService(serviceType, ServiceContext.defaultClassLoader());
+    }
+
+    @Override
+    public <T> T getService(Class<T> serviceType, ClassLoader classLoader) {
         Object cached = singletons.get(serviceType);
 
         if (cached == null) {
-            Collection<T> services = getServices(serviceType);
+            Collection<T> services = getServices(serviceType, classLoader);
             if (services.isEmpty()) {
                 cached = null;
             } else {
@@ -78,7 +81,12 @@ public class CDIAwareServiceContext implements ServiceContext {
 
     @Override
     public <T> T create(Class<T> serviceType) {
-        T serv = getService(serviceType);
+        return create(serviceType, ServiceContext.defaultClassLoader());
+    }
+
+    @Override
+    public <T> T create(Class<T> serviceType, ClassLoader classLoader) {
+        T serv = getService(serviceType, classLoader);
         if(serv!=null){
             try {
                 return (T)serv.getClass().newInstance();
@@ -99,7 +107,19 @@ public class CDIAwareServiceContext implements ServiceContext {
      */
     @Override
     public <T> List<T> getServices(final Class<T> serviceType) {
-        List<T> found = defaultServiceContext.getServices(serviceType);
+        return  getServices(serviceType, ServiceContext.defaultClassLoader());
+    }
+
+    /**
+     * Loads and registers services.
+     *
+     * @param <T>         the concrete type.
+     * @param serviceType The service type.
+     * @return the items found, never {@code null}.
+     */
+    @Override
+    public <T> List<T> getServices(final Class<T> serviceType, ClassLoader classLoader) {
+        List<T> found = defaultServiceContext.getServices(serviceType, classLoader);
         BeanManager beanManager = TamayaCDIAccessor.getBeanManager();
         Instance<T> cdiInstances = null;
         if(beanManager!=null){
@@ -159,7 +179,7 @@ public class CDIAwareServiceContext implements ServiceContext {
      *
      * @return the service with the highest {@link Priority#value()}
      *
-     * @throws ConfigException if there are multiple service implementations with the maximum priority
+     * @throws IllegalStateException if there are multiple service implementations with the maximum priority
      */
     private <T> T getServiceWithHighestPriority(Collection<T> services, Class<T> serviceType) {
 
@@ -184,7 +204,7 @@ public class CDIAwareServiceContext implements ServiceContext {
         }
 
         if (highestPriorityServiceCount > 1) {
-            throw new ConfigException(MessageFormat.format("Found {0} implementations for Service {1} with Priority {2}: {3}",
+            throw new IllegalStateException(MessageFormat.format("Found {0} implementations for Service {1} with Priority {2}: {3}",
                     highestPriorityServiceCount,
                     serviceType.getName(),
                     highestPriority,

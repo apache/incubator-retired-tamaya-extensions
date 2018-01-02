@@ -18,12 +18,11 @@
  */
 package org.apache.tamaya.cdi.extra;
 
-import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.spi.ConfigurationContext;
 import org.junit.Test;
 
 
+import javax.config.Config;
+import javax.config.spi.ConfigProviderResolver;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 
@@ -34,13 +33,12 @@ public class ConfiguredVetoExtensionTest {
 
     @Test
     public void willBeVetoedIfTypeHasBeenConfiguredAsConcreteClassName() {
-        ConfigurationContext context = mock(ConfigurationContext.class);
-        Configuration configuration = mock(Configuration.class);
+        Config configuration = mock(Config.class);
 
-        when(configuration.getContext()).thenReturn(context);
-        when(configuration.get("javax.enterprise.inject.vetoed")).thenReturn("org.apache.tamaya.cdi.extra.TestKlazz");
+        when(configuration.getValue("javax.enterprise.inject.vetoed", String.class))
+                .thenReturn("org.apache.tamaya.cdi.extra.TestKlazz");
 
-        ConfigurationProvider.setConfiguration(configuration);
+        ConfigProviderResolver.instance().registerConfig(configuration, getClass().getClassLoader());
 
         AnnotatedType<TestKlazz> annotatedType = mock(AnnotatedType.class);
         when(annotatedType.getJavaClass()).thenReturn(TestKlazz.class);
@@ -55,13 +53,12 @@ public class ConfiguredVetoExtensionTest {
 
     @Test
     public void willNotBeVetoedIfTypeHasNotBeenConfigured() {
-        ConfigurationContext context = mock(ConfigurationContext.class);
-        Configuration configuration = mock(Configuration.class);
+        Config configuration = mock(Config.class);
 
-        when(configuration.getContext()).thenReturn(context);
-        when(configuration.get("javax.enterprise.inject.vetoed")).thenReturn("org.apache.tamaya.cdi.extra.O");
+        when(configuration.getValue("javax.enterprise.inject.vetoed", String.class))
+                .thenReturn("org.apache.tamaya.cdi.extra.O");
 
-        ConfigurationProvider.setConfiguration(configuration);
+        ConfigProviderResolver.instance().registerConfig(configuration, getClass().getClassLoader());
 
         AnnotatedType<TestKlazz> annotatedType = mock(AnnotatedType.class);
         when(annotatedType.getJavaClass()).thenReturn(TestKlazz.class);
@@ -79,13 +76,11 @@ public class ConfiguredVetoExtensionTest {
         String configuredValue = "  " + TestKlazz.class.getName() +
                                  ",\t" + TestKlazz2.class.getName();
 
-        ConfigurationContext context = mock(ConfigurationContext.class);
-        Configuration configuration = mock(Configuration.class);
+        Config configuration = mock(Config.class);
 
-        when(configuration.getContext()).thenReturn(context);
-        when(configuration.get("javax.enterprise.inject.vetoed")).thenReturn(configuredValue);
+        when(configuration.getValue("javax.enterprise.inject.vetoed", String.class)).thenReturn(configuredValue);
 
-        ConfigurationProvider.setConfiguration(configuration);
+        ConfigProviderResolver.instance().registerConfig(configuration, getClass().getClassLoader());
 
         AnnotatedType<TestKlazz> annotatedType = mock(AnnotatedType.class);
         when(annotatedType.getJavaClass()).thenReturn(TestKlazz.class);
@@ -103,13 +98,12 @@ public class ConfiguredVetoExtensionTest {
         String configuredValue = "  " + TestKlazz.class.getPackage().getName() +
                                  "\\..+";
 
-        ConfigurationContext context = mock(ConfigurationContext.class);
-        Configuration configuration = mock(Configuration.class);
+        Config configuration = mock(Config.class);
 
-        when(configuration.getContext()).thenReturn(context);
-        when(configuration.get("javax.enterprise.inject.vetoed")).thenReturn(configuredValue);
+        when(configuration.getValue("javax.enterprise.inject.vetoed", String.class))
+                .thenReturn(configuredValue);
 
-        ConfigurationProvider.setConfiguration(configuration);
+        ConfigProviderResolver.instance().registerConfig(configuration, getClass().getClassLoader());
 
         AnnotatedType<TestKlazz> annotatedType = mock(AnnotatedType.class);
         when(annotatedType.getJavaClass()).thenReturn(TestKlazz.class);

@@ -18,16 +18,14 @@
  */
 package org.apache.tamaya.mutableconfig;
 
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.mutableconfig.spi.MutableConfigurationProviderSpi;
-import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
-import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.mutableconfig.spi.MutableConfigSource;
 import org.apache.tamaya.spi.ServiceContextManager;
 
+import javax.config.Config;
+import javax.config.ConfigProvider;
+import javax.config.spi.ConfigSource;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -46,7 +44,7 @@ public final class MutableConfigurationProvider {
             MutableConfigurationProviderSpi spi = ServiceContextManager.getServiceContext().getService(
                     MutableConfigurationProviderSpi.class)  ;
         if(spi==null){
-            throw new ConfigException("Failed to initialize MutableConfigurationProviderSpi - " +
+            throw new IllegalArgumentException("Failed to initialize MutableConfigurationProviderSpi - " +
                     "mutable configuration support.");
         }
         return spi;
@@ -58,50 +56,50 @@ public final class MutableConfigurationProvider {
 
     /**
      * Creates a new {@link MutableConfiguration} for the given default configuration, using all
-     * {@link MutablePropertySource} instances found in its context and {@code autoCommit = false}.
+     * {@link MutableConfigSource} instances found in its context and {@code autoCommit = false}.
      *
      * @return a new MutableConfiguration instance
      */
     public static MutableConfiguration createMutableConfiguration(){
         return spi().createMutableConfiguration(
-                ConfigurationProvider.getConfiguration(), getApplyMostSignificantOnlyChangePolicy());
+                ConfigProvider.getConfig(), getApplyMostSignificantOnlyChangePolicy());
     }
 
     /**
      * Creates a new {@link MutableConfiguration} for the given default configuration, using all
-     * {@link MutablePropertySource} instances found in its context and {@code autoCommit = false}.
+     * {@link MutableConfigSource} instances found in its context and {@code autoCommit = false}.
      * @param changePropgationPolicy policy that defines how a change is written back and which property
      *                               sources are finally eligible for a write operation.
      * @return a new MutableConfiguration instance, with the given change policy active.
      */
     public static MutableConfiguration createMutableConfiguration(ChangePropagationPolicy changePropgationPolicy){
         return spi().createMutableConfiguration(
-                ConfigurationProvider.getConfiguration(), changePropgationPolicy);
+                ConfigProvider.getConfig(), changePropgationPolicy);
     }
 
 
     /**
      * Creates a new {@link MutableConfiguration} for the given configuration, using all
-     * {@link MutablePropertySource} instances found in its context and {@code MOST_SIGNIFICANT_ONLY_POLICY}
+     * {@link MutableConfigSource} instances found in its context and {@code MOST_SIGNIFICANT_ONLY_POLICY}
      * configuration writing policy.
      *
      * @param configuration the configuration to use to write the changes/config.
      * @return a new MutableConfiguration instance
      */
-    public static MutableConfiguration createMutableConfiguration(Configuration configuration){
+    public static MutableConfiguration createMutableConfiguration(Config configuration){
         return createMutableConfiguration(configuration, MOST_SIGNIFICANT_ONLY_POLICY);
     }
 
     /**
      * Creates a new {@link MutableConfiguration} for the given configuration, using all
-     * {@link MutablePropertySource} instances found in its context and {@code ALL_POLICY}
+     * {@link MutableConfigSource} instances found in its context and {@code ALL_POLICY}
      * configuration writing policy.
      *
      * @param configuration the configuration to use to write the changes/config.
      * @param changePropagationPolicy the configuration writing policy.
      * @return a new MutableConfiguration instance
      */
-    public static MutableConfiguration createMutableConfiguration(Configuration configuration, ChangePropagationPolicy changePropagationPolicy){
+    public static MutableConfiguration createMutableConfiguration(Config configuration, ChangePropagationPolicy changePropagationPolicy){
         return spi().createMutableConfiguration(configuration, changePropagationPolicy);
     }
 
@@ -147,13 +145,13 @@ public final class MutableConfigurationProvider {
      */
     private static final ChangePropagationPolicy ALL_POLICY = new ChangePropagationPolicy() {
         @Override
-        public void applyChange(ConfigChangeRequest change, Collection<PropertySource> propertySources) {
-            for(PropertySource propertySource: propertySources){
-                if(propertySource instanceof MutablePropertySource){
-                    MutablePropertySource target = (MutablePropertySource)propertySource;
+        public void applyChange(ConfigChangeRequest change, Iterable<ConfigSource> propertySources) {
+            for(ConfigSource propertySource: propertySources){
+                if(propertySource instanceof MutableConfigSource){
+                    MutableConfigSource target = (MutableConfigSource)propertySource;
                     try{
                         target.applyChange(change);
-                    }catch(ConfigException e){
+                    }catch(Exception e){
                         LOG.warning("Failed to store changes '"+change+"' not applicable to "+target.getName()
                         +"("+target.getClass().getName()+").");
                     }
@@ -169,13 +167,13 @@ public final class MutableConfigurationProvider {
      */
     private static final ChangePropagationPolicy MOST_SIGNIFICANT_ONLY_POLICY = new ChangePropagationPolicy() {
         @Override
-        public void applyChange(ConfigChangeRequest change, Collection<PropertySource> propertySources) {
-            for(PropertySource propertySource: propertySources){
-                if(propertySource instanceof MutablePropertySource){
-                    MutablePropertySource target = (MutablePropertySource)propertySource;
+        public void applyChange(ConfigChangeRequest change, Iterable<ConfigSource> propertySources) {
+            for(ConfigSource propertySource: propertySources){
+                if(propertySource instanceof MutableConfigSource){
+                    MutableConfigSource target = (MutableConfigSource)propertySource;
                     try{
                         target.applyChange(change);
-                    }catch(ConfigException e){
+                    }catch(Exception e){
                         LOG.warning("Failed to store changes '"+change+"' not applicable to "+target.getName()
                                 +"("+target.getClass().getName()+").");
                     }
@@ -192,7 +190,7 @@ public final class MutableConfigurationProvider {
      */
     private static final ChangePropagationPolicy NONE_POLICY = new ChangePropagationPolicy() {
         @Override
-        public void applyChange(ConfigChangeRequest change, Collection<PropertySource> propertySources) {
+        public void applyChange(ConfigChangeRequest change, Iterable<ConfigSource> propertySources) {
             LOG.warning("Cannot store changes '"+change+"': prohibited by change policy (read-only).");
         }
     };
@@ -209,14 +207,14 @@ public final class MutableConfigurationProvider {
         }
 
         @Override
-        public void applyChange(ConfigChangeRequest change, Collection<PropertySource> propertySources) {
-            for(PropertySource propertySource: propertySources){
-                if(propertySource instanceof MutablePropertySource){
+        public void applyChange(ConfigChangeRequest change, Iterable<ConfigSource> propertySources) {
+            for(ConfigSource propertySource: propertySources){
+                if(propertySource instanceof MutableConfigSource){
                     if(this.propertySourceNames.contains(propertySource.getName())) {
-                        MutablePropertySource target = (MutablePropertySource) propertySource;
+                        MutableConfigSource target = (MutableConfigSource) propertySource;
                         try{
                             target.applyChange(change);
-                        }catch(ConfigException e){
+                        }catch(Exception e){
                             LOG.warning("Failed to store changes '"+change+"' not applicable to "+target.getName()
                                     +"("+target.getClass().getName()+").");
                         }

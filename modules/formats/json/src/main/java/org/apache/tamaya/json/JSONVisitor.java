@@ -18,10 +18,7 @@
  */
 package org.apache.tamaya.json;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -29,7 +26,6 @@ import javax.json.JsonString;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 
-import org.apache.tamaya.ConfigException;
 
 /**
  * Visitor implementation to read a JSON formatted input source.
@@ -64,7 +60,7 @@ class JSONVisitor {
                         case NUMBER: value = jsonValue.toString(); break;
                         case STRING: value = ((JsonString) jsonValue).getString(); break;
                         default:
-                            throw new ConfigException("Internal failure while processing JSON document.");
+                            throw new IllegalStateException("Internal failure while processing JSON document.");
                     }
                     
                     targetStore.put(key, value);
@@ -73,9 +69,11 @@ class JSONVisitor {
                     JsonObject node = (JsonObject) current.getValue();
                     stack.push(new VisitingContext(node, key));
                 } else if (current.getValue() instanceof JsonArray) {
-                    throw new ConfigException("Arrays are not supported at the moment.");
+                    String key = stack.peek().getNSPrefix() + current.getKey();
+                    JsonArray array = (JsonArray) current.getValue();
+                    stack.push(new VisitingContext(array, key));
                 } else {
-                    throw new ConfigException("Internal failure while processing JSON document.");
+                    throw new IllegalStateException("Internal failure while processing JSON document.");
                 }
 
                 goOn = stack.peek().hasNext();
@@ -94,6 +92,7 @@ class JSONVisitor {
     private static class VisitingContext {
         private final String namespace;
         private final JsonObject node;
+        private final JsonArray array;
         private final Iterator<Map.Entry<String, JsonValue>> elements;
 
         public VisitingContext(JsonObject node) {
@@ -103,7 +102,43 @@ class JSONVisitor {
         public VisitingContext(JsonObject rootNode, String currentNamespace) {
             namespace = currentNamespace;
             node = rootNode;
+            array = null;
             elements = node.entrySet().iterator();
+        }
+
+        public VisitingContext(JsonArray array, String currentNamespace) {
+            namespace = currentNamespace;
+            this.array = array;
+            this.node = null;
+            Map<String,JsonValue> arrayMap = new HashMap<>();
+            arrayMap.put("[array]", formatArray(array.iterator()));
+            elements = arrayMap.entrySet().iterator();
+        }
+
+        private JsonValue formatArray(Iterator<JsonValue> iterator) {
+            StringBuilder b = new StringBuilder();
+            iterator.forEachRemaining(r -> {b.append(r.toString().replace(",", "\\,")).append(',');});
+            if(b.length()>0){
+                b.setLength(b.length()-1);
+            }
+            String elemsAsString = b.toString();
+            return new JsonString(){
+
+                @Override
+                public ValueType getValueType() {
+                    return ValueType.STRING;
+                }
+
+                @Override
+                public String getString() {
+                    return elemsAsString;
+                }
+
+                @Override
+                public CharSequence getChars() {
+                    return elemsAsString;
+                }
+            };
         }
 
         public Map.Entry<String, JsonValue> nextElement() {
@@ -116,6 +151,9 @@ class JSONVisitor {
         }
 
         public String getNSPrefix() {
+            if(array!=null){
+                return namespace;
+            }
             return namespace.isEmpty() ? namespace : namespace + ".";
         }
     }

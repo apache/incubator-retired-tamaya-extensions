@@ -18,15 +18,15 @@
  */
 package org.apache.tamaya.mutableconfig;
 
-import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.mutableconfig.spi.MutableConfigSource;
 
-import java.util.Collection;
+import javax.config.spi.ConfigSource;
 
 /**
  * Policy that defines how changes are applied to the available
- * {@link org.apache.tamaya.mutableconfig.spi.MutablePropertySource} instances, e.g.
+ * {@link MutableConfigSource} instances, e.g.
  * <ul>
- *     <li><b>ALL: </b>Changes are propagated to all {@link org.apache.tamaya.mutableconfig.spi.MutablePropertySource}
+ *     <li><b>ALL: </b>Changes are propagated to all {@link MutableConfigSource}
  *     instances in order of significance. This means that a key added, updated or removed in each instance, if the key
  *     is writable/removable.</li>
  *     <li><b>SIGNIFICANT_ONLY: </b>A change (creation, update) is only applied, if
@@ -48,6 +48,6 @@ public interface ChangePropagationPolicy {
      *                        never null.
      * @param configChange the configuration change, not null.
      */
-    void applyChange(ConfigChangeRequest configChange, Collection<PropertySource> propertySources);
+    void applyChange(ConfigChangeRequest configChange, Iterable<ConfigSource> propertySources);
 
 }

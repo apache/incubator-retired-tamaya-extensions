@@ -34,10 +34,10 @@ abstract class BaseTestConfiguration {
         return ShrinkWrap.create(WebArchive.class)
                          .addClasses(ConfiguredTest.class, ConfiguredClass.class, InjectedClass.class,
                                      AdditionalMatchers.class, NotFoundNoDefault.class,
-                                     ConfigurationProducer.class)
+                                     ConfigProducer.class)
                          .addAsServiceProvider(Extension.class, TamayaCDIInjectionExtension.class)
                          .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
-                         .addAsWebInfResource("META-INF/javaconfiguration.properties", "META-INF/javaconfiguration.properties");
+                         .addAsWebInfResource("META-INF/javaconfig.properties", "META-INF/javaconfig.properties");
     }
 
 }

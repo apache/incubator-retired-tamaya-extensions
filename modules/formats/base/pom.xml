@@ -34,19 +34,13 @@ under the License.
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.tamaya</groupId>
-            <artifactId>tamaya-api</artifactId>
-            <version>${tamaya-apicore.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.apache.tamaya.ext</groupId>
             <artifactId>tamaya-resources</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
-            <artifactId>tamaya-spisupport</artifactId>
+            <artifactId>tamaya-base</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

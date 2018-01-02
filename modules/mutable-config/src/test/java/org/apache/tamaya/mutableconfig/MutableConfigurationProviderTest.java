@@ -19,8 +19,9 @@
 
 package org.apache.tamaya.mutableconfig;
 
-import org.apache.tamaya.ConfigurationProvider;
 import org.junit.Test;
+
+import javax.config.ConfigProvider;
 
 import static org.junit.Assert.*;
 
@@ -36,7 +37,7 @@ public class MutableConfigurationProviderTest {
     @Test
     public void createMutableConfiguration1() throws Exception {
         MutableConfiguration cfg = MutableConfigurationProvider
-                .createMutableConfiguration(ConfigurationProvider.getConfiguration());
+                .createMutableConfiguration(ConfigProvider.getConfig());
         assertNotNull(cfg);
         assertEquals(cfg.getChangePropagationPolicy(),
                 MutableConfigurationProvider.getApplyMostSignificantOnlyChangePolicy());
@@ -46,7 +47,7 @@ public class MutableConfigurationProviderTest {
     public void createMutableConfiguration2() throws Exception {
         ChangePropagationPolicy policy = MutableConfigurationProvider.getApplySelectiveChangePolicy("blabla");
         MutableConfiguration cfg = MutableConfigurationProvider
-                .createMutableConfiguration(ConfigurationProvider.getConfiguration(),
+                .createMutableConfiguration(ConfigProvider.getConfig(),
                         policy);
         assertNotNull(cfg);
         assertEquals(cfg.getChangePropagationPolicy(), policy);

@@ -52,7 +52,7 @@ public class ConfiguredTest extends BaseTestConfiguration {
         assertNotNull(injectedClass.builder1);
         assertNotNull(injectedClass.builder2);
         assertNotNull(injectedClass.config);
-        assertNotNull(injectedClass.configContext);
+        assertNotNull(injectedClass.config2);
     }
 
     @Test
@@ -65,12 +65,6 @@ public class ConfiguredTest extends BaseTestConfiguration {
     public void test_Injected_configs_are_same(){
         InjectedClass injectedClass =  CDI.current().select(InjectedClass.class).get();
         assertTrue(injectedClass.config == injectedClass.config2);
-    }
-
-    @Test
-    public void test_Injected_configContexts_are_same(){
-        InjectedClass injectedClass =  CDI.current().select(InjectedClass.class).get();
-        assertTrue(injectedClass.configContext == injectedClass.configContext2);
     }
 
     @Test(expected=Exception.class)

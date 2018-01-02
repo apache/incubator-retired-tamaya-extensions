@@ -85,15 +85,16 @@ public final class ResolvableConfig implements Config{
 
     @Override
     public <T> Optional<T> getOptionalValue(String propertyName, Class<T> propertyType) {
-        ConfigValue value = ConfigValue.of(
-                propertyName, delegate.getValue(propertyName, String.class), null);
-        value = filterManager.filterValue(value);
-        if(value!=null){
-            if(String.class.equals(propertyType)) {
-                return Optional.ofNullable((T) value.getValue());
+        Optional<String> value = delegate.getOptionalValue(propertyName, String.class);
+        if(value.isPresent()) {
+            String filtered = filterManager.filterValue(propertyName, value.get(), delegate);
+            if (filtered != null) {
+                if (String.class.equals(propertyType)) {
+                    return Optional.ofNullable((T) filtered);
+                }
+                return Optional.ofNullable(
+                        (T) converterManager.convertValue(filtered, propertyType));
             }
-            return Optional.ofNullable(
-                    (T)converterManager.convertValue(propertyName, value.getValue(), propertyType, this));
         }
         return Optional.empty();
     }

@@ -27,12 +27,12 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.net.URL;
 
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValue;
-import org.apache.tamaya.spisupport.PropertySourceComparator;
+import org.apache.tamaya.base.configsource.ConfigSourceComparator;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+
+import javax.config.spi.ConfigSource;
 
 /**
  * Class with a collection of common test cases each JSON processing
@@ -40,7 +40,7 @@ import org.junit.Test;
  */
 public abstract class CommonJSONTestCaseCollection {
 
-    abstract PropertySource getPropertiesFrom(URL source) throws Exception;
+    abstract ConfigSource getPropertiesFrom(URL source) throws Exception;
 
     @Test
     public void canReadNonLatinCharacters() throws Exception {
@@ -49,12 +49,12 @@ public abstract class CommonJSONTestCaseCollection {
 
         assertThat(configURL, Matchers.notNullValue());
 
-        PropertySource propertySource = getPropertiesFrom(configURL);
+        ConfigSource propertySource = getPropertiesFrom(configURL);
 
-        assertThat(propertySource.get("name"), Matchers.notNullValue());
-        assertThat(propertySource.get("name").getValue(), equalTo("\u041e\u043b\u0438\u0432\u0435\u0440"));
-        assertThat(propertySource.get("\u0444\u0430\u043c\u0438\u043b\u0438\u044f"), Matchers.notNullValue());
-        assertThat(propertySource.get("\u0444\u0430\u043c\u0438\u043b\u0438\u044f").getValue(), Matchers.equalTo("Fischer"));
+        assertThat(propertySource.getValue("name"), Matchers.notNullValue());
+        assertThat(propertySource.getValue("name"), equalTo("\u041e\u043b\u0438\u0432\u0435\u0440"));
+        assertThat(propertySource.getValue("\u0444\u0430\u043c\u0438\u043b\u0438\u044f"), Matchers.notNullValue());
+        assertThat(propertySource.getValue("\u0444\u0430\u043c\u0438\u043b\u0438\u044f"), Matchers.equalTo("Fischer"));
     }
 
     @Test
@@ -64,11 +64,11 @@ public abstract class CommonJSONTestCaseCollection {
 
         assertThat(configURL, Matchers.notNullValue());
 
-        PropertySource propertySource = getPropertiesFrom(configURL);
+        ConfigSource propertySource = getPropertiesFrom(configURL);
 
-        assertThat(propertySource.get("onamae"), Matchers.notNullValue());
+        assertThat(propertySource.getValue("onamae"), Matchers.notNullValue());
         // 霊屋 = Tamaya
-        assertThat(propertySource.get("onamae").getValue(), equalTo("\u970a\u5c4b"));
+        assertThat(propertySource.getValue("onamae"), equalTo("\u970a\u5c4b"));
     }
 
     @Test
@@ -78,20 +78,20 @@ public abstract class CommonJSONTestCaseCollection {
 
         assertThat(configURL, CoreMatchers.notNullValue());
 
-        PropertySource properties = getPropertiesFrom(configURL);
+        ConfigSource properties = getPropertiesFrom(configURL);
 
         assertTrue(properties.getProperties().keySet().size()>=5);
 
-        PropertyValue keyB = properties.get("b");
-        PropertyValue keyDO = properties.get("d.o");
-        PropertyValue keyDP = properties.get("d.p");
+        String keyB = properties.getValue("b");
+        String keyDO = properties.getValue("d.o");
+        String keyDP = properties.getValue("d.p");
 
         assertThat(keyB, notNullValue());
-        assertThat(keyB.getValue(), equalTo("B"));
+        assertThat(keyB, equalTo("B"));
         assertThat(keyDO, notNullValue());
-        assertThat(keyDO.getValue(), equalTo("O"));
+        assertThat(keyDO, equalTo("O"));
         assertThat(keyDP, Matchers.notNullValue());
-        assertThat(keyDP.getValue(), is("P"));
+        assertThat(keyDP, is("P"));
     }
 
     @Test
@@ -102,28 +102,28 @@ public abstract class CommonJSONTestCaseCollection {
 
         assertThat(configURL, CoreMatchers.notNullValue());
 
-        PropertySource properties = getPropertiesFrom(configURL);
+        ConfigSource properties = getPropertiesFrom(configURL);
 
         assertTrue(properties.getProperties().keySet().size()>=4);
 
-        PropertyValue keyA = properties.get("a");
-        PropertyValue keyDO = properties.get("b.o");
-        PropertyValue keyDP = properties.get("b.p");
-        PropertyValue keyC = properties.get("c");
+        String keyA = properties.getValue("a");
+        String keyDO = properties.getValue("b.o");
+        String keyDP = properties.getValue("b.p");
+        String keyC = properties.getValue("c");
 
         assertThat(keyA, notNullValue());
-        assertThat(keyA.getValue(), is("A"));
+        assertThat(keyA, is("A"));
         assertThat(keyC, notNullValue());
-        assertThat(keyC.getValue(), equalTo("C"));
+        assertThat(keyC, equalTo("C"));
         assertThat(keyDO, notNullValue());
-        assertThat(keyDO.getValue(), equalTo("O"));
+        assertThat(keyDO, equalTo("O"));
         assertThat(keyDP, notNullValue());
-        assertThat(keyDP.getValue(), is("P"));
+        assertThat(keyDP, is("P"));
     }
 
-    @Test(expected = IOException.class)
-    public void canHandleIllegalJSONFileWhichContainsAnArray() throws Exception {
-        URL configURL = CommonJSONTestCaseCollection.class.getResource("/configs/invalid/with-array.json");
+    @Test
+    public void canHandleJSONFileWhichContainsAnArray() throws Exception {
+        URL configURL = CommonJSONTestCaseCollection.class.getResource("/configs/valid/with-array.json");
 
         assertThat(configURL, CoreMatchers.notNullValue());
 
@@ -154,9 +154,9 @@ public abstract class CommonJSONTestCaseCollection {
 
         assertThat(configURL, CoreMatchers.notNullValue());
 
-        PropertySource properties = getPropertiesFrom(configURL);
+        ConfigSource properties = getPropertiesFrom(configURL);
 
-        assertThat(PropertySourceComparator.getOrdinal(properties), is(16784));
+        assertThat(ConfigSourceComparator.getOrdinal(properties), is(16784));
     }
 
     @Test
@@ -165,20 +165,20 @@ public abstract class CommonJSONTestCaseCollection {
 
         assertThat(configURL, CoreMatchers.notNullValue());
 
-        PropertySource properties = getPropertiesFrom(configURL);
+        ConfigSource properties = getPropertiesFrom(configURL);
 
         assertTrue(properties.getProperties().keySet().size()>=3);
 
-        PropertyValue keyA = properties.get("a");
-        PropertyValue keyB = properties.get("b");
-        PropertyValue keyC = properties.get("c");
+        String keyA = properties.getValue("a");
+        String keyB = properties.getValue("b");
+        String keyC = properties.getValue("c");
 
         assertThat(keyA, notNullValue());
-        assertThat(keyA.getValue(), equalTo("A"));
+        assertThat(keyA, equalTo("A"));
         assertThat(keyB, notNullValue());
-        assertThat(keyB.getValue(), is("B"));
+        assertThat(keyB, is("B"));
         assertThat(keyC, notNullValue());
-        assertThat(keyC.getValue(), is("C"));
+        assertThat(keyC, is("C"));
     }
 
     @Test(expected = IOException.class)
@@ -187,7 +187,7 @@ public abstract class CommonJSONTestCaseCollection {
 
         assertThat(configURL, CoreMatchers.notNullValue());
 
-        PropertySource properties = getPropertiesFrom(configURL);
+        ConfigSource properties = getPropertiesFrom(configURL);
 
         properties.getProperties();
     }
@@ -198,7 +198,7 @@ public abstract class CommonJSONTestCaseCollection {
 
         assertThat(configURL, CoreMatchers.notNullValue());
 
-        PropertySource properties = getPropertiesFrom(configURL);
+        ConfigSource properties = getPropertiesFrom(configURL);
 
         assertTrue(properties.getProperties().keySet().size()>=0);
     }

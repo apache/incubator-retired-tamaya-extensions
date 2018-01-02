@@ -15,18 +15,16 @@
  */
 package org.apache.tamaya.springexample;
 
-import org.apache.tamaya.spi.ConversionContext;
-import org.apache.tamaya.spi.PropertyConverter;
-
+import javax.config.spi.Converter;
 import java.awt.*;
 
 /**
  * Simple demo converter for Color.
  */
-public class ColorConverter implements PropertyConverter<Color>{
+public class ColorConverter implements Converter<Color> {
 
     @Override
-    public Color convert(String value, ConversionContext context) {
+    public Color convert(String value) {
         if(value.length()<7){
             return null;
         }

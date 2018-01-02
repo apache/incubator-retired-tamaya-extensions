@@ -53,12 +53,7 @@
 
         <dependency>
             <groupId>org.apache.tamaya</groupId>
-            <artifactId>tamaya-api</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tamaya</groupId>
-            <artifactId>tamaya-core</artifactId>
+            <artifactId>tamaya-base</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
@@ -68,8 +63,9 @@
         </dependency>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
-            <artifactId>tamaya-spisupport</artifactId>
+            <artifactId>tamaya-core</artifactId>
             <version>${project.parent.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- Testing -->

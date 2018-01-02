@@ -18,15 +18,15 @@
  */
 package org.apache.tamaya.mutableconfig.internal;
 
-import org.apache.tamaya.mutableconfig.propertysources.MutableXmlPropertiesPropertySource;
+import org.apache.tamaya.mutableconfig.propertysources.MutableXmlPropertiesConfigSource;
 
 import java.io.File;
 import java.io.IOException;
 
 /**
- * Writable test property source based on the {@link MutableXmlPropertiesPropertySource}.
+ * Writable test property source based on the {@link MutableXmlPropertiesConfigSource}.
  */
-public class WritableXmlPropertiesSource extends MutableXmlPropertiesPropertySource {
+public class WritableXmlPropertiesSource extends MutableXmlPropertiesConfigSource {
 
     public static File target = createFile();
 

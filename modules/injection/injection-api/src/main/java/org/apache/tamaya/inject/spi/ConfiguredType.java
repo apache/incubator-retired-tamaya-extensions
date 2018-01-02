@@ -18,8 +18,7 @@
  */
 package org.apache.tamaya.inject.spi;
 
-import org.apache.tamaya.Configuration;
-
+import javax.config.Config;
 import java.util.Collection;
 
 /**
@@ -57,7 +56,7 @@ public interface ConfiguredType{
      * @param instance The instance to be configured, not null.
      * @param config  the target config, not null.
      */
-    void configure(Object instance, Configuration config);
+    void configure(Object instance, Config config);
 
 
 }

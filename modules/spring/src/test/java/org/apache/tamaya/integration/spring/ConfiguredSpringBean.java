@@ -18,10 +18,11 @@
  */
 package org.apache.tamaya.integration.spring;
 
-import org.apache.tamaya.inject.api.Config;
 import org.apache.tamaya.inject.api.ConfigDefaultSections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+
+import javax.config.inject.ConfigProperty;
 
 /**
  * Created by Anatole on 25.09.2015.
@@ -34,10 +35,10 @@ public class ConfiguredSpringBean {
     @Autowired
     private Environment env;
 
-    @Config("java.version")
+    @ConfigProperty(name="java.version")
     private String javaVersion;
 
-    @Config(defaultValue = "23")
+    @ConfigProperty(defaultValue = "23")
     private int testNumber;
 
     public String getJavaVersion(){

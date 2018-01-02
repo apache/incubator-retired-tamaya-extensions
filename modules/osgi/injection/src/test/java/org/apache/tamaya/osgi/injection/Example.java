@@ -18,7 +18,8 @@
  */
 package org.apache.tamaya.osgi.injection;
 
-import org.apache.tamaya.inject.api.Config;
+
+import javax.config.inject.ConfigProperty;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -27,11 +28,11 @@ import static org.junit.Assert.assertNotNull;
  * Example class to be configured with injection.
  */
 final class Example {
-    @Config("java.home")
+    @ConfigProperty(name ="java.home")
     String javaHome;
-    @Config("java.version")
+    @ConfigProperty(name ="java.version")
     String javaVersion;
-    @Config(value = "java.used", defaultValue = "true")
+    @ConfigProperty(name = "java.used", defaultValue = "true")
     boolean javaUsed;
 
     static void checkExampleConfig(Example example) {

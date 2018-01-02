@@ -20,6 +20,6 @@ under the License.
   /*
    some useful comment here
    */
-  "tamaya.ordinal" : 16784,
+  "config_ordinal" : 16784,
   "a" : "A" // another comment
 }

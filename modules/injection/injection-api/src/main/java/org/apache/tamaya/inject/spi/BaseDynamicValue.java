@@ -18,18 +18,15 @@
  */
 package org.apache.tamaya.inject.spi;
 
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.TypeLiteral;
+import javax.config.Config;
 import org.apache.tamaya.inject.api.DynamicValue;
 import org.apache.tamaya.inject.api.UpdatePolicy;
-import org.apache.tamaya.spi.ConversionContext;
-import org.apache.tamaya.spi.PropertyConverter;
 
+import javax.config.spi.Converter;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.Serializable;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -72,7 +69,7 @@ public abstract class BaseDynamicValue<T> implements DynamicValue<T> {
      */
     private UpdatePolicy updatePolicy = UpdatePolicy.NEVER;
     /** The targe type. */
-    private TypeLiteral<T> targetType;
+    private Type targetType;
     /**
      * The current value, never null.
      */
@@ -95,9 +92,9 @@ public abstract class BaseDynamicValue<T> implements DynamicValue<T> {
      * @param targetType the target type.
      * @param keys the candidate keys.
      */
-    public BaseDynamicValue(Object owner, String propertyName, TypeLiteral targetType, List<String> keys){
+    public BaseDynamicValue(Object owner, String propertyName, Type targetType, List<String> keys){
         if(keys == null || keys.isEmpty()){
-            throw new ConfigException("At least one key is required.");
+            throw new IllegalArgumentException("At least one key is required.");
         }
         this.owner = owner;
         this.propertyName = Objects.requireNonNull(propertyName);
@@ -125,7 +122,7 @@ public abstract class BaseDynamicValue<T> implements DynamicValue<T> {
      * Get the configuration to evaluate.
      * @return the configuration, never null.
      */
-    protected abstract Configuration getConfiguration();
+    protected abstract Config getConfiguration();
 
     /**
      * Get the corresponding property name.
@@ -155,7 +152,7 @@ public abstract class BaseDynamicValue<T> implements DynamicValue<T> {
      * Get the target type.
      * @return the target type, not null.
      */
-    public TypeLiteral<T> getTargetType(){
+    public Type getTargetType(){
         return targetType;
     }
 
@@ -207,7 +204,7 @@ public abstract class BaseDynamicValue<T> implements DynamicValue<T> {
 
     @Override
     public boolean updateValue() {
-        Configuration config = getConfiguration();
+        Config config = getConfiguration();
         T val = evaluateValue();
         if(value == null){
             value = val;
@@ -262,48 +259,21 @@ public abstract class BaseDynamicValue<T> implements DynamicValue<T> {
      * Allows to customize type conversion if needed, e.g. based on some annotations defined.
      * @return the custom converter, which replaces the default converters, ot null.
      */
-    protected PropertyConverter<T> getCustomConverter(){
+    protected Converter<T> getCustomConverter(){
         return null;
     }
 
     @Override
     public T evaluateValue() {
         T value = null;
-        List<PropertyConverter<T>> converters = new ArrayList<>();
-        if (this.getCustomConverter() != null) {
-            converters.add(this.getCustomConverter());
-        }
-        converters.addAll(getConfiguration().getContext().getPropertyConverters(targetType));
-
+        Converter<T> customConverter = getCustomConverter();
         for (String key : keys) {
-            ConversionContext ctx = new ConversionContext.Builder(key, targetType).build();
-            String stringVal = getConfiguration().getOrDefault(key, String.class, null);
-            if(stringVal!=null) {
-                if(String.class.equals(targetType.getType())){
-                    value = (T)stringVal;
-                }
-                for(PropertyConverter<T> conv:converters){
-                    try{
-                        value = conv.convert(stringVal, ctx);
-                        if(value!=null){
-                            break;
-                        }
-                    }catch(Exception e){
-                        LOG.warning("failed to convert: " + ctx);
-                    }
-                }
-            }
-        }
-        if(value == null && defaultValue!=null){
-            ConversionContext ctx = new ConversionContext.Builder("<defaultValue>", targetType).build();
-            for(PropertyConverter<T> conv:converters){
-                try{
-                    value = conv.convert(defaultValue, ctx);
-                    if(value!=null){
-                        break;
-                    }
-                }catch(Exception e){
-                    LOG.warning("failed to convert: " + ctx);
+            Optional<String> stringVal = getConfiguration().getOptionalValue(key, String.class);
+            if(stringVal.isPresent()) {
+                if(customConverter!=null){
+                    return customConverter.convert(stringVal.get());
+                }else{
+                    return (T)getConfiguration().getValue(key, (Class)getTargetType());
                 }
             }
         }
@@ -324,7 +294,7 @@ public abstract class BaseDynamicValue<T> implements DynamicValue<T> {
      * Performs a commit, if necessary, and returns the current value.
      *
      * @return the non-null value held by this {@code DynamicValue}
-     * @throws org.apache.tamaya.ConfigException if there is no value present
+     * @throws IllegalArgumentException if there is no value present
      * @see DynamicValue#isPresent()
      */
     @Override

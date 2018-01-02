@@ -18,21 +18,20 @@
  */
 package org.apache.tamaya.ext.examples.injection;
 
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.config.Config;
+import javax.config.ConfigProvider;
 import java.math.BigInteger;
 
 public class MinimalTest {
 
-    private static Configuration config;
+    private static Config config;
 
     @BeforeClass
     public static void before() throws InterruptedException {
-        config = ConfigurationProvider.getConfiguration();
+        config = ConfigProvider.getConfig();
         Thread.sleep(100L);
     }
 
@@ -43,53 +42,53 @@ public class MinimalTest {
         System.out.println("****************************************************");
         System.out.println();
         System.out.println("Example Metadata:");
-        System.out.println("\tType        :  " + config.get("example.type"));
-        System.out.println("\tName        :  " + config.get("example.name"));
-        System.out.println("\tDescription :  " + config.get("example.description"));
-        System.out.println("\tVersion     :  " + config.get("example.version"));
-        System.out.println("\tAuthor      :  " + config.get("example.author"));
+        System.out.println("\tType        :  " + config.getValue("example.type", String.class));
+        System.out.println("\tName        :  " + config.getValue("example.name", String.class));
+        System.out.println("\tDescription :  " + config.getValue("example.description", String.class));
+        System.out.println("\tVersion     :  " + config.getValue("example.version", String.class));
+        System.out.println("\tAuthor      :  " + config.getValue("example.author", String.class));
         System.out.println();
     }
 
-    @Test(expected = ConfigException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void getNumberValueTooLong() {
-        String value = config.get("example.number");
+        String value = config.getValue("example.number", String.class);
         System.err.println("**** example.number(String)=" + value);
-        int number = config.get("example.number",int.class);
+        int number = config.getValue("example.number",int.class);
         System.out.println("----\n   example.number(int)=" + number);
     }
 
     @Test
     public void getNumberValueAsInt_BadCase() {
-        String value = config.get("example.numberAsHex");
-        int number = config.get("example.numberAsHex",int.class);
+        String value = config.getValue("example.numberAsHex", String.class);
+        int number = config.getValue("example.numberAsHex",int.class);
         print("example.numberAsHex", number);
     }
 
     @Test
     public void getNumberValueAsBigInteger() {
-        String value = config.get("example.number");
-        BigInteger number = config.get("example.number", BigInteger.class);
+        String value = config.getValue("example.number", String.class);
+        BigInteger number = config.getValue("example.number", BigInteger.class);
         print("example.number", number);
     }
 
-    @Test(expected = ConfigException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void getNumberValueAsLongHex() {
-        String value = config.get("example.numberAsLongHex");
-        long number = config.get("example.numberAsLongHex",int.class);
+        String value = config.getValue("example.numberAsLongHex", String.class);
+        long number = config.getValue("example.numberAsLongHex",int.class);
         print("example.numberAsLongHex", number);
     }
 
     @Test
     public void getEnum() {
-        String value = config.get("example.testEnum");
-        TestEnum en = config.get("example.testEnum", TestEnum.class);
+        String value = config.getValue("example.testEnum", String.class);
+        TestEnum en = config.getValue("example.testEnum", TestEnum.class);
         print("example.testEnum", en);
     }
 
     protected void print(String key, Object value) {
         System.out.println("----\n" +
-                "  " + key + "(String)=" + config.get(key)
+                "  " + key + "(String)=" + config.getValue(key, String.class)
                 + "\n  " + key + "(" + value.getClass().getSimpleName() + ")=" + value);
     }
 }

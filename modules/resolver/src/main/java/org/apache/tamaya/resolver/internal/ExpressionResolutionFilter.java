@@ -19,7 +19,6 @@
 package org.apache.tamaya.resolver.internal;
 
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
-import org.apache.tamaya.spi.ConfigValue;
 import org.apache.tamaya.spi.Filter;
 import org.apache.tamaya.spi.ServiceContextManager;
 
@@ -82,11 +81,11 @@ public class ExpressionResolutionFilter implements Filter {
      * @return the resolved value, or the input in case where no expression was detected.
      */
     @Override
-    public ConfigValue filterProperty(ConfigValue valueToBeFiltered){
-        LOG.finest("Resolving " + valueToBeFiltered);
-        String newVal = evaluator().evaluateExpression(valueToBeFiltered.getKey(), valueToBeFiltered.getValue(), true);
+    public String filterProperty(String key, String valueToBeFiltered){
+        LOG.finest(() -> "Resolving " + valueToBeFiltered + "("+key+")");
+        String newVal = evaluator().evaluateExpression(key, valueToBeFiltered, true);
         if(newVal!=null){
-            return valueToBeFiltered.toBuilder().setValue(newVal).build();
+            return newVal;
         }
         return null;
     }

@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
  * annotation(s). This annotation allows
  * to define the configuration section that is prefixed to all <b>relative</b> configuration keys.
  * @see Config
- * @see ConfigAutoInject
+ * @see ConfigAutoDetect
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.TYPE })

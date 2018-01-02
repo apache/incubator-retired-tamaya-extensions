@@ -19,7 +19,7 @@
 package org.apache.tamaya.osgi.updater;
 
 import org.apache.tamaya.events.ConfigEvent;
-import org.apache.tamaya.events.ConfigurationChangeBuilder;
+import org.apache.tamaya.events.ConfigChangeBuilder;
 import org.apache.tamaya.osgi.commands.TamayaConfigService;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,14 +44,14 @@ public class EventListenerTest extends AbstractOSGITest{
 
     @Test
     public void testEventWithNoDataDoesNotTriggerTamayaServices() throws Exception {
-        ConfigEvent evt = ConfigurationChangeBuilder.of().addChange("a", "b").build();
+        ConfigEvent evt = ConfigChangeBuilder.of().addChange("a", "b").build();
         eventListener.onConfigEvent(evt);
         verify(bundleContext, never()).getServiceReference(TamayaConfigService.class);
     }
 
     @Test
     public void testEventForPIDDoesTriggerTamayaServices() throws Exception {
-        ConfigEvent evt = ConfigurationChangeBuilder.of().addChange("[PID.foo]a", "b").build();
+        ConfigEvent evt = ConfigChangeBuilder.of().addChange("[PID.foo]a", "b").build();
         eventListener.onConfigEvent(evt);
         verify(bundleContext).getServiceReference(TamayaConfigService.class);
         verify(tamayaConfigService).updateConfig("PID.foo");

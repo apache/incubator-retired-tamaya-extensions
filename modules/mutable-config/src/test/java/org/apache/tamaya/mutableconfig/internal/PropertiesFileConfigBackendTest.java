@@ -18,11 +18,11 @@
  */
 package org.apache.tamaya.mutableconfig.internal;
 
-import org.apache.tamaya.mutableconfig.propertysources.MutablePropertiesPropertySource;
+import org.apache.tamaya.mutableconfig.propertysources.MutablePropertiesConfigSource;
 
 
 /**
- * Tests for {@link MutablePropertiesPropertySource}.
+ * Tests for {@link MutablePropertiesConfigSource}.
  */
 public class PropertiesFileConfigBackendTest {
 

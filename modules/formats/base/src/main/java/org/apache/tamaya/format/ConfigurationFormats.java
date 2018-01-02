@@ -31,9 +31,9 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.ServiceContextManager;
+
+import javax.config.spi.ConfigSource;
 
 /**
  * Small accessor and management class dealing with {@link org.apache.tamaya.format.ConfigurationFormat}
@@ -199,7 +199,7 @@ public final class ConfigurationFormats {
      * @param inputStream the inputStream from where to read, not null.
      * @param formats     the formats to try.
      * @return the ConfigurationData read, or null.
-     * @throws ConfigException if the resource cannot be read.
+     * @throws IllegalArgumentException if the resource cannot be read.
      */
     public static ConfigurationData readConfigurationData(String resource, InputStream inputStream,
                                                           Collection<ConfigurationFormat> formats) throws IOException {
@@ -222,64 +222,64 @@ public final class ConfigurationFormats {
 
     /**
      * Tries to read configuration data from a given URL, hereby explicitly trying all given formats
-     * in order and transforms it into a {@link PropertySource} using a default mapping.
+     * in order and transforms it into a {@link javax.config.spi.ConfigSource} using a default mapping.
      *
      * @param url    the URL to read, not null.
      * @param formats     the formats to try. If not formats are passed explicitly, all known formats
      *                    are tried.
      * @return a corresponding property source, or null.
-     * @throws ConfigException if the resource cannot be read.
+     * @throws IllegalArgumentException if the resource cannot be read.
      * @throws IOException if the URL's stream can not be opened.
      */
-    public static PropertySource createPropertySource(URL url, ConfigurationFormat... formats)throws IOException{
-        return createPropertySource(url.toString(), url.openStream(), formats);
+    public static ConfigSource createConfigSource(URL url, ConfigurationFormat... formats)throws IOException{
+        return createConfigSource(url.toString(), url.openStream(), formats);
     }
 
     /**
      * Tries to read configuration data from a given URL, hereby explicitly trying all given formats
-     * in order and transforms it into a {@link PropertySource} using a default mapping.
+     * in order and transforms it into a {@link ConfigSource} using a default mapping.
      *
      * @param url    the URL to read, not null.
      * @param formats     the formats to try. If not formats are passed explicitly, all known formats
      *                    are tried.
      * @return a corresponding property source, or null.
-     * @throws ConfigException if the resource cannot be read.
+     * @throws IllegalArgumentException if the resource cannot be read.
      * @throws IOException if the URL's stream can not be opened.
      */
-    public static PropertySource createPropertySource(URL url, Collection<ConfigurationFormat> formats)throws IOException{
-        return createPropertySource(url.toString(), url.openStream(), formats);
+    public static ConfigSource createConfigSource(URL url, Collection<ConfigurationFormat> formats)throws IOException{
+        return createConfigSource(url.toString(), url.openStream(), formats);
     }
 
     /**
      * Tries to read configuration data from a given URL, hereby explicitly trying all given formats
-     * in order and transforms it into a {@link PropertySource} using a default mapping.
+     * in order and transforms it into a {@link ConfigSource} using a default mapping.
      *
      * @param resource    a descriptive name for the resource, since an InputStream does not have any
      * @param inputStream the inputStream from where to read, not null.
      * @param formats     the formats to try. If not formats are passed explicitly, all known formats
      *                    are tried.
      * @return a corresponding property source, or null.
-     * @throws ConfigException if the resource cannot be read.
+     * @throws IllegalArgumentException if the resource cannot be read.
      */
-    public static PropertySource createPropertySource(String resource, InputStream inputStream,
-                                                      ConfigurationFormat... formats){
-        return createPropertySource(resource, inputStream, Arrays.asList(formats));
+    public static ConfigSource createConfigSource(String resource, InputStream inputStream,
+                                                    ConfigurationFormat... formats){
+        return createConfigSource(resource, inputStream, Arrays.asList(formats));
     }
 
 
     /**
      * Tries to read configuration data from a given URL, hereby explicitly trying all given formats
-     * in order and transforms it into a {@link PropertySource} using a default mapping.
+     * in order and transforms it into a {@link ConfigSource} using a default mapping.
      *
      * @param resource    a descriptive name for the resource, since an InputStream does not have any
      * @param inputStream the inputStream from where to read, not null.
      * @param formats     the formats to try. If not formats are passed explicitly, all known formats
      *                    are tried.
      * @return a corresponding property source, or null.
-     * @throws ConfigException if the resource cannot be read.
+     * @throws IllegalArgumentException if the resource cannot be read.
      */
-    public static PropertySource createPropertySource(String resource, InputStream inputStream,
-                                                       Collection<ConfigurationFormat> formats) {
+    public static ConfigSource createConfigSource(String resource, InputStream inputStream,
+                                                    Collection<ConfigurationFormat> formats) {
         Objects.requireNonNull(resource, "Config resource required for traceability.");
         try(InputStreamFactory isFactory = new InputStreamFactory(Objects.requireNonNull(inputStream))) {
             if(formats.isEmpty()){
@@ -289,7 +289,7 @@ public final class ConfigurationFormats {
                 try (InputStream is = isFactory.createInputStream()) {
                     final ConfigurationData data = format.readConfiguration(resource, is);
                     if (data != null) {
-                        return new MappedConfigurationDataPropertySource(data);
+                        return new MappedConfigurationDataConfigSource(data);
                     }
                 } catch (final Exception e) {
                     LOG.log(Level.INFO,
@@ -297,9 +297,9 @@ public final class ConfigurationFormats {
                 }
             }
         }catch(IOException ioe){
-            throw new ConfigException("Failed to read from input stream for "+resource, ioe);
+            throw new IllegalArgumentException("Failed to read from input stream for "+resource, ioe);
         }
-        throw new ConfigException("No matching format found for "+resource+", tried: "+ formats);
+        throw new IllegalArgumentException("No matching format found for "+resource+", tried: "+ formats);
     }
 
 

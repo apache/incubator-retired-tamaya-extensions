@@ -18,11 +18,12 @@
  */
 package org.apache.tamaya.osgi.injection;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.inject.ConfigurationInjection;
 import org.osgi.service.cm.ConfigurationAdmin;
 
+import javax.config.Config;
+import javax.config.ConfigProvider;
+import javax.config.spi.ConfigProviderResolver;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -34,7 +35,7 @@ final class OSGIConfigurationInjector{
     /** The OSGI ConfigManager. */
     private ConfigurationAdmin cm;
     /** The corresponding Tamaya configuration. */
-    private Configuration tamayaOSGIConfiguration;
+    private Config javaConfigOSGIConfiguration;
     /** The target PID. */
     private String pid;
     /** The target location. */
@@ -59,12 +60,10 @@ final class OSGIConfigurationInjector{
         this.cm = Objects.requireNonNull(cm);
         this.pid = Objects.requireNonNull(pid);
         this.location = location;
-        tamayaOSGIConfiguration = ConfigurationProvider.createConfiguration(
-                ConfigurationProvider.getConfigurationContextBuilder()
-                .addDefaultPropertyConverters()
-                .addDefaultPropertyFilters()
-                .addPropertySources(new OSGIConfigAdminPropertySource(cm, pid, location))
-                .build());
+        javaConfigOSGIConfiguration = ConfigProviderResolver.instance().getBuilder()
+                .addDiscoveredConverters()
+                .withSources(new OSGIConfigAdminPropertySource(cm, pid, location))
+                .build();
     }
 
     /**
@@ -91,7 +90,7 @@ final class OSGIConfigurationInjector{
      */
     public <T> T configure(T instance){
         return ConfigurationInjection.getConfigurationInjector()
-                .configure(instance, tamayaOSGIConfiguration);
+                .configure(instance, javaConfigOSGIConfiguration);
     }
 
     /**
@@ -103,7 +102,7 @@ final class OSGIConfigurationInjector{
      */
     public <T> Supplier<T> getConfiguredSupplier(java.util.function.Supplier<T> supplier){
         return ConfigurationInjection.getConfigurationInjector()
-                .getConfiguredSupplier(supplier, tamayaOSGIConfiguration);
+                .getConfiguredSupplier(supplier, javaConfigOSGIConfiguration);
     }
 
     /**
@@ -115,6 +114,6 @@ final class OSGIConfigurationInjector{
      */
     public <T> T createTemplate(Class<T> templateType){
         return ConfigurationInjection.getConfigurationInjector()
-                .createTemplate(templateType, tamayaOSGIConfiguration);
+                .createTemplate(templateType, javaConfigOSGIConfiguration);
     }
 }

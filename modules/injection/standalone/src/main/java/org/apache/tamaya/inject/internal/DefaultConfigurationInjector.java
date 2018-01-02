@@ -18,11 +18,11 @@
  */
 package org.apache.tamaya.inject.internal;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.inject.ConfigurationInjector;
 
 import javax.annotation.Priority;
+import javax.config.ConfigProvider;
+import javax.config.inject.ConfigProperty;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -33,7 +33,6 @@ import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 import org.apache.tamaya.inject.api.NoConfig;
-import org.apache.tamaya.inject.api.Config;
 import org.apache.tamaya.inject.api.ConfigDefaultSections;
 import org.apache.tamaya.inject.spi.ConfiguredType;
 import org.osgi.service.component.annotations.Component;
@@ -57,13 +56,26 @@ public class DefaultConfigurationInjector implements ConfigurationInjector {
      * @param type the type to be configured.
      * @return the configured type registered.
      */
-    public ConfiguredType registerType(Class<?> type) {
+    public ConfiguredType getConfiguredType(Class<?> type) {
         ConfiguredType confType = configuredTypes.get(type);
         if (confType == null) {
             if(!isConfigAnnotated(type) && !autoConfigureEnabled){
                 return null;
             }
             confType = new ConfiguredTypeImpl(type);
+        }
+        return confType;
+    }
+
+    /**
+     * Extract the configuration annotation config and registers it per class, for later reuse.
+     *
+     * @param type the type to be configured.
+     * @return the configured type registered.
+     */
+    public ConfiguredType registerType(Class<?> type) {
+        ConfiguredType confType = getConfiguredType(type);
+        if (confType != null) {
             configuredTypes.put(type, confType);
             InjectionHelper.sendConfigurationEvent(confType);
         }
@@ -97,12 +109,12 @@ public class DefaultConfigurationInjector implements ConfigurationInjector {
             return true;
         }
         for (Field f : type.getDeclaredFields()) {
-            if (f.isAnnotationPresent(NoConfig.class) || f.isAnnotationPresent(Config.class)) {
+            if (f.isAnnotationPresent(NoConfig.class) || f.isAnnotationPresent(ConfigProperty.class)) {
                 return true;
             }
         }
         for (Method m : type.getDeclaredMethods()) {
-            if (m.isAnnotationPresent(NoConfig.class) || m.isAnnotationPresent(Config.class)) {
+            if (m.isAnnotationPresent(NoConfig.class) || m.isAnnotationPresent(ConfigProperty.class)) {
                 return true;
             }
         }
@@ -117,7 +129,7 @@ public class DefaultConfigurationInjector implements ConfigurationInjector {
      */
     @Override
     public <T> T configure(T instance) {
-        return configure(instance, ConfigurationProvider.getConfiguration());
+        return configure(instance, ConfigProvider.getConfig());
     }
 
     /**
@@ -128,7 +140,7 @@ public class DefaultConfigurationInjector implements ConfigurationInjector {
      * @param config the target configuration, not null.
      */
     @Override
-    public <T> T configure(T instance, Configuration config) {
+    public <T> T configure(T instance, javax.config.Config config) {
         Class<?> type = Objects.requireNonNull(instance).getClass();
         ConfiguredType configuredType = registerType(type);
         if(configuredType!=null){
@@ -146,7 +158,7 @@ public class DefaultConfigurationInjector implements ConfigurationInjector {
      */
     @Override
     public <T> T createTemplate(Class<T> templateType) {
-        return createTemplate(templateType, ConfigurationProvider.getConfiguration());
+        return createTemplate(templateType, ConfigProvider.getConfig());
     }
 
     /**
@@ -156,7 +168,7 @@ public class DefaultConfigurationInjector implements ConfigurationInjector {
      * @param config the target configuration, not null.
      */
     @Override
-    public <T> T createTemplate(Class<T> templateType, Configuration config) {
+    public <T> T createTemplate(Class<T> templateType, javax.config.Config config) {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         if(cl==null){
             cl = this.getClass().getClassLoader();
@@ -167,15 +179,16 @@ public class DefaultConfigurationInjector implements ConfigurationInjector {
 
     @Override
     public <T> Supplier<T> getConfiguredSupplier(final Supplier<T> supplier) {
-        return getConfiguredSupplier(supplier, ConfigurationProvider.getConfiguration());
+        return getConfiguredSupplier(supplier, ConfigProvider.getConfig());
     }
 
     @Override
-    public <T> Supplier<T> getConfiguredSupplier(final Supplier<T> supplier, final Configuration config) {
-        return new Supplier<T>() {
-            public T get() {
-                return configure(supplier.get(), config);
-            }
-        };
+    public <T> Supplier<T> getConfiguredSupplier(final Supplier<T> supplier, final javax.config.Config config) {
+        return () -> configure(supplier.get(), config);
+    }
+
+    @Override
+    public boolean isConfigured(Object o) {
+        return getConfiguredType(o.getClass())!=null;
     }
 }

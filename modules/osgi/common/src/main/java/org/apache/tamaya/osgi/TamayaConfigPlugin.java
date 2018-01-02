@@ -23,6 +23,7 @@ import org.osgi.framework.*;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 
+import javax.config.Config;
 import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
@@ -323,8 +324,8 @@ public class TamayaConfigPlugin implements TamayaConfigService,BundleListener, S
     }
 
 
-    public org.apache.tamaya.Configuration getTamayaConfiguration(String root) {
-        return configChanger.getTamayaConfiguration(root);
+    public Config getJavaConfiguration(String root) {
+        return configChanger.getJavaConfiguration(root);
     }
 
     @Override

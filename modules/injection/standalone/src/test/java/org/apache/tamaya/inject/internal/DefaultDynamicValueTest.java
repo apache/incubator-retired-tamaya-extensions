@@ -18,18 +18,15 @@
  */
 package org.apache.tamaya.inject.internal;
 
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.inject.api.DynamicValue;
-import org.apache.tamaya.inject.api.Config;
 import org.apache.tamaya.inject.api.UpdatePolicy;
-import org.apache.tamaya.spi.ConversionContext;
-import org.apache.tamaya.spi.PropertyConverter;
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValue;
 import org.junit.Test;
 
-import org.apache.tamaya.Configuration;
-
+import javax.config.ConfigProvider;
+import javax.config.inject.ConfigProperty;
+import javax.config.spi.ConfigProviderResolver;
+import javax.config.spi.ConfigSource;
+import javax.config.spi.Converter;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
@@ -42,13 +39,13 @@ import static org.junit.Assert.*;
  */
 public class DefaultDynamicValueTest {
 
-    @Config("a")
+    @ConfigProperty(name="a")
     String myValue;
 
-    @Config("a")
+    @ConfigProperty(name="a")
     String myValue2;
 
-    @Config("a")
+    @ConfigProperty(name="a")
     void setterMethod(String value){
 
     }
@@ -62,10 +59,10 @@ public class DefaultDynamicValueTest {
         }
     };
 
-    private Map<String,PropertyValue> properties = new HashMap<>();
-    private Configuration config = ConfigurationProvider.createConfiguration(
-            ConfigurationProvider.getConfigurationContextBuilder().addPropertySources(
-            new PropertySource() {
+    private Map<String,String> properties = new HashMap<>();
+    private javax.config.Config config = ConfigProviderResolver.instance().getBuilder()
+            .withSources(
+            new ConfigSource() {
                 @Override
                 public int getOrdinal() {
                     return 0;
@@ -77,26 +74,22 @@ public class DefaultDynamicValueTest {
                 }
 
                 @Override
-                public PropertyValue get(String key) {
+                public String getValue(String key) {
                     return properties.get(key);
                 }
 
                 @Override
-                public Map<String, PropertyValue> getProperties() {
+                public Map<String, String> getProperties() {
                     return properties;
                 }
 
-                @Override
-                public boolean isScannable() {
-                    return false;
-                }
             }
-    ).build());
+    ).build();
 
     @Test
     public void testOf_Field() throws Exception {
         DynamicValue val = DefaultDynamicValue.of(this, getClass().getDeclaredField("myValue"),
-                ConfigurationProvider.getConfiguration());
+                ConfigProvider.getConfig());
         assertNotNull(val);
     }
 
@@ -109,7 +102,7 @@ public class DefaultDynamicValueTest {
 
     @Test
     public void testCommitAndGet() throws Exception {
-        properties.put("a",PropertyValue.of("a","aValue","test"));
+        properties.put("a","aValue");
         DynamicValue val = DefaultDynamicValue.of(this, getClass().getDeclaredField("myValue"),
                 config);
         assertNotNull(val);
@@ -118,7 +111,7 @@ public class DefaultDynamicValueTest {
 
     @Test
     public void testCommitAndGets() throws Exception {
-        properties.put("a",PropertyValue.of("a","aValue","test"));
+        properties.put("a","aValue");
         DynamicValue val = DefaultDynamicValue.of(this, getClass().getDeclaredField("myValue"),
                 config);
         val.setUpdatePolicy(UpdatePolicy.EXPLICIT);
@@ -126,14 +119,14 @@ public class DefaultDynamicValueTest {
         assertEquals("aValue",val.evaluateValue());
         // change config
         val.get();
-        properties.put("a",PropertyValue.of("a","aValue2","test"));
+        properties.put("a","aValue2");
         assertTrue(val.updateValue());
         assertEquals("aValue2", val.commitAndGet());
     }
 
     @Test
     public void testCommit() throws Exception {
-        properties.put("a",PropertyValue.of("a","aValue","test"));
+        properties.put("a","aValue");
         DynamicValue val = DefaultDynamicValue.of(this, getClass().getDeclaredField("myValue"),
                 config);
         val.setUpdatePolicy(UpdatePolicy.EXPLICIT);
@@ -141,7 +134,7 @@ public class DefaultDynamicValueTest {
         assertEquals("aValue", val.evaluateValue());
         // change config
         val.get();
-        properties.put("a",PropertyValue.of("a","aValue2","test"));
+        properties.put("a","aValue2");
         assertEquals("aValue2", val.evaluateValue());
         assertTrue(val.updateValue());
         val.commit();
@@ -160,37 +153,37 @@ public class DefaultDynamicValueTest {
 
     @Test
     public void testAddRemoveListener() throws Exception {
-        properties.put("a",PropertyValue.of("a","aValue","test"));
+        properties.put("a","aValue");
         DynamicValue val = DefaultDynamicValue.of(this, getClass().getDeclaredField("myValue"),
                 config);
         val.setUpdatePolicy(UpdatePolicy.IMMEDIATE);
         val.addListener(consumer);
         // change config
         val.get();
-        properties.put("a",PropertyValue.of("a","aValue2","test"));
+        properties.put("a","aValue2");
         val.get();
         assertNotNull(event);
         event = null;
         val.removeListener(consumer);
-        properties.put("a",PropertyValue.of("a","aValue3","test"));
+        properties.put("a","aValue3");
         val.updateValue();
         assertNull(event);
     }
 
     @Test
     public void testGet() throws Exception {
-        properties.put("a",PropertyValue.of("a","aValue","test"));
+        properties.put("a","aValue");
         DynamicValue val = DefaultDynamicValue.of(this, getClass().getDeclaredField("myValue"),
                 config);
         val.setUpdatePolicy(UpdatePolicy.IMMEDIATE);
-        properties.put("a",PropertyValue.of("a","aValue2","test"));
+        properties.put("a","aValue2");
         val.updateValue();
         assertEquals("aValue2", val.get());
     }
 
     @Test
     public void testUpdateValue() throws Exception {
-        properties.put("a",PropertyValue.of("a","aValue","test"));
+        properties.put("a","aValue");
         DynamicValue val = DefaultDynamicValue.of(this, getClass().getDeclaredField("myValue"),
                 config);
         val.setUpdatePolicy(UpdatePolicy.EXPLICIT);
@@ -205,25 +198,25 @@ public class DefaultDynamicValueTest {
 
     @Test
     public void testEvaluateValue() throws Exception {
-        properties.put("a",PropertyValue.of("a","aValue","test"));
+        properties.put("a","aValue");
         DynamicValue val = DefaultDynamicValue.of(this, getClass().getDeclaredField("myValue"),
                 config);
         val.setUpdatePolicy(UpdatePolicy.EXPLICIT);
         assertNotNull(val.get());
         assertEquals("aValue",val.evaluateValue());
-        properties.put("a",PropertyValue.of("a","aValue2","test"));
+        properties.put("a","aValue2");
         assertEquals("aValue2", val.evaluateValue());
     }
 
     @Test
     public void testGetNewValue() throws Exception {
-        properties.put("a",PropertyValue.of("a","aValue","test"));
+        properties.put("a","aValue");
         DynamicValue val = DefaultDynamicValue.of(this, getClass().getDeclaredField("myValue"),
                 config);
         val.setUpdatePolicy(UpdatePolicy.EXPLICIT);
         val.get();
         assertNull(val.getNewValue());
-        properties.put("a",PropertyValue.of("a","aValue2","test"));
+        properties.put("a","aValue2");
         val.get();
         assertNotNull(val.getNewValue());
         assertEquals("aValue2", val.getNewValue());
@@ -239,7 +232,7 @@ public class DefaultDynamicValueTest {
 
     @Test
     public void testIfPresent() throws Exception {
-        properties.put("a",PropertyValue.of("a","aValue","test"));
+        properties.put("a","aValue");
         DynamicValue val = DefaultDynamicValue.of(this, getClass().getDeclaredField("myValue"),
                 config);
         val.setUpdatePolicy(UpdatePolicy.IMMEDIATE);
@@ -255,7 +248,7 @@ public class DefaultDynamicValueTest {
                 config);
         val.setUpdatePolicy(UpdatePolicy.IMMEDIATE);
         assertEquals("bla", val.orElse("bla"));
-        properties.put("a",PropertyValue.of("a","aValue","test"));
+        properties.put("a","aValue");
         val.updateValue();
         assertEquals("aValue", val.orElse("bla"));
     }
@@ -305,10 +298,10 @@ public class DefaultDynamicValueTest {
 //        }));
 //    }
 
-    private static final class DoublicatingConverter implements PropertyConverter<String>{
+    private static final class DoublicatingConverter implements Converter<String> {
 
         @Override
-        public String convert(String value, ConversionContext context) {
+        public String convert(String value) {
             return value + value;
         }
     }

@@ -36,10 +36,9 @@ public class ConfigCommandsTest extends AbstractOSGITest{
         String result = ConfigCommands.getInfo(tamayaConfigPlugin);
         assertNotNull(result);
         System.out.println(result);
-        assertTrue(result.contains("Property Sources"));
-        assertTrue(result.contains("Property Converter"));
-        assertTrue(result.contains("Property Filter"));
-        assertTrue(result.contains("ConfigurationContext"));
+        assertTrue(result.contains("Config Sources"));
+        assertTrue(result.contains("Converter"));
+        assertTrue(result.contains("Filter"));
         assertTrue(result.contains("Configuration"));
     }
 
@@ -128,7 +127,7 @@ public class ConfigCommandsTest extends AbstractOSGITest{
         String result = ConfigCommands.getPropertySource("system-properties");
         assertNotNull(result);
         System.out.println(result);
-        assertTrue(result.contains("Property Source"));
+        assertTrue(result.contains("Config Source"));
         assertTrue(result.contains("ID"));
         assertTrue(result.contains("system-properties"));
         assertTrue(result.contains("Ordinal"));

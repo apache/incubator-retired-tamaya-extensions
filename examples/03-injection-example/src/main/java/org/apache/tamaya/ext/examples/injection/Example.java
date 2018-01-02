@@ -18,8 +18,8 @@
  */
 package org.apache.tamaya.ext.examples.injection;
 
-import org.apache.tamaya.inject.api.Config;
 import org.apache.tamaya.inject.api.ConfigDefaultSections;
+import javax.config.inject.ConfigProperty;
 
 /**
  * Simple example bean, mapped by default names mostly.
@@ -30,10 +30,10 @@ public class Example {
 
     private String type;
     private String name;
-    @Config(defaultValue = "No description available.")
+    @ConfigProperty(defaultValue = "No description available.")
     private String description;
     private int version;
-    @Config("author")
+    @ConfigProperty(name="author")
     private String exampleAuthor;
 
     @Override

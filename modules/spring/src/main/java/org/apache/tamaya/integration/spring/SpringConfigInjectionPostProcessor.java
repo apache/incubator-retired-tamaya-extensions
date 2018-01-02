@@ -21,12 +21,8 @@ package org.apache.tamaya.integration.spring;
 import org.apache.tamaya.inject.ConfigurationInjection;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.cglib.core.ReflectUtils;
-import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Proxy;
 
 /**
  * PostProcessor that performs injection of configured values using Tamaya {@link ConfigurationInjection}.
@@ -36,7 +32,9 @@ public class SpringConfigInjectionPostProcessor implements BeanPostProcessor{
 
     @Override
     public Object postProcessBeforeInitialization(Object o, String s) throws BeansException {
-        ConfigurationInjection.getConfigurationInjector().configure(o);
+        if(ConfigurationInjection.getConfigurationInjector().isConfigured(o)){
+            ConfigurationInjection.getConfigurationInjector().configure(o);
+        }
         return o;
     }
 

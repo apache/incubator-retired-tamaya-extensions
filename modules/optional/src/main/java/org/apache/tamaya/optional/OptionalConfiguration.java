@@ -20,8 +20,7 @@ package org.apache.tamaya.optional;
 
 
 import java.util.Objects;
-
-import org.apache.tamaya.ConfigurationProvider;
+import javax.config.ConfigProvider;
 
 /**
  * Simplified configuration API, that can be used by code that only wants Tamaya to optionally enhance its configuration
@@ -32,21 +31,21 @@ public final class OptionalConfiguration {
     /**
      * Flag only true, if Tamaya is on the classpath.
      */
-    private static final boolean TAMAYA_LOADED = initTamayaLoaded();
+    private static final boolean CONFIG_LOADED = initConfigLoaded();
 
     /**
      * Configuration API to be loaded.
      */
-    private static final String TAMAYA_CONFIGURATION = "org.apache.tamaya.Configuration";
+    private static final String JAVAX_CONFIGURATION = "javax.config.Config";
 
     /**
      * Tries to load the Tamaya Configuration interface from the classpath.
      *
      * @return true, if the interface is available.
      */
-    private static boolean initTamayaLoaded() {
+    private static boolean initConfigLoaded() {
         try {
-            Class.forName(TAMAYA_CONFIGURATION);
+            Class.forName(JAVAX_CONFIGURATION);
             return true;
         } catch (final Exception e) {
             return false;
@@ -57,8 +56,8 @@ public final class OptionalConfiguration {
      * Allows to check if Tamaya is on the classpath.
      * @return true, if Tamaya is available.
      */
-    public static boolean isTamayaLoaded(){
-        return TAMAYA_LOADED;
+    public static boolean isConfigLoaded(){
+        return CONFIG_LOADED;
     }
 
     /**
@@ -178,7 +177,7 @@ public final class OptionalConfiguration {
             case THROWS_EXCEPTION:
                 if (tamayaValue != value) {
                     if ((tamayaValue != null && !tamayaValue.equals(value)) ||
-                            (value != null && TAMAYA_LOADED && !value.equals(tamayaValue))) {
+                            (value != null && CONFIG_LOADED && !value.equals(tamayaValue))) {
                         throw new IllegalStateException("Incompatible configuration values: key=" + key +
                                 "=" + value + "(provider)/" + tamayaValue + "(Tamaya");
                     }
@@ -214,11 +213,11 @@ public final class OptionalConfiguration {
      * @param <T>  The type param
      * @return the corresponding value from Tamaya, or null.
      * @throws IllegalStateException if Tamaya is not loaded.
-     * @see #isTamayaLoaded()
+     * @see #isConfigLoaded()
      */
     private <T> T getTamaya(String key, Class<T> type) {
-        if (TAMAYA_LOADED) {
-            return ConfigurationProvider.getConfiguration().get(key, type);
+        if (CONFIG_LOADED) {
+            return ConfigProvider.getConfig().getValue(key, type);
         }
         throw new IllegalStateException("Tamaya is not loaded.");
     }

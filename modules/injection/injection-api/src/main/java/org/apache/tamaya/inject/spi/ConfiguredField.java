@@ -18,8 +18,7 @@
  */
 package org.apache.tamaya.inject.spi;
 
-import org.apache.tamaya.Configuration;
-
+import javax.config.Config;
 import java.lang.reflect.Field;
 import java.util.Collection;
 
@@ -64,5 +63,5 @@ public interface ConfiguredField {
      * @param instance the instance, not null.
      * @param config the configuration, not null.
      */
-    void configure(Object instance, Configuration config);
+    void configure(Object instance, Config config);
 }

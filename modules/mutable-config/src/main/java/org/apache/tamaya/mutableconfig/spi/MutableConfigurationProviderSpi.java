@@ -18,9 +18,10 @@
  */
 package org.apache.tamaya.mutableconfig.spi;
 
-import org.apache.tamaya.Configuration;
 import org.apache.tamaya.mutableconfig.ChangePropagationPolicy;
 import org.apache.tamaya.mutableconfig.MutableConfiguration;
+
+import javax.config.Config;
 
 
 /**
@@ -37,6 +38,6 @@ public interface MutableConfigurationProviderSpi {
     *                          sources.
     * @return a new mutable configuration instance.
     */
-   MutableConfiguration createMutableConfiguration(Configuration configuration,
+   MutableConfiguration createMutableConfiguration(Config configuration,
                                                    ChangePropagationPolicy propagationPolicy);
 }

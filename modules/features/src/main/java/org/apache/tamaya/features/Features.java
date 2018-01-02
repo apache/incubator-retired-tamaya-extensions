@@ -50,7 +50,7 @@ public final class Features {
      * @return true, if <i>tamaya-core</i> is on the classpath.
      */
     public static boolean tamayaCoreAvailable() {
-        return checkClassIsLoadable("org.apache.tamaya.core.internal.CoreConfiguration");
+        return checkClassIsLoadable("org.apache.tamaya.core.TamayaConfigProviderResolver");
     }
 
     /**
@@ -105,8 +105,16 @@ public final class Features {
      * Checks if <i>tamaya-spisupport</i> is on the classpath.
      * @return true, if <i>tamaya-spisupport</i> is on the classpath.
      */
-    public static boolean spiSupportAvailable() {
-        return checkClassIsLoadable("org.apache.tamaya.spisupport.PropertySourceComparator");
+    public static boolean baseSupportAvailable() {
+        return checkClassIsLoadable("org.apache.tamaya.base.PriorityServiceComparator");
+    }
+
+    /**
+     * Checks if <i>tamaya-spisupport</i> is on the classpath.
+     * @return true, if <i>tamaya-spisupport</i> is on the classpath.
+     */
+    public static boolean compatSupportAvailable() {
+        return checkClassIsLoadable("org.apache.tamaya.spi.PropertyConverter");
     }
 
     /**
@@ -130,7 +138,7 @@ public final class Features {
      * @return true, if <i>tamaya-jndi</i> is on the classpath.
      */
     public static boolean jndiAvailable() {
-        return checkClassIsLoadable("org.apache.tamaya.jndi.JNDIPropertySource");
+        return checkClassIsLoadable("org.apache.tamaya.jndi.JNDIConfigSource");
     }
 
     /**

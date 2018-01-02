@@ -18,15 +18,15 @@
  */
 package org.apache.tamaya.mutableconfig.internal;
 
-import org.apache.tamaya.mutableconfig.propertysources.MutablePropertiesPropertySource;
+import org.apache.tamaya.mutableconfig.propertysources.MutablePropertiesConfigSource;
 
 import java.io.File;
 import java.io.IOException;
 
 /**
- * Writable test property source based on the {@link MutablePropertiesPropertySource}.
+ * Writable test property source based on the {@link MutablePropertiesConfigSource}.
  */
-public class WritablePropertiesSource extends MutablePropertiesPropertySource {
+public class WritablePropertiesSource extends MutablePropertiesConfigSource {
 
     public static File target = createFile();
 

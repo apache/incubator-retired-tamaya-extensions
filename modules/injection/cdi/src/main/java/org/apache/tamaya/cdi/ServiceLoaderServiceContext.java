@@ -18,9 +18,8 @@
  */
 package org.apache.tamaya.cdi;
 
-import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.base.PriorityServiceComparator;
 import org.apache.tamaya.spi.ServiceContext;
-import org.apache.tamaya.spisupport.PriorityServiceComparator;
 
 import javax.annotation.Priority;
 import java.io.IOException;
@@ -49,6 +48,11 @@ final class ServiceLoaderServiceContext implements ServiceContext {
 
     @Override
     public <T> T getService(Class<T> serviceType) {
+        return getService(serviceType, ServiceContext.defaultClassLoader());
+    }
+
+    @Override
+    public <T> T getService(Class<T> serviceType, ClassLoader classLoader) {
         Object cached = singletons.get(serviceType);
         if (cached == null) {
             cached = create(serviceType);
@@ -61,9 +65,15 @@ final class ServiceLoaderServiceContext implements ServiceContext {
 
     @Override
     public <T> T create(Class<T> serviceType) {
+        return create(serviceType, ServiceContext.defaultClassLoader());
+    }
+
+    @Override
+    public <T> T create(Class<T> serviceType, ClassLoader classLoader) {
+        @SuppressWarnings("unchecked")
         Class<? extends T> implType = factoryTypes.get(serviceType);
         if(implType==null) {
-            Collection<T> services = getServices(serviceType);
+            Collection<T> services = getServices(serviceType, classLoader);
             if (services.isEmpty()) {
                 return null;
             } else {
@@ -87,13 +97,25 @@ final class ServiceLoaderServiceContext implements ServiceContext {
      */
     @Override
     public <T> List<T> getServices(final Class<T> serviceType) {
+        return  getServices(serviceType, ServiceContext.defaultClassLoader());
+    }
+
+    /**
+     * Loads and registers services.
+     *
+     * @param <T>         the concrete type.
+     * @param serviceType The service type.
+     * @return the items found, never {@code null}.
+     */
+    @Override
+    public <T> List<T> getServices(final Class<T> serviceType, ClassLoader classLoader) {
         List<T> found = (List<T>) servicesLoaded.get(serviceType);
         if (found != null) {
             return found;
         }
         List<T> services = new ArrayList<>();
         try {
-            for (T t : ServiceLoader.load(serviceType)) {
+            for (T t : ServiceLoader.load(serviceType, classLoader)) {
                 services.add(t);
             }
             Collections.sort(services, PriorityServiceComparator.getInstance());
@@ -130,7 +152,7 @@ final class ServiceLoaderServiceContext implements ServiceContext {
      *
      * @return the service with the highest {@link Priority#value()}
      *
-     * @throws ConfigException if there are multiple service implementations with the maximum priority
+     * @throws IllegalStateException if there are multiple service implementations with the maximum priority
      */
     private <T> T getServiceWithHighestPriority(Collection<T> services, Class<T> serviceType) {
         T highestService = null;
@@ -156,7 +178,7 @@ final class ServiceLoaderServiceContext implements ServiceContext {
         }
 
         if (highestPriorityServiceCount > 1) {
-            throw new ConfigException(MessageFormat.format("Found {0} implementations for Service {1} with Priority {2}: {3}",
+            throw new IllegalStateException(MessageFormat.format("Found {0} implementations for Service {1} with Priority {2}: {3}",
                     highestPriorityServiceCount,
                     serviceType.getName(),
                     highestPriority,

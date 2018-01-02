@@ -18,18 +18,18 @@
  */
 package org.apache.tamaya.inject.internal;
 
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.inject.api.DynamicValue;
-import org.apache.tamaya.inject.spi.InjectionUtils;
+import org.apache.tamaya.inject.spi.InjectionEvaluator;
 import org.apache.tamaya.inject.spi.ConfiguredField;
 
+import javax.config.Config;
+import javax.config.ConfigProvider;
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
 import java.util.Collection;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 /**
@@ -58,9 +58,9 @@ public class ConfiguredFieldImpl implements ConfiguredField{
      * Evaluate the initial keys from the configuration and apply changes to the field.
      *
      * @param target the target instance.
-     * @throws ConfigException if evaluation or conversion failed.
+     * @throws java.util.NoSuchElementException if evaluation or conversion failed.
      */
-    public void configure(Object target, Configuration config) throws ConfigException {
+    public void configure(Object target, Config config) {
         if (this.annotatedField.getType() == DynamicValue.class) {
             applyDynamicValue(target);
         } else {
@@ -73,9 +73,9 @@ public class ConfiguredFieldImpl implements ConfiguredField{
      * This method instantiates and assigns a dynamic value.
      *
      * @param target the target instance, not null.
-     * @throws ConfigException if the configuration required could not be resolved or converted.
+     * @throws NoSuchElementException if the configuration required could not be resolved or converted.
      */
-    private void applyDynamicValue(Object target) throws ConfigException {
+    private void applyDynamicValue(Object target) {
         Objects.requireNonNull(target);
         try {
             AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
@@ -83,13 +83,13 @@ public class ConfiguredFieldImpl implements ConfiguredField{
                 public Object run() throws Exception {
                     annotatedField.setAccessible(true);
                     annotatedField.set(target,
-                            DefaultDynamicValue.of(target, annotatedField, ConfigurationProvider.getConfiguration()));
+                            DefaultDynamicValue.of(target, annotatedField, ConfigProvider.getConfig()));
                     return annotatedField;
                 }
             });
         } catch (Exception e) {
-            throw new ConfigException("Failed to annotation configured field: " + this.annotatedField.getDeclaringClass()
-                    .getName() + '.' + annotatedField.getName(), e);
+            throw new NoSuchElementException("Failed to annotation configured field: " + this.annotatedField.getDeclaringClass()
+                    .getName() + '.' + annotatedField.getName()+": " +  e);
         }
     }
 
@@ -99,34 +99,28 @@ public class ConfiguredFieldImpl implements ConfiguredField{
      * @param target      the target instance, not null.
      * @param config The configuration to be used.
      * @param resolve     set to true, if expression resolution should be applied on the keys passed.
-     * @throws ConfigException if the configuration required could not be resolved or converted.
+     * @throws NoSuchElementException if the configuration required could not be resolved or converted.
      */
-    private void applyValue(Object target, Configuration config, boolean resolve) throws ConfigException {
+    private void applyValue(Object target, Config config, boolean resolve) {
         Objects.requireNonNull(target);
         try {
-            String[] retKey = new String[1];
-            String configValue = InjectionHelper.getConfigValue(this.annotatedField, retKey, config);
-            // Next step perform expression resolution, if any
-            String evaluatedValue = resolve && configValue != null
-                    ? InjectionHelper.evaluateValue(configValue)
-                    : configValue;
+            Class targetType = this.annotatedField.getType();
+            Object configValue = InjectionHelper.getConfigValue(this.annotatedField, targetType, config);
 
-            // Check for adapter/filter
-            Object value = InjectionHelper.adaptValue(this.annotatedField,
-                    TypeLiteral.of(this.annotatedField.getType()), retKey[0], evaluatedValue);
             AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
                 @Override
                 public Object run() throws Exception {
                     annotatedField.setAccessible(true);
-                    if(value!=null) {
-                        annotatedField.set(target, value);
+                    if(configValue!=null) {
+                        annotatedField.set(target, configValue);
                     }
                     return annotatedField;
                 }
             });
         } catch (Exception e) {
-            throw new ConfigException("Failed to evaluate annotated field: " + this.annotatedField.getDeclaringClass()
-                    .getName() + '.' + annotatedField.getName(), e);
+            e.printStackTrace();
+            throw new NoSuchElementException("Failed to evaluate annotated field: " + this.annotatedField.getDeclaringClass()
+                    .getName() + '.' + annotatedField.getName()+": "+ e);
         }
     }
 
@@ -145,7 +139,7 @@ public class ConfiguredFieldImpl implements ConfiguredField{
      */
     @Override
     public Collection<String> getConfiguredKeys(){
-        return InjectionUtils.getKeys(this.annotatedField);
+        return InjectionEvaluator.getKeys(this.annotatedField);
     }
 
     @Override

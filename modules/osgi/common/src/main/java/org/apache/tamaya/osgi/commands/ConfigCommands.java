@@ -18,13 +18,12 @@
  */
 package org.apache.tamaya.osgi.commands;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.functions.ConfigurationFunctions;
 import org.apache.tamaya.osgi.Policy;
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValue;
 
+import javax.config.Config;
+import javax.config.ConfigProvider;
+import javax.config.spi.ConfigSource;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -39,26 +38,25 @@ public final class ConfigCommands {
     private ConfigCommands(){}
 
     public static String getInfo(TamayaConfigService configPlugin) throws IOException {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Config config = ConfigProvider.getConfig();
         return config.toString() + "\n\n"
                 + StringUtil.format("Default Policy:", 30) + configPlugin.getDefaultPolicy() + '\n'
                 + StringUtil.format("Default Enabled: ", 30) + configPlugin.isTamayaEnabledByDefault();
     }
 
     public static String readTamayaConfig(String section, String filter) {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Config config = ConfigProvider.getConfig();
         if(section!=null){
-            config = config
-                    .with(ConfigurationFunctions.section(section, true));
+            config = ConfigurationFunctions.section(section, true).apply(config);
         }
         if(filter!=null){
-            config = config.with(ConfigurationFunctions.section(filter, false));
+            config = ConfigurationFunctions.section(filter, false).apply(config);
         }
         return "Tamaya Configuration\n" +
                 "--------------------\n" +
                 "Section:     "+section +"\n" +
                 (filter!=null?"Filter:      "+filter + "\n":"") +
-                config.query(ConfigurationFunctions.textInfo());
+                ConfigurationFunctions.textInfo().apply(config);
     }
 
     public static String readTamayaConfig4PID(String pid, String filter) {
@@ -123,37 +121,33 @@ public final class ConfigCommands {
     }
 
     public static String getProperty(String propertysource, String key, boolean extended) throws IOException {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Config config = ConfigProvider.getConfig();
         if(propertysource!=null){
-            PropertySource ps = config.getContext().getPropertySource(propertysource);
+            ConfigSource ps = getPropertySource(config, propertysource);
             if(ps==null){
                 return "ERR: No such Property Source: " + propertysource;
             }else {
-                PropertyValue val = ps.get(key);
+                String val = ps.getValue(key);
                 if(val==null){
-                    return "ERR: Property Source: " + propertysource + " - undefined key: " + key;
+                    return "ERR: Config Source: " + propertysource + " - undefined key: " + key;
                 }else {
                     if(extended) {
-                        return StringUtil.format("Property Source", 25) + StringUtil.format("Value", 25) + '\n' +
+                        return StringUtil.format("Config Source", 25) + StringUtil.format("Value", 25) + '\n' +
                                 StringUtil.printRepeat("-", 50) + '\n' +
-                                StringUtil.format(propertysource, 25) + StringUtil.format(val.getValue(), 55);
+                                StringUtil.format(propertysource, 25) + StringUtil.format(val, 55);
                     }else{
-                        return val.getValue();
+                        return val;
                     }
                 }
             }
         }else{
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
-            pw.println(StringUtil.format("Property Source", 25) + StringUtil.format("Value", 25));
-            for(PropertySource ps:config.getContext().getPropertySources()){
-                PropertyValue val = ps.get(key);
+            pw.println(StringUtil.format("Config Source", 25) + StringUtil.format("Value", 25));
+            for(ConfigSource ps:config.getConfigSources()){
+                String val = ps.getValue(key);
                 if(val!=null){
-                    if(extended) {
-                        pw.println(StringUtil.format("", 25) + StringUtil.format(val.toString(), 55));
-                    }else{
-                        pw.println(StringUtil.format("", 25) + StringUtil.format(val.getValue(), 55));
-                    }
+                    pw.println(StringUtil.format("", 25) + StringUtil.format(val, 55));
                 }
             }
             pw.flush();
@@ -161,17 +155,26 @@ public final class ConfigCommands {
         }
     }
 
+    private static ConfigSource getPropertySource(Config config, String propertysource) {
+        for(ConfigSource cs:config.getConfigSources()){
+            if(cs.getName().equals(propertysource)){
+                return cs;
+            }
+        }
+        return null;
+    }
+
     public static String getPropertySource(String propertysource) throws IOException {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Config config = ConfigProvider.getConfig();
         if(propertysource!=null){
-            PropertySource ps = config.getContext().getPropertySource(propertysource);
+            ConfigSource ps = getPropertySource(config, propertysource);
             if(ps==null){
-                return "No such Property Source: " + propertysource;
+                return "No such Config Source: " + propertysource;
             }else {
                 StringWriter sw = new StringWriter();
                 PrintWriter pw = new PrintWriter(sw);
-                pw.println("Property Source");
-                pw.println("---------------");
+                pw.println("Config Source");
+                pw.println("-------------");
                 pw.println(StringUtil.format("ID:", 20) + ps.getName());
                 pw.println(StringUtil.format("Ordinal:", 20) + ps.getOrdinal());
                 pw.println(StringUtil.format("Class:", 20) + ps.getClass().getName());
@@ -181,11 +184,11 @@ public final class ConfigCommands {
                 pw.print(StringUtil.format("Source", 20));
                 pw.println(StringUtil.format("Meta-Entries", 20));
                 pw.println("  " + StringUtil.printRepeat("-", 80));
-                for(PropertyValue pv:ps.getProperties().values()) {
+                for(Map.Entry<String,String> pv:ps.getProperties().entrySet()) {
                     pw.print("  " + StringUtil.format(pv.getKey(), 20));
                     pw.print(StringUtil.format(pv.getValue(), 20));
-                    pw.print(StringUtil.format(pv.getSource(), 20));
-                    pw.println(StringUtil.format(pv.getMetaEntries().toString(), 80));
+                    pw.println(StringUtil.format(ps.getName(), 20));
+//                    pw.println(StringUtil.format(pv.getMetaEntries().toString(), 80));
                 }
                 pw.flush();
                 return sw.toString();
@@ -193,10 +196,10 @@ public final class ConfigCommands {
         }
         // Get a name of existing propertysources
         List<String> result = new ArrayList<>();
-        for(PropertySource ps:config.getContext().getPropertySources()){
+        for(ConfigSource ps:config.getConfigSources()){
             result.add(ps.getName());
         }
-        StringBuilder b = new StringBuilder("Please select a property source:\n");
+        StringBuilder b = new StringBuilder("Please select a config source:\n");
         for(String name:result){
             b.append(name).append('\n');
         }
@@ -204,17 +207,17 @@ public final class ConfigCommands {
     }
 
     public static String getPropertySourceOverview() throws IOException {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Config config = ConfigProvider.getConfig();
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
-        pw.println("Property Sources");
-        pw.println("----------------");
+        pw.println("Config Sources");
+        pw.println("--------------");
         pw.print(StringUtil.format("ID", 30));
         pw.print(StringUtil.format("Ordinal", 20));
         pw.print(StringUtil.format("Class", 40));
         pw.println(StringUtil.format("Size", 5));
         pw.println(StringUtil.printRepeat("-", 80));
-        for(PropertySource ps:config.getContext().getPropertySources()){
+        for(ConfigSource ps:config.getConfigSources()){
             pw.print(StringUtil.format(ps.getName(), 30));
             pw.print(StringUtil.format(String.valueOf(ps.getOrdinal()), 20));
             pw.print(StringUtil.format(ps.getClass().getName(), 40));

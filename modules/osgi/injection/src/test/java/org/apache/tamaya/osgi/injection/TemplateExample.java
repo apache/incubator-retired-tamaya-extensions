@@ -18,19 +18,20 @@
  */
 package org.apache.tamaya.osgi.injection;
 
-import org.apache.tamaya.inject.api.Config;
+
+import javax.config.inject.ConfigProperty;
 
 /**
  * Example template interface.
  */
 interface TemplateExample {
 
-    @Config("java.home")
+    @ConfigProperty(name ="java.home")
     String getJavaHome();
 
-    @Config("java.version")
+    @ConfigProperty(name ="java.version")
     String javaVersion();
 
-    @Config(value = "java.used", defaultValue = "true")
+    @ConfigProperty(name = "java.used", defaultValue = "true")
     boolean isJavaUsed();
 }

@@ -16,14 +16,11 @@
  */
 package org.apache.tamaya.cdi;
 
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.ConfigOperator;
-import org.apache.tamaya.inject.api.Config;
 import org.apache.tamaya.inject.api.ConfigDefaultSections;
-import org.apache.tamaya.inject.api.WithConfigOperator;
-import org.apache.tamaya.inject.api.WithPropertyConverter;
-import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.inject.api.WithConverter;
 
+import javax.config.inject.ConfigProperty;
+import javax.config.spi.Converter;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
@@ -39,16 +36,15 @@ import java.util.logging.Logger;
 /**
  * CDI Extension module that adds injection mechanism for configuration.
  *
- * @see Config
+ * @see javax.config.inject.ConfigProperty
  * @see ConfigDefaultSections
- * @see ConfigException
  */
 public class TamayaCDIInjectionExtension implements Extension {
 
     private static final Logger LOG = Logger.getLogger(TamayaCDIInjectionExtension.class.getName());
 
-    static final Map<Class, ConfigOperator> CUSTOM_OPERATORS = new ConcurrentHashMap<>();
-    static final Map<Class, PropertyConverter> CUSTOM_CONVERTERS = new ConcurrentHashMap<>();
+//    static final Map<Class, ConfigOperator> CUSTOM_OPERATORS = new ConcurrentHashMap<>();
+    static final Map<Class, Converter> CUSTOM_CONVERTERS = new ConcurrentHashMap<>();
 
     private final Set<Type> types = new HashSet<>();
     private Bean<?> tamayaProducerBean;
@@ -72,18 +68,18 @@ public class TamayaCDIInjectionExtension implements Extension {
 
         boolean configured = false;
         for (InjectionPoint injectionPoint : ips) {
-            if (injectionPoint.getAnnotated().isAnnotationPresent(Config.class)) {
+            if (injectionPoint.getAnnotated().isAnnotationPresent(ConfigProperty.class)) {
                 LOG.fine("Configuring: " + injectionPoint);
-                final Config annotation = injectionPoint.getAnnotated().getAnnotation(Config.class);
+                final ConfigProperty annotation = injectionPoint.getAnnotated().getAnnotation(ConfigProperty.class);
                 final ConfigDefaultSections typeAnnot = injectionPoint.getMember().getDeclaringClass().getAnnotation(ConfigDefaultSections.class);
                 final List<String> keys = evaluateKeys(injectionPoint.getMember().getName(),
-                        annotation!=null?annotation.value():null,
+                        (annotation!=null && !annotation.name().isEmpty())?new String[]{annotation.name()}:null,
                         typeAnnot!=null?typeAnnot.value():null);
-                final WithConfigOperator withOperatorAnnot = injectionPoint.getAnnotated().getAnnotation(WithConfigOperator.class);
-                if(withOperatorAnnot!=null){
-                    tryLoadOpererator(withOperatorAnnot.value());
-                }
-                final WithPropertyConverter withConverterAnnot = injectionPoint.getAnnotated().getAnnotation(WithPropertyConverter.class);
+//                final WithConfigOperator withOperatorAnnot = injectionPoint.getAnnotated().getAnnotation(WithConfigOperator.class);
+//                if(withOperatorAnnot!=null){
+//                    tryLoadOpererator(withOperatorAnnot.value());
+//                }
+                final WithConverter withConverterAnnot = injectionPoint.getAnnotated().getAnnotation(WithConverter.class);
                 if(withConverterAnnot!=null){
                     tryLoadConverter(withConverterAnnot.value());
                 }
@@ -102,7 +98,7 @@ public class TamayaCDIInjectionExtension implements Extension {
 
 
     public void captureConvertBean(@Observes final ProcessProducerMethod<?, ?> ppm) {
-        if (ppm.getAnnotated().isAnnotationPresent(Config.class)) {
+        if (ppm.getAnnotated().isAnnotationPresent(ConfigProperty.class)) {
             tamayaProducerBean = ppm.getBean();
         }
     }
@@ -123,23 +119,23 @@ public class TamayaCDIInjectionExtension implements Extension {
         return type;
     }
 
-    private void tryLoadOpererator(Class<? extends ConfigOperator> operatorClass) {
-        Objects.requireNonNull(operatorClass);
-        if(ConfigOperator.class == operatorClass){
-            return;
-        }
-        try{
-            if(!CUSTOM_OPERATORS.containsKey(operatorClass)) {
-                CUSTOM_OPERATORS.put(operatorClass, operatorClass.newInstance());
-            }
-        } catch(Exception e){
-            throw new ConfigException("Custom ConfigOperator could not be loaded: " + operatorClass.getName(), e);
-        }
-    }
+//    private void tryLoadOpererator(Class<? extends ConfigOperator> operatorClass) {
+//        Objects.requireNonNull(operatorClass);
+//        if(ConfigOperator.class == operatorClass){
+//            return;
+//        }
+//        try{
+//            if(!CUSTOM_OPERATORS.containsKey(operatorClass)) {
+//                CUSTOM_OPERATORS.put(operatorClass, operatorClass.newInstance());
+//            }
+//        } catch(Exception e){
+//            throw new ConfigException("Custom ConfigOperator could not be loaded: " + operatorClass.getName(), e);
+//        }
+//    }
 
-    private void tryLoadConverter(Class<? extends PropertyConverter> converterClass) {
+    private void tryLoadConverter(Class<? extends Converter> converterClass) {
         Objects.requireNonNull(converterClass);
-        if(PropertyConverter.class == converterClass){
+        if(Converter.class == converterClass){
             return;
         }
         try{
@@ -147,7 +143,7 @@ public class TamayaCDIInjectionExtension implements Extension {
                 CUSTOM_CONVERTERS.put(converterClass, converterClass.newInstance());
             }
         } catch(Exception e){
-            throw new ConfigException("Custom PropertyConverter could not be loaded: " + converterClass.getName(), e);
+            throw new IllegalArgumentException("Custom PropertyConverter could not be loaded: " + converterClass.getName(), e);
         }
     }
 

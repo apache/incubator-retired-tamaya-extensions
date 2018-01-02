@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.osgi;
 
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.functions.ConfigurationFunctions;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -26,6 +25,8 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 
+import javax.config.Config;
+import javax.config.ConfigProvider;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Dictionary;
@@ -102,7 +103,7 @@ final class ConfigChanger {
                     LOG.finest("Stored OSGI configuration backup for PID: " + pid);
                 }
                 LOG.finest("Evaluating Tamaya Config for PID: " + pid);
-                org.apache.tamaya.Configuration tamayaConfig = getTamayaConfiguration(root);
+                Config tamayaConfig = getJavaConfiguration(root);
                 if (tamayaConfig == null) {
                     LOG.finest("No Tamaya configuration for root: " + root);
                 }else {
@@ -136,7 +137,7 @@ final class ConfigChanger {
         }
     }
 
-    public void modifyConfiguration(String pid, org.apache.tamaya.Configuration config, Dictionary<String, Object> dictionary, Policy opMode) {
+    public void modifyConfiguration(String pid, Config config, Dictionary<String, Object> dictionary, Policy opMode) {
         LOG.info(() -> "Updating configuration for PID: " + pid + "...");
         dictionary.put("tamaya.modified.at", new Date().toString());
 
@@ -148,7 +149,7 @@ final class ConfigChanger {
             dictionaryMap.put(key, value);
         }
         for (Map.Entry<String, Object> dictEntry : dictionaryMap.entrySet()) {
-            Object configuredValue = config.getOrDefault(dictEntry.getKey(), dictEntry.getValue().getClass(), null);
+            Object configuredValue = config.getOptionalValue(dictEntry.getKey(), dictEntry.getValue().getClass()).orElse(null);
             if (configuredValue != null) {
                 if(configuredValue.equals(dictEntry.getValue())){
                     continue;
@@ -168,39 +169,40 @@ final class ConfigChanger {
                 }
             }
         }
-        for (Map.Entry<String, String> configEntry : config.getProperties().entrySet()) {
-            Object dictValue = dictionary.get(configEntry.getKey());
-            if(dictValue!=null && dictValue.equals(configEntry.getValue())){
+        for (String configKey : config.getPropertyNames()) {
+            Object dictValue = dictionary.get(configKey);
+            String configValue = config.getValue(configKey, String.class);
+            if(dictValue!=null && dictValue.equals(configValue)){
                 continue;
             }
             switch (opMode) {
                 case EXTEND:
                     if(dictValue==null){
-                        LOG.info(() -> "Setting key " + configEntry.getKey() + " to " + configEntry.getValue());
-                        ConfigHistory.propertySet(pid,configEntry.getKey(), configEntry.getValue(), null);
-                        dictionary.put(configEntry.getKey(), configEntry.getValue());
+                        LOG.info(() -> "Setting key " + configKey + " to " + configValue);
+                        ConfigHistory.propertySet(pid,configKey, configValue, null);
+                        dictionary.put(configKey, configValue);
                     }
                     break;
                 case OVERRIDE:
-                    LOG.info(() -> "Setting key " + configEntry.getKey() + " to " + configEntry.getValue());
-                    ConfigHistory.propertySet(pid,configEntry.getKey(), configEntry.getValue(), null);
-                    dictionary.put(configEntry.getKey(), configEntry.getValue());
+                    LOG.info(() -> "Setting key " + configKey + " to " + configValue);
+                    ConfigHistory.propertySet(pid,configKey, configValue, null);
+                    dictionary.put(configKey, configValue);
                     break;
                 case UPDATE_ONLY:
                     if(dictValue!=null){
-                        LOG.info(() -> "Setting key " + configEntry.getKey() + " to " + configEntry.getValue());
-                        ConfigHistory.propertySet(pid,configEntry.getKey(), configEntry.getValue(), dictValue);
-                        dictionary.put(configEntry.getKey(), configEntry.getValue());
+                        LOG.info(() -> "Setting key " + configKey + " to " + configValue);
+                        ConfigHistory.propertySet(pid,configKey, configValue, dictValue);
+                        dictionary.put(configKey, configValue);
                     }
                     break;
             }
         }
     }
 
-    public org.apache.tamaya.Configuration getTamayaConfiguration(String root) {
+    public Config getJavaConfiguration(String root) {
         if (root != null) {
-            return ConfigurationProvider.getConfiguration()
-                    .with(ConfigurationFunctions.section(root, true));
+            return ConfigurationFunctions.section(root, true)
+                    .apply(ConfigProvider.getConfig());
         }
         return null;
     }

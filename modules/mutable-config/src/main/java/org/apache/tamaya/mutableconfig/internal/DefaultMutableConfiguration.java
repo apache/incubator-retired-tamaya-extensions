@@ -18,25 +18,15 @@
  */
 package org.apache.tamaya.mutableconfig.internal;
 
-import org.apache.tamaya.ConfigOperator;
-import org.apache.tamaya.ConfigQuery;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.mutableconfig.ChangePropagationPolicy;
 import org.apache.tamaya.mutableconfig.MutableConfiguration;
 import org.apache.tamaya.mutableconfig.ConfigChangeRequest;
-import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
-import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.mutableconfig.spi.MutableConfigSource;
 import org.osgi.service.component.annotations.Component;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import javax.config.Config;
+import javax.config.spi.ConfigSource;
+import java.util.*;
 import java.util.logging.Logger;
 
 
@@ -47,10 +37,10 @@ import java.util.logging.Logger;
 public class DefaultMutableConfiguration implements MutableConfiguration {
     private static final Logger LOG = Logger.getLogger(DefaultMutableConfiguration.class.getName());
     private ConfigChangeRequest changeRequest = new ConfigChangeRequest(UUID.randomUUID().toString());
-    private final Configuration config;
+    private final Config config;
     private ChangePropagationPolicy changePropagationPolicy;
 
-    public DefaultMutableConfiguration(Configuration config, ChangePropagationPolicy changePropagationPolicy){
+    public DefaultMutableConfiguration(Config config, ChangePropagationPolicy changePropagationPolicy){
         this.config = Objects.requireNonNull(config);
         this.changePropagationPolicy = Objects.requireNonNull(changePropagationPolicy);
     }
@@ -65,11 +55,11 @@ public class DefaultMutableConfiguration implements MutableConfiguration {
         return changeRequest;
     }
 
-    protected List<MutablePropertySource> getMutablePropertySources() {
-        List<MutablePropertySource> result = new ArrayList<>();
-        for(PropertySource propertySource:this.config.getContext().getPropertySources()) {
-            if(propertySource instanceof  MutablePropertySource){
-                result.add((MutablePropertySource)propertySource);
+    protected List<MutableConfigSource> getMutablePropertySources() {
+        List<MutableConfigSource> result = new ArrayList<>();
+        for(ConfigSource propertySource:this.config.getConfigSources()) {
+            if(propertySource instanceof MutableConfigSource){
+                result.add((MutableConfigSource)propertySource);
             }
         }
         return result;
@@ -97,69 +87,35 @@ public class DefaultMutableConfiguration implements MutableConfiguration {
 
     @Override
     public void store() {
-        this.changePropagationPolicy.applyChange(changeRequest, config.getContext().getPropertySources());
+        this.changePropagationPolicy.applyChange(changeRequest, config.getConfigSources());
     }
 
     @Override
     public MutableConfiguration remove(Collection<String> keys) {
-        for(MutablePropertySource target:getMutablePropertySources()) {
+        for(MutableConfigSource target:getMutablePropertySources()) {
             changeRequest.removeAll(keys);
         }
         return this;
     }
 
     @Override
-    public String get(String key) {
-        return this.config.get(key);
+    public <T> T getValue(String key, Class<T> type) {
+        return this.config.getValue(key, type);
     }
 
     @Override
-    public String getOrDefault(String key, String defaultValue) {
-        return this.config.getOrDefault(key, defaultValue);
+    public <T> Optional<T> getOptionalValue(String key, Class<T> type) {
+        return this.config.getOptionalValue(key,type);
     }
 
     @Override
-    public <T> T getOrDefault(String key, Class<T> type, T defaultValue) {
-        return this.config.getOrDefault(key, type, defaultValue);
+    public Iterable<String> getPropertyNames() {
+        return this.config.getPropertyNames();
     }
 
     @Override
-    public <T> T get(String key, Class<T> type) {
-        return this.config.get(key, type);
-    }
-
-    @Override
-    public <T> T get(String key, TypeLiteral<T> type) {
-        return this.config.get(key, type);
-    }
-
-    @Override
-    public <T> T getOrDefault(String key, TypeLiteral<T> type, T defaultValue) {
-        return this.config.getOrDefault(key, type, defaultValue);
-    }
-
-        @Override
-    public Map<String, String> getProperties() {
-        return this.config.getProperties();
-    }
-
-    @Override
-    public Configuration with(ConfigOperator operator) {
-        return operator.operate(this);
-    }
-
-    @Override
-    public <T> T query(ConfigQuery<T> query) {
-        return query.query(this);
-    }
-
-    @Override
-    public ConfigurationContext getContext() {
-        return config.getContext();
-    }
-
-    private Collection<PropertySource> getPropertySources() {
-        return this.config.getContext().getPropertySources();
+    public Iterable<ConfigSource> getConfigSources() {
+        return this.config.getConfigSources();
     }
 
     @Override

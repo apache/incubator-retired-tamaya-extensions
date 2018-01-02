@@ -18,10 +18,11 @@
  */
 package annottext;
 
+import org.apache.tamaya.inject.api.ConfigFallbackKeys;
 import org.apache.tamaya.inject.api.DynamicValue;
 import org.apache.tamaya.inject.api.NoConfig;
-import org.apache.tamaya.inject.api.Config;
 
+import javax.config.inject.ConfigProperty;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,20 +33,20 @@ import java.util.List;
  */
 public class AnnotatedConfigBean {
 
-    @Config(value = {"foo.bar.myprop", "mp", "common.testdata.myProperty"}, defaultValue = "ET")
-    // @ConfigLoadPolicy(listener = MyListener.class)
+    @ConfigProperty(name="foo.bar.myprop", defaultValue = "ET")
+    @ConfigFallbackKeys({"mp", "common.testdata.myProperty"})
     public String myParameter;
 
-    @Config("simple_value")
+    @ConfigProperty(name="simple_value")
     public String simpleValue;
 
-    @Config
+    @ConfigProperty
     String anotherValue;
 
-    @Config("host.name")
+    @ConfigProperty(name="host.name")
     private String hostName;
 
-    @Config("host.name")
+    @ConfigProperty(name="host.name")
     private DynamicValue<String> dynamicHostname;
 
     @NoConfig
@@ -70,7 +71,7 @@ public class AnnotatedConfigBean {
     public static final String CONSTANT = "a constant";
 
 
-    @Config("java.version")
+    @ConfigProperty(name="java.version")
     void setJavaVersion(String version){
         this.javaVersion = version;
     }

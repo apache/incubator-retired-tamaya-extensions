@@ -19,8 +19,7 @@
 package org.apache.tamaya.inject;
 
 
-import org.apache.tamaya.Configuration;
-
+import javax.config.Config;
 import java.util.function.Supplier;
 
 /**
@@ -51,7 +50,7 @@ public interface ConfigurationInjector {
      * @param config the configuration to be used for injection.
      * @return the configured instance (allows chaining of operations).
      */
-    <T> T configure(T instance, Configuration config);
+    <T> T configure(T instance, Config config);
 
     /**
      * Creates a template implementing the annotated methods based on current configuration data.
@@ -70,7 +69,7 @@ public interface ConfigurationInjector {
      * @param templateType the type of the template to be created.
      * @return the configured template.
      */
-    <T> T createTemplate(Class<T> templateType, Configuration config);
+    <T> T createTemplate(Class<T> templateType, Config config);
 
 
     /**
@@ -90,6 +89,13 @@ public interface ConfigurationInjector {
      * @param <T> the target type.
      * @return a supplier creating configured instances of {@code T}.
      */
-    <T> Supplier<T> getConfiguredSupplier(Supplier<T> supplier, Configuration config);
+    <T> Supplier<T> getConfiguredSupplier(Supplier<T> supplier, Config config);
 
+    /**
+     * Method checks if the given instance is annotated for being configured using {@link javax.config.inject.ConfigProperty}
+     * annotations.
+     * @param o the instance, not null.
+     * @return true, if the instance has any fields or setter methods annotated with {@link javax.config.inject.ConfigProperty}.
+     */
+    boolean isConfigured(Object o);
 }
