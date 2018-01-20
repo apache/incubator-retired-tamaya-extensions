@@ -23,55 +23,68 @@ import org.apache.tamaya.Configuration;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.junit.Test;
 
-
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 
 import static org.mockito.Mockito.*;
 
 public class ConfiguredVetoExtensionTest {
+
     ConfiguredVetoExtension extension = new ConfiguredVetoExtension();
 
     @Test
     public void willBeVetoedIfTypeHasBeenConfiguredAsConcreteClassName() {
-        ConfigurationContext context = mock(ConfigurationContext.class);
-        Configuration configuration = mock(Configuration.class);
 
-        when(configuration.getContext()).thenReturn(context);
-        when(configuration.get("javax.enterprise.inject.vetoed")).thenReturn("org.apache.tamaya.cdi.extra.TestKlazz");
+        Configuration oldConfiguration = ConfigurationProvider.getConfiguration();
 
-        ConfigurationProvider.setConfiguration(configuration);
+        try {
 
-        AnnotatedType<TestKlazz> annotatedType = mock(AnnotatedType.class);
-        when(annotatedType.getJavaClass()).thenReturn(TestKlazz.class);
+            ConfigurationContext context = mock(ConfigurationContext.class);
+            Configuration configuration = mock(Configuration.class);
 
-        ProcessAnnotatedType<TestKlazz> processAnnotatedType = mock(ProcessAnnotatedType.class);
-        when(processAnnotatedType.getAnnotatedType()).thenReturn(annotatedType);
+            when(configuration.getContext()).thenReturn(context);
+            when(configuration.get("javax.enterprise.inject.vetoed")).thenReturn("org.apache.tamaya.cdi.extra.TestKlazz");
 
-        extension.observesBean(processAnnotatedType);
+            ConfigurationProvider.setConfiguration(configuration);
+            AnnotatedType<TestKlazz> annotatedType = mock(AnnotatedType.class);
+            when(annotatedType.getJavaClass()).thenReturn(TestKlazz.class);
 
-        (processAnnotatedType).veto();
+            ProcessAnnotatedType<TestKlazz> processAnnotatedType = mock(ProcessAnnotatedType.class);
+            when(processAnnotatedType.getAnnotatedType()).thenReturn(annotatedType);
+
+            extension.observesBean(processAnnotatedType);
+
+            (processAnnotatedType).veto();
+        } finally {
+            ConfigurationProvider.setConfiguration(oldConfiguration);
+        }
     }
 
     @Test
     public void willNotBeVetoedIfTypeHasNotBeenConfigured() {
-        ConfigurationContext context = mock(ConfigurationContext.class);
-        Configuration configuration = mock(Configuration.class);
+        Configuration oldConfiguration = ConfigurationProvider.getConfiguration();
 
-        when(configuration.getContext()).thenReturn(context);
-        when(configuration.get("javax.enterprise.inject.vetoed")).thenReturn("org.apache.tamaya.cdi.extra.O");
+        try {
 
-        ConfigurationProvider.setConfiguration(configuration);
+            ConfigurationContext context = mock(ConfigurationContext.class);
+            Configuration configuration = mock(Configuration.class);
 
-        AnnotatedType<TestKlazz> annotatedType = mock(AnnotatedType.class);
-        when(annotatedType.getJavaClass()).thenReturn(TestKlazz.class);
+            when(configuration.getContext()).thenReturn(context);
+            when(configuration.get("javax.enterprise.inject.vetoed")).thenReturn("org.apache.tamaya.cdi.extra.O");
 
-        ProcessAnnotatedType<TestKlazz> processAnnotatedType = mock(ProcessAnnotatedType.class);
-        when(processAnnotatedType.getAnnotatedType()).thenReturn(annotatedType);
+            ConfigurationProvider.setConfiguration(configuration);
+            AnnotatedType<TestKlazz> annotatedType = mock(AnnotatedType.class);
+            when(annotatedType.getJavaClass()).thenReturn(TestKlazz.class);
 
-        extension.observesBean(processAnnotatedType);
+            ProcessAnnotatedType<TestKlazz> processAnnotatedType = mock(ProcessAnnotatedType.class);
+            when(processAnnotatedType.getAnnotatedType()).thenReturn(annotatedType);
 
-        verify(processAnnotatedType, never()).veto();
+            extension.observesBean(processAnnotatedType);
+
+            verify(processAnnotatedType, never()).veto();
+        } finally {
+            ConfigurationProvider.setConfiguration(oldConfiguration);
+        }
     }
 
     @Test
@@ -79,23 +92,29 @@ public class ConfiguredVetoExtensionTest {
         String configuredValue = "  " + TestKlazz.class.getName() +
                                  ",\t" + TestKlazz2.class.getName();
 
-        ConfigurationContext context = mock(ConfigurationContext.class);
-        Configuration configuration = mock(Configuration.class);
+        Configuration oldConfiguration = ConfigurationProvider.getConfiguration();
 
-        when(configuration.getContext()).thenReturn(context);
-        when(configuration.get("javax.enterprise.inject.vetoed")).thenReturn(configuredValue);
+        try {
+            ConfigurationContext context = mock(ConfigurationContext.class);
+            Configuration configuration = mock(Configuration.class);
 
-        ConfigurationProvider.setConfiguration(configuration);
+            when(configuration.getContext()).thenReturn(context);
+            when(configuration.get("javax.enterprise.inject.vetoed")).thenReturn(configuredValue);
 
-        AnnotatedType<TestKlazz> annotatedType = mock(AnnotatedType.class);
-        when(annotatedType.getJavaClass()).thenReturn(TestKlazz.class);
+            ConfigurationProvider.setConfiguration(configuration);
 
-        ProcessAnnotatedType<TestKlazz> processAnnotatedType = mock(ProcessAnnotatedType.class);
-        when(processAnnotatedType.getAnnotatedType()).thenReturn(annotatedType);
+            AnnotatedType<TestKlazz> annotatedType = mock(AnnotatedType.class);
+            when(annotatedType.getJavaClass()).thenReturn(TestKlazz.class);
 
-        extension.observesBean(processAnnotatedType);
+            ProcessAnnotatedType<TestKlazz> processAnnotatedType = mock(ProcessAnnotatedType.class);
+            when(processAnnotatedType.getAnnotatedType()).thenReturn(annotatedType);
 
-        verify(processAnnotatedType).veto();
+            extension.observesBean(processAnnotatedType);
+
+            verify(processAnnotatedType).veto();
+        } finally {
+            ConfigurationProvider.setConfiguration(oldConfiguration);
+        }
     }
 
     @Test
@@ -103,22 +122,27 @@ public class ConfiguredVetoExtensionTest {
         String configuredValue = "  " + TestKlazz.class.getPackage().getName() +
                                  "\\..+";
 
-        ConfigurationContext context = mock(ConfigurationContext.class);
-        Configuration configuration = mock(Configuration.class);
+        Configuration oldConfiguration = ConfigurationProvider.getConfiguration();
 
-        when(configuration.getContext()).thenReturn(context);
-        when(configuration.get("javax.enterprise.inject.vetoed")).thenReturn(configuredValue);
+        try {
+            ConfigurationContext context = mock(ConfigurationContext.class);
+            Configuration configuration = mock(Configuration.class);
 
-        ConfigurationProvider.setConfiguration(configuration);
+            when(configuration.getContext()).thenReturn(context);
+            when(configuration.get("javax.enterprise.inject.vetoed")).thenReturn(configuredValue);
 
-        AnnotatedType<TestKlazz> annotatedType = mock(AnnotatedType.class);
-        when(annotatedType.getJavaClass()).thenReturn(TestKlazz.class);
+            ConfigurationProvider.setConfiguration(configuration);
+            AnnotatedType<TestKlazz> annotatedType = mock(AnnotatedType.class);
+            when(annotatedType.getJavaClass()).thenReturn(TestKlazz.class);
 
-        ProcessAnnotatedType<TestKlazz> processAnnotatedType = mock(ProcessAnnotatedType.class);
-        when(processAnnotatedType.getAnnotatedType()).thenReturn(annotatedType);
+            ProcessAnnotatedType<TestKlazz> processAnnotatedType = mock(ProcessAnnotatedType.class);
+            when(processAnnotatedType.getAnnotatedType()).thenReturn(annotatedType);
 
-        extension.observesBean(processAnnotatedType);
+            extension.observesBean(processAnnotatedType);
 
-        verify(processAnnotatedType).veto();
+            verify(processAnnotatedType).veto();
+        } finally {
+            ConfigurationProvider.setConfiguration(oldConfiguration);
+        }
     }
 }

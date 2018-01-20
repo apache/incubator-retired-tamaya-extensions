@@ -21,8 +21,11 @@ package org.apache.tamaya.cdi;
 import org.junit.Test;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import org.jboss.arquillian.junit.Arquillian;
+import org.junit.runner.RunWith;
 
-public class CDIAwareServiceContextTest {
+@RunWith(Arquillian.class)
+public class CDIAwareServiceContextTest extends BaseTestConfiguration {
     private CDIAwareServiceContext context = new CDIAwareServiceContext();
 
     @Test
