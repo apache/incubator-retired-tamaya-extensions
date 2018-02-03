@@ -33,3 +33,6 @@ protocols:
 users:
     tom: passwd
     bob: passwd
+
+foo.bar[meta]:
+  propertysource: "MyPropertySource"

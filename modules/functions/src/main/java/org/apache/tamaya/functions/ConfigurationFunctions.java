@@ -511,4 +511,14 @@ public final class ConfigurationFunctions {
     }
 
 
+    /**
+     * Reads out all keys found into a String, String map.
+     * @param config the config, not null.
+     * @return the properties map.
+     */
+    public static Map<String,String> toMap(Config config) {
+        Map<String,String> result = new HashMap<>();
+        config.getPropertyNames().forEach(key -> result.put(key, config.getValue(key, String.class)));
+        return result;
+    }
 }

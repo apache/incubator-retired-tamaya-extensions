@@ -23,8 +23,8 @@ Export-Package: \
 	org.apache.tamaya.events,\
 	org.apache.tamaya.events.spi
 Import-Package: \
-	org.apache.tamaya,\
-	org.apache.tamaya.spi,\
+	javax.config,\
+	javax.config.spi,\
 	org.osgi.framework,\
 	javax.annotation
 Private-Package: \
