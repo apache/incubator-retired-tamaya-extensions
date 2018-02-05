@@ -143,57 +143,44 @@ public final class MutableConfigurationProvider {
     /**
      * This propagation policy writes through all changes to all mutable property sources, where applicable.
      */
-    private static final ChangePropagationPolicy ALL_POLICY = new ChangePropagationPolicy() {
-        @Override
-        public void applyChange(ConfigChangeRequest change, Iterable<ConfigSource> propertySources) {
-            for(ConfigSource propertySource: propertySources){
-                if(propertySource instanceof MutableConfigSource){
-                    MutableConfigSource target = (MutableConfigSource)propertySource;
-                    try{
-                        target.applyChange(change);
-                    }catch(Exception e){
-                        LOG.warning("Failed to store changes '"+change+"' not applicable to "+target.getName()
-                        +"("+target.getClass().getName()+").");
-                    }
+    private static final ChangePropagationPolicy ALL_POLICY = (change, propertySources) -> {
+        for(ConfigSource propertySource: propertySources){
+            if(propertySource instanceof MutableConfigSource){
+                MutableConfigSource target = (MutableConfigSource)propertySource;
+                try{
+                    target.applyChange(change);
+                }catch(Exception e){
+                    LOG.warning("Failed to store changes '"+change+"' not applicable to "+target.getName()
+                    +"("+target.getClass().getName()+").");
                 }
             }
         }
-
     };
 
     /**
      * This propagation policy writes changes only once to the most significant property source, where a change is
      * applicable.
      */
-    private static final ChangePropagationPolicy MOST_SIGNIFICANT_ONLY_POLICY = new ChangePropagationPolicy() {
-        @Override
-        public void applyChange(ConfigChangeRequest change, Iterable<ConfigSource> propertySources) {
-            for(ConfigSource propertySource: propertySources){
-                if(propertySource instanceof MutableConfigSource){
-                    MutableConfigSource target = (MutableConfigSource)propertySource;
-                    try{
-                        target.applyChange(change);
-                    }catch(Exception e){
-                        LOG.warning("Failed to store changes '"+change+"' not applicable to "+target.getName()
-                                +"("+target.getClass().getName()+").");
-                    }
-                    break;
+    private static final ChangePropagationPolicy MOST_SIGNIFICANT_ONLY_POLICY = (change, propertySources) -> {
+        for(ConfigSource propertySource: propertySources){
+            if(propertySource instanceof MutableConfigSource){
+                MutableConfigSource target = (MutableConfigSource)propertySource;
+                try{
+                    target.applyChange(change);
+                }catch(Exception e){
+                    LOG.warning("Failed to store changes '"+change+"' not applicable to "+target.getName()
+                            +"("+target.getClass().getName()+").");
                 }
+                break;
             }
         }
-
     };
 
     /**
      * This propagation policy writes changes only once to the most significant property source, where a change is
      * applicable.
      */
-    private static final ChangePropagationPolicy NONE_POLICY = new ChangePropagationPolicy() {
-        @Override
-        public void applyChange(ConfigChangeRequest change, Iterable<ConfigSource> propertySources) {
-            LOG.warning("Cannot store changes '"+change+"': prohibited by change policy (read-only).");
-        }
-    };
+    private static final ChangePropagationPolicy NONE_POLICY = (change, propertySources) -> LOG.warning("Cannot store changes '"+change+"': prohibited by change policy (read-only).");
 
     /**
      * This propagation policy writes through all changes to all mutable property sources, where applicable.
@@ -223,7 +210,7 @@ public final class MutableConfigurationProvider {
                 }
             }
         }
-    };
+    }
 
 
 }

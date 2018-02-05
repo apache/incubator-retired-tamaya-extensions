@@ -56,12 +56,7 @@ public class MappedConfigurationDataConfigSource extends BaseConfigSource {
      * @see ConfigurationData#getCombinedProperties()
      */
     public MappedConfigurationDataConfigSource(final ConfigurationData data) {
-        this(data.getResource(), 0, new Supplier<ConfigurationData>(){
-            @Override
-            public ConfigurationData get() {
-                return data;
-            }
-        });
+        this(data.getResource(), 0, () -> data);
     }
 
     /*
@@ -72,12 +67,7 @@ public class MappedConfigurationDataConfigSource extends BaseConfigSource {
      * @see ConfigurationData#getCombinedProperties()
      */
     public MappedConfigurationDataConfigSource(int defaultOrdinal, final ConfigurationData data) {
-        this(data.getResource(), defaultOrdinal, new Supplier<ConfigurationData>() {
-            @Override
-            public ConfigurationData get() {
-                return data;
-            }
-        });
+        this(data.getResource(), defaultOrdinal, () -> data);
     }
 
     /*

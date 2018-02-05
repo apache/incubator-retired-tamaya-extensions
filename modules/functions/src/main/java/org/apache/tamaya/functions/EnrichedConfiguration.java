@@ -86,7 +86,7 @@ class EnrichedConfiguration implements Config {
     public Iterable<String> getPropertyNames() {
         Set<String> allKeys = new HashSet<>();
         baseConfiguration.getPropertyNames().forEach(allKeys::add);
-        addedProperties.keySet().forEach(allKeys::add);
+        allKeys.addAll(addedProperties.keySet());
         return allKeys;
     }
 

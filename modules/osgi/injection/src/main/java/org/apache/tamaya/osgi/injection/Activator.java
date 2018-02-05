@@ -68,12 +68,12 @@ public class Activator implements BundleActivator {
 
         @Override
         public boolean isInjectionEnabled(ServiceReference reference) {
-            return injector.isInjectionEnabled(reference);
+            return TamayaOSGIInjector.isInjectionEnabled(reference);
         }
 
         @Override
         public boolean isInjectionEnabled(Bundle bundle) {
-            return injector.isInjectionEnabled(bundle);
+            return TamayaOSGIInjector.isInjectionEnabled(bundle);
         }
 
         @Override

@@ -23,7 +23,6 @@ import org.apache.tamaya.inject.spi.ConfiguredMethod;
 
 import javax.config.Config;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
 import java.util.Collection;
@@ -60,12 +59,9 @@ public class ConfiguredSetterMethod implements ConfiguredMethod {
         Object configValue = InjectionHelper.getConfigValue(this.setterMethod, targetType, config);
         Objects.requireNonNull(target);
         try {
-            AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-                @Override
-                public Object run() throws Exception {
-                    setterMethod.setAccessible(true);
-                    return setterMethod;
-                }
+            AccessController.doPrivileged((PrivilegedExceptionAction<Object>) () -> {
+                setterMethod.setAccessible(true);
+                return setterMethod;
             });
             setterMethod.invoke(target, configValue);
         } catch (Exception e) {

@@ -22,7 +22,6 @@ import org.apache.tamaya.inject.ConfigurationInjection;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 import javax.config.Config;
-import javax.config.ConfigProvider;
 import javax.config.spi.ConfigProviderResolver;
 import java.util.Objects;
 import java.util.function.Supplier;

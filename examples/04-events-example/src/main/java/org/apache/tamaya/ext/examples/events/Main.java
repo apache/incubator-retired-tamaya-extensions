@@ -85,17 +85,14 @@ public class Main {
     }
 
     private static void installCleanupHook(final Path path) {
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                try {
-                    Files.delete(path);
-                    out.println("Removed " + path);
-                } catch (IOException e) {
-                    throw new RuntimeException("Failed to delete " + path, e);
-                }
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                Files.delete(path);
+                out.println("Removed " + path);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to delete " + path, e);
             }
-        });
+        }));
     }
 
     static Path getPropertiesFilePath() {

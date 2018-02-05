@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.inject.api;
 
-import javax.inject.Provider;
 import java.beans.PropertyChangeListener;
 import java.util.function.Supplier;
 

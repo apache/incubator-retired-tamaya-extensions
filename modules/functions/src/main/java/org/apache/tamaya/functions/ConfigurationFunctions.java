@@ -379,7 +379,7 @@ public final class ConfigurationFunctions {
             StringBuilder builder = new StringBuilder(400);
             builder.append("<configuration>\n");
             for (Map.Entry<String, String> en : props.entrySet()) {
-                builder.append("  <entry key=\"" + escape(en.getKey()) + "\">" + escape(en.getValue()) + "</entry>\n");
+                builder.append("  <entry key=\"").append(escape(en.getKey())).append("\">").append(escape(en.getValue())).append("</entry>\n");
             }
             builder.append("</configuration>\n");
             return builder.toString();
@@ -412,7 +412,7 @@ public final class ConfigurationFunctions {
             }
             StringBuilder builder = new StringBuilder(400).append("Configuration:\n");
             for (Map.Entry<String, String> en : props.entrySet()) {
-                builder.append("  " + escape(en.getKey()) + ": " + escape(en.getValue()).replace("\n", "\n     ") + ",\n");
+                builder.append("  ").append(escape(en.getKey())).append(": ").append(escape(en.getValue()).replace("\n", "\n     ")).append(",\n");
             }
             if(builder.toString().endsWith(",\n")){
                 builder.setLength(builder.length() - 2);
@@ -485,10 +485,7 @@ public final class ConfigurationFunctions {
         } catch (Exception e) {
             LOG.log(Level.INFO, "Failed to lookup hostname.", e);
         }
-        b.append("<html>\n<head><title>System Configuration</title></head>\n" +
-                "<body>\n" +
-                "<h1>System Configuration</h1>\n" +
-                "<p>This view shows the system configuration of " + host + " at " + new Date() + ".</p>");
+        b.append("<html>\n<head><title>System Configuration</title></head>\n" + "<body>\n" + "<h1>System Configuration</h1>\n" + "<p>This view shows the system configuration of ").append(host).append(" at ").append(new Date()).append(".</p>");
 
     }
 

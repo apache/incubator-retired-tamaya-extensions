@@ -118,7 +118,7 @@ final class ServiceLoaderServiceContext implements ServiceContext {
             for (T t : ServiceLoader.load(serviceType, classLoader)) {
                 services.add(t);
             }
-            Collections.sort(services, PriorityServiceComparator.getInstance());
+            services.sort(PriorityServiceComparator.getInstance());
             services = Collections.unmodifiableList(services);
         } catch (ServiceConfigurationError e) {
             LOG.log(Level.WARNING,

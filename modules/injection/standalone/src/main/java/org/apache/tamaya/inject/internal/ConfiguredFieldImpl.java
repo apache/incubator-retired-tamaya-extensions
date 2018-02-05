@@ -25,7 +25,6 @@ import org.apache.tamaya.inject.spi.ConfiguredField;
 import javax.config.Config;
 import javax.config.ConfigProvider;
 import java.lang.reflect.Field;
-import java.lang.reflect.Type;
 import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
 import java.util.Collection;
@@ -78,14 +77,11 @@ public class ConfiguredFieldImpl implements ConfiguredField{
     private void applyDynamicValue(Object target) {
         Objects.requireNonNull(target);
         try {
-            AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-                @Override
-                public Object run() throws Exception {
-                    annotatedField.setAccessible(true);
-                    annotatedField.set(target,
-                            DefaultDynamicValue.of(target, annotatedField, ConfigProvider.getConfig()));
-                    return annotatedField;
-                }
+            AccessController.doPrivileged((PrivilegedExceptionAction<Object>) () -> {
+                annotatedField.setAccessible(true);
+                annotatedField.set(target,
+                        DefaultDynamicValue.of(target, annotatedField, ConfigProvider.getConfig()));
+                return annotatedField;
             });
         } catch (Exception e) {
             throw new NoSuchElementException("Failed to annotation configured field: " + this.annotatedField.getDeclaringClass()
@@ -107,15 +103,12 @@ public class ConfiguredFieldImpl implements ConfiguredField{
             Class targetType = this.annotatedField.getType();
             Object configValue = InjectionHelper.getConfigValue(this.annotatedField, targetType, config);
 
-            AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-                @Override
-                public Object run() throws Exception {
-                    annotatedField.setAccessible(true);
-                    if(configValue!=null) {
-                        annotatedField.set(target, configValue);
-                    }
-                    return annotatedField;
+            AccessController.doPrivileged((PrivilegedExceptionAction<Object>) () -> {
+                annotatedField.setAccessible(true);
+                if(configValue!=null) {
+                    annotatedField.set(target, configValue);
                 }
+                return annotatedField;
             });
         } catch (Exception e) {
             e.printStackTrace();

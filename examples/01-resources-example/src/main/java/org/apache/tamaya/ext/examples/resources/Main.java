@@ -21,8 +21,6 @@ package org.apache.tamaya.ext.examples.resources;
 import javax.config.Config;
 import javax.config.ConfigProvider;
 import java.io.PrintStream;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 

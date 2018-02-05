@@ -151,10 +151,7 @@ public final class FrozenConfig implements Config, Serializable {
         if (frozenAt != that.frozenAt) {
             return false;
         }
-        if (properties != null ? !properties.equals(that.properties) : that.properties != null) {
-            return false;
-        }
-        return id != null ? id.equals(that.id) : that.id == null;
+        return (properties != null ? properties.equals(that.properties) : that.properties == null) && (id != null ? id.equals(that.id) : that.id == null);
     }
 
     @Override

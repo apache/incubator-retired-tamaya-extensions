@@ -95,9 +95,7 @@ public final class ConfigChangeBuilder {
         for (String key : previous.getPropertyNames()) {
             String previousValue = previous.getValue(key, String.class);
             Optional<String> currentValue = current.getOptionalValue(key, String.class);
-            if(Objects.equals(currentValue.orElse(null), previousValue)){
-                continue;
-            }else {
+            if(!Objects.equals(currentValue.orElse(null), previousValue)){
                 PropertyChangeEvent event = new PropertyChangeEvent(previous, key, previousValue, currentValue.orElse(null));
                 events.put(key, event);
             }
@@ -106,9 +104,7 @@ public final class ConfigChangeBuilder {
         for (String key : current.getPropertyNames()){
             Optional<String> previousValue = previous.getOptionalValue(key, String.class);
             String currentValue = current.getOptionalValue(key, String.class).orElse(null);
-            if(Objects.equals(currentValue, previousValue.orElse(null))){
-                continue;
-            }else{
+            if(!Objects.equals(currentValue, previousValue.orElse(null))){
                 if (!previousValue.isPresent()) {
                     PropertyChangeEvent event = new PropertyChangeEvent(current, key, null, currentValue);
                     events.put(key, event);

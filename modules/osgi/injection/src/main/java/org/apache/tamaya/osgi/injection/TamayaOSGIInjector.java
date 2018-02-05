@@ -114,11 +114,7 @@ public class TamayaOSGIInjector{
      */
     private OSGIConfigurationInjector getInjector(String pid, String location){
         String key = location==null?pid.trim():pid.trim()+"::"+location.trim();
-        OSGIConfigurationInjector injector = INJECTORS.get(key);
-        if(injector==null){
-            injector = new OSGIConfigurationInjector(cm, pid, location);
-            INJECTORS.put(key, injector);
-        }
+        OSGIConfigurationInjector injector = INJECTORS.computeIfAbsent(key, k -> new OSGIConfigurationInjector(cm, pid, location));
         return injector;
     }
 

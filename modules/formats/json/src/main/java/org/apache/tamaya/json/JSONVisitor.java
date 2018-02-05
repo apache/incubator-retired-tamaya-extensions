@@ -117,7 +117,7 @@ class JSONVisitor {
 
         private JsonValue formatArray(Iterator<JsonValue> iterator) {
             StringBuilder b = new StringBuilder();
-            iterator.forEachRemaining(r -> {b.append(r.toString().replace(",", "\\,")).append(',');});
+            iterator.forEachRemaining(r -> b.append(r.toString().replace(",", "\\,")).append(','));
             if(b.length()>0){
                 b.setLength(b.length()-1);
             }

@@ -195,14 +195,11 @@ public class ConfiguredTypeImpl implements ConfiguredType{
         }
         // if no class level annotation is there we might have method level annotations only
         for (Method method : type.getDeclaredMethods()) {
-            if(isConfiguredMethod(method)) {
+            if (isConfiguredMethod(method)) {
                 return true;
             }
         }
-        if (type.getSuperclass() != null) {
-            return isConfigured(type.getSuperclass());
-        }
-        return false;
+        return type.getSuperclass() != null && isConfigured(type.getSuperclass());
     }
 
     public static boolean isConfiguredField(Field field) {

@@ -25,14 +25,14 @@ import java.util.Collection;
 
 /**
  * Singleton accessor for accessing the event support component that distributes change events of
- * {@link org.apache.tamaya.spi.PropertySource} and {@link org.apache.tamaya.Configuration}.
+ * {@link javax.config.spi.ConfigSource} and {@link javax.config.Config}.
  */
 @SuppressWarnings("rawtypes")
 public final class ConfigEventManager {
     /**
      * The backing SPI.
      */
-    private static final ConfigEventManagerSpi spi(){
+    private static ConfigEventManagerSpi spi(){
         ConfigEventManagerSpi spi = ServiceContextManager.getServiceContext()
                 .getService(ConfigEventManagerSpi.class);
         if(spi==null){

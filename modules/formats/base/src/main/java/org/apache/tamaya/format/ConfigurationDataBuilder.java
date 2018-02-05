@@ -81,7 +81,7 @@ public final class ConfigurationDataBuilder {
     public ConfigurationDataBuilder addSections(String... sections){
         for (String section : sections) {
             if (!namedSections.containsKey(section)) {
-                namedSections.put(section, new HashMap<String, String>());
+                namedSections.put(section, new HashMap<>());
             }
         }
         return this;
@@ -95,11 +95,7 @@ public final class ConfigurationDataBuilder {
      * @return the builder for chaining.
      */
     public ConfigurationDataBuilder addSectionProperty(String section, String key, String value) {
-        Map<String, String> map = namedSections.get(section);
-        if (map == null) {
-            map = new HashMap<>();
-            namedSections.put(section, map);
-        }
+        Map<String, String> map = namedSections.computeIfAbsent(section, k -> new HashMap<>());
         map.put(key, value);
         return this;
     }
@@ -133,11 +129,7 @@ public final class ConfigurationDataBuilder {
      * @return the builder for chaining.
      */
     public ConfigurationDataBuilder addSectionProperties(String section, Map<String, String> properties) {
-        Map<String, String> map = namedSections.get(section);
-        if (map == null) {
-            map = new HashMap<>();
-            namedSections.put(section, map);
-        }
+        Map<String, String> map = namedSections.computeIfAbsent(section, k -> new HashMap<>());
         map.putAll(properties);
         return this;
     }
@@ -160,11 +152,7 @@ public final class ConfigurationDataBuilder {
          * @return the builder for chaining.
          */
     public ConfigurationDataBuilder addDefaultProperties(Map<String, String> properties) {
-        Map<String,String> defaultProps = this.namedSections.get("default");
-        if(defaultProps==null){
-            defaultProps = new HashMap<>();
-            this.namedSections.put("default", defaultProps);
-        }
+        Map<String, String> defaultProps = this.namedSections.computeIfAbsent("default", k -> new HashMap<>());
         defaultProps.putAll(properties);
         return this;
     }

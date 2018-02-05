@@ -278,7 +278,7 @@ public class TamayaConfigPlugin implements TamayaConfigService,BundleListener, S
                     && config.getProperties() != null) {
                 props = config.getProperties();
             } else {
-                props = new Hashtable<String, Object>();
+                props = new Hashtable<>();
             }
             return props;
         } catch (IOException e) {

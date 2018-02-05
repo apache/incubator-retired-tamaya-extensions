@@ -115,7 +115,7 @@ final class InjectionHelper {
             return getCustomConvertedConfigValue(member, converterAnnot, targetType, keys, config);
         }
 
-        Optional<T> result = null;
+        Optional<T> result;
         for(String key:keys) {
             result = config.getOptionalValue(key, targetType);
             if (result.isPresent()) {

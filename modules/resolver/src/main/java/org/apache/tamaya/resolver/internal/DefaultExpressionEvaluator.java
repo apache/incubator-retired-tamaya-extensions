@@ -41,12 +41,7 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
     /**
      * Comparator used (not needed with Java8).
      */
-    private static final Comparator<ExpressionResolver> RESOLVER_COMPARATOR = new Comparator<ExpressionResolver>() {
-        @Override
-        public int compare(ExpressionResolver o1, ExpressionResolver o2) {
-            return compareExpressionResolver(o1, o2);
-        }
-    };
+    private static final Comparator<ExpressionResolver> RESOLVER_COMPARATOR = (o1, o2) -> compareExpressionResolver(o1, o2);
 
     /**
      * Order ExpressionResolver reversely, the most important come first.
@@ -151,10 +146,8 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
     @Override
     public Collection<ExpressionResolver> getResolvers() {
         List<ExpressionResolver> resolvers = new ArrayList<>();
-        for (ExpressionResolver resolver : ServiceContextManager.getServiceContext().getServices(ExpressionResolver.class)) {
-            resolvers.add(resolver);
-        }
-        Collections.sort(resolvers, RESOLVER_COMPARATOR);
+        resolvers.addAll(ServiceContextManager.getServiceContext().getServices(ExpressionResolver.class));
+        resolvers.sort(RESOLVER_COMPARATOR);
         return resolvers;
     }
 

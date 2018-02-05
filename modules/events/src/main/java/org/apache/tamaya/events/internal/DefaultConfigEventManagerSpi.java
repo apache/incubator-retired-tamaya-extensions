@@ -71,11 +71,7 @@ public class DefaultConfigEventManagerSpi implements ConfigEventManagerSpi {
 
 	@Override
     public <T extends ConfigEvent> void addListener(ConfigEventListener l, Class<T> eventType){
-        List<ConfigEventListener> ls = listeners.get(eventType);
-        if(ls==null){
-            ls = Collections.synchronizedList(new ArrayList<ConfigEventListener>());
-            listeners.put(eventType, ls);
-        }
+        List<ConfigEventListener> ls = listeners.computeIfAbsent(eventType, k -> Collections.synchronizedList(new ArrayList<ConfigEventListener>()));
         synchronized (ls){
             if(!ls.contains(l)){
                 ls.add(l);
