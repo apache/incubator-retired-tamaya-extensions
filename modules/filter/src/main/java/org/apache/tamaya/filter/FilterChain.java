@@ -30,7 +30,7 @@ import java.util.List;
  * A set of property filter and accessor methods. This class is built for
  * usage within a single threaded context, so it is NOT thread-safe.
  */
-public final class Context implements Filter{
+public final class FilterChain implements Filter{
     /** The filters. */
     private List<Filter> filters = new ArrayList<>();
 

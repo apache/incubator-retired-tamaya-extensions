@@ -20,7 +20,7 @@ package org.apache.tamaya.spisupport.filter;
 
 import org.apache.tamaya.base.filter.FilterContext;
 import org.apache.tamaya.base.filter.RegexPropertyFilter;
-import org.apache.tamaya.filter.Context;
+import org.apache.tamaya.filter.FilterChain;
 import org.apache.tamaya.base.filter.Filter;
 import org.junit.Test;
 
@@ -33,7 +33,7 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 /**
- * Tests for {@link Context}. Created by atsticks on 11.02.16.
+ * Tests for {@link FilterChain}. Created by atsticks on 11.02.16.
  */
 public class ProgrammableFilterTest {
 
@@ -44,7 +44,7 @@ public class ProgrammableFilterTest {
 
     @Test
     public void testAddRemoveFilter() throws Exception {
-        Context filter = new Context();
+        FilterChain filter = new FilterChain();
         Map<String,String> map = new HashMap<>();
         FilterContext.setContext(new FilterContext(map, config));
         assertEquals(filter.filterProperty(test1Property,test1Property), test1Property);
@@ -79,7 +79,7 @@ public class ProgrammableFilterTest {
 
     @Test
     public void testClearFilters() throws Exception {
-        Context filter = new Context();
+        FilterChain filter = new FilterChain();
         RegexPropertyFilter regexFilter = new RegexPropertyFilter();
         regexFilter.setIncludes("test1.*");
         Map<String,String> map = new HashMap<>();
@@ -110,7 +110,7 @@ public class ProgrammableFilterTest {
 
     @Test
     public void testSetFilters() throws Exception {
-        Context filter = new Context();
+        FilterChain filter = new FilterChain();
         RegexPropertyFilter regexFilter = new RegexPropertyFilter();
         regexFilter.setIncludes("test\\..*");
         Map<String,String> map = new HashMap<>();
@@ -134,7 +134,7 @@ public class ProgrammableFilterTest {
 
     @Test
     public void testSetFilters1() throws Exception {
-        Context filter = new Context();
+        FilterChain filter = new FilterChain();
         RegexPropertyFilter regexFilter = new RegexPropertyFilter();
         regexFilter.setIncludes("test1.*");
         Map<String,String> map = new HashMap<>();
@@ -155,7 +155,7 @@ public class ProgrammableFilterTest {
 
     @Test
     public void testGetFilters() throws Exception {
-        Context filter = new Context();
+        FilterChain filter = new FilterChain();
         assertNotNull(filter.getFilters());
         assertTrue(filter.getFilters().isEmpty());
         RegexPropertyFilter regexFilter = new RegexPropertyFilter();
@@ -169,7 +169,7 @@ public class ProgrammableFilterTest {
 
     @Test
     public void testToString() throws Exception {
-        Context filter = new Context();
+        FilterChain filter = new FilterChain();
         assertFalse(filter.toString().contains("test\\..*"));
         assertTrue(filter.toString().contains("ProgrammableFilter"));
         assertFalse(filter.toString().contains("RegexPropertyFilter"));
