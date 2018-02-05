@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.filter;
 
-import org.apache.tamaya.spi.Filter;
+import org.apache.tamaya.base.filter.Filter;
 import org.osgi.service.component.annotations.Component;
 
 import java.util.*;

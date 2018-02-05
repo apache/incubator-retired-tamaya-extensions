@@ -22,9 +22,9 @@ import org.apache.tamaya.base.DefaultConfig;
 import org.apache.tamaya.base.DefaultConfigBuilder;
 import org.apache.tamaya.base.convert.ConverterManager;
 import org.apache.tamaya.base.filter.FilterManager;
-import org.apache.tamaya.spi.ConfigContext;
-import org.apache.tamaya.spi.ConfigContextSupplier;
-import org.apache.tamaya.spi.ConfigValue;
+import org.apache.tamaya.base.ConfigContext;
+import org.apache.tamaya.base.filter.Filter;
+import org.apache.tamaya.base.ConfigContextSupplier;
 
 import javax.config.Config;
 import javax.config.spi.ConfigSource;
@@ -33,7 +33,7 @@ import java.util.Optional;
 
 /**
  * Wrapper that intercepts evaluation of String configuration extending with value resolution capabilities
- * as provided by registered instances of type {@link org.apache.tamaya.spi.Filter}.
+ * as provided by registered instances of type {@link Filter}.
  */
 public final class ResolvableConfig implements Config{
 
@@ -54,7 +54,7 @@ public final class ResolvableConfig implements Config{
      *     <li>If the instance passed is of type {@link ResolvableConfig}, the instance is passed through.</li>
      *     <li>If the instance passed is of type {@link DefaultConfig}, the instance is passed through.</li>
      *     <li>It the instance implements {@link ConfigContextSupplier}, a new {@link DefaultConfig} is
-     *     created and returned, using the returned {@link org.apache.tamaya.spi.ConfigContext}.</li>
+     *     created and returned, using the returned {@link ConfigContext}.</li>
      *     <li>Otherwise a new instance of this class is created, with filtering and conversion added on top, based
      *     on the discoverable filters and converters only.</li>
      * </ol>

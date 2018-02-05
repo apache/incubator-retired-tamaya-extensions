@@ -20,7 +20,7 @@ package org.apache.tamaya.mutableconfig;
 
 import org.apache.tamaya.mutableconfig.spi.MutableConfigurationProviderSpi;
 import org.apache.tamaya.mutableconfig.spi.MutableConfigSource;
-import org.apache.tamaya.spi.ServiceContextManager;
+import org.apache.tamaya.base.ServiceContextManager;
 
 import javax.config.Config;
 import javax.config.ConfigProvider;

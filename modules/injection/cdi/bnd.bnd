@@ -21,12 +21,17 @@ Bundle-ContactAddress: dev-tamaya@incubator.apache.org
 Bundle-DocURL: http://tamaya.apache.org
 Export-Package: \
 	org.apache.tamaya.inject.cdi,\
-	org.apache.tamaya.inject.extras
+	org.apache.tamaya.inject.cdi.extra
 Import-Package: \
-	org.apache.tamaya,\
-	org.apache.tamaya.spi,\
-	org.apache.tamaya.inject.api,\
-    org.apache.tamaya.inject.spi
+	javax.config,\
+    javax.config.spi,\
+    javax.inject,\
+    org.apache.tamaya.base,\
+    org.apache.tamaya.base.convert,\
+    org.apache.tamaya.inject.api,\
+    org.apache.tamaya.inject.spi,\
+    org.osgi.framework,\
+    javax.annotation,
 Export-Service: \
     org.apache.tamaya.spi.ServiceContext,\
     javax.enterprise.inject.spi.Extension

@@ -23,12 +23,10 @@ Bundle-DocURL: http://tamaya.apache.org
 Export-Package: \
 	org.apache.tamaya.gogo.shell
 Import-Package: \
-    org.osgi.service.cm,\
+    javax.config,\
     org.osgi.framework,\
-    org.apache.tamaya,\
-    org.apache.tamaya.spi,\
-    org.apache.tamaya.functions,\
-    org.apache.tamaya.base,\
-    org.apache.tamaya.osgi,\
+    javax.annotation,\
+    org.osgi.framework,\
+    org.osgi.service.cm,\
     org.apache.tamaya.osgi.commands,\
     org.apache.felix.service.command

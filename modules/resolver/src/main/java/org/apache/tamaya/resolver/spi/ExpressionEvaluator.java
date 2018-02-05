@@ -19,10 +19,13 @@
 package org.apache.tamaya.resolver.spi;
 
 
+import org.apache.tamaya.base.filter.Filter;
+import org.apache.tamaya.base.ServiceContext;
+
 import java.util.Collection;
 
 /**
- * Interface that provides an SPI that can be accessed from the current {@link org.apache.tamaya.spi.ServiceContext},
+ * Interface that provides an SPI that can be accessed from the current {@link ServiceContext},
  * which allows to pass expression that contain placeholders and variable expressions. Expressions passed hereby
  * use UNIX styled variable syntax as follows:
  * <pre>
@@ -41,7 +44,7 @@ import java.util.Collection;
  *     Also multiple expressions are supported, e.g. ${resource:META-INF/version.conf}, ${file:C:/temp/version.txt},
  *     ${url:http://configserver/name}.
  * </pre>
- * Basically this service is consumed by an instance of {@link org.apache.tamaya.spi.Filter}, which
+ * Basically this service is consumed by an instance of {@link Filter}, which
  * takes the configuration values found and passes them to this evaluator, when expressions are detected. This
  * also done iteratively, so also multi-stepped references (references, which themselves must be evaluated as well)
  * are supported.

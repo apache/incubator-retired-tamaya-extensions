@@ -21,7 +21,7 @@ package org.apache.tamaya.spisupport.filter;
 import org.apache.tamaya.base.filter.FilterContext;
 import org.apache.tamaya.base.filter.RegexPropertyFilter;
 import org.apache.tamaya.filter.Context;
-import org.apache.tamaya.spi.Filter;
+import org.apache.tamaya.base.filter.Filter;
 import org.junit.Test;
 
 import javax.config.Config;

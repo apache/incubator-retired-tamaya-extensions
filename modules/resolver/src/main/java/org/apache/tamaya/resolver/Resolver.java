@@ -18,10 +18,10 @@
  */
 package org.apache.tamaya.resolver;
 
+import org.apache.tamaya.base.ServiceContextManager;
 import org.apache.tamaya.resolver.internal.ResolvableConfig;
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
 import org.apache.tamaya.resolver.spi.ExpressionResolver;
-import org.apache.tamaya.spi.ServiceContextManager;
 
 import javax.config.Config;
 import java.util.Collection;

@@ -19,8 +19,7 @@
 package org.apache.tamaya.spisupport.filter;
 
 import org.apache.tamaya.filter.ConfigurationFilter;
-import org.apache.tamaya.spi.ConfigValue;
-import org.apache.tamaya.spi.Filter;
+import org.apache.tamaya.base.filter.Filter;
 import org.junit.Test;
 
 import javax.config.Config;

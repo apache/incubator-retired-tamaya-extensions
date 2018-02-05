@@ -19,7 +19,7 @@
 package org.apache.tamaya.resource.internal;
 
 import org.apache.tamaya.resource.ResourceLocator;
-import org.apache.tamaya.spi.ServiceContextManager;
+import org.apache.tamaya.base.ServiceContextManager;
 import org.osgi.service.component.annotations.Component;
 
 import javax.annotation.Priority;

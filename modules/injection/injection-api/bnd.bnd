@@ -23,7 +23,6 @@ Export-Package: \
 	org.apache.tamaya.inject.api,\
 	org.apache.tamaya.inject.spi
 Import-Package: \
-	org.apache.tamaya,\
-	org.apache.tamaya.spi
-Import-Package: org.apache.tamaya,\
-    org.apache.tamaya.spi
+	javax.config,\
+	javax.config.spi
+

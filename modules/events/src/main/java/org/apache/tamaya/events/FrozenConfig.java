@@ -20,8 +20,8 @@ package org.apache.tamaya.events;
 
 import org.apache.tamaya.base.convert.ConversionContext;
 import org.apache.tamaya.base.convert.ConverterManager;
-import org.apache.tamaya.spi.ConfigContext;
-import org.apache.tamaya.spi.ConfigContextSupplier;
+import org.apache.tamaya.base.ConfigContext;
+import org.apache.tamaya.base.ConfigContextSupplier;
 
 import javax.config.Config;
 import javax.config.spi.ConfigSource;

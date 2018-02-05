@@ -23,7 +23,11 @@ Export-Package: \
 	org.apache.tamaya.format,\
 	org.apache.tamaya.format.formats
 Import-Package: \
-	org.apache.tamaya,\
-	org.apache.tamaya.spi
+	javax.config,\
+	javax.config.spi,\
+    org.apache.tamaya.base,\
+    org.apache.tamaya.base.configsource,\
+    org.osgi.framework,\
+    javax.annotation
 Export-Service: \
     org.apache.tamaya.format.ConfigurationFormat

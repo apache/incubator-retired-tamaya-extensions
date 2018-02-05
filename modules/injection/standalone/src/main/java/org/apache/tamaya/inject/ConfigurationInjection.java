@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.inject;
 
-import org.apache.tamaya.spi.ServiceContextManager;
+import org.apache.tamaya.base.ServiceContextManager;
 
 /**
  * Singleton accessor class for accessing {@link ConfigurationInjector} instances.

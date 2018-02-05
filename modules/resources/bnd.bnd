@@ -24,8 +24,12 @@ Export-Package: \
 Private-Package: \
     org.apache.tamaya.resource.internal
 Import-Package: \
-	org.apache.tamaya,\
-	org.apache.tamaya.spi
+    javax.config,\
+    javax.config.spi,\
+    org.apache.tamaya.base,\
+    org.apache.tamaya.base.configsource,\
+    org.osgi.framework,\
+    javax.annotation
 Export-Service: \
     org.apache.tamaya.resources.ResourceLocator,\
     org.apache.tamaya.resources.ResourceResolver

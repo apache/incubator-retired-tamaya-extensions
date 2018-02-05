@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.cdi;
 
-import org.apache.tamaya.spi.ServiceContext;
+import org.apache.tamaya.base.ServiceContext;
 
 import javax.annotation.Priority;
 import javax.enterprise.inject.Instance;

@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.tamaya.base.ServiceContextManager;
 import org.apache.tamaya.base.convert.ConversionContext;
 import org.apache.tamaya.events.ConfigEventManager;
 import org.apache.tamaya.events.spi.BaseConfigEvent;
@@ -32,9 +33,8 @@ import org.apache.tamaya.inject.spi.InjectionEvaluator;
 import org.apache.tamaya.inject.api.WithConverter;
 import org.apache.tamaya.inject.spi.ConfiguredType;
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
-import org.apache.tamaya.spi.ConfigContext;
-import org.apache.tamaya.spi.ConfigContextSupplier;
-import org.apache.tamaya.spi.ServiceContextManager;
+import org.apache.tamaya.base.ConfigContext;
+import org.apache.tamaya.base.ConfigContextSupplier;
 
 import javax.config.Config;
 import javax.config.inject.ConfigProperty;

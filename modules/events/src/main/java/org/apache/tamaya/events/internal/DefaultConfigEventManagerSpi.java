@@ -21,7 +21,7 @@ package org.apache.tamaya.events.internal;
 import org.apache.tamaya.events.ConfigEvent;
 import org.apache.tamaya.events.ConfigEventListener;
 import org.apache.tamaya.events.spi.ConfigEventManagerSpi;
-import org.apache.tamaya.spi.ServiceContextManager;
+import org.apache.tamaya.base.ServiceContextManager;
 import org.osgi.service.component.annotations.Component;
 
 import java.util.*;

@@ -22,8 +22,7 @@ import org.apache.tamaya.functions.Supplier;
 import org.apache.tamaya.inject.api.ConfigDefaultSections;
 import org.apache.tamaya.inject.api.DynamicValue;
 import org.apache.tamaya.inject.api.WithConverter;
-import org.apache.tamaya.spi.ConfigContextSupplier;
-import org.apache.tamaya.spi.TypeLiteral;
+import org.apache.tamaya.base.ConfigContextSupplier;
 
 import javax.config.Config;
 import javax.config.ConfigProvider;
@@ -39,7 +38,6 @@ import javax.inject.Provider;
 import java.lang.reflect.*;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -109,10 +107,18 @@ public class ConfigProducer {
                     keys, conversionContext.getTargetType(), conversionContext.getSupportedFormats().toString()));
         }
         LOGGER.finest(String.format("Injecting %s for key %s in class %s", keyFound, value.toString(), injectionPoint.toString()));
-        if(TypeLiteral.of(injectionPoint.getAnnotated().getBaseType()).getRawType().equals(Optional.class)){
+        if(getRawType(injectionPoint.getAnnotated().getBaseType()).equals(Optional.class)){
             return Optional.ofNullable(value);
         }
         return value;
+    }
+
+    private Type getRawType(Type baseType) {
+        if(baseType instanceof ParameterizedType){
+            ParameterizedType pt = (ParameterizedType)baseType;
+            return pt.getRawType();
+        }
+        return baseType;
     }
 
 //    private Class getClass(Type baseType) {

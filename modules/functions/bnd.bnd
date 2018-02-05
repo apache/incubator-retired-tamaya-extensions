@@ -22,5 +22,6 @@ Bundle-DocURL: http://tamaya.apache.org
 Export-Package: \
 	org.apache.tamaya.functions
 Import-Package: \
-	org.apache.tamaya,\
-	org.apache.tamaya.spi
+	javax.config,\
+	javax.config.spi,\
+    org.apache.tamaya.base.configsource

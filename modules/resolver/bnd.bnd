@@ -21,11 +21,15 @@ Bundle-ContactAddress: dev-tamaya@incubator.apache.org
 Bundle-DocURL: http://tamaya.apache.org
 Export-Package: \
 	org.apache.tamaya.resolver,\
-    	org.apache.tamaya.resolver.spi
+    org.apache.tamaya.resolver.spi
 Import-Package: \
-	org.apache.tamaya,\
-	org.apache.tamaya.spi
+    javax.config,\
+    javax.config.spi,\
+    org.apache.tamaya.base,\
+    org.apache.tamaya.base.filter,\
+    org.osgi.framework,\
+    javax.annotation
 Export-Service: \
     org.apache.tamaya.resolver.spi.ExpressionEvaluator,\
     org.apache.tamaya.resolver.spi.ExpressionResolver,\
-    org.apache.tamaya.spi.PropertyFilter
+    org.apache.tamaya.spi.Filter

@@ -22,5 +22,12 @@ Bundle-DocURL: http://tamaya.apache.org
 Export-Package: \
 	org.apache.tamaya.integration.spring
 Import-Package: \
-    org.apache.tamaya,\
+    javax.config,\
+    javax.config.spi,\
+    org.springframework,\
+    org.springframework.context,\
+    org.springframework.stereotype,\
+    org.springframework.beans,\
+    org.springframework.beans.factory.annotation,\
+    org.springframework.core.env,\
     org.apache.tamaya.spi

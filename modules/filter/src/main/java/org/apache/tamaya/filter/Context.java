@@ -18,8 +18,7 @@
  */
 package org.apache.tamaya.filter;
 
-import org.apache.tamaya.spi.ConfigValue;
-import org.apache.tamaya.spi.Filter;
+import org.apache.tamaya.base.filter.Filter;
 
 import java.util.ArrayList;
 import java.util.Arrays;

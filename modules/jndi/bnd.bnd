@@ -22,6 +22,7 @@ Bundle-DocURL: http://tamaya.apache.org
 Export-Package: \
 	org.apache.tamaya.jndi
 Import-Package: \
-	org.apache.tamaya,\
-	org.apache.tamaya.spi,\
-	org.apache.tamaya.spisupport
+    javax.config.spi,\
+    org.apache.tamaya.base.configsource,\
+    org.osgi.framework,\
+    javax.annotation

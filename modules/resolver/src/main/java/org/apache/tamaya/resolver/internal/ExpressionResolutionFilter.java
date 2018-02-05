@@ -19,8 +19,8 @@
 package org.apache.tamaya.resolver.internal;
 
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
-import org.apache.tamaya.spi.Filter;
-import org.apache.tamaya.spi.ServiceContextManager;
+import org.apache.tamaya.base.filter.Filter;
+import org.apache.tamaya.base.ServiceContextManager;
 
 import javax.annotation.Priority;
 import java.util.logging.Logger;

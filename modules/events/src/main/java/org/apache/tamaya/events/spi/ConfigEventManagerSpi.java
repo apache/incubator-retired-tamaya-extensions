@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.events.spi;
 
+import org.apache.tamaya.base.ServiceContext;
 import org.apache.tamaya.events.ConfigChange;
 import org.apache.tamaya.events.ConfigEvent;
 import org.apache.tamaya.events.ConfigEventListener;
@@ -26,7 +27,7 @@ import java.util.Collection;
 
 /**
  * SPI interface to implement the {@link org.apache.tamaya.events.ConfigEventManager} singleton.
- * Implementations of this interface must be registered with the current {@link org.apache.tamaya.spi.ServiceContext},
+ * Implementations of this interface must be registered with the current {@link ServiceContext},
  * by default this equals to registering it with {@link java.util.ServiceLoader}. Add {@link javax.annotation.Priority}
  * annotations for overriding (higher values override lower values).
  */

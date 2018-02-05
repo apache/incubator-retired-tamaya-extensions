@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.resource;
 
-import org.apache.tamaya.spi.ServiceContext;
+import org.apache.tamaya.base.ServiceContext;
 
 import java.io.InputStream;
 import java.net.URL;

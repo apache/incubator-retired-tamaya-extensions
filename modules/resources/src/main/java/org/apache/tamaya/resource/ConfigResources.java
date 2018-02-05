@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.resource;
 
-import org.apache.tamaya.spi.ServiceContextManager;
+import org.apache.tamaya.base.ServiceContextManager;
 
 
 /**

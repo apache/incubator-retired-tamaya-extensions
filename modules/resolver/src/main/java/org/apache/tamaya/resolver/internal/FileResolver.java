@@ -20,7 +20,7 @@ package org.apache.tamaya.resolver.internal;
 
 import org.apache.tamaya.resolver.spi.ExpressionResolver;
 import org.apache.tamaya.resource.ResourceResolver;
-import org.apache.tamaya.spi.ServiceContextManager;
+import org.apache.tamaya.base.ServiceContextManager;
 
 import javax.annotation.Priority;
 import java.io.BufferedReader;

@@ -20,7 +20,7 @@ package org.apache.tamaya.filter.internal;
 
 import org.apache.tamaya.base.filter.FilterContext;
 import org.apache.tamaya.filter.ConfigurationFilter;
-import org.apache.tamaya.spi.Filter;
+import org.apache.tamaya.base.filter.Filter;
 
 /**
  * Default property filter that hides metadta entries starting with an '_', similar ti {@code etcd}.

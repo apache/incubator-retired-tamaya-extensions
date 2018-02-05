@@ -19,7 +19,7 @@
 package org.apache.tamaya.events;
 
 import org.apache.tamaya.events.spi.ConfigEventManagerSpi;
-import org.apache.tamaya.spi.ServiceContextManager;
+import org.apache.tamaya.base.ServiceContextManager;
 
 import java.util.Collection;
 

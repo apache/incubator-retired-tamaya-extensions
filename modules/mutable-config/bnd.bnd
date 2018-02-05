@@ -26,7 +26,10 @@ Export-Package: \
 Private-Package: \
     org.apache.tamaya.mutableconfig.internal
 Import-Package: \
-	org.apache.tamaya,\
-	org.apache.tamaya.spi
+    javax.config,\
+    javax.config.spi,\
+    org.apache.tamaya.base,\
+    org.osgi.framework,\
+    javax.annotation
 Export-Service: \
     org.apache.tamaya.mutableconfig.spi.MutableConfigProviderSpi

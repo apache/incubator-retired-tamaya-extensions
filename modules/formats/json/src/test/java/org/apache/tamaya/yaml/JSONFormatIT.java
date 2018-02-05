@@ -20,7 +20,7 @@ package org.apache.tamaya.yaml;
 
 import org.apache.tamaya.format.ConfigurationFormat;
 import org.apache.tamaya.json.JSONFormat;
-import org.apache.tamaya.spi.ServiceContextManager;
+import org.apache.tamaya.base.ServiceContextManager;
 import org.junit.Test;
 
 import java.util.List;
