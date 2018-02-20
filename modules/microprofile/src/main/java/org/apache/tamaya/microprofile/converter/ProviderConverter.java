@@ -18,6 +18,15 @@
  */
 package org.apache.tamaya.microprofile.converter;
 
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.annotation.Priority;
+import javax.inject.Provider;
+
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
@@ -25,28 +34,19 @@ import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
-import javax.annotation.Priority;
-import javax.inject.Provider;
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-/**
- * Converter, converting from String to Boolean for 1 = true, otherwise false.
- */
+@SuppressWarnings("rawtypes")
 @Priority(-1)
 public class ProviderConverter implements PropertyConverter<Provider> {
 
     private static final Logger LOG = Logger.getLogger(ProviderConverter.class.getName());
 
-    @Override
+    @SuppressWarnings({"unchecked", "rawtypes"})
+	@Override
     public Provider convert(String value, ConversionContext context) {
         return () -> {
             try{
                 Type targetType = context.getTargetType().getType();
-                ConvertQuery converter = new ConvertQuery(value, TypeLiteral.of(targetType));
+				ConvertQuery converter = new ConvertQuery(value, TypeLiteral.of(targetType));
                 return context.getConfiguration().query(converter);
             }catch(Exception e){
                 throw new ConfigException("Error evaluating config value.", e);
@@ -84,7 +84,8 @@ public class ProviderConverter implements PropertyConverter<Provider> {
                     if(conv instanceof ProviderConverter){
                         continue;
                     }
-                    T result = (T)conv.convert(rawValue, context);
+                    @SuppressWarnings("unchecked")
+					T result = (T)conv.convert(rawValue, context);
                     if(result!=null){
                         return result;
                     }

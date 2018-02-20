@@ -18,15 +18,15 @@
  */
 package org.apache.tamaya.microprofile;
 
-import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.spi.ConfigurationContextBuilder;
-import org.eclipse.microprofile.config.Config;
-import org.eclipse.microprofile.config.spi.ConfigBuilder;
-import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
+
+import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.spi.ConfigurationBuilder;
+import org.eclipse.microprofile.config.Config;
+import org.eclipse.microprofile.config.spi.ConfigBuilder;
+import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
 
 /**
  * Created by atsticks on 23.03.17.
@@ -44,7 +44,7 @@ public class MicroprofileConfigProviderResolver extends ConfigProviderResolver {
     public Config getConfig(ClassLoader loader) {
         Config config = this.configs.get(loader);
         if(config==null){
-            ConfigurationContextBuilder builder = ConfigurationProvider.getConfigurationContextBuilder();
+        	ConfigurationBuilder builder = ConfigurationProvider.getConfigurationBuilder();
             builder.addDefaultPropertyConverters();
             MicroprofileConfigBuilder microConfigBuilder = new MicroprofileConfigBuilder(builder);
             microConfigBuilder.addDefaultSources();
@@ -57,7 +57,7 @@ public class MicroprofileConfigProviderResolver extends ConfigProviderResolver {
 
     @Override
     public ConfigBuilder getBuilder() {
-        return new MicroprofileConfigBuilder(ConfigurationProvider.getConfigurationContextBuilder());
+        return new MicroprofileConfigBuilder(ConfigurationProvider.getConfigurationBuilder());
     }
 
     @Override

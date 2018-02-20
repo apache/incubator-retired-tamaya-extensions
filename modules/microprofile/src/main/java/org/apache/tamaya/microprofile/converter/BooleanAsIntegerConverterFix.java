@@ -18,21 +18,18 @@
  */
 package org.apache.tamaya.microprofile.converter;
 
-import org.apache.tamaya.spi.ConversionContext;
-import org.apache.tamaya.spi.PropertyConverter;
+import java.util.Objects;
 
 import javax.annotation.Priority;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.logging.Logger;
+
+import org.apache.tamaya.spi.ConversionContext;
+import org.apache.tamaya.spi.PropertyConverter;
 
 /**
  * Converter, converting from String to Boolean for 1 = true, otherwise false.
  */
 @Priority(-1)
 public class BooleanAsIntegerConverterFix implements PropertyConverter<Boolean> {
-
-    private final Logger LOG = Logger.getLogger(getClass().getName());
 
     @Override
     public Boolean convert(String value, ConversionContext context) {

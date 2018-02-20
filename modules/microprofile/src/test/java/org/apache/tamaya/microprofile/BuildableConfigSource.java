@@ -18,11 +18,13 @@
  */
 package org.apache.tamaya.microprofile;
 
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValue;
-import org.eclipse.microprofile.config.spi.ConfigSource;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
-import java.util.*;
+import org.eclipse.microprofile.config.spi.ConfigSource;
 
 /**
  * The Buildable config source.

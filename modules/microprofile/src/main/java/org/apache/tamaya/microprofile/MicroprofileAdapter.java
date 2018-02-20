@@ -19,8 +19,14 @@
 package org.apache.tamaya.microprofile;
 
 
-import org.apache.tamaya.*;
-import org.apache.tamaya.spi.ConfigurationContextBuilder;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.tamaya.Configuration;
+import org.apache.tamaya.spi.ConfigurationBuilder;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
@@ -28,8 +34,6 @@ import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.spi.ConfigBuilder;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.eclipse.microprofile.config.spi.Converter;
-
-import java.util.*;
 
 /**
  * Utility class for adapting microprofile artifacts into Tamaya artifacts and vice versa.
@@ -122,11 +126,12 @@ public final class MicroprofileAdapter{
      * @param <T> the target type
      * @return the corresponding Tamaya {@link PropertyConverter} instance, never null.
      */
-    public static <T> PropertyConverter<T> toPropertyConverter(Converter<T> converter) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public static <T> PropertyConverter<T> toPropertyConverter(Converter<T> converter) {
         if(converter instanceof MicroprofileConverter){
             return ((MicroprofileConverter)converter).getPropertyConverter();
         }
-        return new TamayaPropertyConverter(converter);
+        return new TamayaPropertyConverter<T>(converter);
     }
 
     /**
@@ -135,7 +140,8 @@ public final class MicroprofileAdapter{
      * @param <T> the target type
      * @return the corresponding Microprofile.io {@link Converter} instance, never null.
      */
-    public static <T> Converter<T> toConverter(PropertyConverter<T> converter) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public static <T> Converter<T> toConverter(PropertyConverter<T> converter) {
         if(converter instanceof TamayaPropertyConverter){
             return ((TamayaPropertyConverter)converter).getConverter();
         }
@@ -143,11 +149,11 @@ public final class MicroprofileAdapter{
     }
 
     /**
-     * Converts a Tamaya {@link ConfigurationContextBuilder} into a Microprofile.io {@link ConfigBuilder}.
-     * @param builder the Tamaya {@link ConfigurationContextBuilder} instance, not null.
+     * Converts a Tamaya {@link ConfigurationBuilder} into a Microprofile.io {@link ConfigBuilder}.
+     * @param builder the Tamaya {@link ConfigurationBuilder} instance, not null.
      * @return the corresponding Microprofile.io {@link ConfigBuilder} instance, never null.
      */
-    public static ConfigBuilder toConfigBuilder(ConfigurationContextBuilder builder) {
+    public static ConfigBuilder toConfigBuilder(ConfigurationBuilder builder) {
         return new MicroprofileConfigBuilder(builder);
     }
 

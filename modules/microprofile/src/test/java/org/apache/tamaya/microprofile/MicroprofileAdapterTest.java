@@ -154,7 +154,7 @@ public class MicroprofileAdapterTest {
 
     @Test
     public void toConfigBuilder() throws Exception {
-        ConfigBuilder builder = MicroprofileAdapter.toConfigBuilder(ConfigurationProvider.getConfigurationContextBuilder());
+        ConfigBuilder builder = MicroprofileAdapter.toConfigBuilder(ConfigurationProvider.getConfigurationBuilder());
         assertNotNull(builder);
     }
 

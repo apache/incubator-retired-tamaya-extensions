@@ -36,7 +36,8 @@ import java.util.*;
  */
 public class MicroprofileConfig implements Config, Serializable {
 
-    private Configuration delegate;
+	private static final long serialVersionUID = -2811635734899431816L;
+	private Configuration delegate;
 
     public MicroprofileConfig(Configuration delegate){
         this.delegate = Objects.requireNonNull(delegate);
