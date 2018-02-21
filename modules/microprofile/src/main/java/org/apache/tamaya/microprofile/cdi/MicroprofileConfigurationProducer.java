@@ -16,6 +16,20 @@
  */
 package org.apache.tamaya.microprofile.cdi;
 
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Produces;
+import javax.enterprise.inject.spi.InjectionPoint;
+import javax.inject.Provider;
+
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
@@ -27,22 +41,6 @@ import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.config.spi.ConfigBuilder;
 import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
-import javax.enterprise.inject.spi.Annotated;
-import javax.enterprise.inject.spi.AnnotatedField;
-import javax.enterprise.inject.spi.AnnotatedType;
-import javax.enterprise.inject.spi.InjectionPoint;
-import javax.inject.Provider;
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Producer bean for configuration properties.
@@ -63,7 +61,7 @@ public class MicroprofileConfigurationProducer {
         }
 
         // unless the extension is not installed, this should never happen because the extension
-        // enforces the resolvability of the config
+        // enforces the resolvability of the configuration
 
         String defaultTextValue = annotation.defaultValue().equals(ConfigProperty.UNCONFIGURED_VALUE) ? null : annotation.defaultValue();
         ConversionContext conversionContext = createConversionContext(key, injectionPoint);
@@ -77,7 +75,8 @@ public class MicroprofileConfigurationProducer {
         return value;
     }
 
-    static String getDefaultKey(InjectionPoint injectionPoint) {
+    @SuppressWarnings("rawtypes")
+	static String getDefaultKey(InjectionPoint injectionPoint) {
         Class declaringType = injectionPoint.getMember().getDeclaringClass();
         return declaringType.getCanonicalName() + "." + injectionPoint.getMember().getName();
     }
@@ -114,6 +113,7 @@ public class MicroprofileConfigurationProducer {
         return builder.build();
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     static Object resolveValue(String defaultTextValue, ConversionContext context, InjectionPoint injectionPoint) {
         Config config = ConfigProviderResolver.instance().getConfig();
         String textValue = config.getOptionalValue(context.getKey(), String.class).orElse(defaultTextValue);
@@ -123,7 +123,7 @@ public class MicroprofileConfigurationProducer {
         Object value = null;
         if (textValue != null || Optional.class.equals(context.getTargetType().getRawType())) {
             LOGGER.log(Level.FINEST, () -> "Converting KEY: " + context.getKey() + "("+context.getTargetType()+"), textValue: " + textValue);
-            List<PropertyConverter> converters = ConfigurationProvider.getConfiguration().getContext()
+			List<PropertyConverter> converters = ConfigurationProvider.getConfiguration().getContext()
                     .getPropertyConverters((TypeLiteral)context.getTargetType());
             for (PropertyConverter<Object> converter : converters) {
                 try {
@@ -151,6 +151,5 @@ public class MicroprofileConfigurationProducer {
     public ConfigBuilder getConfigBuilder(){
         return ConfigProviderResolver.instance().getBuilder();
     }
-
 
 }

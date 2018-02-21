@@ -41,7 +41,8 @@ public final class ConfiguredType {
         this.type = Objects.requireNonNull(type);
     }
 
-    public Class getType() {
+    @SuppressWarnings("rawtypes")
+	public Class getType() {
         return type;
     }
 
@@ -64,7 +65,7 @@ public final class ConfiguredType {
     /**
      * Used to build up during injection point processing.
      * @param injectionPoint the CDI injection point, not null.
-     * @param key the possible config key, not null.
+     * @param key the possible configuration key, not null.
      */
     void addConfiguredMember(InjectionPoint injectionPoint, String key) {
         Member member = injectionPoint.getMember();

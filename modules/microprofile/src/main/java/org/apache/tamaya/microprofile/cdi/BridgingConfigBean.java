@@ -32,7 +32,8 @@ final class BridgingConfigBean implements Bean<Object> {
     private final Bean<Object> delegate;
     private final Set<Type> types;
 
-    public BridgingConfigBean(final Bean delegate, final Set<Type> types) {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	public BridgingConfigBean(final Bean delegate, final Set<Type> types) {
         this.types = types;
         this.delegate = Objects.requireNonNull(delegate);
     }

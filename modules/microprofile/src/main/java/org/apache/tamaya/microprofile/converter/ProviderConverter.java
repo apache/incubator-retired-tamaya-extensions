@@ -40,7 +40,7 @@ public class ProviderConverter implements PropertyConverter<Provider> {
 
     private static final Logger LOG = Logger.getLogger(ProviderConverter.class.getName());
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({"unchecked"})
 	@Override
     public Provider convert(String value, ConversionContext context) {
         return () -> {
@@ -49,7 +49,7 @@ public class ProviderConverter implements PropertyConverter<Provider> {
 				ConvertQuery converter = new ConvertQuery(value, TypeLiteral.of(targetType));
                 return context.getConfiguration().query(converter);
             }catch(Exception e){
-                throw new ConfigException("Error evaluating config value.", e);
+                throw new ConfigException("Error evaluating configuration value.", e);
             }
         };
     }
