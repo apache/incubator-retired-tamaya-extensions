@@ -9,6 +9,7 @@
 javac.source: 1.8
 javac.target: 1.8
 
+Automatic-Module-Name: org.apache.tamaya.mutableconfig
 Bundle-Version: ${version}.${tstamp}
 Bundle-Name: Apache Tamaya - Mutable Configuration
 Bundle-SymbolicName: org.apache.tamaya.mutableconfig
