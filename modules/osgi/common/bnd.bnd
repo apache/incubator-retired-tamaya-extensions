@@ -25,6 +25,7 @@ Export-Package: \
 	org.apache.tamaya.osgi,\
 	org.apache.tamaya.osgi.commands
 Import-Package: \
+    javax.annotation,\
     org.osgi.framework,\
     org.osgi.service.cm,\
     org.apache.tamaya,\

@@ -70,18 +70,20 @@ under the License.
         <asciidoctor.version>1.5.6</asciidoctor.version>
         <asciidoctor-diagramm.version>1.2.1</asciidoctor-diagramm.version>
         <asciidoctorj.version>1.5.6</asciidoctorj.version>
+        <assembly.version>3.1.0</assembly.version>
         <checkstyle.version>2.15</checkstyle.version>
-        <enforcer.version>1.4.1</enforcer.version>
+        <enforcer.version>3.0.0-M1</enforcer.version>
         <gem.plugin>1.0.7</gem.plugin>
         <sources.plugin>3.0.1</sources.plugin>
         <hamcrest.version>2.0.0.0</hamcrest.version>
-        <javadoc.version>2.10.4</javadoc.version>
+        <javadoc.version>3.0.0</javadoc.version>
         <!-- Must/should match the JRuby version used by AsciidoctorJ -->
         <jruby.version>1.7.26</jruby.version>
         <findbugs.version>3.0.4</findbugs.version>
         <mockito.version>1.10.19</mockito.version>
         <pitest-plugin.version>1.3.1</pitest-plugin.version>
         <rat.version>0.12</rat.version>
+        <surefire.version>2.21.0</surefire.version>
         <toolchains.plugin>1.1</toolchains.plugin>
 
         <!-- Dependencies for site generation -->
@@ -490,6 +492,7 @@ under the License.
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${surefire.version}</version>
                     <inherited>true</inherited>
                 </plugin>
 
@@ -669,6 +672,20 @@ under the License.
                         </configuration>
                     </execution>
                 </executions>
+                <!-- compiling on JDK 9+ requires these Java EE modules
+                     it should be possible to remove this after Karaf 4.2.0 GA has been released -->
+                <dependencies>
+                  <dependency>
+                    <groupId>org.glassfish.jaxb</groupId>
+                    <artifactId>jaxb-runtime</artifactId>
+                    <version>2.3.0</version>
+                  </dependency>
+                  <dependency>
+                    <groupId>javax.activation</groupId>
+                    <artifactId>javax.activation-api</artifactId>
+                    <version>1.2.0</version>
+                  </dependency>
+                </dependencies>
             </plugin>
 
             <plugin>
@@ -744,6 +761,15 @@ under the License.
                     <source>${maven.compile.sourceLevel}</source>
                     <verbose>false</verbose>
                 </configuration>
+                <!-- compiling on JDK 10 requires a newer version of commons-lang3
+                     it should be possible to remove this once a newer javadoc plugin becomes available -->
+                <dependencies>
+                  <dependency>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-lang3</artifactId>
+                    <version>3.7</version>
+                  </dependency>
+                </dependencies>
             </plugin>
 
             <plugin>
