@@ -18,18 +18,18 @@
  */
 package org.apache.tamaya.resolver.internal;
 
-import org.apache.tamaya.base.DefaultConfig;
-import org.apache.tamaya.base.DefaultConfigBuilder;
+import org.apache.tamaya.base.*;
 import org.apache.tamaya.base.convert.ConverterManager;
 import org.apache.tamaya.base.filter.FilterManager;
-import org.apache.tamaya.base.ConfigContext;
 import org.apache.tamaya.base.filter.Filter;
-import org.apache.tamaya.base.ConfigContextSupplier;
 
 import javax.config.Config;
+import javax.config.ConfigValue;
 import javax.config.spi.ConfigSource;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * Wrapper that intercepts evaluation of String configuration extending with value resolution capabilities
@@ -100,6 +100,11 @@ public final class ResolvableConfig implements Config{
     }
 
     @Override
+    public ConfigValue<String> access(String key) {
+        return new DefaultConfigValue<>(this, () -> ConfigContext.from(delegate), key, String.class);
+    }
+
+    @Override
     public Iterable<String> getPropertyNames() {
         return delegate.getPropertyNames();
     }
@@ -107,6 +112,11 @@ public final class ResolvableConfig implements Config{
     @Override
     public Iterable<ConfigSource> getConfigSources() {
         return delegate.getConfigSources();
+    }
+
+    @Override
+    public void registerConfigChangedListener(Consumer<Set<String>> consumer) {
+        this.delegate.registerConfigChangedListener(consumer);
     }
 
     @Override

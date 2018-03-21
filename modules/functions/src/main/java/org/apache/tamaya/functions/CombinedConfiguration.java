@@ -18,9 +18,14 @@
  */
 package org.apache.tamaya.functions;
 
+import org.apache.tamaya.base.ConfigContext;
+import org.apache.tamaya.base.DefaultConfigValue;
+
 import javax.config.Config;
+import javax.config.ConfigValue;
 import javax.config.spi.ConfigSource;
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * Combines a set of child configurations to a new one, by overriding the first entries with result from
@@ -83,6 +88,11 @@ class CombinedConfiguration implements Config{
     }
 
     @Override
+    public ConfigValue<String> access(String key) {
+        return new DefaultConfigValue<>(this, () -> ConfigContext.from(this), key, String.class);
+    }
+
+    @Override
     public Iterable<String> getPropertyNames() {
         Set<String> result = new HashSet<>();
         for(Config ps : configurations){
@@ -98,6 +108,13 @@ class CombinedConfiguration implements Config{
             ps.getConfigSources().forEach(configSources::add);
         }
         return configSources;
+    }
+
+    @Override
+    public void registerConfigChangedListener(Consumer<Set<String>> consumer) {
+        for(Config cfg:this.configurations){
+            cfg.registerConfigChangedListener(consumer);
+        }
     }
 
     @Override

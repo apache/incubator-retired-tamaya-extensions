@@ -19,9 +19,14 @@
 package org.apache.tamaya.events;
 
 
+import org.apache.tamaya.base.ConfigContext;
+import org.apache.tamaya.base.DefaultConfigValue;
+
 import javax.config.Config;
+import javax.config.ConfigValue;
 import javax.config.spi.ConfigSource;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
 
@@ -58,6 +63,11 @@ public class TestConfigView implements UnaryOperator<Config>{
             }
 
             @Override
+            public void registerConfigChangedListener(Consumer<Set<String>> consumer) {
+
+            }
+
+            @Override
             public <T> T getValue(String key, Class<T> type) {
                 if (key.startsWith("test")) {
                     return config.getValue(key, type);
@@ -71,6 +81,11 @@ public class TestConfigView implements UnaryOperator<Config>{
                     return config.getOptionalValue(key, type);
                 }
                 return Optional.empty();
+            }
+
+            @Override
+            public ConfigValue<String> access(String key) {
+                return new DefaultConfigValue<>(this, () -> ConfigContext.from(config), key, String.class);
             }
 
         };

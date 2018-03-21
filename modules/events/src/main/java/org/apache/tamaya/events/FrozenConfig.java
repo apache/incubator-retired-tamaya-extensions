@@ -18,17 +18,20 @@
  */
 package org.apache.tamaya.events;
 
+import org.apache.tamaya.base.DefaultConfigValue;
 import org.apache.tamaya.base.convert.ConversionContext;
 import org.apache.tamaya.base.convert.ConverterManager;
 import org.apache.tamaya.base.ConfigContext;
 import org.apache.tamaya.base.ConfigContextSupplier;
 
 import javax.config.Config;
+import javax.config.ConfigValue;
 import javax.config.spi.ConfigSource;
 import javax.config.spi.Converter;
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -119,6 +122,11 @@ public final class FrozenConfig implements Config, Serializable {
         return Optional.empty();
     }
 
+    @Override
+    public ConfigValue<String> access(String key) {
+        return new DefaultConfigValue<>(this, () -> ConfigContext.from(this), key, String.class);
+    }
+
 
     @SuppressWarnings("unchecked")
 	@Override
@@ -135,6 +143,11 @@ public final class FrozenConfig implements Config, Serializable {
     @Override
     public List<ConfigSource> getConfigSources() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public void registerConfigChangedListener(Consumer<Set<String>> consumer) {
+
     }
 
     @Override

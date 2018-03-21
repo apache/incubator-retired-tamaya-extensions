@@ -18,9 +18,14 @@
  */
 package org.apache.tamaya.functions;
 
+import org.apache.tamaya.base.ConfigContext;
+import org.apache.tamaya.base.DefaultConfigValue;
+
 import javax.config.Config;
+import javax.config.ConfigValue;
 import javax.config.spi.ConfigSource;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 
@@ -28,6 +33,16 @@ import java.util.logging.Logger;
  * Configuration that filters part of the entries defined by a filter predicate.
  */
 class MappedConfiguration implements Config {
+
+    @Override
+    public ConfigValue<String> access(String key) {
+        return new DefaultConfigValue<>(this, () -> ConfigContext.from(this), key, String.class);
+    }
+
+    @Override
+    public void registerConfigChangedListener(Consumer<Set<String>> consumer) {
+        this.baseConfiguration.registerConfigChangedListener(consumer);
+    }
 
     private static final Logger LOG = Logger.getLogger(MappedConfiguration.class.getName());
     private final Config baseConfiguration;

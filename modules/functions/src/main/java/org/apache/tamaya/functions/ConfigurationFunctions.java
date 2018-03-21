@@ -18,10 +18,15 @@
  */
 package org.apache.tamaya.functions;
 
+import org.apache.tamaya.base.ConfigContext;
+import org.apache.tamaya.base.DefaultConfigValue;
+
 import javax.config.Config;
+import javax.config.ConfigValue;
 import javax.config.spi.ConfigSource;
 import java.net.Inet4Address;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import java.util.logging.Level;
@@ -53,6 +58,11 @@ public final class ConfigurationFunctions {
         }
 
         @Override
+        public ConfigValue<String> access(String s) {
+            return new DefaultConfigValue<>(this , () -> ConfigContext.from(this), s, String.class);
+        }
+
+        @Override
         public Iterable<String> getPropertyNames() {
             return Collections.emptySet();
         }
@@ -60,6 +70,10 @@ public final class ConfigurationFunctions {
         @Override
         public Iterable<ConfigSource> getConfigSources() {
             return Collections.emptySet();
+        }
+
+        @Override
+        public void registerConfigChangedListener(Consumer<Set<String>> consumer) {
         }
 
         @Override

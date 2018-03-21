@@ -18,9 +18,14 @@
  */
 package org.apache.tamaya.functions;
 
+import org.apache.tamaya.base.ConfigContext;
+import org.apache.tamaya.base.DefaultConfigValue;
+
 import javax.config.Config;
+import javax.config.ConfigValue;
 import javax.config.spi.ConfigSource;
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * Configuration, that has values added or overridden.
@@ -81,6 +86,12 @@ class EnrichedConfiguration implements Config {
         return Optional.empty();
     }
 
+    @Override
+    public ConfigValue<String> access(String key) {
+        return new DefaultConfigValue<>(this, () -> ConfigContext.from(baseConfiguration),
+                key, String.class);
+    }
+
 
     @Override
     public Iterable<String> getPropertyNames() {
@@ -93,6 +104,11 @@ class EnrichedConfiguration implements Config {
     @Override
     public Iterable<ConfigSource> getConfigSources() {
         return baseConfiguration.getConfigSources();
+    }
+
+    @Override
+    public void registerConfigChangedListener(Consumer<Set<String>> consumer) {
+
     }
 
 }
