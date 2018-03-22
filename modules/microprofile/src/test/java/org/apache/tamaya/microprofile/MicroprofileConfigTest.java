@@ -23,6 +23,7 @@ import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.junit.Test;
 
+import java.time.Instant;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -76,7 +77,7 @@ public class MicroprofileConfigTest {
     @Test(expected = IllegalArgumentException.class)
     public void testGetValue_InvalidType(){
         Config config = ConfigProvider.getConfig();
-        config.getValue("java.version", Integer.class);
+        config.getValue("java.version", Instant.class);
     }
 
     @Test
