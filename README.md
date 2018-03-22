@@ -32,3 +32,10 @@ Then you can build Tamaya extensions via:
 $ export MAVEN_OPTS="-Xmx512m -XX:PermGenSpace=200m"
 $ mvn
 ```
+
+### Travis / CI
+
+Apart from integration into ASF CI there's a travis build:
+
+[![Build Status](https://travis-ci.org/apache/incubator-tamaya-extensions.svg?branch=master)](https://travis-ci.org/apache/incubator-tamaya-extensions/branches)
+
