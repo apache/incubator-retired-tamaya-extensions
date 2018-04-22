@@ -18,6 +18,9 @@
  */
 package org.apache.tamaya.mutableconfig.internal;
 
+import org.apache.tamaya.base.ConfigContext;
+import org.apache.tamaya.base.ConfigContextSupplier;
+import org.apache.tamaya.base.DefaultConfigValue;
 import org.apache.tamaya.mutableconfig.ChangePropagationPolicy;
 import org.apache.tamaya.mutableconfig.MutableConfig;
 import org.apache.tamaya.mutableconfig.ConfigChangeRequest;
@@ -25,8 +28,10 @@ import org.apache.tamaya.mutableconfig.spi.MutableConfigSource;
 import org.osgi.service.component.annotations.Component;
 
 import javax.config.Config;
+import javax.config.ConfigValue;
 import javax.config.spi.ConfigSource;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 
@@ -34,15 +39,30 @@ import java.util.logging.Logger;
  * Default implementation of a {@link MutableConfig}.
  */
 @Component
-public class DefaultMutableConfiguration implements MutableConfig {
-    private static final Logger LOG = Logger.getLogger(DefaultMutableConfiguration.class.getName());
+public class DefaultMutableConfig implements MutableConfig, ConfigContextSupplier {
+    private static final Logger LOG = Logger.getLogger(DefaultMutableConfig.class.getName());
     private ConfigChangeRequest changeRequest = new ConfigChangeRequest(UUID.randomUUID().toString());
     private final Config config;
     private ChangePropagationPolicy changePropagationPolicy;
 
-    public DefaultMutableConfiguration(Config config, ChangePropagationPolicy changePropagationPolicy){
+    public DefaultMutableConfig(Config config, ChangePropagationPolicy changePropagationPolicy){
         this.config = Objects.requireNonNull(config);
         this.changePropagationPolicy = Objects.requireNonNull(changePropagationPolicy);
+    }
+
+    @Override
+    public ConfigValue<String> access(String key) {
+        return new DefaultConfigValue(this, this, key, String.class);
+    }
+
+    @Override
+    public void registerConfigChangedListener(Consumer<Set<String>> consumer) {
+        throw new UnsupportedOperationException("Not yet implemented.");
+    }
+
+    @Override
+    public ConfigContext getConfigContext() {
+        return ConfigContext.from(config);
     }
 
     @Override

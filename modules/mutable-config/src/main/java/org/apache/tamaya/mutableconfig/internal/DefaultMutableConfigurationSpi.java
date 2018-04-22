@@ -27,7 +27,7 @@ import javax.config.Config;
 
 
 /**
- * SPI implementation that creates instances of {@link DefaultMutableConfiguration}, hereby for
+ * SPI implementation that creates instances of {@link DefaultMutableConfig}, hereby for
  * each instance of {@link Config} a new instance has to be returned.
  */
 @Component
@@ -36,6 +36,6 @@ public class DefaultMutableConfigurationSpi implements MutableConfigProviderSpi 
     @Override
     public MutableConfig createMutableConfig(Config configuration,
                                              ChangePropagationPolicy propagationPolicy){
-        return new DefaultMutableConfiguration(configuration, propagationPolicy);
+        return new DefaultMutableConfig(configuration, propagationPolicy);
     }
 }
