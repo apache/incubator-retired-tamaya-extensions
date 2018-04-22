@@ -19,25 +19,26 @@
 package org.apache.tamaya.mutableconfig.spi;
 
 import org.apache.tamaya.mutableconfig.ChangePropagationPolicy;
-import org.apache.tamaya.mutableconfig.MutableConfiguration;
+import org.apache.tamaya.mutableconfig.MutableConfig;
+import org.apache.tamaya.mutableconfig.MutableConfigProvider;
 
 import javax.config.Config;
 
 
 /**
- * Provider SPI used by {@link org.apache.tamaya.mutableconfig.MutableConfigurationProvider}. Providers may override
+ * Provider SPI used by {@link MutableConfigProvider}. Providers may override
  * other providers registering with a higher {@link javax.annotation.Priority} value annotated.
  */
-public interface MutableConfigurationProviderSpi {
+public interface MutableConfigProviderSpi {
 
    /**
-    * Creates a new {@link MutableConfiguration} with {@code autoCommit = false} as default.
+    * Creates a new {@link MutableConfig} with {@code autoCommit = false} as default.
     *
     * @param configuration the configuration, not null.
     * @param propagationPolicy policy that defines how changes are published to the property
     *                          sources.
     * @return a new mutable configuration instance.
     */
-   MutableConfiguration createMutableConfiguration(Config configuration,
-                                                   ChangePropagationPolicy propagationPolicy);
+   MutableConfig createMutableConfig(Config configuration,
+                                     ChangePropagationPolicy propagationPolicy);
 }

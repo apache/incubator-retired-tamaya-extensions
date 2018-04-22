@@ -19,8 +19,8 @@
 package org.apache.tamaya.mutableconfig.internal;
 
 import org.apache.tamaya.mutableconfig.ChangePropagationPolicy;
-import org.apache.tamaya.mutableconfig.MutableConfiguration;
-import org.apache.tamaya.mutableconfig.spi.MutableConfigurationProviderSpi;
+import org.apache.tamaya.mutableconfig.MutableConfig;
+import org.apache.tamaya.mutableconfig.spi.MutableConfigProviderSpi;
 import org.osgi.service.component.annotations.Component;
 
 import javax.config.Config;
@@ -31,11 +31,11 @@ import javax.config.Config;
  * each instance of {@link Config} a new instance has to be returned.
  */
 @Component
-public class DefaultMutableConfigurationSpi implements MutableConfigurationProviderSpi {
+public class DefaultMutableConfigurationSpi implements MutableConfigProviderSpi {
 
     @Override
-    public MutableConfiguration createMutableConfiguration(Config configuration,
-                                                    ChangePropagationPolicy propagationPolicy){
+    public MutableConfig createMutableConfig(Config configuration,
+                                             ChangePropagationPolicy propagationPolicy){
         return new DefaultMutableConfiguration(configuration, propagationPolicy);
     }
 }

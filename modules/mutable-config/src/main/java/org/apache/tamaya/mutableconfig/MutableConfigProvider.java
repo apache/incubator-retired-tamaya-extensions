@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.mutableconfig;
 
-import org.apache.tamaya.mutableconfig.spi.MutableConfigurationProviderSpi;
+import org.apache.tamaya.mutableconfig.spi.MutableConfigProviderSpi;
 import org.apache.tamaya.mutableconfig.spi.MutableConfigSource;
 import org.apache.tamaya.base.ServiceContextManager;
 
@@ -32,17 +32,17 @@ import java.util.logging.Logger;
 
 
 /**
- * Accessor for creating {@link MutableConfiguration} instances to change configuration and commit changes.
+ * Accessor for creating {@link MutableConfig} instances to change configuration and commit changes.
  */
-public final class MutableConfigurationProvider {
+public final class MutableConfigProvider {
 
-    private static final Logger LOG = Logger.getLogger(MutableConfigurationProvider.class.getName());
+    private static final Logger LOG = Logger.getLogger(MutableConfigProvider.class.getName());
     /**
      * URIs used by this query instance to identify the backends to use for write operations.
      */
-    private static MutableConfigurationProviderSpi spi(){
-            MutableConfigurationProviderSpi spi = ServiceContextManager.getServiceContext().getService(
-                    MutableConfigurationProviderSpi.class)  ;
+    private static MutableConfigProviderSpi spi(){
+            MutableConfigProviderSpi spi = ServiceContextManager.getServiceContext().getService(
+                    MutableConfigProviderSpi.class)  ;
         if(spi==null){
             throw new IllegalArgumentException("Failed to initialize MutableConfigurationProviderSpi - " +
                     "mutable configuration support.");
@@ -52,46 +52,46 @@ public final class MutableConfigurationProvider {
 
 
     /** Singleton constructor. */
-    private MutableConfigurationProvider(){}
+    private MutableConfigProvider(){}
 
     /**
-     * Creates a new {@link MutableConfiguration} for the given default configuration, using all
+     * Creates a new {@link MutableConfig} for the given default configuration, using all
      * {@link MutableConfigSource} instances found in its context and {@code autoCommit = false}.
      *
      * @return a new MutableConfiguration instance
      */
-    public static MutableConfiguration createMutableConfiguration(){
-        return spi().createMutableConfiguration(
+    public static MutableConfig createMutableConfig(){
+        return spi().createMutableConfig(
                 ConfigProvider.getConfig(), getApplyMostSignificantOnlyChangePolicy());
     }
 
     /**
-     * Creates a new {@link MutableConfiguration} for the given default configuration, using all
+     * Creates a new {@link MutableConfig} for the given default configuration, using all
      * {@link MutableConfigSource} instances found in its context and {@code autoCommit = false}.
      * @param changePropgationPolicy policy that defines how a change is written back and which property
      *                               sources are finally eligible for a write operation.
      * @return a new MutableConfiguration instance, with the given change policy active.
      */
-    public static MutableConfiguration createMutableConfiguration(ChangePropagationPolicy changePropgationPolicy){
-        return spi().createMutableConfiguration(
+    public static MutableConfig createMutableConfig(ChangePropagationPolicy changePropgationPolicy){
+        return spi().createMutableConfig(
                 ConfigProvider.getConfig(), changePropgationPolicy);
     }
 
 
     /**
-     * Creates a new {@link MutableConfiguration} for the given configuration, using all
+     * Creates a new {@link MutableConfig} for the given configuration, using all
      * {@link MutableConfigSource} instances found in its context and {@code MOST_SIGNIFICANT_ONLY_POLICY}
      * configuration writing policy.
      *
      * @param configuration the configuration to use to write the changes/config.
      * @return a new MutableConfiguration instance
      */
-    public static MutableConfiguration createMutableConfiguration(Config configuration){
-        return createMutableConfiguration(configuration, MOST_SIGNIFICANT_ONLY_POLICY);
+    public static MutableConfig createMutableConfig(Config configuration){
+        return createMutableConfig(configuration, MOST_SIGNIFICANT_ONLY_POLICY);
     }
 
     /**
-     * Creates a new {@link MutableConfiguration} for the given configuration, using all
+     * Creates a new {@link MutableConfig} for the given configuration, using all
      * {@link MutableConfigSource} instances found in its context and {@code ALL_POLICY}
      * configuration writing policy.
      *
@@ -99,8 +99,8 @@ public final class MutableConfigurationProvider {
      * @param changePropagationPolicy the configuration writing policy.
      * @return a new MutableConfiguration instance
      */
-    public static MutableConfiguration createMutableConfiguration(Config configuration, ChangePropagationPolicy changePropagationPolicy){
-        return spi().createMutableConfiguration(configuration, changePropagationPolicy);
+    public static MutableConfig createMutableConfig(Config configuration, ChangePropagationPolicy changePropagationPolicy){
+        return spi().createMutableConfig(configuration, changePropagationPolicy);
     }
 
     /**

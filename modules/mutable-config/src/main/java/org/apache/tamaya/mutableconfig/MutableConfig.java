@@ -37,9 +37,9 @@ import java.util.Map;
  *
  * This class should only used in a single threaded context, though all methods inherited from {@link Config}
  * must be thread-safe. Methods handling configuration changes are expected to be used in a single threaded environment
- * only. For multi-threaded us create a new instance of {@link MutableConfiguration} for each thread.
+ * only. For multi-threaded us create a new instance of {@link MutableConfig} for each thread.
  */
-public interface MutableConfiguration extends Config {
+public interface MutableConfig extends Config {
 
     /**
      * Storesd the changes. After a commit the change is not editable anymore. All changes applied will be written to
@@ -75,7 +75,7 @@ public interface MutableConfiguration extends Config {
      * @return the former property value, or null.
      * @throws IllegalStateException if the key/value cannot be added, or the request is read-only.
      */
-    MutableConfiguration put(String key, String value);
+    MutableConfig put(String key, String value);
 
     /**
      * Puts all given configuration entries. This method should check that all given properties are
@@ -91,7 +91,7 @@ public interface MutableConfiguration extends Config {
      * @throws IllegalStateException if any of the given properties could not be written, or the request
      * is read-only.
      */
-    MutableConfiguration putAll(Map<String, String> properties);
+    MutableConfig putAll(Map<String, String> properties);
 
     /**
      * Removes all given configuration entries. This method should check that all given properties are
@@ -107,7 +107,7 @@ public interface MutableConfiguration extends Config {
      * @throws IllegalStateException if any of the given keys could not be removedProperties, or the
      * request is read-only.
      */
-    MutableConfiguration remove(Collection<String> keys);
+    MutableConfig remove(Collection<String> keys);
 
     /**
      * Removes all given configuration entries. This method should check that all given properties are
@@ -121,6 +121,6 @@ public interface MutableConfiguration extends Config {
      * @return the config change request
      * @throws IllegalStateException if any of the given keys could not be removedProperties, or the request is read-only.
      */
-    MutableConfiguration remove(String... keys);
+    MutableConfig remove(String... keys);
 
 }

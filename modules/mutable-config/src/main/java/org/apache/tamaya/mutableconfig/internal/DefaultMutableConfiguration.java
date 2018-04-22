@@ -19,7 +19,7 @@
 package org.apache.tamaya.mutableconfig.internal;
 
 import org.apache.tamaya.mutableconfig.ChangePropagationPolicy;
-import org.apache.tamaya.mutableconfig.MutableConfiguration;
+import org.apache.tamaya.mutableconfig.MutableConfig;
 import org.apache.tamaya.mutableconfig.ConfigChangeRequest;
 import org.apache.tamaya.mutableconfig.spi.MutableConfigSource;
 import org.osgi.service.component.annotations.Component;
@@ -31,10 +31,10 @@ import java.util.logging.Logger;
 
 
 /**
- * Default implementation of a {@link MutableConfiguration}.
+ * Default implementation of a {@link MutableConfig}.
  */
 @Component
-public class DefaultMutableConfiguration implements MutableConfiguration {
+public class DefaultMutableConfiguration implements MutableConfig {
     private static final Logger LOG = Logger.getLogger(DefaultMutableConfiguration.class.getName());
     private ConfigChangeRequest changeRequest = new ConfigChangeRequest(UUID.randomUUID().toString());
     private final Config config;
@@ -67,19 +67,19 @@ public class DefaultMutableConfiguration implements MutableConfiguration {
 
 
     @Override
-    public MutableConfiguration put(String key, String value) {
+    public MutableConfig put(String key, String value) {
         changeRequest.put(key, value);
         return this;
     }
 
     @Override
-    public MutableConfiguration putAll(Map<String, String> properties) {
+    public MutableConfig putAll(Map<String, String> properties) {
         changeRequest.putAll(properties);
         return this;
     }
 
     @Override
-    public MutableConfiguration remove(String... keys) {
+    public MutableConfig remove(String... keys) {
         changeRequest.removeAll(Arrays.asList(keys));
         return this;
     }
@@ -91,7 +91,7 @@ public class DefaultMutableConfiguration implements MutableConfiguration {
     }
 
     @Override
-    public MutableConfiguration remove(Collection<String> keys) {
+    public MutableConfig remove(Collection<String> keys) {
         for(MutableConfigSource target:getMutablePropertySources()) {
             changeRequest.removeAll(keys);
         }

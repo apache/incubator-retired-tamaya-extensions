@@ -32,9 +32,9 @@ import java.util.Properties;
 import static org.junit.Assert.*;
 
 /**
- * Tests for {@link MutableConfiguration}.
+ * Tests for {@link MutableConfig}.
  */
-public class MutableConfigurationTest {
+public class MutableConfigTest {
 
     /**
      * Test create change request.
@@ -44,12 +44,12 @@ public class MutableConfigurationTest {
     @Test
     public void testCreateMutableConfiguration() throws Exception {
         File f = File.createTempFile("ConfigChangeRequest",".properties");
-        MutableConfiguration cfg1 = MutableConfigurationProvider.createMutableConfiguration(
+        MutableConfig cfg1 = MutableConfigProvider.createMutableConfig(
                 ConfigProvider.getConfig(),
-                MutableConfigurationProvider.getApplyAllChangePolicy());
+                MutableConfigProvider.getApplyAllChangePolicy());
         assertNotNull(cfg1);
         assertNotNull(cfg1.getConfigChangeRequest());
-        MutableConfiguration cfg2 = MutableConfigurationProvider.createMutableConfiguration(
+        MutableConfig cfg2 = MutableConfigProvider.createMutableConfig(
                 ConfigProvider.getConfig());
         assertNotNull(cfg2);
         assertNotNull(cfg2.getConfigChangeRequest());
@@ -64,7 +64,7 @@ public class MutableConfigurationTest {
      */
     @Test(expected=NullPointerException.class)
     public void testNullCreateMutableConfiguration1() throws Exception {
-        MutableConfigurationProvider.createMutableConfiguration(
+        MutableConfigProvider.createMutableConfig(
                 (javax.config.Config) null);
     }
 
@@ -75,7 +75,7 @@ public class MutableConfigurationTest {
      */
     @Test(expected=NullPointerException.class)
     public void testNullCreateMutableConfiguration2() throws Exception {
-        MutableConfigurationProvider.createMutableConfiguration(
+        MutableConfigProvider.createMutableConfig(
                 (ChangePropagationPolicy) null);
     }
 
@@ -87,7 +87,7 @@ public class MutableConfigurationTest {
     @Test
     public void testReadWriteProperties_WithCancel() throws IOException {
         WritablePropertiesSource.target.delete();
-        MutableConfiguration mutConfig = MutableConfigurationProvider.createMutableConfiguration(
+        MutableConfig mutConfig = MutableConfigProvider.createMutableConfig(
                 ConfigProvider.getConfig()
         );
         mutConfig.put("key1", "value1");
@@ -104,7 +104,7 @@ public class MutableConfigurationTest {
     @Test
     public void testReadWriteProperties_WithCommit() throws IOException {
         WritablePropertiesSource.target.delete();
-        MutableConfiguration mutConfig = MutableConfigurationProvider.createMutableConfiguration(
+        MutableConfig mutConfig = MutableConfigProvider.createMutableConfig(
                 ConfigProvider.getConfig()
         );
         mutConfig.put("key1", "value1");
@@ -114,7 +114,7 @@ public class MutableConfigurationTest {
         mutConfig.putAll(cm);
         mutConfig.store();
         assertTrue(WritablePropertiesSource.target.exists());
-        MutableConfiguration mmutConfig2 = MutableConfigurationProvider.createMutableConfiguration(
+        MutableConfig mmutConfig2 = MutableConfigProvider.createMutableConfig(
                 ConfigProvider.getConfig()
         );
         mmutConfig2.remove("foo");
@@ -138,8 +138,8 @@ public class MutableConfigurationTest {
     @Test
     public void testReadWriteXmlProperties_WithCommit() throws IOException {
         WritableXmlPropertiesSource.target.delete();
-        MutableConfiguration cfg = MutableConfigurationProvider.createMutableConfiguration(
-                ConfigProvider.getConfig(), MutableConfigurationProvider.getApplyAllChangePolicy());
+        MutableConfig cfg = MutableConfigProvider.createMutableConfig(
+                ConfigProvider.getConfig(), MutableConfigProvider.getApplyAllChangePolicy());
         cfg.put("key1", "value1");
         Map<String,String> cm = new HashMap<>();
         cm.put("key2", "value2");
@@ -147,7 +147,7 @@ public class MutableConfigurationTest {
         cfg.putAll(cm);
         cfg.store();
         assertTrue(WritableXmlPropertiesSource.target.exists());
-        MutableConfiguration cfg2 = MutableConfigurationProvider.createMutableConfiguration(
+        MutableConfig cfg2 = MutableConfigProvider.createMutableConfig(
                 ConfigProvider.getConfig());
         assertTrue(cfg != cfg2);
         cfg2.remove("foo");
@@ -170,9 +170,9 @@ public class MutableConfigurationTest {
     @Test
     public void testWriteWithNoChangePolicy() throws IOException {
         WritableXmlPropertiesSource.target.delete();
-        MutableConfiguration cfg = MutableConfigurationProvider.createMutableConfiguration(
+        MutableConfig cfg = MutableConfigProvider.createMutableConfig(
                 ConfigProvider.getConfig(),
-                MutableConfigurationProvider.getApplyNonePolicy());
+                MutableConfigProvider.getApplyNonePolicy());
         cfg.put("key1", "value1");
         Map<String,String> cm = new HashMap<>();
         cm.put("key2", "value2");

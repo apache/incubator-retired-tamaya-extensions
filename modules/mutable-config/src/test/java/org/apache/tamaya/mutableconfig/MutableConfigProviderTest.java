@@ -28,26 +28,26 @@ import static org.junit.Assert.*;
 /**
  * Created by atsticks on 26.08.16.
  */
-public class MutableConfigurationProviderTest {
+public class MutableConfigProviderTest {
     @Test
     public void createMutableConfiguration() throws Exception {
-        assertNotNull(MutableConfigurationProvider.createMutableConfiguration());
+        assertNotNull(MutableConfigProvider.createMutableConfig());
     }
 
     @Test
     public void createMutableConfiguration1() throws Exception {
-        MutableConfiguration cfg = MutableConfigurationProvider
-                .createMutableConfiguration(ConfigProvider.getConfig());
+        MutableConfig cfg = MutableConfigProvider
+                .createMutableConfig(ConfigProvider.getConfig());
         assertNotNull(cfg);
         assertEquals(cfg.getChangePropagationPolicy(),
-                MutableConfigurationProvider.getApplyMostSignificantOnlyChangePolicy());
+                MutableConfigProvider.getApplyMostSignificantOnlyChangePolicy());
     }
 
     @Test
     public void createMutableConfiguration2() throws Exception {
-        ChangePropagationPolicy policy = MutableConfigurationProvider.getApplySelectiveChangePolicy("blabla");
-        MutableConfiguration cfg = MutableConfigurationProvider
-                .createMutableConfiguration(ConfigProvider.getConfig(),
+        ChangePropagationPolicy policy = MutableConfigProvider.getApplySelectiveChangePolicy("blabla");
+        MutableConfig cfg = MutableConfigProvider
+                .createMutableConfig(ConfigProvider.getConfig(),
                         policy);
         assertNotNull(cfg);
         assertEquals(cfg.getChangePropagationPolicy(), policy);
@@ -55,31 +55,31 @@ public class MutableConfigurationProviderTest {
 
     @Test
     public void createMutableConfiguration3() throws Exception {
-        ChangePropagationPolicy policy = MutableConfigurationProvider.getApplySelectiveChangePolicy("gugus");
-        MutableConfiguration cfg = MutableConfigurationProvider
-                .createMutableConfiguration(policy);
+        ChangePropagationPolicy policy = MutableConfigProvider.getApplySelectiveChangePolicy("gugus");
+        MutableConfig cfg = MutableConfigProvider
+                .createMutableConfig(policy);
         assertNotNull(cfg);
         assertEquals(cfg.getChangePropagationPolicy(), policy);
     }
 
     @Test
     public void getApplyAllChangePolicy() throws Exception {
-        assertNotNull(MutableConfigurationProvider.getApplyAllChangePolicy());
+        assertNotNull(MutableConfigProvider.getApplyAllChangePolicy());
     }
 
     @Test
     public void getApplyMostSignificantOnlyChangePolicy() throws Exception {
-        assertNotNull(MutableConfigurationProvider.getApplyMostSignificantOnlyChangePolicy());
+        assertNotNull(MutableConfigProvider.getApplyMostSignificantOnlyChangePolicy());
     }
 
     @Test
     public void getApplySelectiveChangePolicy() throws Exception {
-        assertNotNull(MutableConfigurationProvider.getApplySelectiveChangePolicy());
+        assertNotNull(MutableConfigProvider.getApplySelectiveChangePolicy());
     }
 
     @Test
     public void getApplyNonePolicy() throws Exception {
-        assertNotNull(MutableConfigurationProvider.getApplyNonePolicy());
+        assertNotNull(MutableConfigProvider.getApplyNonePolicy());
     }
 
 }
