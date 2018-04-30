@@ -66,6 +66,7 @@ public class JSONPropertySource implements PropertySource {
     /**
      * Constructor, hereby using 0 as the default ordinal.
      * @param resource the resource modelled as URL, not null.
+     * @throws IOException if reading the resource fails.
      */
     public JSONPropertySource(URL resource)throws IOException {
         this(resource, 0);
@@ -75,6 +76,7 @@ public class JSONPropertySource implements PropertySource {
      * Constructor.
      * @param resource the resource modelled as URL, not null.
      * @param defaultOrdinal the defaultOrdinal to be used.
+     * @throws IOException if reading the resource fails.
      */
     public JSONPropertySource(URL resource, int defaultOrdinal)throws IOException {
         urlResource = Objects.requireNonNull(resource);
@@ -123,6 +125,7 @@ public class JSONPropertySource implements PropertySource {
      * @param urlResource soure of the configuration.
      * @return the configuration read from the given resource URL.
      * @throws ConfigException if resource URL cannot be read.
+     * @throws IOException if reading the urlResource fails.
      */
     protected Map<String, PropertyValue> readConfig(URL urlResource) throws IOException{
         try (InputStream is = urlResource.openStream()) {

@@ -200,6 +200,7 @@ public final class ConfigurationFormats {
      * @param formats     the formats to try.
      * @return the ConfigurationData read, or null.
      * @throws ConfigException if the resource cannot be read.
+     * @throws IOException if reading the input fails.
      */
     public static ConfigurationData readConfigurationData(String resource, InputStream inputStream,
                                                           Collection<ConfigurationFormat> formats) throws IOException {

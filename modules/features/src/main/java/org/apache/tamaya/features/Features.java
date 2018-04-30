@@ -175,6 +175,7 @@ public final class Features {
     /**
      * Checks if the given class canm be loaded, using {@code Class.forName(classname)}.
      * @param classname the fully qualified classname.
+     * @param classLoader class loader from which the class must be loaded.
      * @return true, if the given class canm be loaded.
      */
     public static boolean checkClassIsLoadable(String classname, ClassLoader classLoader) {

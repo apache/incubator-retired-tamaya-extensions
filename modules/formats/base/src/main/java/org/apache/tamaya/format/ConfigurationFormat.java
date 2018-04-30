@@ -95,6 +95,7 @@ public interface ConfigurationFormat {
      * @param resource the resource id, not null.
      * @return the corresponding {@link ConfigurationData} containing sections/properties read, never {@code null}.
      * @throws org.apache.tamaya.ConfigException if parsing of the input fails.
+     * @throws IOException if reading the input fails.
      */
     ConfigurationData readConfiguration(String resource, InputStream inputStream) throws IOException;
 

@@ -162,7 +162,7 @@ public final class ConfigHistory implements Serializable{
     /**
      * Get the history for a PID.
      * @param pid the pid, null returns the full history.
-     * @return
+     * @return the history, never null.
      */
     public static List<ConfigHistory> getHistory(String pid) {
         if(pid==null || pid.isEmpty()){
