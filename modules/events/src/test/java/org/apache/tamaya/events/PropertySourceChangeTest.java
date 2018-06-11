@@ -18,18 +18,18 @@
  */
 package org.apache.tamaya.events;
 
-import org.apache.tamaya.spisupport.propertysource.EnvironmentPropertySource;
-import org.apache.tamaya.spisupport.propertysource.SimplePropertySource;
-import org.apache.tamaya.spisupport.propertysource.SystemPropertySource;
-import org.apache.tamaya.spisupport.propertysource.MapPropertySource;
-import org.apache.tamaya.spi.PropertySource;
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
-
+import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spisupport.propertysource.EnvironmentPropertySource;
+import org.apache.tamaya.spisupport.propertysource.MapPropertySource;
+import org.apache.tamaya.spisupport.propertysource.SimplePropertySource;
+import org.apache.tamaya.spisupport.propertysource.SystemPropertySource;
+import org.junit.Test;
 /**
  * Tests for {@link PropertySourceChange} and its builder.
  */
@@ -40,21 +40,21 @@ public class PropertySourceChangeTest {
     @Test
     public void testGetPropertySource() throws Exception {
         PropertySourceChange change = PropertySourceChangeBuilder.of(myPS).build();
-        assertEquals(change.getResource().getName(), myPS.getName());
+        assertThat(change.getResource().getName()).isEqualTo(myPS.getName());
     }
 
     @Test
     public void testGetVersion() throws Exception {
         PropertySourceChange change = PropertySourceChangeBuilder.of(myPS)
                 .setVersion("myVersion1").build();
-        assertEquals(change.getVersion(), "myVersion1");
+        assertThat(change.getVersion()).isEqualTo("myVersion1");
     }
 
     @Test
     public void testGetTimestamp() throws Exception {
         PropertySourceChange change = PropertySourceChangeBuilder.of(myPS)
                 .setTimestamp(111L).build();
-        assertEquals(change.getTimestamp(), 111L);
+        assertThat(change.getTimestamp()).isEqualTo(111L);
     }
 
     @Test
@@ -63,7 +63,7 @@ public class PropertySourceChangeTest {
                 .addChanges(
                         new EnvironmentPropertySource()
                 ).build();
-        assertTrue(change.getChanges().size() > 0);
+        assertThat(change.getChanges()).isNotEmpty();
     }
 
     @Test
@@ -92,7 +92,7 @@ public class PropertySourceChangeTest {
 
         PropertySourceChange change = PropertySourceChangeBuilder.of(myPS)
                 .addChanges(
-                        //java.home and JAVA_HOME will often override each
+                        // java.home and JAVA_HOME will often override each
                         //  other, so stay away from EnvironmentPropertySource
                         new SystemPropertySource()
                 )
@@ -100,7 +100,7 @@ public class PropertySourceChangeTest {
                         new MapPropertySource("addableMap", addableMap)
                 )
                 .build();
-        assertTrue(change.getUpdatedSize() == 0);
+        assertThat(change.getUpdatedSize()).isZero();
     }
 
     @Test
@@ -133,9 +133,9 @@ public class PropertySourceChangeTest {
                 .addChanges(
                         ps2
                 ).build();
-        assertFalse(change.isRemoved("key1"));
-        assertTrue(change.isRemoved("key2"));
-        assertFalse(change.isRemoved("key3"));
+        assertThat(change.isRemoved("key1")).isFalse();
+        assertThat(change.isRemoved("key2")).isTrue();
+        assertThat(change.isRemoved("key3")).isFalse();
     }
 
     @Test
@@ -152,9 +152,9 @@ public class PropertySourceChangeTest {
                 .addChanges(
                         ps2
                 ).build();
-        assertTrue(change.isAdded("key3"));
-        assertFalse(change.isAdded("key2"));
-        assertFalse(change.isAdded("key1"));
+        assertThat(change.isAdded("key3")).isTrue();
+        assertThat(change.isAdded("key2")).isFalse();
+        assertThat(change.isAdded("key1")).isFalse();
     }
 
     @Test
@@ -171,9 +171,9 @@ public class PropertySourceChangeTest {
                 .addChanges(
                         ps2
                 ).build();
-        assertTrue(change.isUpdated("key1"));
-        assertFalse(change.isUpdated("key2"));
-        assertFalse(change.isUpdated("key3"));
+        assertThat(change.isUpdated("key1")).isTrue();
+        assertThat(change.isUpdated("key2")).isFalse();
+        assertThat(change.isUpdated("key3")).isFalse();
     }
 
     @Test
@@ -182,7 +182,7 @@ public class PropertySourceChangeTest {
                 .addChanges(
                         myPS
                 ).build();
-        assertTrue(change.isKeyAffected("java.version"));
+        assertThat(change.isKeyAffected("java.version")).isTrue();
     }
 
     @Test
@@ -194,14 +194,13 @@ public class PropertySourceChangeTest {
                 .addChanges(
                         myPS
                 ).build();
-        assertFalse(change.isEmpty());
+        assertThat(change.isEmpty()).isFalse();
     }
 
     @Test
     public void testToString() throws Exception {
         PropertySourceChange change = PropertySourceChangeBuilder.of(myPS).build();
         String toString = change.toString();
-        assertNotNull(toString);
-        assertTrue(toString.contains(myPS.getName()));
+        assertThat(toString).isNotNull().contains(myPS.getName());
     }
 }
