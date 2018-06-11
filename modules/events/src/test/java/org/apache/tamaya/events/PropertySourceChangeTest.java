@@ -21,6 +21,7 @@ package org.apache.tamaya.events;
 import org.apache.tamaya.spisupport.propertysource.EnvironmentPropertySource;
 import org.apache.tamaya.spisupport.propertysource.SimplePropertySource;
 import org.apache.tamaya.spisupport.propertysource.SystemPropertySource;
+import org.apache.tamaya.spisupport.propertysource.MapPropertySource;
 import org.apache.tamaya.spi.PropertySource;
 import org.junit.Test;
 
@@ -62,7 +63,7 @@ public class PropertySourceChangeTest {
                 .addChanges(
                         new EnvironmentPropertySource()
                 ).build();
-        assertTrue(change.getChanges().size()>0);
+        assertTrue(change.getChanges().size() > 0);
     }
 
     @Test
@@ -71,7 +72,7 @@ public class PropertySourceChangeTest {
                 .addChanges(
                         new EnvironmentPropertySource()
                 ).build();
-        assertTrue(change.getRemovedSize()>0);
+        assertTrue(change.getRemovedSize() > 0);
     }
 
     @Test
@@ -80,16 +81,42 @@ public class PropertySourceChangeTest {
                 .addChanges(
                         new EnvironmentPropertySource()
                 ).build();
-        assertTrue(change.getAddedSize()>0);
+        assertTrue(change.getAddedSize() > 0);
     }
 
     @Test
-    public void testGetUpdatedSize() throws Exception {
+    public void testGetUpdatedSizeNoUpdates() throws Exception {
+        Map<String, String> addableMap = new HashMap<>();
+        
+        addableMap.put("NonOverridingValue", "someValue");
+
+        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS)
+                .addChanges(
+                        //java.home and JAVA_HOME will often override each
+                        //  other, so stay away from EnvironmentPropertySource
+                        new SystemPropertySource()
+                )
+                .addChanges(
+                        new MapPropertySource("addableMap", addableMap)
+                )
+                .build();
+        assertTrue(change.getUpdatedSize() == 0);
+    }
+
+    @Test
+    public void testGetUpdatedSizeWithUpdates() throws Exception {
+        Map<String, String> addableMap = new HashMap<>();
+        addableMap.put("java.home", "/new/java/home/value");
+
         PropertySourceChange change = PropertySourceChangeBuilder.of(myPS)
                 .addChanges(
                         new EnvironmentPropertySource()
-                ).build();
-        assertTrue(change.getUpdatedSize()==0);
+                )
+                .addChanges(
+                        new MapPropertySource("addableMap", addableMap)
+                )
+                .build();
+        assertTrue(change.getUpdatedSize() > 0);
     }
 
     @Test
