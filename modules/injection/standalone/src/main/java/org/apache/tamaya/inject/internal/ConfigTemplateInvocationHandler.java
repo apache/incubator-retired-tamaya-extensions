@@ -43,6 +43,7 @@ public final class ConfigTemplateInvocationHandler implements InvocationHandler 
      * Creates a new handler instance.
      *
      * @param type          the target type, not null.
+     * @param config        the target config, not null.
      */
     public ConfigTemplateInvocationHandler(Class<?> type, Configuration config) {
         this.type = new ConfiguredTypeImpl(Objects.requireNonNull(type));
