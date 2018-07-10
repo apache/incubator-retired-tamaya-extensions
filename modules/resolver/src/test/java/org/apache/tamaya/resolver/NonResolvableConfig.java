@@ -18,10 +18,16 @@
  */
 package org.apache.tamaya.resolver;
 
+import org.apache.tamaya.base.ConfigContextSupplier;
+import org.apache.tamaya.base.DefaultConfigValue;
+
 import javax.config.Config;
+import javax.config.ConfigValue;
 import javax.config.spi.ConfigSource;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * Implements s simple config just based on the {@link MyTestConfigSource}, without any
@@ -45,6 +51,11 @@ public class NonResolvableConfig implements Config{
     }
 
     @Override
+    public ConfigValue<String> access(String s) {
+        return new DefaultConfigValue<>(this, ConfigContextSupplier.of(this), s, String.class);
+    }
+
+    @Override
     public Iterable<String> getPropertyNames() {
         return configDelegate.getPropertyNames();
     }
@@ -52,5 +63,10 @@ public class NonResolvableConfig implements Config{
     @Override
     public Iterable<ConfigSource> getConfigSources() {
         return Arrays.asList(new ConfigSource[]{configDelegate});
+    }
+
+    @Override
+    public void registerConfigChangedListener(Consumer<Set<String>> consumer) {
+
     }
 }
