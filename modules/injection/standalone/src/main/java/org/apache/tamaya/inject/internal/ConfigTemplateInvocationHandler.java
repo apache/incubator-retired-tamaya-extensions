@@ -37,23 +37,24 @@ public final class ConfigTemplateInvocationHandler implements InvocationHandler 
      * The configured type.
      */
     private final ConfiguredType type;
+    private Configuration config;
 
     /**
      * Creates a new handler instance.
      *
      * @param type          the target type, not null.
      */
-    public ConfigTemplateInvocationHandler(Class<?> type) {
+    public ConfigTemplateInvocationHandler(Class<?> type, Configuration config) {
         this.type = new ConfiguredTypeImpl(Objects.requireNonNull(type));
         if (!type.isInterface()) {
             throw new IllegalArgumentException("Can only proxy interfaces as configuration templates.");
         }
+        this.config = Objects.requireNonNull(config);
         InjectionHelper.sendConfigurationEvent(this.type);
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        Configuration config = ConfigurationProvider.getConfiguration();
         if ("toString".equals(method.getName())) {
             return "Configured Proxy -> " + this.type.getType().getName();
         } else if ("hashCode".equals(method.getName())) {

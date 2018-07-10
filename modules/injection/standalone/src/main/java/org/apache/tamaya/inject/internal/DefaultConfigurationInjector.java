@@ -162,7 +162,7 @@ public class DefaultConfigurationInjector implements ConfigurationInjector {
             cl = this.getClass().getClassLoader();
         }
         return templateType.cast(Proxy.newProxyInstance(cl, new Class[]{Supplier.class, Objects.requireNonNull(templateType)},
-                new ConfigTemplateInvocationHandler(templateType)));
+                new ConfigTemplateInvocationHandler(templateType, config)));
     }
 
     @Override

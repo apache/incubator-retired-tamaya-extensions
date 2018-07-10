@@ -22,7 +22,13 @@ import annottext.AnnotatedConfigBean;
 import annottext.AnnotatedConfigTemplate;
 import annottext.InheritedAnnotatedConfigBean;
 import annottext.NonAnnotatedConfigBean;
+import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.spisupport.propertysource.MapPropertySource;
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -105,7 +111,29 @@ public class TamayaInjectionTest {
         assertTrue(testInstance.getDynamicValue().isPresent());
         assertEquals(testInstance.getDynamicValue().get(), "tamaya01.incubator.apache.org");
         assertEquals(testInstance.hostName(), testInstance.getDynamicValue().get());
-//        assertEquals(testInstance.simplestValue(), "HALLO!");
+    }
+
+    @Test
+    public void testConfigTemplate_WithCustomConfig(){
+        Map<String,String> properties = new HashMap<>();
+        properties.put("env.stage", "custom-stage");
+        properties.put("simple_value", "custom-value");
+        properties.put("host.name", "custom-hostname");
+        properties.put("anotherValue", "custom-HALLO!");
+        properties.put("foo.bar.myprop", "custom-parameter");
+        MapPropertySource ps = new MapPropertySource("test", properties);
+        Configuration customConfig = ConfigurationProvider.getConfigurationBuilder()
+                .addPropertySources(ps).build();
+        assertNotNull(ConfigurationInjection.getConfigurationInjector());
+        AnnotatedConfigTemplate testInstance = ConfigurationInjection.getConfigurationInjector()
+                .createTemplate(AnnotatedConfigTemplate.class, customConfig);
+        assertEquals(testInstance.hostName(), "custom-hostname");
+        assertEquals(testInstance.myParameter(), "custom-parameter");
+        assertEquals(testInstance.simpleValue(), "custom-value");
+        assertNotNull(testInstance.getDynamicValue());
+        assertTrue(testInstance.getDynamicValue().isPresent());
+        assertEquals(testInstance.getDynamicValue().get(), "custom-hostname");
+        assertEquals(testInstance.hostName(), testInstance.getDynamicValue().get());
     }
 
 }
