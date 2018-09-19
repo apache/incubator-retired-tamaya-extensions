@@ -137,6 +137,9 @@ public class YAMLFormat implements ConfigurationFormat {
     }
 
     protected String mapValueToString(Object val) {
+	if (val == null) {
+	    return null;
+	}
         return String.valueOf(val);
     }
 
