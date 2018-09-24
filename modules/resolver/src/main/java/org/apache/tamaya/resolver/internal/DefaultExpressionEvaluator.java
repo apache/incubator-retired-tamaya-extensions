@@ -231,18 +231,6 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
             }
         }
         if(value==null){
-            for(ExpressionResolver resolver:resolvers){
-                try{
-                    value = resolver.evaluate(unresolvedExpression);
-                    if(value!=null){
-                        return value;
-                    }
-                }catch(Exception e){
-                    LOG.log(Level.FINEST, "Error during expression resolution from " + resolver, e);
-                }
-            }
-        }
-        if(value==null){
             LOG.log(Level.WARNING, "Unresolvable expression encountered " + unresolvedExpression);
             if(maskUnresolved){
                 value = "?{" + unresolvedExpression + '}';
