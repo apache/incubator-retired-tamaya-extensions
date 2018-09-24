@@ -44,7 +44,8 @@ public class MyTestPropertySource implements PropertySource{
         properties.put("Multi-expression", "Java version ${sys:java.version} and line.separator ${line.separator}.");
 
         properties.put("cp-ref", "${resource:Testresource.txt}");
-        properties.put("file-ref", "${file:"+getFileRefAsString()+"}");
+        properties.put("file-ref", "${file:"+getFileRefAsString("Testresource2.txt")+"}");
+        properties.put("file3-ref", "${file:"+getFileRefAsString("Testresource3.txt")+"}");
         properties.put("res-ref", "${resource:Test?es*ce.txt}");
         properties.put("url-ref", "${url:http://www.google.com}");
         properties.put("config-ref", "Expression Only -> ${conf:Expression Only}");
@@ -63,15 +64,15 @@ public class MyTestPropertySource implements PropertySource{
                 "newlines or \\r returns...YEP!");
     }
 
-    private String getFileRefAsString() {
+    private String getFileRefAsString(String filename) {
         try {
-            URL res = getClass().getClassLoader().getResource("Testresource2.txt");
+            URL res = getClass().getClassLoader().getResource(filename);
             if(res==null){
                 return null;
             }
             return new File(res.toURI()).getAbsolutePath().replaceAll("\\\\","/");
         } catch (URISyntaxException e) {
-            return "Failed to evaluate file: Testresource2.txt";
+            return "Failed to evaluate file: " + filename;
         }
     }
 

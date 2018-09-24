@@ -18,21 +18,22 @@
  */
 package org.apache.tamaya.resolver.internal;
 
-import org.apache.tamaya.resolver.spi.ExpressionResolver;
-import org.apache.tamaya.resource.ResourceResolver;
-import org.apache.tamaya.spi.ServiceContextManager;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
-import javax.annotation.Priority;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import javax.annotation.Priority;
+
+import org.apache.tamaya.resolver.spi.ExpressionResolver;
+import org.apache.tamaya.resource.ResourceResolver;
+import org.apache.tamaya.spi.ServiceContextManager;
 
 /**
  * <p>Property resolver implementation that tries to load the given resource from the current file system.</p>
@@ -42,7 +43,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 @Priority(400)
 public final class FileResolver implements ExpressionResolver {
-    /**
+
+	/**
      * The looger used.
      */
     private final Logger LOG = Logger.getLogger(FileResolver.class.getName());
@@ -77,16 +79,10 @@ public final class FileResolver implements ExpressionResolver {
         if(url==null){
             return null;
         }
-        try (InputStreamReader streamReader = new InputStreamReader(url.openStream(), UTF_8);
-             BufferedReader bufferedReader = new BufferedReader(streamReader)) {
-            StringBuilder builder = new StringBuilder();
-            String inputLine;
-
-            while ((inputLine = bufferedReader.readLine()) != null) {
-                builder.append(inputLine).append("\n");
-            }
-
-            return builder.toString();
+        
+        try {
+        	byte[] encoded = Files.readAllBytes(Paths.get(url.toURI()));
+            return new String(encoded, UTF_8);
         } catch (Exception e) {
             LOG.log(Level.FINEST, "Could not resolve URL: " + expression, e);
             return null;
@@ -116,5 +112,5 @@ public final class FileResolver implements ExpressionResolver {
         }
         return null; // no such resource found
     }
-
+    
 }
