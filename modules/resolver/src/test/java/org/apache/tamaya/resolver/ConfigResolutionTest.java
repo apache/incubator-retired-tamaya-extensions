@@ -103,6 +103,12 @@ public class ConfigResolutionTest {
         assertNotNull(value);
         assertTrue(value.contains("This content comes from Testresource2.txt!"));
     }
+    
+    @Test
+    public void testFile_Refs_doNotAppendNewLineAtTheEnd() {
+        String value = ConfigurationProvider.getConfiguration().get("file3-ref");
+        assertEquals("singleValue", value);
+    }
 
     @Test
     public void testURL_Refs() {

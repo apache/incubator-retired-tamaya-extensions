@@ -42,7 +42,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 @Priority(400)
 public final class FileResolver implements ExpressionResolver {
-    /**
+    private static final String NEW_LINE = "\n";
+
+	/**
      * The looger used.
      */
     private final Logger LOG = Logger.getLogger(FileResolver.class.getName());
@@ -83,14 +85,11 @@ public final class FileResolver implements ExpressionResolver {
             String inputLine;
 
             while ((inputLine = bufferedReader.readLine()) != null) {
-                builder.append(inputLine).append("\n");
+                builder.append(inputLine).append(NEW_LINE);
             }
 
             String content = builder.toString();
-            if (content.endsWith("\n")) {
-                content = content.substring(0, conent.length() - 2);        
-            }
-               
+            content = removeEndingNewLine(content);
             return content;
         } catch (Exception e) {
             LOG.log(Level.FINEST, "Could not resolve URL: " + expression, e);
@@ -122,4 +121,12 @@ public final class FileResolver implements ExpressionResolver {
         return null; // no such resource found
     }
 
+    private String removeEndingNewLine(String content)
+    {
+    	if (content.endsWith(NEW_LINE)) {
+            content = content.substring(0, content.length() - 1);        
+        }
+    	return content;
+    }
+    
 }
