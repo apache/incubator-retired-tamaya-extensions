@@ -56,13 +56,29 @@ public class YAMLFormatTest {
 
     @Test
     public void testRead() throws IOException {
-        URL configURL = YAMLPropertySourceTest.class.getResource("/configs/valid/contact.yaml");
+        URL configURL = getContactYaml();
         assertTrue(format.accepts(configURL));
-        ConfigurationData data = format.readConfiguration(configURL.toString(), configURL.openStream());
+        ConfigurationData data = loadConfigurationData(configURL);
         assertNotNull(data);
         for(Map.Entry<String,String> en:data.getDefaultProperties().entrySet()) {
             System.out.println(en.getKey() + " -> " + en.getValue());
         }
     }
+    
+    @Test
+    public void testRead_nullValues() throws IOException {
+    	URL configURL = getContactYaml();
+        ConfigurationData data = loadConfigurationData(configURL);
+        assertFalse(data.getDefaultProperties().containsKey("summary"));
+    }
+
+	private ConfigurationData loadConfigurationData(URL configURL) throws IOException {
+		return format.readConfiguration(configURL.toString(), configURL.openStream());
+	}
+
+	private URL getContactYaml() {
+		URL configURL = YAMLPropertySourceTest.class.getResource("/configs/valid/contact.yaml");
+		return configURL;
+	}
 
 }

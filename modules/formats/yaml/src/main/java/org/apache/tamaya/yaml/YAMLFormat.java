@@ -132,14 +132,13 @@ public class YAMLFormat implements ConfigurationFormat {
                 mapYamlIntoProperties(newPrefix, en.getValue(), values);
             }
         } else{
-            values.put(prefix, mapValueToString(config));
+        	if (config != null) {
+        		values.put(prefix, mapValueToString(config));
+        	}
         }
     }
 
     protected String mapValueToString(Object val) {
-	if (val == null) {
-	    return null;
-	}
         return String.valueOf(val);
     }
 
