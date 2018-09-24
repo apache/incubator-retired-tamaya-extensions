@@ -86,7 +86,12 @@ public final class FileResolver implements ExpressionResolver {
                 builder.append(inputLine).append("\n");
             }
 
-            return builder.toString();
+            String content = builder.toString();
+            if (content.endsWith("\n")) {
+                content = content.substring(0, conent.length() - 2);        
+            }
+               
+            return content;
         } catch (Exception e) {
             LOG.log(Level.FINEST, "Could not resolve URL: " + expression, e);
             return null;
