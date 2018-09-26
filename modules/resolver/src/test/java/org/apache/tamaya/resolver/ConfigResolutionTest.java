@@ -25,6 +25,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 /**
  * Test class that test resolution of different values as configured within
  * {@link org.apache.tamaya.resolver.MyTestPropertySource} and on test resource path.
@@ -105,9 +110,14 @@ public class ConfigResolutionTest {
     }
     
     @Test
-    public void testFile_Refs_doNotAppendNewLineAtTheEnd() {
+    public void testFile_Refs_doNotAppendNewLineAtTheEnd() throws Exception {
         String value = ConfigurationProvider.getConfiguration().get("file3-ref");
-        assertEquals("singleValue", value);
+        
+        URI uri = getClass().getClassLoader().getResource("Testresource3.txt").toURI();
+        byte[] byteContent = Files.readAllBytes(Paths.get(uri));
+        String content = new String(byteContent, StandardCharsets.UTF_8);
+        
+        assertEquals(content, value);
     }
 
     @Test
