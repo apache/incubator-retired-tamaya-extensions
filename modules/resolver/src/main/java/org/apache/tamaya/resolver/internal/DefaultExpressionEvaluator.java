@@ -230,17 +230,12 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
                 break;
             }
         }
+        // Lookup system and environment props as defaults...
         if(value==null){
-            for(ExpressionResolver resolver:resolvers){
-                try{
-                    value = resolver.evaluate(unresolvedExpression);
-                    if(value!=null){
-                        return value;
-                    }
-                }catch(Exception e){
-                    LOG.log(Level.FINEST, "Error during expression resolution from " + resolver, e);
-                }
-            }
+            value = System.getProperty(unresolvedExpression);
+        }
+        if(value==null){
+            value = System.getenv(unresolvedExpression);
         }
         if(value==null){
             LOG.log(Level.WARNING, "Unresolvable expression encountered " + unresolvedExpression);
