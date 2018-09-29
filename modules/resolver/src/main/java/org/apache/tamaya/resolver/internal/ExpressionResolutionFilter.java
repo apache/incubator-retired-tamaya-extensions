@@ -37,8 +37,22 @@ import java.util.logging.Logger;
 public class ExpressionResolutionFilter implements PropertyFilter {
 
     private static final Logger LOG = Logger.getLogger(ExpressionResolutionFilter.class.getName());
+    
+    private ExpressionEvaluator expressionEvaluator;
 
+    public ExpressionResolutionFilter() {
+    	
+    }
+    
+    public ExpressionResolutionFilter(ExpressionEvaluator expressionEvaluator) {
+    	this.expressionEvaluator = expressionEvaluator;
+    }
+    
     private final ExpressionEvaluator evaluator(){
+    	if (expressionEvaluator != null) {
+    		return expressionEvaluator;
+    	}
+    	
         ExpressionEvaluator evaluator = ServiceContextManager.getServiceContext().getService(ExpressionEvaluator.class);
         if(evaluator==null){
             throw new ConfigException("No ExpressionEvaluator registered.");
