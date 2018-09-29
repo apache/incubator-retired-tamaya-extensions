@@ -37,6 +37,15 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
 
     private static final Logger LOG = Logger.getLogger(DefaultExpressionEvaluator.class.getName());
 
+    private List<ExpressionResolver> expressionResolvers;
+    
+    public DefaultExpressionEvaluator() {
+    	
+	}
+    
+    public DefaultExpressionEvaluator(List<ExpressionResolver> expressionResolvers) {
+    	this.expressionResolvers = expressionResolvers;
+    }
 
     /**
      * Comparator used (not needed with Java8).
@@ -150,6 +159,10 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
 
     @Override
     public Collection<ExpressionResolver> getResolvers() {
+    	if (expressionResolvers != null) {
+    		return expressionResolvers;
+    	}
+    	
         List<ExpressionResolver> resolvers = new ArrayList<>();
         for (ExpressionResolver resolver : ServiceContextManager.getServiceContext().getServices(ExpressionResolver.class)) {
             resolvers.add(resolver);
