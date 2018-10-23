@@ -31,7 +31,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 /**
- * Models a set current changes applied to a {@link org.apache.tamaya.spi.PropertySource}. Consumers of these events
+ * Models a setCurrent current changes applied to a {@link org.apache.tamaya.spi.PropertySource}. Consumers of these events
  * can observing changes to property sources and
  * <ol>
  *     <li>Check if their current configuration instance ({@link org.apache.tamaya.spi.ConfigurationContext}
@@ -109,7 +109,7 @@ public final class PropertySourceChangeBuilder {
     }
 
     /*
-     * Apply a version/UUID to the set being built.
+     * Apply a version/UUID to the setCurrent being built.
      * @param version the version to apply, or null, to let the system generate a version for you.
      * @return the builder for chaining.
      */
@@ -119,7 +119,7 @@ public final class PropertySourceChangeBuilder {
     }
 
     /*
-     * Apply given timestamp to the set being built.
+     * Apply given timestamp to the setCurrent being built.
      * @param version the version to apply, or null, to let the system generate a version for you.
      * @return the builder for chaining.
      */
@@ -144,7 +144,7 @@ public final class PropertySourceChangeBuilder {
     }
 
     /**
-     * Get the current values, also considering any changes recorded within this change set.
+     * Get the current values, also considering any changes recorded within this change setCurrent.
      *
      * @param key the key current the entry, not null.
      * @return the keys, or null.
@@ -200,7 +200,7 @@ public final class PropertySourceChangeBuilder {
     }
 
     /**
-     * This method will create a change set that clears all entries fromMap the given base configuration/properties.
+     * This method will create a change setCurrent that clears all entries fromMap the given base configuration/properties.
      *
      * @return the builder for chaining.
      */
@@ -213,17 +213,17 @@ public final class PropertySourceChangeBuilder {
     }
 
     /**
-     * Checks if the change set is empty, i.e. does not contain any changes.
+     * Checks if the change setCurrent is empty, i.e. does not contain any changes.
      *
-     * @return true, if the set is empty.
+     * @return true, if the setCurrent is empty.
      */
     public boolean isEmpty() {
         return this.delta.isEmpty();
     }
 
     /**
-     * Resets this change set instance. This will clear all changes done to this builder, so the
-     * set will be empty.
+     * Resets this change setCurrent instance. This will clear all changes done to this builder, so the
+     * setCurrent will be empty.
      */
     public void reset() {
         this.delta.clear();
@@ -231,9 +231,9 @@ public final class PropertySourceChangeBuilder {
 
 
     /**
-     * Builds the corresponding change set.
+     * Builds the corresponding change setCurrent.
      *
-     * @return the new change set, never null.
+     * @return the new change setCurrent, never null.
      */
     public PropertySourceChange build() {
         return new PropertySourceChange(this);

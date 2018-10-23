@@ -65,13 +65,13 @@ class EnrichedPropertySource implements PropertySource {
     public PropertyValue get(String key) {
         if (overriding) {
             PropertyValue val = addedProperties.get(key);
-            if (val != null) {
+            if (val != null && val.getValue()!=null) {
                 return val;
             }
             return basePropertySource.get(key);
         }
         PropertyValue val = basePropertySource.get(key);
-        if (val != null) {
+        if (val != null && val.getValue()!=null) {
             return val;
         }
         return addedProperties.get(key);

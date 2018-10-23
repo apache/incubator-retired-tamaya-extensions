@@ -47,6 +47,8 @@ final class ServiceLoaderServiceContext implements ServiceContext {
     private final Map<Class<?>, Object> singletons = new ConcurrentHashMap<>();
     private Map<Class, Class> factoryTypes = new ConcurrentHashMap<>();
 
+    private ClassLoader classLoader;
+
     @Override
     public <T> T getService(Class<T> serviceType) {
         Object cached = singletons.get(serviceType);
@@ -167,24 +169,32 @@ final class ServiceLoaderServiceContext implements ServiceContext {
     }
 
     @Override
+    public ClassLoader getClassLoader() {
+        return classLoader;
+    }
+
+    @Override
+    public void init(ClassLoader classLoader) {
+        if(this.classLoader==null){
+            this.classLoader = classLoader;
+        }else{
+            throw new IllegalStateException("Context already initialized.");
+        }
+    }
+
+    @Override
     public int ordinal() {
         return 1;
     }
 
     @Override
-    public Enumeration<URL> getResources(String resource, ClassLoader cl) throws IOException{
-        if(cl==null){
-            cl = Thread.currentThread().getContextClassLoader();
-        }
-        return cl.getResources(resource);
+    public Enumeration<URL> getResources(String resource) throws IOException{
+        return classLoader.getResources(resource);
     }
 
     @Override
-    public URL getResource(String resource, ClassLoader cl){
-        if(cl==null){
-            cl = Thread.currentThread().getContextClassLoader();
-        }
-        return cl.getResource(resource);
+    public URL getResource(String resource){
+        return classLoader.getResource(resource);
     }
 
 }

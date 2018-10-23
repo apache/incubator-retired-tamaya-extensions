@@ -43,9 +43,9 @@ import java.lang.annotation.Target;
  * </pre>
  * Configuration resolution is implemented as follows:
  * <ul>
- *     <li>The current valid Configuration is evaluated by calling {@code Configuration cfg = ConfigurationProvider.getConfiguration();}</li>
- *     <li>The current possible property keys are evaluated by calling {@code cfg.get("a.b.ConfigureItem.aValue");},
- *     {@code cfg.get("ConfigureItem.aValue");}, {@code cfg.get("aValue");}</li>
+ *     <li>The current valid Configuration is evaluated by calling {@code Configuration cfg = Configuration.current();}</li>
+ *     <li>The current possible property keys are evaluated by calling {@code cfg.current("a.b.ConfigureItem.aValue");},
+ *     {@code cfg.current("ConfigureItem.aValue");}, {@code cfg.current("aValue");}</li>
  *     <li>if not successful, and since no @ConfigDefault annotation is present, the configured default value is used.
  *     <li>If no value could be evaluated a ({@link org.apache.tamaya.ConfigException} is thrown.</li>
  *     <li>On success, since no type conversion is involved, the value is injected.</li>
@@ -89,7 +89,7 @@ import java.lang.annotation.Target;
 @Target(value = { ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
 public @interface Config {
 
-    /** Value that is set by default as default, so it is possible to use empty Strings as default values. */
+    /** Value that is setCurrent by default as default, so it is possible to use empty Strings as default values. */
     String UNCONFIGURED_VALUE = "org.apache.tamaya.config.configproperty.unconfigureddvalue";
 
     /**

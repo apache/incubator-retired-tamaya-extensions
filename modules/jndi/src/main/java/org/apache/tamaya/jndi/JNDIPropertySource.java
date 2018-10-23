@@ -88,7 +88,7 @@ public class JNDIPropertySource extends BasePropertySource {
      * the current JNDI context is mapped to configuration map:
      * <ul>
      *   <li>For each leave entry one entry is created.</li>
-     *   <li>The key is the fully path of parent contexts, separated by a '.'.</li>
+     *   <li>The key is the fully path of getParent contexts, separated by a '.'.</li>
      *   <li>The value is the value returned from {@code String.valueOf(leaveObject)}.</li>
      * </ul>
      * @return a map representation of the JNDI tree.
@@ -111,7 +111,7 @@ public class JNDIPropertySource extends BasePropertySource {
     }
 
     /**
-     * If set to true, the property source will return a String representation of the JNDI
+     * If setCurrent to true, the property source will return a String representation of the JNDI
      * tree when calling {@code getProperties()}.
      * @see #getProperties()
      * @param val true, to activate scanable (default is false).
@@ -143,7 +143,7 @@ public class JNDIPropertySource extends BasePropertySource {
      *  mapped to configuration map:
      * <ul>
      *   <li>For each leave entry one entry is created.</li>
-     *   <li>The key is the fully path of parent contexts, separated by a '.'.</li>
+     *   <li>The key is the fully path of getParent contexts, separated by a '.'.</li>
      *   <li>The value is the value returned from {@code String.valueOf(leaveObject)}.</li>
      * </ul>
      * @param ctx the JNDI context, not null.

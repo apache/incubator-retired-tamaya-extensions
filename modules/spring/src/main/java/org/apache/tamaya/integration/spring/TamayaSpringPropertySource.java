@@ -19,6 +19,7 @@
 package org.apache.tamaya.integration.spring;
 
 
+import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.springframework.core.env.PropertySource;
 
@@ -33,7 +34,7 @@ public class TamayaSpringPropertySource extends PropertySource<String> {
 
     @Override
     public String getProperty(String name) {
-        return ConfigurationProvider.getConfiguration().get(name);
+        return Configuration.current().get(name);
     }
 
 }

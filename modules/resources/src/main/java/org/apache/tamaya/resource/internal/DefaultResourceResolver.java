@@ -56,7 +56,9 @@ public class DefaultResourceResolver extends BaseResourceResolver {
 
     @Override
     public Collection<ResourceLocator> getResourceLocators() {
-        return ServiceContextManager.getServiceContext().getServices(ResourceLocator.class);
+        return ServiceContextManager.getServiceContext(
+                Thread.currentThread().getContextClassLoader()
+        ).getServices(ResourceLocator.class);
     }
 
 }

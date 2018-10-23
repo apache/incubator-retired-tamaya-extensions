@@ -20,7 +20,6 @@ import java.util.Date;
 import java.util.Map;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.functions.ConfigurationFunctions;
 import org.apache.tamaya.inject.api.Config;
 import org.apache.tamaya.inject.api.DynamicValue;
@@ -72,19 +71,19 @@ public class WelcomeController {
 
     @GetMapping("/config")
     public String config(Map<String, Object> model) {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         model.put("filter", "NO FILTER");
         model.put("config", config
-                    .query(ConfigurationFunctions.textInfo()));
+                    .adapt(ConfigurationFunctions.textInfo()));
         return "config";
     }
 
     @GetMapping(value="/config/{path}")
 	public String config(@PathVariable("path") String path, Map<String, Object> model) {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         model.put("filter", path);
-        model.put("config", config.with(ConfigurationFunctions.section(path))
-					.query(ConfigurationFunctions.textInfo()));
+        model.put("config", config.map(ConfigurationFunctions.section(path))
+					.adapt(ConfigurationFunctions.textInfo()));
 		return "config";
 	}
 

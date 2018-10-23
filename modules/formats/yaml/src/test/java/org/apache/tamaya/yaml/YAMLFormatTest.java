@@ -60,7 +60,7 @@ public class YAMLFormatTest {
         assertTrue(format.accepts(configURL));
         ConfigurationData data = format.readConfiguration(configURL.toString(), configURL.openStream());
         assertNotNull(data);
-        for(Map.Entry<String,String> en:data.getDefaultProperties().entrySet()) {
+        for(Map.Entry<String,String> en:data.getData().get(0).asMap().entrySet()) {
             System.out.println(en.getKey() + " -> " + en.getValue());
         }
     }

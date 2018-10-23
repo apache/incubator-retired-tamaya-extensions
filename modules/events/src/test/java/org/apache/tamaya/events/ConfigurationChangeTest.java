@@ -33,14 +33,14 @@ public class ConfigurationChangeTest {
 
     @Test
     public void testEmptyChangeSet() throws Exception {
-        ConfigurationChange change = ConfigurationChange.emptyChangeSet(ConfigurationProvider.getConfiguration());
+        ConfigurationChange change = ConfigurationChange.emptyChangeSet(Configuration.current());
         assertThat(change).isNotNull();
         assertThat(change.getChanges()).isEmpty();
     }
 
     @Test
     public void testGetConfiguration() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         ConfigurationChange change = ConfigurationChangeBuilder.of(config).build();
         assertNotNull(change);
         assertTrue(change.getUpdatedSize()==0);
@@ -48,7 +48,7 @@ public class ConfigurationChangeTest {
         assertTrue(change.getRemovedSize()==0);
         assertTrue(change.getChanges().size()==0);
         for (Map.Entry<String, String> en : config.getProperties().entrySet()) {
-            if (!"[meta]frozenAt".equals(en.getKey())) {
+            if (!"[getMeta]frozenAt".equals(en.getKey())) {
                 if(en.getKey().contains("random.new")){ // dynamic generated value!
                     continue;
                 }
@@ -59,7 +59,7 @@ public class ConfigurationChangeTest {
 
     @Test
     public void testGetVersion() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         ConfigurationChange change = ConfigurationChangeBuilder.of(config).build();
         assertNotNull(change.getVersion());
         change = ConfigurationChangeBuilder.of(config).setVersion("version2").build();
@@ -68,17 +68,18 @@ public class ConfigurationChangeTest {
 
     @Test
     public void testGetTimestamp() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
-        Thread.sleep(10L);
+        long startTS = System.currentTimeMillis();
+        Configuration config = Configuration.current();
+        Thread.sleep(20L);
         ConfigurationChange change = ConfigurationChangeBuilder.of(config).build();
-        assertTrue((System.currentTimeMillis() - change.getTimestamp()) > 0L);
+        assertTrue((change.getTimestamp() - startTS) > 0L);
         change = ConfigurationChangeBuilder.of(config).setTimestamp(10L).build();
         assertEquals(10L, change.getTimestamp());
     }
 
     @Test
     public void testGetEvents() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         ConfigurationChange change = ConfigurationChangeBuilder.of(config).removeKey("key1", "key2").build();
         assertTrue(change.getChanges().size() == 2);
         change = ConfigurationChangeBuilder.of(config).addChange("key1Added", "value1Added").build();
@@ -87,7 +88,7 @@ public class ConfigurationChangeTest {
 
     @Test
     public void testGetRemovedSize() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         ConfigurationChange change = ConfigurationChangeBuilder.of(config).removeKey("java.version", "key2").build();
         assertTrue(change.getRemovedSize() == 2);
         assertTrue(change.getAddedSize() == 0);
@@ -95,7 +96,7 @@ public class ConfigurationChangeTest {
 
     @Test
     public void testGetAddedSize() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         ConfigurationChange change = ConfigurationChangeBuilder.of(config).addChange("key1", "key2").build();
         assertTrue(change.getAddedSize() == 1);
         assertTrue(change.getRemovedSize() == 0);
@@ -103,35 +104,35 @@ public class ConfigurationChangeTest {
 
     @Test
     public void testGetUpdatedSize() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         ConfigurationChange change = ConfigurationChangeBuilder.of(config).addChange("java.version", "1.8").build();
         assertTrue(change.getUpdatedSize() == 1);
     }
 
     @Test
     public void testIsRemoved() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         ConfigurationChange change = ConfigurationChangeBuilder.of(config).removeKey("java.version").build();
         assertTrue(change.isRemoved("java.version"));
     }
 
     @Test
     public void testIsAdded() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         ConfigurationChange change = ConfigurationChangeBuilder.of(config).addChange("key1", "key2").build();
         assertTrue(change.isAdded("key1"));
     }
 
     @Test
     public void testIsUpdated() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         ConfigurationChange change = ConfigurationChangeBuilder.of(config).addChange("java.version", "1.8").build();
         assertTrue(change.isUpdated("java.version"));
     }
 
     @Test
     public void testContainsKey() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         ConfigurationChange change = ConfigurationChangeBuilder.of(config).addChange("key1", "key2").build();
         assertTrue(change.isKeyAffected("key1"));
         assertFalse(change.isKeyAffected("key2"));
@@ -142,14 +143,14 @@ public class ConfigurationChangeTest {
 
     @Test
     public void testIsEmpty() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         ConfigurationChange change = ConfigurationChangeBuilder.of(config).build();
         assertTrue(change.isEmpty());
     }
 
     @Test
     public void testToString() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         ConfigurationChange change = ConfigurationChangeBuilder.of(config).removeKey("java.version").build();
         String toString =
                 change.toString();

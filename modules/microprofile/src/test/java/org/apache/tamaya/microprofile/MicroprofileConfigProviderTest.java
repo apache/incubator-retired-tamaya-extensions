@@ -18,12 +18,11 @@
  */
 package org.apache.tamaya.microprofile;
 
-import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.Configuration;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -43,7 +42,7 @@ public class MicroprofileConfigProviderTest {
             count++;
             System.out.println(count + ": " +name);
         }
-        assertTrue(ConfigurationProvider.getConfiguration().getProperties().size() <= count);
+        assertTrue(Configuration.current().getProperties().size() <= count);
     }
 
     @Test

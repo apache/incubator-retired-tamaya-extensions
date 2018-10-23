@@ -20,8 +20,8 @@ package org.apache.tamaya.format.formats;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.format.ConfigurationData;
-import org.apache.tamaya.format.ConfigurationDataBuilder;
 import org.apache.tamaya.format.ConfigurationFormat;
+import org.apache.tamaya.spi.PropertyValue;
 import org.osgi.service.component.annotations.Component;
 
 import java.io.BufferedReader;
@@ -29,6 +29,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Implements a ini file format.
@@ -50,10 +52,12 @@ public class IniConfigurationFormat implements ConfigurationFormat {
     @Override
     public ConfigurationData readConfiguration(String resource, InputStream inputStream)
     throws IOException{
-        ConfigurationDataBuilder builder = ConfigurationDataBuilder.of(resource, this);
+        PropertyValue data = PropertyValue.create();
+        data.setMeta("resource", resource);
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"))) {
             String line = reader.readLine();
             int lineNum = 0;
+            Map<String,PropertyValue> sections = new HashMap<>();
             String section = null;
             while (line != null) {
                 lineNum++;
@@ -76,14 +80,23 @@ public class IniConfigurationFormat implements ConfigurationFormat {
                     String key = line.substring(0, sep);
                     String value = line.substring(sep + 1);
                     if (section != null) {
-                        builder.addSectionProperty(section, key, value);
+                        final String sectionName = section;
+                        PropertyValue sectionPV = sections.computeIfAbsent(section,
+                                s -> PropertyValue.of(sectionName, "", resource)
+                        .setMeta(ConfigurationFormat.class, this));
+                        sectionPV.addChild(PropertyValue.of(key, value, resource)
+                                .setMeta(ConfigurationFormat.class, this));
                     } else {
-                        builder.addDefaultProperty(key, value);
+                        String finalSection = "default";
+                        PropertyValue sectionBuilder = sections.computeIfAbsent(section,
+                                s -> PropertyValue.of(finalSection, "", resource));
+                        sectionBuilder.addChild(PropertyValue.of(key, value, resource)
+                                .setMeta(ConfigurationFormat.class, this));
                     }
                 }
                 line = reader.readLine();
             }
-            return builder.build();
+            return new ConfigurationData(resource, this, sections.values());
         } catch (Exception e) {
             if(e instanceof IOException){
                 throw (IOException)e;

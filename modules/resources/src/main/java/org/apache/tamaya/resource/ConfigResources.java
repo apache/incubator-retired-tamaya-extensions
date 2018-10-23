@@ -38,9 +38,23 @@ public final class ConfigResources {
      * @throws ConfigException if no ResourceResolver is available (should not happen).
      *
      * @return the current ResourceResolver instance, never null.
+     * @deprecated Use {@link #getResourceResolver(ClassLoader)}
      */
+    @Deprecated
     public static ResourceResolver getResourceResolver() throws ConfigException {
-        ResourceResolver resolver = ServiceContextManager.getServiceContext().getService(ResourceResolver.class);
+        return getResourceResolver(Thread.currentThread().getContextClassLoader());
+    }
+
+    /**
+     * <p>Access the current ResourceResolver.</p>
+     *
+     * @throws ConfigException if no ResourceResolver is available (should not happen).
+     *
+     * @return the current ResourceResolver instance, never null.
+     */
+    public static ResourceResolver getResourceResolver(ClassLoader classLoader) throws ConfigException {
+        ResourceResolver resolver = ServiceContextManager.getServiceContext(classLoader)
+                .getService(ResourceResolver.class);
         if (resolver == null) {
             throw new ConfigException("ResourceResolver not available.");
         }

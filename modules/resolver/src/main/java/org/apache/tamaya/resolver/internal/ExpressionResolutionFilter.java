@@ -20,12 +20,10 @@ package org.apache.tamaya.resolver.internal;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
-import org.apache.tamaya.spi.FilterContext;
-import org.apache.tamaya.spi.PropertyFilter;
-import org.apache.tamaya.spi.PropertyValue;
-import org.apache.tamaya.spi.ServiceContextManager;
+import org.apache.tamaya.spi.*;
 
 import javax.annotation.Priority;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 /**
@@ -34,12 +32,25 @@ import java.util.logging.Logger;
  * has the advantage that different resolvers can be active in parallel.
  */
 @Priority(10000)
-public class ExpressionResolutionFilter implements PropertyFilter {
+public class ExpressionResolutionFilter implements PropertyFilter, ClassloaderAware {
 
     private static final Logger LOG = Logger.getLogger(ExpressionResolutionFilter.class.getName());
 
+    private ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+
+    @Override
+    public void init(ClassLoader classLoader) {
+        this.classLoader = Objects.requireNonNull(classLoader);
+
+    }
+
+    @Override
+    public ClassLoader getClassLoader() {
+        return classLoader;
+    }
+
     private final ExpressionEvaluator evaluator(){
-        ExpressionEvaluator evaluator = ServiceContextManager.getServiceContext().getService(ExpressionEvaluator.class);
+        ExpressionEvaluator evaluator = ServiceContextManager.getServiceContext(classLoader).getService(ExpressionEvaluator.class);
         if(evaluator==null){
             throw new ConfigException("No ExpressionEvaluator registered.");
         }
@@ -80,19 +91,17 @@ public class ExpressionResolutionFilter implements PropertyFilter {
      * <li><code>\${resolverId:expression}foo${resolverId2:expression2}bar</code> (first expression is escaped).</li>
      * </ul>
      *
-     * @param context the filter context
      * @param valueToBeFiltered value to be analyzed for expressions
      * @return the resolved value, or the input in case where no expression was detected.
      */
     @Override
-    public PropertyValue filterProperty(PropertyValue valueToBeFiltered, FilterContext context){
+    public PropertyValue filterProperty(PropertyValue valueToBeFiltered){
         LOG.finest("Resolving " + valueToBeFiltered);
         String newVal = evaluator().evaluateExpression(valueToBeFiltered.getKey(), valueToBeFiltered.getValue(), true);
         if(newVal!=null){
-            return valueToBeFiltered.toBuilder().setValue(newVal).build();
+            return valueToBeFiltered.setValue(newVal);
         }
         return null;
     }
-
 
 }

@@ -18,6 +18,7 @@ package org.apache.tamaya.cdi;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.ConfigOperator;
+import org.apache.tamaya.Configuration;
 import org.apache.tamaya.inject.api.Config;
 import org.apache.tamaya.inject.api.ConfigDefaultSections;
 import org.apache.tamaya.inject.api.WithConfigOperator;
@@ -33,6 +34,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.UnaryOperator;
 import java.util.logging.Logger;
 
 
@@ -47,7 +49,7 @@ public class TamayaCDIInjectionExtension implements Extension {
 
     private static final Logger LOG = Logger.getLogger(TamayaCDIInjectionExtension.class.getName());
 
-    static final Map<Class, ConfigOperator> CUSTOM_OPERATORS = new ConcurrentHashMap<>();
+    static final Map<Class, UnaryOperator<Configuration>> CUSTOM_OPERATORS = new ConcurrentHashMap<>();
     static final Map<Class, PropertyConverter> CUSTOM_CONVERTERS = new ConcurrentHashMap<>();
 
     private final Set<Type> types = new HashSet<>();
@@ -130,7 +132,8 @@ public class TamayaCDIInjectionExtension implements Extension {
         }
         try{
             if(!CUSTOM_OPERATORS.containsKey(operatorClass)) {
-                CUSTOM_OPERATORS.put(operatorClass, operatorClass.newInstance());
+                final ConfigOperator op = operatorClass.newInstance();
+                CUSTOM_OPERATORS.put(operatorClass, cfg -> op.operate(cfg));
             }
         } catch(Exception e){
             throw new ConfigException("Custom ConfigOperator could not be loaded: " + operatorClass.getName(), e);

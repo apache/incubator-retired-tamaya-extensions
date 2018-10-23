@@ -71,7 +71,7 @@ public class DefaultConfigurationInjector implements ConfigurationInjector {
     }
 
     /**
-     * If set also non annotated instances can be configured or created as templates.
+     * If setCurrent also non annotated instances can be configured or created as templates.
      * @return true, if autoConfigureEnabled.
      */
     public boolean isAutoConfigureEnabled(){
@@ -117,7 +117,7 @@ public class DefaultConfigurationInjector implements ConfigurationInjector {
      */
     @Override
     public <T> T configure(T instance) {
-        return configure(instance, ConfigurationProvider.getConfiguration());
+        return configure(instance, Configuration.current());
     }
 
     /**
@@ -146,7 +146,7 @@ public class DefaultConfigurationInjector implements ConfigurationInjector {
      */
     @Override
     public <T> T createTemplate(Class<T> templateType) {
-        return createTemplate(templateType, ConfigurationProvider.getConfiguration());
+        return createTemplate(templateType, Configuration.current());
     }
 
     /**
@@ -167,7 +167,7 @@ public class DefaultConfigurationInjector implements ConfigurationInjector {
 
     @Override
     public <T> Supplier<T> getConfiguredSupplier(final Supplier<T> supplier) {
-        return getConfiguredSupplier(supplier, ConfigurationProvider.getConfiguration());
+        return getConfiguredSupplier(supplier, Configuration.current());
     }
 
     @Override

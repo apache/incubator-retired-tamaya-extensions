@@ -72,15 +72,15 @@ public class HistoryCommands {
         }
     }
 
-    @Descriptor("Get the maximum configuration change getHistory size.")
+    @Descriptor("Get the maximum configuration change getHistory getNumChilds.")
     public void tm_history_maxsize() throws IOException {
         System.out.println(String.valueOf(org.apache.tamaya.osgi.commands.HistoryCommands.getMaxHistorySize(
                 getService(TamayaConfigService.class))));
     }
 
-    @Descriptor("Sets the maximum configuration change getHistory size.")
-    public void tm_history_maxsize_set(@Parameter(absentValue = Parameter.UNSPECIFIED, names={"-s", "--size"})
-                                   @Descriptor("The maximum size of getHistory entries stored.")int maxSize) throws IOException {
+    @Descriptor("Sets the maximum configuration change getHistory getNumChilds.")
+    public void tm_history_maxsize_set(@Parameter(absentValue = Parameter.UNSPECIFIED, names={"-s", "--getNumChilds"})
+                                   @Descriptor("The maximum getNumChilds of getHistory entries stored.")int maxSize) throws IOException {
         System.out.println(org.apache.tamaya.osgi.commands.HistoryCommands.setMaxHistorySize(
                 getService(TamayaConfigService.class),
                 maxSize));

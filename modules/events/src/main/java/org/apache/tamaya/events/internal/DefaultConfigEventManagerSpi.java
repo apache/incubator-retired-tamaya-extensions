@@ -52,7 +52,9 @@ public class DefaultConfigEventManagerSpi implements ConfigEventManagerSpi {
      */
     public DefaultConfigEventManagerSpi() {
         try {
-            for (ConfigEventListener l : ServiceContextManager.getServiceContext().getServices(ConfigEventListener.class)) {
+            for (ConfigEventListener l : ServiceContextManager.getServiceContext(
+                    Thread.currentThread().getContextClassLoader()
+            ).getServices(ConfigEventListener.class)) {
                 try {
                     addListener(l);
                 } catch (Exception e) {

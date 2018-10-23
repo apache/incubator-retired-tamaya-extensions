@@ -42,7 +42,7 @@ import static org.mockito.Mockito.mock;
 public class EnrichedConfigurationTest {
 
     /*
-     * Tests for get(String)
+     * Tests for current(String)
      */
 
     @Test
@@ -420,11 +420,11 @@ public class EnrichedConfigurationTest {
 
 
     /*
-     * Tests for get(String, Class<T>)
+     * Tests for current(String, Class<T>)
      */
 
     /*
-     * Tests for get(String, TypeLiteral)
+     * Tests for current(String, TypeLiteral)
      */
 
     /*
@@ -704,6 +704,6 @@ public class EnrichedConfigurationTest {
      */
 
     /*
-     * Tests for getContext()
+     * Tests for current()
      */
 }

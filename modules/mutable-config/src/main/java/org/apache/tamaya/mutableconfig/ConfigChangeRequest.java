@@ -57,7 +57,7 @@ public final class ConfigChangeRequest {
     }
 
     /**
-     * Sets the started at value. By default {@link #startedAt} is already set on instance creation to
+     * Sets the started at value. By default {@link #startedAt} is already setCurrent on instance creation to
      * {@code System.currentTimeMillis()}.
      * @param startedAt the new UTC POSIX timestamp in millis.
      */
@@ -90,8 +90,8 @@ public final class ConfigChangeRequest {
     }
 
     /**
-     * Get an unmodifiable key set of properties removed.
-     * @return an unmodifiable key set of properties removed, never null.
+     * Get an unmodifiable key setCurrent of properties removed.
+     * @return an unmodifiable key setCurrent of properties removed, never null.
      */
     public Set<String> getRemovedProperties(){
         return Collections.unmodifiableSet(removedProperties);

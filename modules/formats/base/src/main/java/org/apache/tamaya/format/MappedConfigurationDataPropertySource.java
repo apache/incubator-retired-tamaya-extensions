@@ -22,6 +22,8 @@ import org.apache.tamaya.functions.Supplier;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spisupport.propertysource.BasePropertySource;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -34,7 +36,7 @@ import java.util.logging.Logger;
  */
 public class MappedConfigurationDataPropertySource extends BasePropertySource {
     private static final Logger LOG = Logger.getLogger(MappedConfigurationDataPropertySource.class.getName());
-    private Map<String, String> properties;
+    private Map<String, PropertyValue> properties = new HashMap<>();
     private final Supplier<ConfigurationData> dataSupplier;
 
     /*
@@ -56,12 +58,7 @@ public class MappedConfigurationDataPropertySource extends BasePropertySource {
      * @see ConfigurationData#getCombinedProperties()
      */
     public MappedConfigurationDataPropertySource(final ConfigurationData data) {
-        this(data.getResource(), 0, new Supplier<ConfigurationData>(){
-            @Override
-            public ConfigurationData get() {
-                return data;
-            }
-        });
+        this(data.getResource(), 0, () -> data);
     }
 
     /*
@@ -72,12 +69,7 @@ public class MappedConfigurationDataPropertySource extends BasePropertySource {
      * @see ConfigurationData#getCombinedProperties()
      */
     public MappedConfigurationDataPropertySource(int defaultOrdinal, final ConfigurationData data) {
-        this(data.getResource(), defaultOrdinal, new Supplier<ConfigurationData>() {
-            @Override
-            public ConfigurationData get() {
-                return data;
-            }
-        });
+        this(data.getResource(), defaultOrdinal, () -> data);
     }
 
     /*
@@ -95,17 +87,28 @@ public class MappedConfigurationDataPropertySource extends BasePropertySource {
     }
 
     public void load(){
+        ConfigurationData data = dataSupplier.get();
+        if(data==null){
+            return;
+        }
+        Map<String, Object> meta = new HashMap<>();
+        meta.put("source", data.getResource());
+        meta.put("timestamp",String.valueOf(System.currentTimeMillis()));
         try{
-            this.properties = populateData(dataSupplier.get());
+            this.properties.putAll(populateData(data, meta));
         }catch(Exception e){
             LOG.log(Level.INFO, "Failed to load property source: " + getName(), e);
             if(this.properties==null) {
                 this.properties = new HashMap<>();
             }
-            this.properties.put("_exception", e.getLocalizedMessage());
-            this.properties.put("_state", "ERROR");
-        }finally{
-            this.properties.put("_timestamp", String.valueOf(System.currentTimeMillis()));
+            this.properties.put("_meta.propertysource."+getName()+"exception",
+                    PropertyValue.of("_meta.propertysource."+getName()+"exception",
+                            e.getLocalizedMessage(),
+                            data.getResource()));
+            this.properties.put("_meta.propertysource."+getName()+"exception",
+                    PropertyValue.of("_meta.propertysource."+getName()+"state",
+                            "ERROR",
+                            data.getResource()));
         }
     }
 
@@ -113,39 +116,41 @@ public class MappedConfigurationDataPropertySource extends BasePropertySource {
      * Method that copies and converts the properties read from the data instance
      * provided.
      * @param data the data returned from the format, not null.
+     * @param meta the metadata to add.
      * @return the final properties to be included.
      */
-    protected Map<String, String> populateData(ConfigurationData data) {
-        Map<String, String> result = new HashMap<>();
-        if(data!=null) {
-            for (String section : data.getSectionNames()) {
-                for (Map.Entry<String, String> en : data.getSection(section).entrySet()) {
-                    if ("default".equals(section)) {
-                        result.put(en.getKey(), en.getValue());
-                    } else {
-                        result.put(section + '.' + en.getKey(), en.getValue());
-                    }
-                }
+    protected Map<String, PropertyValue> populateData(ConfigurationData data, Map<String, Object> meta) {
+        Map<String, PropertyValue> result = new HashMap<>();
+        for(PropertyValue val:data.getData()) {
+            if(!val.getKey().isEmpty()) {
+                addNode(val, result, meta);
             }
-            result.put("_propertySource", getName());
-            result.put("_source", data.getResource());
+            for(PropertyValue child:val) {
+                addNode(child, result, meta);
+            }
         }
         return result;
+    }
+
+    protected void addNode(PropertyValue val, Map<String, PropertyValue> map, Map<String, Object> meta){
+        if(val.isLeaf()){
+            val.setMeta(meta);
+            map.put(val.getQualifiedKey(), val);
+        }else{
+            for(PropertyValue child:val) {
+                addNode(child, map, meta);
+            }
+        }
     }
 
     @Override
     public PropertyValue get(String key) {
-        String val = properties.get(key);
-        return PropertyValue.of(key, val, getName());
+       return properties.get(key);
     }
 
     @Override
     public Map<String, PropertyValue> getProperties() {
-        Map<String, PropertyValue> result = new HashMap<>();
-        for(Map.Entry<String,String> en:this.properties.entrySet()) {
-            result.put(en.getKey(), PropertyValue.of(en.getKey(), en.getValue(), getName()));
-        }
-        return result;
+        return Collections.unmodifiableMap(properties);
     }
 
     @Override

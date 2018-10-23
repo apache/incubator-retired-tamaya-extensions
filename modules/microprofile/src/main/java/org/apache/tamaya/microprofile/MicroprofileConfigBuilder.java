@@ -20,7 +20,7 @@ package org.apache.tamaya.microprofile;
 
 import java.util.Objects;
 
-import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConfigurationBuilder;
 import org.apache.tamaya.spi.ServiceContextManager;
@@ -147,10 +147,10 @@ final class MicroprofileConfigBuilder implements ConfigBuilder {
     
     @Override
     public Config build() {
-    	ConfigurationProvider.setConfiguration(
+    	Configuration.setCurrent(
         		getConfigurationBuilder().build());
     	
-        return MicroprofileAdapter.toConfig(ConfigurationProvider.getConfiguration());
+        return MicroprofileAdapter.toConfig(Configuration.current());
     }
 
 }

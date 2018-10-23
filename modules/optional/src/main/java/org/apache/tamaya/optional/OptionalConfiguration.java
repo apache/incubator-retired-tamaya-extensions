@@ -21,7 +21,7 @@ package org.apache.tamaya.optional;
 
 import java.util.Objects;
 
-import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.Configuration;
 
 /**
  * Simplified configuration API, that can be used by code that only wants Tamaya to optionally enhance its configuration
@@ -218,7 +218,7 @@ public final class OptionalConfiguration {
      */
     private <T> T getTamaya(String key, Class<T> type) {
         if (TAMAYA_LOADED) {
-            return ConfigurationProvider.getConfiguration().get(key, type);
+            return Configuration.current().get(key, type);
         }
         throw new IllegalStateException("Tamaya is not loaded.");
     }

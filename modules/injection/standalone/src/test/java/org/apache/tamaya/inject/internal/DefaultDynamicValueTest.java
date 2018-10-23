@@ -22,7 +22,6 @@ import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.inject.api.DynamicValue;
 import org.apache.tamaya.inject.api.Config;
 import org.apache.tamaya.inject.api.UpdatePolicy;
-import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
@@ -96,7 +95,7 @@ public class DefaultDynamicValueTest {
     @Test
     public void testOf_Field() throws Exception {
         DynamicValue val = DefaultDynamicValue.of(this, getClass().getDeclaredField("myValue"),
-                ConfigurationProvider.getConfiguration());
+                Configuration.current());
         assertNotNull(val);
     }
 
@@ -268,7 +267,7 @@ public class DefaultDynamicValueTest {
 //        val.setUpdatePolicy(UpdatePolicy.IMMEDEATE);
 //        assertEquals("bla", val.orElseGet(new ConfiguredItemSupplier() {
 //            @Override
-//            public Object get() {
+//            public Object current() {
 //                return "bla";
 //            }
 //        }));
@@ -276,7 +275,7 @@ public class DefaultDynamicValueTest {
 //        val.updateValue();
 //        assertEquals("aValue", val.orElseGet(new ConfiguredItemSupplier() {
 //            @Override
-//            public Object get() {
+//            public Object current() {
 //                return "bla";
 //            }
 //        }));
@@ -287,11 +286,11 @@ public class DefaultDynamicValueTest {
 //        DynamicValue val = DefaultDynamicValue.of(getClass().getDeclaredField("myValue"),
 //                config);
 //        val.setUpdatePolicy(UpdatePolicy.EXPLCIT);
-//        val.get();
+//        val.current();
 //        properties.put("a", "aValue");
 //        assertEquals("aValue", val.orElseThrow(new ConfiguredItemSupplier() {
 //            @Override
-//            public ConfigException get() {
+//            public ConfigException current() {
 //                return new ConfigException("bla");
 //            }
 //        }));
@@ -299,7 +298,7 @@ public class DefaultDynamicValueTest {
 //        val.updateValue();
 //        assertEquals("aValue", val.orElseThrow(new ConfiguredItemSupplier() {
 //            @Override
-//            public ConfigException get() {
+//            public ConfigException current() {
 //                return new ConfigException("bla");
 //            }
 //        }));
@@ -308,7 +307,7 @@ public class DefaultDynamicValueTest {
     private static final class DoublicatingConverter implements PropertyConverter<String>{
 
         @Override
-        public String convert(String value, ConversionContext context) {
+        public String convert(String value) {
             return value + value;
         }
     }

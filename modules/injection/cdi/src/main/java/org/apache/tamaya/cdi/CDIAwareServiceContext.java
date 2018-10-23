@@ -43,13 +43,14 @@ import java.util.logging.Logger;
  * declared services) are loaded multiple times, when going up the classloader hierarchy.</p>
  *
  * <p>Finally classloaders are not stored by reference by this class, to ensure they still can be garbage collected.
- * Refer also the inherited parent class for further details.</p>
+ * Refer also the inherited getParent class for further details.</p>
  *
  * <p>This class uses an ordinal of {@code 10}, so it overrides any default {@link ServiceContext} implementations
  * provided with the Tamaya core modules.</p>
  */
 public class CDIAwareServiceContext implements ServiceContext {
 
+    private static final Logger LOG = Logger.getLogger(CDIAwareServiceContext.class.getName());
     /**
      * Singletons.
      */
@@ -100,42 +101,34 @@ public class CDIAwareServiceContext implements ServiceContext {
     @Override
     public <T> List<T> getServices(final Class<T> serviceType) {
         List<T> found = defaultServiceContext.getServices(serviceType);
-        BeanManager beanManager = TamayaCDIAccessor.getBeanManager();
-        Instance<T> cdiInstances = null;
-        if(beanManager!=null){
-            Set<Bean<?>> instanceBeans = beanManager.getBeans(Instance.class);
-            Bean<?> bean = instanceBeans.iterator().next();
-            cdiInstances = (Instance<T>)beanManager.getReference(bean, Instance.class,
-                    beanManager.createCreationalContext(bean));
-        }
-        if(cdiInstances!=null){
-            for(T t:cdiInstances.select(serviceType)){
-                found.add(t);
+        try {
+            BeanManager beanManager = TamayaCDIAccessor.getBeanManager();
+            Instance<T> cdiInstances = null;
+            if(beanManager!=null) {
+                Set<Bean<?>> instanceBeans = beanManager.getBeans(Instance.class);
+                Bean<?> bean = instanceBeans.iterator().next();
+                cdiInstances = (Instance<T>) beanManager.getReference(bean, Instance.class,
+                        beanManager.createCreationalContext(bean));
             }
+            if(cdiInstances!=null){
+                for(T t:cdiInstances.select(serviceType)){
+                    found.add(t);
+                }
+            }
+        }catch(Exception e){
+            LOG.log(Level.SEVERE, "Failed to access BeanManager.", e);
         }
         return found;
     }
 
     @Override
-    public Enumeration<URL> getResources(String resource, ClassLoader cl) throws IOException {
-        if(cl==null){
-            cl = Thread.currentThread().getContextClassLoader();
-        }
-        if(cl==null){
-            cl = getClass().getClassLoader();
-        }
-        return cl.getResources(resource);
+    public Enumeration<URL> getResources(String resource) throws IOException {
+        return defaultServiceContext.getResources(resource);
     }
 
     @Override
-    public URL getResource(String resource, ClassLoader cl) {
-        if(cl==null){
-            cl = Thread.currentThread().getContextClassLoader();
-        }
-        if(cl==null){
-            cl = getClass().getClassLoader();
-        }
-        return cl.getResource(resource);
+    public URL getResource(String resource) {
+        return defaultServiceContext.getResource(resource);
     }
 
     /**
@@ -192,6 +185,16 @@ public class CDIAwareServiceContext implements ServiceContext {
         }
 
         return highestService;
+    }
+
+    @Override
+    public ClassLoader getClassLoader() {
+        return defaultServiceContext.getClassLoader();
+    }
+
+    @Override
+    public void init(ClassLoader classLoader) {
+        this.defaultServiceContext.init(Objects.requireNonNull(classLoader));
     }
 
     /**

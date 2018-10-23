@@ -34,7 +34,8 @@ public final class ConfigEventManager {
      * The backing SPI.
      */
     private static final ConfigEventManagerSpi spi(){
-        ConfigEventManagerSpi spi = ServiceContextManager.getServiceContext()
+        ConfigEventManagerSpi spi = ServiceContextManager.getServiceContext(
+                Thread.currentThread().getContextClassLoader())
                 .getService(ConfigEventManagerSpi.class);
         if(spi==null){
             throw new ConfigException("No SPI registered for " +

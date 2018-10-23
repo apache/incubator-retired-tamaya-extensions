@@ -37,11 +37,11 @@ public class ApplyTamayaConfigCommand implements Action{
             required = true, multiValued = false)
     String pid = null;
 
-    @Option(name = "operationMode", aliases={"-m","--opmode"}, description = "Explicitly set (override) the operation mode to use.",
+    @Option(name = "operationMode", aliases={"-m","--opmode"}, description = "Explicitly setCurrent (override) the operation mode to use.",
             required = false, multiValued = false)
     String opMode = null;
 
-    @Option(name = "dryRun", aliases={"-d","--dryrun"}, description = "If set to true no OSGI configuration gets changed.",
+    @Option(name = "dryRun", aliases={"-d","--dryrun"}, description = "If setCurrent to true no OSGI configuration gets changed.",
             required = false, multiValued = false)
     boolean dryRun = false;
 

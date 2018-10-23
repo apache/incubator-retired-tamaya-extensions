@@ -16,10 +16,14 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.apache.tamaya.cdi.extra;
+package org.apache.tamaya.cdi;
 
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.cdi.BaseTestConfiguration;
+import org.apache.tamaya.cdi.extra.ConfiguredVetoExtension;
+import org.apache.tamaya.cdi.extra.TestKlazz;
+import org.apache.tamaya.cdi.extra.TestKlazz2;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.junit.Test;
 
@@ -28,24 +32,15 @@ import javax.enterprise.inject.spi.ProcessAnnotatedType;
 
 import static org.mockito.Mockito.*;
 
-public class ConfiguredVetoExtensionTest {
+public class ConfiguredVetoExtensionTest extends BaseTestConfiguration {
 
     ConfiguredVetoExtension extension = new ConfiguredVetoExtension();
 
     @Test
     public void willBeVetoedIfTypeHasBeenConfiguredAsConcreteClassName() {
 
-        Configuration oldConfiguration = ConfigurationProvider.getConfiguration();
-
         try {
-
-            ConfigurationContext context = mock(ConfigurationContext.class);
-            Configuration configuration = mock(Configuration.class);
-
-            when(configuration.getContext()).thenReturn(context);
-            when(configuration.get("javax.enterprise.inject.vetoed")).thenReturn("org.apache.tamaya.cdi.extra.TestKlazz");
-
-            ConfigurationProvider.setConfiguration(configuration);
+            System.setProperty("javax.enterprise.inject.vetoed", "org.apache.tamaya.cdi.extra.TestKlazz");
             AnnotatedType<TestKlazz> annotatedType = mock(AnnotatedType.class);
             when(annotatedType.getJavaClass()).thenReturn(TestKlazz.class);
 
@@ -56,23 +51,17 @@ public class ConfiguredVetoExtensionTest {
 
             (processAnnotatedType).veto();
         } finally {
-            ConfigurationProvider.setConfiguration(oldConfiguration);
+            System.setProperty("javax.enterprise.inject.vetoed","");
         }
     }
 
     @Test
     public void willNotBeVetoedIfTypeHasNotBeenConfigured() {
-        Configuration oldConfiguration = ConfigurationProvider.getConfiguration();
 
         try {
 
-            ConfigurationContext context = mock(ConfigurationContext.class);
-            Configuration configuration = mock(Configuration.class);
+            System.setProperty("javax.enterprise.inject.vetoed", "org.apache.tamaya.cdi.extra.Oz");
 
-            when(configuration.getContext()).thenReturn(context);
-            when(configuration.get("javax.enterprise.inject.vetoed")).thenReturn("org.apache.tamaya.cdi.extra.O");
-
-            ConfigurationProvider.setConfiguration(configuration);
             AnnotatedType<TestKlazz> annotatedType = mock(AnnotatedType.class);
             when(annotatedType.getJavaClass()).thenReturn(TestKlazz.class);
 
@@ -83,7 +72,7 @@ public class ConfiguredVetoExtensionTest {
 
             verify(processAnnotatedType, never()).veto();
         } finally {
-            ConfigurationProvider.setConfiguration(oldConfiguration);
+            System.setProperty("javax.enterprise.inject.vetoed","");
         }
     }
 
@@ -92,16 +81,8 @@ public class ConfiguredVetoExtensionTest {
         String configuredValue = "  " + TestKlazz.class.getName() +
                                  ",\t" + TestKlazz2.class.getName();
 
-        Configuration oldConfiguration = ConfigurationProvider.getConfiguration();
-
         try {
-            ConfigurationContext context = mock(ConfigurationContext.class);
-            Configuration configuration = mock(Configuration.class);
-
-            when(configuration.getContext()).thenReturn(context);
-            when(configuration.get("javax.enterprise.inject.vetoed")).thenReturn(configuredValue);
-
-            ConfigurationProvider.setConfiguration(configuration);
+            System.setProperty("javax.enterprise.inject.vetoed", configuredValue);
 
             AnnotatedType<TestKlazz> annotatedType = mock(AnnotatedType.class);
             when(annotatedType.getJavaClass()).thenReturn(TestKlazz.class);
@@ -113,7 +94,7 @@ public class ConfiguredVetoExtensionTest {
 
             verify(processAnnotatedType).veto();
         } finally {
-            ConfigurationProvider.setConfiguration(oldConfiguration);
+            System.setProperty("javax.enterprise.inject.vetoed", "");
         }
     }
 
@@ -122,16 +103,9 @@ public class ConfiguredVetoExtensionTest {
         String configuredValue = "  " + TestKlazz.class.getPackage().getName() +
                                  "\\..+";
 
-        Configuration oldConfiguration = ConfigurationProvider.getConfiguration();
-
         try {
-            ConfigurationContext context = mock(ConfigurationContext.class);
-            Configuration configuration = mock(Configuration.class);
+            System.setProperty("javax.enterprise.inject.vetoed", configuredValue);
 
-            when(configuration.getContext()).thenReturn(context);
-            when(configuration.get("javax.enterprise.inject.vetoed")).thenReturn(configuredValue);
-
-            ConfigurationProvider.setConfiguration(configuration);
             AnnotatedType<TestKlazz> annotatedType = mock(AnnotatedType.class);
             when(annotatedType.getJavaClass()).thenReturn(TestKlazz.class);
 
@@ -142,7 +116,7 @@ public class ConfiguredVetoExtensionTest {
 
             verify(processAnnotatedType).veto();
         } finally {
-            ConfigurationProvider.setConfiguration(oldConfiguration);
+            System.setProperty("javax.enterprise.inject.vetoed", "");
         }
     }
 }

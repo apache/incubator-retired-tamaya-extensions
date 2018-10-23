@@ -20,7 +20,6 @@ package org.apache.tamaya.filter;
 
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.spi.FilterContext;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertyValue;
 import org.junit.Test;
@@ -42,12 +41,12 @@ public class ConfigurationFilterTest {
 
     @Test
     public void testGetSingleFilters() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         assertNotNull(ConfigurationFilter.getSingleValueFilterContext());
         PropertyFilter testFilter = new PropertyFilter() {
             @Override
-            public PropertyValue filterProperty(PropertyValue value, FilterContext context) {
-                return value.toBuilder().setValue(value.getKey() + ":testGetSingleFilters").build();
+            public PropertyValue filterProperty(PropertyValue value) {
+                return value.setValue(value.getKey() + ":testGetSingleFilters");
             }
         };
         ConfigurationFilter.getSingleValueFilterContext().addFilter(testFilter);
@@ -58,12 +57,12 @@ public class ConfigurationFilterTest {
 
     @Test
     public void testRemoveSingleFiltersAt0() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         assertNotNull(ConfigurationFilter.getSingleValueFilterContext());
         PropertyFilter testFilter = new PropertyFilter() {
             @Override
-            public PropertyValue filterProperty(PropertyValue value, FilterContext context) {
-                return value.toBuilder().setValue(value.getKey() + ":testGetSingleFilters").build();
+            public PropertyValue filterProperty(PropertyValue value) {
+                return value.setValue(value.getKey() + ":testGetSingleFilters");
             }
         };
         ConfigurationFilter.getSingleValueFilterContext().addFilter(testFilter);
@@ -74,12 +73,12 @@ public class ConfigurationFilterTest {
 
     @Test
     public void testGetMapFilters() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         assertNotNull(ConfigurationFilter.getMapFilterContext());
         PropertyFilter testFilter = new PropertyFilter() {
             @Override
-            public PropertyValue filterProperty(PropertyValue value, FilterContext context) {
-                return value.toBuilder().setValue(value.getKey() + ":testGetMapFilters").build();
+            public PropertyValue filterProperty(PropertyValue value) {
+                return value.setValue(value.getKey() + ":testGetMapFilters");
             }
         };
         ConfigurationFilter.getMapFilterContext().addFilter(testFilter);
@@ -90,12 +89,12 @@ public class ConfigurationFilterTest {
 
     @Test
     public void testRemoveMapFilterAt0() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         assertNotNull(ConfigurationFilter.getMapFilterContext());
         PropertyFilter testFilter = new PropertyFilter() {
             @Override
-            public PropertyValue filterProperty(PropertyValue value, FilterContext context) {
-                return value .toBuilder().setValue(value.getKey() + ":testGetMapFilters").build();
+            public PropertyValue filterProperty(PropertyValue value) {
+                return value.setValue(value.getKey() + ":testGetMapFilters");
             }
         };
         ConfigurationFilter.getMapFilterContext().addFilter(testFilter);
@@ -106,12 +105,12 @@ public class ConfigurationFilterTest {
 
     @Test
     public void testClearFilters() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         assertNotNull(ConfigurationFilter.getSingleValueFilterContext());
         PropertyFilter testFilter = new PropertyFilter() {
             @Override
-            public PropertyValue filterProperty(PropertyValue value, FilterContext context) {
-                return value.toBuilder().setValue(value.getKey() + ":testGetSingleFilters").build();
+            public PropertyValue filterProperty(PropertyValue value) {
+                return value.setValue(value.getKey() + ":testGetSingleFilters");
             }
         };
         ConfigurationFilter.getSingleValueFilterContext().addFilter(testFilter);

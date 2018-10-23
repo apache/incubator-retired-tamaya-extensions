@@ -168,7 +168,7 @@ class VfsSupport {
         try {
             return (String) methodGetPathName.invoke(resource);
         } catch (Exception e) {
-            throw new IllegalStateException("Failed to get path name - " + resource, e);
+            throw new IllegalStateException("Failed to current path name - " + resource, e);
         }
     }
 
@@ -209,8 +209,8 @@ class VfsSupport {
      * has a primitive type.
      * <p>Thrown exceptions are rethrown as {@link IllegalStateException}.
      *
-     * @param field  the field to get
-     * @param target the target object from which to get the field
+     * @param field  the field to current
+     * @param target the target object from which to current the field
      * @return the field's current value
      */
     private static Object readField(Field field, Object target) {

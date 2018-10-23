@@ -18,9 +18,11 @@
  */
 package org.apache.tamaya.yaml;
 
+import org.apache.tamaya.format.ConfigurationData;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
@@ -48,7 +50,7 @@ public class YAMLPropertySource implements PropertySource {
      * Constructor, hereby using 0 as the default ordinal.
      * @param resource the resource modelled as URL, not null.
      */
-    public YAMLPropertySource(URL resource) {
+    public YAMLPropertySource(URL resource) throws IOException {
         this(resource, 0);
     }
 
@@ -57,16 +59,16 @@ public class YAMLPropertySource implements PropertySource {
      * @param resource the resource modelled as URL, not null.
      * @param defaultOrdinal the defaultOrdinal to be used.
      */
-    public YAMLPropertySource(URL resource, int defaultOrdinal) {
+    public YAMLPropertySource(URL resource, int defaultOrdinal) throws IOException {
         urlResource = Objects.requireNonNull(resource);
         this.ordinal = defaultOrdinal; // may be overriden by read...
-        Map<String,String> cfg = format.readConfig(urlResource);
+        ConfigurationData data = format.readConfiguration(urlResource.toString(), resource.openStream());
         this.values = new HashMap<>();
-        for(Map.Entry<String,String> en:cfg.entrySet()){
+        for(Map.Entry<String,String> en:data.getData().get(0).asMap().entrySet()){
             this.values.put(en.getKey(), PropertyValue.of(en.getKey(), en.getValue(), getName()));
         }
-        if (cfg.containsKey(TAMAYA_ORDINAL)) {
-            this.ordinal = Integer.parseInt(cfg.get(TAMAYA_ORDINAL));
+        if (data.getData().get(0).asMap().containsKey(TAMAYA_ORDINAL)) {
+            this.ordinal = Integer.parseInt(data.getData().get(0).asMap().get(TAMAYA_ORDINAL));
         }
     }
 

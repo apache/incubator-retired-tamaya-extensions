@@ -115,16 +115,16 @@ public final class ConfigHistory implements Serializable{
     }
 
     /**
-     * Sets the maximum history size.
-     * @param maxHistory the size
+     * Sets the maximum history getNumChilds.
+     * @param maxHistory the getNumChilds
      */
     static void setMaxHistory(int maxHistory){
         ConfigHistory.maxHistory = maxHistory;
     }
 
     /**
-     * Get the max history size.
-     * @return the max size
+     * Get the max history getNumChilds.
+     * @return the max getNumChilds
      */
     static int getMaxHistory(){
         return maxHistory;

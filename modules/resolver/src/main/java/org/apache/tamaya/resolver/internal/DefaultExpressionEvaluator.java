@@ -160,7 +160,7 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
 
     /**
      * Parses subexpression from tokenizer, hereby counting all open and closed brackets, but ignoring any
-     * meta characters.
+     * getMeta characters.
      * @param tokenizer the current tokenizer instance
      * @param valueToBeFiltered subexpression to be filtered for
      * @return the parsed sub expression

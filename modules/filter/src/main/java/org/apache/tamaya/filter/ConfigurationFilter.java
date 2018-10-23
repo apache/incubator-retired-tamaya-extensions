@@ -21,7 +21,7 @@ package org.apache.tamaya.filter;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertyValue;
 import org.osgi.service.component.annotations.Component;
-
+import org.apache.tamaya.spi.FilterContext;
 
 /**
  * Hereby
@@ -49,17 +49,17 @@ public final class ConfigurationFilter implements PropertyFilter{
         }
     };
 
-    private static final ThreadLocal<FilterContext> THREADED_MAP_FILTERS = new ThreadLocal<FilterContext>(){
+    private static final ThreadLocal<CompositeFilter> THREADED_MAP_FILTERS = new ThreadLocal<CompositeFilter>(){
         @Override
-        protected FilterContext initialValue() {
-            return new FilterContext();
+        protected CompositeFilter initialValue() {
+            return new CompositeFilter();
         }
     };
 
-    private static final ThreadLocal<FilterContext> THREADED_VALUE_FILTERS = new ThreadLocal<FilterContext>(){
+    private static final ThreadLocal<CompositeFilter> THREADED_VALUE_FILTERS = new ThreadLocal<CompositeFilter>(){
         @Override
-        protected FilterContext initialValue() {
-            return new FilterContext();
+        protected CompositeFilter initialValue() {
+            return new CompositeFilter();
         }
     };
 
@@ -87,7 +87,7 @@ public final class ConfigurationFilter implements PropertyFilter{
      *
      * @return the filtering config, never null.
      */
-    public static FilterContext getSingleValueFilterContext(){
+    public static CompositeFilter getSingleValueFilterContext(){
         return THREADED_VALUE_FILTERS.get();
     }
 
@@ -97,7 +97,7 @@ public final class ConfigurationFilter implements PropertyFilter{
      * map.
      * @return the filtering config, never null.
      */
-    public static FilterContext getMapFilterContext(){
+    public static CompositeFilter getMapFilterContext(){
         return THREADED_MAP_FILTERS.get();
     }
 
@@ -111,14 +111,15 @@ public final class ConfigurationFilter implements PropertyFilter{
     }
 
     @Override
-    public PropertyValue filterProperty(PropertyValue valueToBeFiltered, org.apache.tamaya.spi.FilterContext context) {
-        if(context.isSinglePropertyScoped()){
+    public PropertyValue filterProperty(PropertyValue valueToBeFiltered) {
+        FilterContext context = FilterContext.get();
+        if(context==null || context.isSinglePropertyScoped()){
             for(PropertyFilter pred: THREADED_VALUE_FILTERS.get().getFilters()){
-                valueToBeFiltered = pred.filterProperty(valueToBeFiltered, context);
+                valueToBeFiltered = pred.filterProperty(valueToBeFiltered);
             }
         }else{
             for(PropertyFilter pred: THREADED_MAP_FILTERS.get().getFilters()){
-                valueToBeFiltered = pred.filterProperty(valueToBeFiltered, context);
+                valueToBeFiltered = pred.filterProperty(valueToBeFiltered);
             }
         }
         return valueToBeFiltered;

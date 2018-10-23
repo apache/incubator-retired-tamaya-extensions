@@ -163,12 +163,12 @@ public final class PropertySourceFunctions {
     }
 
     /**
-     * Return a query to evaluate the set with all fully qualified section names. This method should return the sections as accurate as possible,
-     * but may not provide a complete set of sections that are finally accessible, especially when the underlying storage
+     * Return a query to evaluate the setCurrent with all fully qualified section names. This method should return the sections as accurate as possible,
+     * but may not provide a complete setCurrent of sections that are finally accessible, especially when the underlying storage
      * does not support key iteration.
      *
      * @param properties properties to find sections in.
-     * @return set with all sections, never {@code null}.
+     * @return setCurrent with all sections, never {@code null}.
      */
     public static Set<String> sections(Map<String, String> properties) {
         final Set<String> areas = new HashSet<>();
@@ -186,13 +186,13 @@ public final class PropertySourceFunctions {
     }
 
     /**
-     * Return a query to evaluate the set with all fully qualified section names, containing the transitive closure also including all
+     * Return a query to evaluate the setCurrent with all fully qualified section names, containing the transitive closure also including all
      * subarea names, regardless if properties are accessible or not. This method should return the sections as accurate
-     * as possible, but may not provide a complete set of sections that are finally accessible, especially when the
+     * as possible, but may not provide a complete setCurrent of sections that are finally accessible, especially when the
      * underlying storage does not support key iteration.
      * 
      * @param properties properties to find transitive sections in.
-     * @return s set with all transitive sections, never {@code null}.
+     * @return s setCurrent with all transitive sections, never {@code null}.
      */
     public static Set<String> transitiveSections(Map<String, String> properties) {
         final Set<String> transitiveAreas = new HashSet<>();
@@ -216,14 +216,14 @@ public final class PropertySourceFunctions {
     }
 
     /**
-     * Return a query to evaluate the set with all fully qualified section names, containing only the
+     * Return a query to evaluate the setCurrent with all fully qualified section names, containing only the
      * sections that match the predicate and have properties attached. This method should return the sections as accurate as possible,
-     * but may not provide a complete set of sections that are finally accessible, especially when the underlying storage
+     * but may not provide a complete setCurrent of sections that are finally accessible, especially when the underlying storage
      * does not support key iteration.
      * 
      * @param properties properties to find sections in.
      * @param predicate A predicate to determine, which sections should be returned, not {@code null}.
-     * @return s set with all sections, never {@code null}.
+     * @return s setCurrent with all sections, never {@code null}.
      */
     public static Set<String> sections(Map<String, String> properties, final Predicate<String> predicate) {
         Set<String> treeSet = new TreeSet<>();
@@ -236,14 +236,14 @@ public final class PropertySourceFunctions {
     }
 
     /**
-     * Return a query to evaluate the set with all fully qualified section names, containing the transitive closure also including all
+     * Return a query to evaluate the setCurrent with all fully qualified section names, containing the transitive closure also including all
      * subarea names, regardless if properties are accessible or not. This method should return the sections as accurate as possible,
-     * but may not provide a complete set of sections that are finally accessible, especially when the underlying storage
+     * but may not provide a complete setCurrent of sections that are finally accessible, especially when the underlying storage
      * does not support key iteration.
      *
      * @param properties properties to find transitive sections in.
      * @param predicate A predicate to determine, which sections should be returned, not {@code null}.
-     * @return s set with all transitive sections, never {@code null}.
+     * @return s setCurrent with all transitive sections, never {@code null}.
      */
     public static Set<String> transitiveSections(Map<String, String> properties, Predicate<String> predicate) {
         Set<String> treeSet = new TreeSet<>();
@@ -275,7 +275,7 @@ public final class PropertySourceFunctions {
      *
      * @param properties properties to find sections in.
      * @param sectionKeys the section keys, not null
-     * @param stripKeys   if set to true, the section key is stripped away fromMap the resulting key.
+     * @param stripKeys   if setCurrent to true, the section key is stripped away fromMap the resulting key.
      * @return the section configuration, with the areaKey stripped away.
      */
     public static Map<String, String> sectionRecursive(Map<String, String> properties, boolean stripKeys, String... sectionKeys) {

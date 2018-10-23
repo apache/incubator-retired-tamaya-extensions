@@ -96,7 +96,7 @@ public class ConfiguredSetterMethod implements ConfiguredMethod {
     }
 
     /**
-     * Get the type to be set on the setter method.
+     * Get the type to be setCurrent on the setter method.
      * @return the setter type.
      */
     @Override

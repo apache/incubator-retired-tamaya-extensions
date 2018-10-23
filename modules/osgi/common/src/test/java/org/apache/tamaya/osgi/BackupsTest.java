@@ -39,9 +39,9 @@ public class BackupsTest {
     }
     @Test
     public void setGet() throws Exception {
-        Dictionary<String,Object> cfg = createConfig("set");
-        Backups.set("set", cfg);
-        assertEquals(Backups.get("set"), cfg);
+        Dictionary<String,Object> cfg = createConfig("setCurrent");
+        Backups.set("setCurrent", cfg);
+        assertEquals(Backups.get("setCurrent"), cfg);
     }
 
     @Test

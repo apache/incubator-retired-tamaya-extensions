@@ -55,7 +55,7 @@ public class TamayaPropertySource implements PropertySource {
 
     @Override
     public PropertyValue get(String key) {
-        return PropertyValue.of(key, delegate.getValue(key),getName());
+        return PropertyValue.create(key, delegate.getValue(key)).setMeta("source",getName());
     }
 
     @Override
@@ -66,13 +66,9 @@ public class TamayaPropertySource implements PropertySource {
     private Map<String, PropertyValue> toValueMap(Map<String, String> properties) {
         Map<String, PropertyValue> valueMap = new HashMap<>(properties.size());
         for(Map.Entry<String,String> en:properties.entrySet()){
-            valueMap.put(en.getKey(), PropertyValue.of(en.getKey(), en.getValue(), getName()));
+            valueMap.put(en.getKey(), PropertyValue.create(en.getKey(), en.getValue()).setMeta("source", getName()));
         }
         return valueMap;
     }
 
-    @Override
-    public boolean isScannable() {
-        return true;
-    }
 }

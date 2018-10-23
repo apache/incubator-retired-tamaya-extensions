@@ -148,7 +148,7 @@ public class MappedPropertySourceTest {
     }
 
     /*
-     * Tests for get(String)
+     * Tests for current(String)
      */
 
     @Test

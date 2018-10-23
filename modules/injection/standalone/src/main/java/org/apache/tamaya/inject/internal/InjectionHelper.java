@@ -164,15 +164,17 @@ final class InjectionHelper {
             converterType = (Class<? extends PropertyConverter<T>>) converterAnnot.value();
             if (!converterType.getName().equals(WithPropertyConverter.class.getName())) {
                 try {
-                    // TODO cache here...
+                // TODO cache here...
                     ConversionContext ctx = new ConversionContext.Builder(key,targetType)
                             .setAnnotatedElement(element).build();
-
+                    ConversionContext.set(ctx);
                     PropertyConverter<T> converter = PropertyConverter.class.cast(converterType.newInstance());
-                    adaptedValue = converter.convert(configValue, ctx);
+                    adaptedValue = converter.convert(configValue);
                 } catch (Exception e) {
                     LOG.log(Level.SEVERE, "Failed to convert using explicit PropertyConverter on " + element +
                             ", trying default conversion.", e);
+                }finally{
+                    ConversionContext.reset();
                 }
             }
         }
@@ -185,16 +187,21 @@ final class InjectionHelper {
             if(configValue==null) {
                 return null;
             }
-            ConfigurationContext configContext = ConfigurationProvider.getConfiguration().getContext();
+            ConfigurationContext configContext = Configuration.current().getContext();
             List<PropertyConverter<T>> converters = configContext
                     .getPropertyConverters(targetType);
-            ConversionContext ctx = new ConversionContext.Builder(ConfigurationProvider.getConfiguration(),
-                    configContext, key, targetType).setAnnotatedElement(element).build();
-            for (PropertyConverter<T> converter : converters) {
-                adaptedValue = converter.convert(configValue, ctx);
-                if (adaptedValue != null) {
-                    return adaptedValue;
+            try {
+                ConversionContext ctx = new ConversionContext.Builder(Configuration.current(),
+                        key, targetType).setAnnotatedElement(element).build();
+                ConversionContext.set(ctx);
+                for (PropertyConverter<T> converter : converters) {
+                    adaptedValue = converter.convert(configValue);
+                    if (adaptedValue != null) {
+                        return adaptedValue;
+                    }
                 }
+            }finally {
+                ConversionContext.reset();
             }
         }
         throw new ConfigException("Non convertible property type: " + element);

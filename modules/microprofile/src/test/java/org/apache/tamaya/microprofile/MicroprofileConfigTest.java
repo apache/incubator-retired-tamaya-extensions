@@ -18,9 +18,12 @@
  */
 package org.apache.tamaya.microprofile;
 
+import org.apache.tamaya.Configuration;
+import org.apache.tamaya.spisupport.propertysource.SystemPropertySource;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.config.spi.ConfigSource;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.time.Instant;

@@ -19,17 +19,18 @@
 package org.apache.tamaya.filter.internal;
 
 import org.apache.tamaya.filter.ConfigurationFilter;
-import org.apache.tamaya.spi.FilterContext;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.spi.FilterContext;
 
 /**
  * Default property filter that hides metadta entries starting with an '_', similar ti {@code etcd}.
  */
 public final class DefaultMetadataFilter implements PropertyFilter{
     @Override
-    public PropertyValue filterProperty(PropertyValue valueToBeFiltered, FilterContext context) {
-        if(context.isSinglePropertyScoped()){
+    public PropertyValue filterProperty(PropertyValue valueToBeFiltered) {
+        FilterContext context = FilterContext.get();
+        if(context==null || context.isSinglePropertyScoped()){
             // When accessing keys explicitly, do not hide anything.
             return valueToBeFiltered;
         }

@@ -22,11 +22,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.Assert.assertEquals;
+
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 
-import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.spi.PropertyValue;
 import org.junit.Test;
 
 public class JSONVisitorTest {
@@ -41,18 +44,18 @@ public class JSONVisitorTest {
 				add("null", JsonValue.NULL).//
 				add("empty", JsonValue.EMPTY_JSON_OBJECT).//
 				build();
-		Map<String, String> targetStore = new HashMap<>();
-		JSONVisitor visitor = new JSONVisitor(startNode, targetStore);
-		assertThat(visitor).isNotNull();
+		JSONDataBuilder visitor = new JSONDataBuilder("Test:ensureJSONisParsedProperlyWithDifferentValueTypesFilteringOutEmptyValues", startNode);
 
-		visitor.run();
+		PropertyValue data = visitor.build();
+		assertThat(data).isNotNull();
 
-		assertThat(targetStore).hasSize(5);
-		assertThat(targetStore).containsKeys("key.sub", "anotherKey", "notAnotherKey", "number", "null");
-		assertThat(targetStore).containsEntry("key.sub", "value");
-		assertThat(targetStore).containsEntry("null", null);		
-		assertThat(targetStore).containsEntry("anotherKey", "true");
-		assertThat(targetStore).doesNotContainKey("empty");
+		assertThat(data.getChildren().size() == 6);
+		assertEquals(data.getNumChilds(), 6);
+		assertThat(data.asMap()).containsKeys("key.sub", "anotherKey", "notAnotherKey", "number", "null");
+		assertThat(data.asMap()).containsEntry("key.sub", "value");
+		assertThat(data.asMap()).containsEntry("null", null);
+		assertThat(data.asMap()).containsEntry("anotherKey", "true");
+		assertThat(data.asMap()).containsEntry("empty", null);
 	}
 
 	@Test
@@ -60,22 +63,34 @@ public class JSONVisitorTest {
 		JsonObject startNode = Json.createObjectBuilder().build();
 
 		Map<String, String> targetStore = new HashMap<>();
-		JSONVisitor visitor = new JSONVisitor(startNode, targetStore);
-		assertThat(visitor).isNotNull();
-
-		visitor.run();
-		assertThat(targetStore).isEmpty();
+		JSONDataBuilder visitor = new JSONDataBuilder("Test:parsingWorksOnEmptyObject", startNode);
+		PropertyValue data = visitor.build();
+		assertThat(data).isNotNull();
+		assertThat(data.isLeaf());
 	}
 
-	@Test(expected = ConfigException.class)
-	public void arraysAreNotSupported() {
+	@Test
+	public void arrayInObject() {
 		JsonObject startNode = Json.createObjectBuilder().//
 				add("arrayKey", Json.createArrayBuilder().build()).//
 				build();
-		Map<String, String> targetStore = new HashMap<>();
-		JSONVisitor visitor = new JSONVisitor(startNode, targetStore);
-		assertThat(visitor).isNotNull();
-		visitor.run();
+		JSONDataBuilder visitor = new JSONDataBuilder("Test:array", startNode);
+		PropertyValue data = visitor.build();
+		assertThat(data).isNotNull();
+		System.out.println(data.asString());
+	}
+
+	@Test
+	public void array() {
+		JsonArray startNode = Json.createArrayBuilder().//
+				add(Json.createObjectBuilder().add("k1", 1).add("k2", 2).build()).//
+				add(Json.createObjectBuilder().add("k1", 1).add("k2", 2).build()).//
+				add(Json.createArrayBuilder().add(Json.createObjectBuilder().add("k31", "v31").add("k32", false).build()).build()).//
+				build();
+		JSONDataBuilder visitor = new JSONDataBuilder("Test:array", startNode);
+		PropertyValue data = visitor.build();
+		assertThat(data).isNotNull();
+		System.out.println(data.asString());
 	}
 
 }

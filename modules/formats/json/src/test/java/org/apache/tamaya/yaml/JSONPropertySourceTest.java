@@ -41,8 +41,8 @@ public class JSONPropertySourceTest extends CommonJSONTestCaseCollection {
         assertEquals(source.getOrdinal(), 16784);
     }
     
-    @Test(expected=IOException.class)
-    public void testDoNotAcceptJsonArrays() throws Exception {
+    @Test
+    public void testAcceptJsonArrays() throws Exception {
         URL configURL = JSONPropertySourceTest.class.getResource("/configs/invalid/array.json");
 
         assertThat(configURL, CoreMatchers.notNullValue());

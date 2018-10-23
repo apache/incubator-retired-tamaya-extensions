@@ -52,8 +52,8 @@ public class RandomPropertySource implements PropertySource{
     @Override
     public Map<String, PropertyValue> getProperties() {
         synchronized(data) {
-            data.put("random.new", PropertyValue.builder("random.new", String.valueOf(Math.random()), getName())
-            .addMetaEntry("_random.new.timestamp", String.valueOf(System.currentTimeMillis())).build());
+            data.put("random.new", PropertyValue.of("random.new", String.valueOf(Math.random()), getName())
+            .setMeta("_random.new.timestamp", String.valueOf(System.currentTimeMillis())));
             return new HashMap<>(data);
         }
     }

@@ -28,10 +28,10 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * A set of property filter and accessor methods. This class is built for
+ * A setCurrent of property filter and accessor methods. This class is built for
  * usage within a single threaded context, so it is NOT thread-safe.
  */
-public final class FilterContext implements PropertyFilter{
+public final class CompositeFilter implements PropertyFilter{
     /** The filters. */
     private List<PropertyFilter> filters = new ArrayList<>();
 
@@ -102,9 +102,9 @@ public final class FilterContext implements PropertyFilter{
     }
 
     @Override
-    public PropertyValue filterProperty(PropertyValue valueToBeFiltered, org.apache.tamaya.spi.FilterContext context) {
+    public PropertyValue filterProperty(PropertyValue valueToBeFiltered) {
         for(PropertyFilter filter:filters){
-            valueToBeFiltered = filter.filterProperty(valueToBeFiltered, context);
+            valueToBeFiltered = filter.filterProperty(valueToBeFiltered);
         }
         return valueToBeFiltered;
     }

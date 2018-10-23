@@ -19,7 +19,6 @@
 package org.apache.tamaya.json;
 
 import org.apache.tamaya.format.ConfigurationData;
-import org.apache.tamaya.format.ConfigurationDataBuilder;
 import org.apache.tamaya.format.ConfigurationFormat;
 
 import java.io.IOException;
@@ -72,11 +71,8 @@ public class JSONFormat implements ConfigurationFormat {
         try{
             final JsonReader reader = this.readerFactory.createReader(inputStream, Charset.forName("UTF-8"));
             JsonObject root = reader.readObject();
-            HashMap<String, String> values = new HashMap<>();
-            JSONVisitor visitor = new JSONVisitor(root, values);
-            visitor.run();
-            return ConfigurationDataBuilder.of(resource, this).addDefaultProperties(values)
-                                           .build();
+            JSONDataBuilder dataBuilder = new JSONDataBuilder(resource, root);
+            return new ConfigurationData(resource, this, dataBuilder.build());
         } catch(Exception e) {
             throw new IOException("Failed to read data from " + resource, e);
         }

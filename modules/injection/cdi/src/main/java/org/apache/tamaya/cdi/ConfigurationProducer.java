@@ -19,6 +19,7 @@ package org.apache.tamaya.cdi;
 import org.apache.tamaya.*;
 import org.apache.tamaya.inject.api.*;
 import org.apache.tamaya.spi.*;
+import org.apache.tamaya.spi.ConversionContext;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
@@ -28,6 +29,7 @@ import javax.inject.Provider;
 import java.lang.reflect.*;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.UnaryOperator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -42,9 +44,9 @@ public class ConfigurationProducer {
     private DynamicValue createDynamicValue(final InjectionPoint injectionPoint) {
         Member member = injectionPoint.getMember();
         if (member instanceof Field) {
-            return DefaultDynamicValue.of(injectionPoint.getBean(), (Field) member, ConfigurationProvider.getConfiguration());
+            return DefaultDynamicValue.of(injectionPoint.getBean(), (Field) member, Configuration.current());
         } else if (member instanceof Method) {
-            return DefaultDynamicValue.of(injectionPoint.getBean(), (Method) member, ConfigurationProvider.getConfiguration());
+            return DefaultDynamicValue.of(injectionPoint.getBean(), (Method) member, Configuration.current());
         }
         return null;
     }
@@ -62,7 +64,7 @@ public class ConfigurationProducer {
                 typeAnnot != null ? typeAnnot.value() : null);
 
         final WithConfigOperator withOperatorAnnot = injectionPoint.getAnnotated().getAnnotation(WithConfigOperator.class);
-        ConfigOperator operator = null;
+        UnaryOperator<Configuration> operator = null;
         if (withOperatorAnnot != null) {
             operator = TamayaCDIInjectionExtension.CUSTOM_OPERATORS.get(withOperatorAnnot.value());
         }
@@ -77,9 +79,9 @@ public class ConfigurationProducer {
 
         String defaultTextValue = annotation.defaultValue().equals(Config.UNCONFIGURED_VALUE) ? null : annotation.defaultValue();
         String textValue = null;
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         if(operator!=null) {
-            config = config.with(operator);
+            config = config.map(operator);
         }
         String keyFound = null;
         for(String key:keys) {
@@ -106,9 +108,8 @@ public class ConfigurationProducer {
 
     static ConversionContext createConversionContext(String key, List<String> keys, InjectionPoint injectionPoint) {
         final Type targetType = injectionPoint.getAnnotated().getBaseType();
-        Configuration config = ConfigurationProvider.getConfiguration();
-        ConversionContext.Builder builder = new ConversionContext.Builder(config,
-                ConfigurationProvider.getConfiguration().getContext(), key, TypeLiteral.of(targetType));
+        Configuration config = Configuration.current();
+        ConversionContext.Builder builder = new ConversionContext.Builder(config, key, TypeLiteral.of(targetType));
         // builder.setKeys(keys);
         if(targetType instanceof ParameterizedType){
             ParameterizedType pt = (ParameterizedType)targetType;
@@ -138,54 +139,59 @@ public class ConfigurationProducer {
 
     static Object convertValue(String textValue, ConversionContext conversionContext, InjectionPoint injectionPoint,
                                PropertyConverter customConverter) {
-        if (customConverter != null) {
-            return customConverter.convert(textValue, conversionContext);
-        }
-        if(String.class.equals(conversionContext.getTargetType().getRawType())){
-            return textValue;
-        }
         Object value = null;
-        ParameterizedType pt = null;
-        Type toType = injectionPoint.getAnnotated().getBaseType();
-        if(toType instanceof ParameterizedType){
-            pt = (ParameterizedType)toType;
-            if(Provider.class.equals(pt.getRawType()) || Instance.class.equals(pt.getRawType())
-                    || Optional.class.equals(pt.getRawType())){
-                toType = pt.getActualTypeArguments()[0];
+        try {
+            ConversionContext.set(conversionContext);
+            if (customConverter != null) {
+                return customConverter.convert(textValue);
             }
-            if(toType.equals(String.class)){
-                value = textValue;
+            if (String.class.equals(conversionContext.getTargetType().getRawType())) {
+                return textValue;
             }
-        }
-        List<PropertyConverter<Object>> converters = ConfigurationProvider.getConfiguration().getContext()
-                .getPropertyConverters(TypeLiteral.of(toType));
-        for (PropertyConverter<Object> converter : converters) {
-            try {
-                value = converter.convert(textValue, conversionContext);
-                if (value != null) {
-                    LOGGER.log(Level.INFO, "Parsed value from '" + textValue + "' into " +
-                            injectionPoint);
-                    break;
+            ParameterizedType pt = null;
+            Type toType = injectionPoint.getAnnotated().getBaseType();
+            if (toType instanceof ParameterizedType) {
+                pt = (ParameterizedType) toType;
+                if (Provider.class.equals(pt.getRawType()) || Instance.class.equals(pt.getRawType())
+                        || Optional.class.equals(pt.getRawType())) {
+                    toType = pt.getActualTypeArguments()[0];
                 }
-            } catch (Exception e) {
-                LOGGER.log(Level.INFO, "Failed to convert value '" + textValue + "' for " +
-                        injectionPoint, e);
+                if (toType.equals(String.class)) {
+                    value = textValue;
+                }
             }
-        }
-        if(pt != null && Optional.class.equals(pt.getRawType())){
-            return Optional.ofNullable(value);
+            List<PropertyConverter<Object>> converters = Configuration.current().getContext()
+                    .getPropertyConverters(TypeLiteral.of(toType));
+            for (PropertyConverter<Object> converter : converters) {
+                try {
+                    value = converter.convert(textValue);
+                    if (value != null) {
+                        LOGGER.log(Level.INFO, "Parsed value from '" + textValue + "' into " +
+                                injectionPoint);
+                        break;
+                    }
+                } catch (Exception e) {
+                    LOGGER.log(Level.INFO, "Failed to convert value '" + textValue + "' for " +
+                            injectionPoint, e);
+                }
+            }
+            if (pt != null && Optional.class.equals(pt.getRawType())) {
+                return Optional.ofNullable(value);
+            }
+        }finally{
+            ConversionContext.reset();
         }
         return value;
     }
 
     @Produces
     public Configuration getConfiguration(){
-        return ConfigurationProvider.getConfiguration();
+        return Configuration.current();
     }
 
     @Produces
     public ConfigurationContext getConfigurationContext(){
-        return ConfigurationProvider.getConfiguration().getContext();
+        return Configuration.current().getContext();
     }
 
     @Deprecated
@@ -196,7 +202,7 @@ public class ConfigurationProducer {
 
     @Produces
     public ConfigurationBuilder getConfigurationBuilder(){
-        return ConfigurationProvider.getConfigurationBuilder();
+        return Configuration.createConfigurationBuilder();
     }
 
 }

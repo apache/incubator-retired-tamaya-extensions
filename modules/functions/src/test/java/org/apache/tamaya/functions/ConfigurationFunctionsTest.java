@@ -19,10 +19,9 @@
 package org.apache.tamaya.functions;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.spi.ConfigurationBuilder;
 import org.apache.tamaya.spisupport.propertysource.EnvironmentPropertySource;
 import org.apache.tamaya.spisupport.propertysource.SystemPropertySource;
-import org.apache.tamaya.spi.ConfigurationContextBuilder;
 import org.junit.Test;
 
 import java.io.PrintStream;
@@ -154,9 +153,9 @@ public class ConfigurationFunctionsTest {
 
 
     private void testSection(boolean stripKeys){
-        ConfigurationContextBuilder b = ConfigurationProvider.getConfigurationContextBuilder();
+        ConfigurationBuilder b = Configuration.createConfigurationBuilder();
         b.addPropertySources(new EnvironmentPropertySource(), new SystemPropertySource());
-        Configuration cfg = ConfigurationProvider.createConfiguration(b.build()).with(
+        Configuration cfg = b.build().map(
                 ConfigurationFunctions.section("java.", stripKeys));
         System.out.println("*****************************************************");
         System.out.println("stripKeys: " + stripKeys);

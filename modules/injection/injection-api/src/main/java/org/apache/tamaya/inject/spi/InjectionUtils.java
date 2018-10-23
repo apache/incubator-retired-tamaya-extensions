@@ -70,7 +70,7 @@ public final class InjectionUtils {
         List<String> areaKeys = evaluateSectionKeys(member, sectionAnnot);
         String key = null;
         String name = member.getName();
-        if (name.startsWith("get") || name.startsWith("set")) {
+        if (name.startsWith("get") || name.startsWith("setCurrent")) {
             key = Character.toLowerCase(name.charAt(3)) + name.substring(4);
         } else {
             key = Character.toLowerCase(name.charAt(0)) + name.substring(1);

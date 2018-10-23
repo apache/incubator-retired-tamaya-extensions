@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.events.internal;
 
+import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.events.ConfigEventManager;
 import org.apache.tamaya.events.ConfigurationChange;
@@ -61,7 +62,7 @@ public class DefaultConfigChangeObserver {
 
     public void checkConfigurationUpdate() {
         LOG.finest("Checking configuration for changes...");
-        FrozenConfiguration frozenConfig = FrozenConfiguration.of(ConfigurationProvider.getConfiguration());
+        FrozenConfiguration frozenConfig = FrozenConfiguration.of(Configuration.current());
         ConfigurationChange changes;
 
         if (getLastConfig() != null) {

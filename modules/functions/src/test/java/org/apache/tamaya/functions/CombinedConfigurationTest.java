@@ -465,6 +465,6 @@ public class CombinedConfigurationTest {
         assertThat(result).isEqualTo(1);
     }
 
-    // ConfigurationContext getContext();  none one three
+    // ConfigurationContext current();  none one three
 
 }

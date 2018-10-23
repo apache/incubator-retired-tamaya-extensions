@@ -40,6 +40,6 @@ public class NonAnnotatedConfigBean {
 
     public String fullKey;
 
-    public String test2 = "This is not set.";
+    public String test2 = "This is not setCurrent.";
 
 }

@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.osgi;
 
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.functions.ConfigurationFunctions;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -199,8 +198,8 @@ final class ConfigChanger {
 
     public org.apache.tamaya.Configuration getTamayaConfiguration(String root) {
         if (root != null) {
-            return ConfigurationProvider.getConfiguration()
-                    .with(ConfigurationFunctions.section(root, true));
+            return org.apache.tamaya.Configuration.current()
+                    .map(ConfigurationFunctions.section(root, true));
         }
         return null;
     }

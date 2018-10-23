@@ -34,6 +34,9 @@ product:
       quantity    : 4
       description : Basketball
       price       : 450.00
+      items:
+        - name: item1
+        - name: item2
     - sku         : BL4438H
       quantity    : 1
       description : Super Hoop

@@ -115,8 +115,10 @@ public class ClasspathCollector {
         Locator locator = Locator.of(expression);
         List<URL> result = new ArrayList<>();
         try {
-            Enumeration<URL> rootResources = ServiceContextManager.getServiceContext()
-                            .getResources(locator.getRootPath(), this.classLoader);
+            Enumeration<URL> rootResources = ServiceContextManager.getServiceContext(
+                    this.classLoader
+            )
+                            .getResources(locator.getRootPath());
             while (rootResources.hasMoreElements()) {
                 URL resource = rootResources.nextElement();
                 try {
@@ -277,8 +279,8 @@ public class ClasspathCollector {
 
     /**
      * Method that collects resources from a JBoss classloading system using Vfs.
-     * @param rootResource the root resource for evaluating its children.
-     * @param locationPattern the sub pattern that all children must mach, so they are selected.
+     * @param rootResource the root resource for evaluating its getChildren.
+     * @param locationPattern the sub pattern that all getChildren must mach, so they are selected.
      * @return the resources found, never null.
      * @throws IOException
      */

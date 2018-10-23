@@ -32,7 +32,7 @@ public class MinimalTest {
 
     @BeforeClass
     public static void before() throws InterruptedException {
-        config = ConfigurationProvider.getConfiguration();
+        config = Configuration.current();
         Thread.sleep(100L);
     }
 

@@ -23,12 +23,11 @@ import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.inject.api.DynamicValue;
 import org.apache.tamaya.inject.api.UpdatePolicy;
-import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.spi.ConversionContext;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.function.Consumer;
@@ -284,7 +283,7 @@ public abstract class BaseDynamicValue<T> implements DynamicValue<T> {
                 }
                 for(PropertyConverter<T> conv:converters){
                     try{
-                        value = conv.convert(stringVal, ctx);
+                        value = conv.convert(stringVal);
                         if(value!=null){
                             break;
                         }
@@ -296,15 +295,20 @@ public abstract class BaseDynamicValue<T> implements DynamicValue<T> {
         }
         if(value == null && defaultValue!=null){
             ConversionContext ctx = new ConversionContext.Builder("<defaultValue>", targetType).build();
-            for(PropertyConverter<T> conv:converters){
-                try{
-                    value = conv.convert(defaultValue, ctx);
-                    if(value!=null){
-                        break;
+            try {
+                ConversionContext.set(ctx);
+                for (PropertyConverter<T> conv : converters) {
+                    try {
+                        value = conv.convert(defaultValue);
+                        if (value != null) {
+                            break;
+                        }
+                    } catch (Exception e) {
+                        LOG.warning("failed to convert: " + ctx);
                     }
-                }catch(Exception e){
-                    LOG.warning("failed to convert: " + ctx);
                 }
+            }finally{
+                ConversionContext.reset();
             }
         }
         return value;
@@ -366,7 +370,7 @@ public abstract class BaseDynamicValue<T> implements DynamicValue<T> {
      *
      * @param other a {@code ConfiguredItemSupplier} whose result is returned if no value
      *              is present
-     * @return the value if present otherwise the result of {@code other.get()}
+     * @return the value if present otherwise the result of {@code other.current()}
      * @throws NullPointerException if value is not present and {@code other} is
      *                              null
      */

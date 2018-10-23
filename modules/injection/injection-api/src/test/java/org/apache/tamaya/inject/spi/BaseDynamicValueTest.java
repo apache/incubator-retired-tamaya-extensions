@@ -84,7 +84,7 @@ public class BaseDynamicValueTest {
 
         @Override
         protected Configuration getConfiguration() {
-            return ConfigurationProvider.getConfiguration();
+            return Configuration.current();
         }
 
         @Override

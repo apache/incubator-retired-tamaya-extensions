@@ -19,16 +19,14 @@
 package org.apache.tamaya.resolver.internal;
 
 import org.apache.tamaya.resolver.spi.ExpressionResolver;
+import org.apache.tamaya.spi.ClassloaderAware;
 import org.apache.tamaya.spi.ServiceContextManager;
 
 import javax.annotation.Priority;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -42,7 +40,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * <p>If the {@code Resources} module is available this module is used for resolving the expression.</p>
  */
 @Priority(300)
-public final class ResourceResolver implements ExpressionResolver {
+public final class ResourceResolver implements ExpressionResolver, ClassloaderAware {
     /**
      * The looger used.
      */
@@ -52,6 +50,8 @@ public final class ResourceResolver implements ExpressionResolver {
      * Flag that controls if the Tamaya Resource loader is available.
      */
     private static final boolean IS_RESOURCE_MODULE_AVAILABLE = checkResourceModule();
+
+    private ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
     /**
      * Checks if the Tamaya ResourceLoader can be loaded from the classpath.
@@ -68,23 +68,23 @@ public final class ResourceResolver implements ExpressionResolver {
     }
 
     @Override
+    public void init(ClassLoader classLoader) {
+        this.classLoader = Objects.requireNonNull(classLoader);
+    }
+
+    @Override
+    public ClassLoader getClassLoader() {
+        return classLoader;
+    }
+
+    @Override
     public String getResolverPrefix() {
         return "resource:";
     }
 
     @Override
     public String evaluate(String expression) {
-        List<ClassLoader> classLoaders = new ArrayList<>();
-        for (ClassLoader cl : new ClassLoader[]{Thread.currentThread().getContextClassLoader(), getClass().getClassLoader(), ClassLoader.getSystemClassLoader()}) {
-            if (!classLoaders.contains(cl)) {
-                classLoaders.add(cl);
-            }
-        }
-        return readURL(expression, classLoaders);
-    }
-
-    private String readURL(String expression, List<ClassLoader> classLoaders) {
-        URL url = getUrl(expression, classLoaders);
+        URL url = getUrl(expression, classLoader);
         if(url==null){
             return null;
         }
@@ -105,7 +105,7 @@ public final class ResourceResolver implements ExpressionResolver {
         }
     }
 
-    private URL getUrl(String expression, List<ClassLoader> classLoaders) {
+    private URL getUrl(String expression, ClassLoader... classLoaders) {
         if (IS_RESOURCE_MODULE_AVAILABLE) {
             org.apache.tamaya.resource.ResourceResolver resolver = ServiceContextManager.getServiceContext()
                     .getService(org.apache.tamaya.resource.ResourceResolver.class);
@@ -124,8 +124,8 @@ public final class ResourceResolver implements ExpressionResolver {
                 List<URL> resources = new ArrayList<>();
                 Enumeration<URL> found;
                 try {
-                    found = ServiceContextManager.getServiceContext()
-                            .getResources(expression, cl);
+                    found = ServiceContextManager.getServiceContext(cl)
+                            .getResources(expression);
                 } catch (Exception e) {
                     LOG.log(Level.SEVERE, "Error resolving expression: " + expression, e);
                     continue;
@@ -148,5 +148,6 @@ public final class ResourceResolver implements ExpressionResolver {
         }
         return null; // no such resource found
     }
+
 
 }

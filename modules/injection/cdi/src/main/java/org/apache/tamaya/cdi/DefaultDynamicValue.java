@@ -37,7 +37,7 @@ import java.util.*;
 
 /**
  * A accessor for a single configured value. This can be used to support values that may change during runtime,
- * reconfigured or final. Hereby external code (could be Tamaya configuration listeners or client code), can set a
+ * reconfigured or final. Hereby external code (could be Tamaya configuration listeners or client code), can setCurrent a
  * new value. Depending on the {@link UpdatePolicy} the new value is immediately active or it requires an active commit
  * by client code. Similarly an instance also can ignore all later changes to the value.
  * <h3>Implementation Details</h3>

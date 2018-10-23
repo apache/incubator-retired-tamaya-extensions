@@ -20,7 +20,7 @@ package org.apache.tamaya.events;
 
 
 /**
- * Event that contains a set current changes that were applied or could be applied.
+ * Event that contains a setCurrent current changes that were applied or could be applied.
  * @param <T> the resource type.
  */
 public interface ConfigEvent<T>{

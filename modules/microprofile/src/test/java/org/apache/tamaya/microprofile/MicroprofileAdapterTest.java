@@ -39,7 +39,7 @@ import static org.junit.Assert.*;
 public class MicroprofileAdapterTest {
     @Test
     public void toConfig() throws Exception {
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         Config mpConfig = MicroprofileAdapter.toConfig(config);
         assertNotNull(mpConfig);
         assertEquals(config.getProperties().keySet(), mpConfig.getPropertyNames());
@@ -142,7 +142,7 @@ public class MicroprofileAdapterTest {
     public void toPropertyConverter() throws Exception {
         PropertyConverter<String> tamayaConverter = MicroprofileAdapter.toPropertyConverter(new UppercaseConverter());
         assertNotNull(tamayaConverter);
-        assertEquals("ABC", tamayaConverter.convert("aBC", null));
+        assertEquals("ABC", tamayaConverter.convert("aBC"));
     }
 
     @Test
@@ -154,14 +154,14 @@ public class MicroprofileAdapterTest {
 
     @Test
     public void toConfigBuilder() throws Exception {
-        ConfigBuilder builder = MicroprofileAdapter.toConfigBuilder(ConfigurationProvider.getConfigurationBuilder());
+        ConfigBuilder builder = MicroprofileAdapter.toConfigBuilder(Configuration.createConfigurationBuilder());
         assertNotNull(builder);
     }
 
     @Test
     public void toStringMap() throws Exception {
         Map<String,PropertyValue> props = new HashMap<>();
-        props.put("a", PropertyValue.of("a","b", "toStringMap"));
+        props.put("a", PropertyValue.create("a","b").setMeta("source", "toStringMap"));
         Map<String, String> mpProps = MicroprofileAdapter.toStringMap(props);
         assertNotNull(mpProps);
         assertEquals(props.keySet(), mpProps.keySet());

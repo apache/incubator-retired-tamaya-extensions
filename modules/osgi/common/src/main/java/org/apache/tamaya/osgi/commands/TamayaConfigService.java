@@ -30,9 +30,9 @@ import java.util.Set;
  * Service exposing the Tamaya OSGI configuration logic.
  */
 public interface TamayaConfigService{
-    /** The system/config property to set Tamaya's {@link Policy}. */
+    /** The system/config property to setCurrent Tamaya's {@link Policy}. */
     String TAMAYA_POLICY_PROP = "tamaya-policy";
-    /** The MANIFEST property to set Tamaya's {@link Policy}. */
+    /** The MANIFEST property to setCurrent Tamaya's {@link Policy}. */
     String TAMAYA_POLICY_MANIFEST = "Tamaya-Policy";
     /** The system/config property to define a customized Tamaya's configuration root, replacing the {@code [PID]} default
      * prefix used. */
@@ -51,13 +51,13 @@ public interface TamayaConfigService{
 
     /**
      * Enables/disables automatic updates (requires Tamaya's Updater plugin to be loaded as well).
-     * @param enabled set to true to enable updates.
+     * @param enabled setCurrent to true to enable updates.
      */
     void setAutoUpdateEnabled(boolean enabled);
 
     /**
      * Enables/disables Tamaya config by default.
-     * @param enabled set to true to enable Tamaya for all bundles by default.
+     * @param enabled setCurrent to true to enable Tamaya for all bundles by default.
      */
     void setTamayaEnabledByDefault(boolean enabled);
 
@@ -98,7 +98,7 @@ public interface TamayaConfigService{
      * Updates the given OSGI configuration with Tamaya configuration.
      * @param pid the target PID, not null.
      * @param policy the updating policy to be used, by default.
-     * @param forcePolicy if set to true, the given policy will be used, even if an alternate policy is configured
+     * @param forcePolicy if setCurrent to true, the given policy will be used, even if an alternate policy is configured
      *                    for the given PID.
      * @param dryRun if true, the changes will not be applied to the OSGI configuration.
      * @return the configuration that would be applied, has been applied.
@@ -154,14 +154,14 @@ public interface TamayaConfigService{
     boolean deleteBackup(String pid);
 
     /**
-     * Sets the maximum getHistory size.
-     * @param maxHistory the max getHistory size. {@code 0} disables the getHistory function.
+     * Sets the maximum getHistory getNumChilds.
+     * @param maxHistory the max getHistory getNumChilds. {@code 0} disables the getHistory function.
      */
     void setMaxHistorySize(int maxHistory);
 
     /**
-     * Get the max getHistory size.
-     * @return the max getHistory size. {@code 0} means the getHistory function is disabled.
+     * Get the max getHistory getNumChilds.
+     * @return the max getHistory getNumChilds. {@code 0} means the getHistory function is disabled.
      */
     int getMaxHistorySize();
 

@@ -26,7 +26,7 @@
     <h2>Accessing properties programmatically</h2>
     Configuration properties can be easily accessed with Tamaya's Java API:<br/>
 <pre>
-Configuration config = ConfigurationProvider.getConfiguration();
+Configuration config = Configuration.current();
 String value = config.get("foreground.color");
 </pre>
    Hereby Tamaya also offers type safe access:<br/>

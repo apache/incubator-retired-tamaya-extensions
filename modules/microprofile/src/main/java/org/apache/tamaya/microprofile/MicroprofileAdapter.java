@@ -159,7 +159,7 @@ public final class MicroprofileAdapter{
 
     /**
      * Converts the given Tamaya key, value map into a corresponding String based map, hereby
-     * omitting all meta-entries.
+     * omitting all getMeta-entries.
      * @param properties the Tamaya key, value map, not null.
      * @return the corresponding String based map, never null.
      */
@@ -183,7 +183,7 @@ public final class MicroprofileAdapter{
     public static Map<String, PropertyValue> toPropertyValueMap(Map<String, String> properties, String source) {
         Map<String, PropertyValue> valueMap = new HashMap<>(properties.size());
         for(Map.Entry<String,String> en:properties.entrySet()){
-            valueMap.put(en.getKey(), PropertyValue.of(en.getKey(), en.getValue(), source));
+            valueMap.put(en.getKey(), PropertyValue.create(en.getKey(), en.getValue()).setMeta("source", source));
         }
         return valueMap;
     }

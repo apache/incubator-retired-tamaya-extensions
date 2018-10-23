@@ -27,30 +27,22 @@ import org.apache.tamaya.inject.api.LoadPolicy;
 import org.apache.tamaya.inject.api.UpdatePolicy;
 import org.apache.tamaya.inject.api.WithPropertyConverter;
 import org.apache.tamaya.inject.spi.BaseDynamicValue;
-import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 /**
  * A accessor for a single configured value. This can be used to support values that may change during runtime,
- * reconfigured or final. Hereby external code (could be Tamaya configuration listeners or client code), can set a
+ * reconfigured or final. Hereby external code (could be Tamaya configuration listeners or client code), can setCurrent a
  * new value. Depending on the {@link UpdatePolicy} the new value is immediately active or it requires an active commit
  * by client code. Similarly an instance also can ignore all later changes to the value.
  * <h3>Implementation Details</h3>

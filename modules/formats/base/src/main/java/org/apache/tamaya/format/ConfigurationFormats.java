@@ -86,8 +86,8 @@ public final class ConfigurationFormats {
 //    public static List<ConfigurationFormat> getFormats(Predicate<String> namePredicate) {
 //        List<ConfigurationFormat> result = new ArrayList<>();
 //        for(ConfigurationFormat f:getFormats()){
-//            if(namePredicate.test(f.getName()){
-//                result.add(f);
+//            if(namePredicate.test(f.name()){
+//                result.addNode(f);
 //            }
 //        }
 //        return result;

@@ -53,8 +53,9 @@ public class ClassPathResourceLocator implements ResourceLocator{
     public Collection<URL> lookup(ClassLoader classLoader, String expression) {
         List<URL> resources = new ArrayList<>();
         try {
-            Enumeration<URL> urls = ServiceContextManager.getServiceContext()
-                            .getResources(expression, classLoader);
+            Enumeration<URL> urls = ServiceContextManager.getServiceContext(
+                    Thread.currentThread().getContextClassLoader()
+            ).getResources(expression);
             while (urls.hasMoreElements()) {
                 URL url = urls.nextElement();
                 resources.add(url);

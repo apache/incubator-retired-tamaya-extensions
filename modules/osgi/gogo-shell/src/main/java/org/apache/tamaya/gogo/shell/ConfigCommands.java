@@ -57,10 +57,10 @@ public class ConfigCommands {
                                 @Descriptor("The target OSGI component PID.")
                                         String pid,
                                 @Parameter(absentValue = "OVERRIDE", names={"-m", "--opmode"})
-                                @Descriptor("Explicitly set (override) the operation mode to use, one of: EXTEND, OVERRIDE, UPDATE_ONLY")
+                                @Descriptor("Explicitly setCurrent (override) the operation mode to use, one of: EXTEND, OVERRIDE, UPDATE_ONLY")
                                         Policy policy,
                                 @Parameter(absentValue = "false", names={"-d", "--dryrun"})
-                                @Descriptor("If set to true no OSGI configuration gets changed.")
+                                @Descriptor("If setCurrent to true no OSGI configuration gets changed.")
                                         boolean dryRun){
         System.out.println(org.apache.tamaya.osgi.commands.ConfigCommands.applyTamayaConfiguration(
                 getService(TamayaConfigService.class), pid, policy.toString(), dryRun));

@@ -32,8 +32,9 @@ import org.apache.tamaya.spi.PropertyConverter;
 public class BooleanAsIntegerConverterFix implements PropertyConverter<Boolean> {
 
     @Override
-    public Boolean convert(String value, ConversionContext context) {
-        context.addSupportedFormats(getClass(), "'1' (true), otherwise false.");
+    public Boolean convert(String value) {
+        ConversionContext.doOptional(ctx ->
+                ctx.addSupportedFormats(getClass(), "'1' (true), otherwise false."));
         try{
             int val = Integer.parseInt(Objects.requireNonNull(value).trim());
             if(val==1) {

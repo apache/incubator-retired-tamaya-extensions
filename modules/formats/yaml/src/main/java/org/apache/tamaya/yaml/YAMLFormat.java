@@ -20,13 +20,12 @@ package org.apache.tamaya.yaml;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.format.ConfigurationData;
-import org.apache.tamaya.format.ConfigurationDataBuilder;
 import org.apache.tamaya.format.ConfigurationFormat;
+import org.apache.tamaya.spi.PropertyValue;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -60,84 +59,54 @@ public class YAMLFormat implements ConfigurationFormat {
 
     @Override
     public ConfigurationData readConfiguration(String resource, InputStream inputStream) {
-        Map<String, String> values = readConfig(resource, inputStream);
-        return ConfigurationDataBuilder.of(resource, this).addDefaultProperties(values).build();
-    }
-
-    /**
-     * Reads the configuration.
-     * @param inputStream the input stream, not null.
-     * @param resource resource URI, not null.
-     * @return the configuration read from the given resource URI.
-     * @throws ConfigException if resource URI cannot be read.
-     */
-    protected Map<String, String> readConfig(String resource, InputStream inputStream) {
-        Yaml yaml = new Yaml();
-        HashMap<String, String> values = new HashMap<>();
-        Object config = yaml.load(inputStream);
-        mapYamlIntoProperties(config, values);
-        if(LOG.isLoggable(Level.FINEST)){
-            LOG.finest("Read data from " + resource + " : " + values);
-        }
-        return values;
-    }
-
-    /**
-     * Reads the configuration.
-     * @param urlResource source of the configuration.
-     * @return the configuration read from the given resource URL.
-     * @throws ConfigException if resource URL cannot be read.
-     */
-    protected Map<String, String> readConfig(URL urlResource) {
-        try (InputStream is = urlResource.openStream()) {
-            return readConfig(urlResource.toExternalForm(), is);
+        try{
+            Yaml yaml = new Yaml();
+            PropertyValue data = PropertyValue.create();
+            data.setMeta("resource", resource);
+            data.setMeta("format", "yaml");
+            Object config = yaml.load(inputStream);
+            if(config instanceof Map){
+                addObject((Map)config, data, null);
+            }else if(config instanceof List){
+                addArray((List)config, data, null);
+            }else {
+                throw new ConfigException("Unknown YamlType encountered: " + config.getClass().getName());
+            }
+            if(LOG.isLoggable(Level.FINEST)){
+                LOG.finest(String.format("Read data from " + resource + " : " + data.asString()));
+            }
+            return new ConfigurationData(resource, this, data);
         }
         catch (Throwable t) {
-            throw new ConfigException(format("Failed to read properties from %s", urlResource.toExternalForm()), t);
+            throw new ConfigException(format("Failed to read properties from %s", resource), t);
         }
     }
 
-    private void mapYamlIntoProperties(Object config, HashMap<String, String> values) {
-        mapYamlIntoProperties("", config, values);
+
+    private void addObject(Map<String,Object> object, PropertyValue parent, String objectKey){
+        PropertyValue dataNode = objectKey==null?parent:parent.getOrCreateChild(objectKey);
+        object.entrySet().forEach(en -> {
+            if (en.getValue() instanceof List) {
+                addArray((List) en.getValue(), dataNode, en.getKey());
+            } else if (en.getValue() instanceof Map) {
+                addObject((Map) en.getValue(), dataNode, en.getKey());
+            } else{
+                dataNode.createChild(en.getKey(), String.valueOf(en.getValue()));
+            }
+        });
     }
 
-    /**
-     * Maps the given config item (could be a String, a collection type or something else returned by the yaml parser
-     * to a key/value pair and adds it to {@code values} (hereby honoring the prefix as a key to be used.).
-     * Collection types are recursively to remapped hereby extending the given prefix as needed and recursively
-     * delegate mapping of values contained.
-     * @param prefix the prefix or key evaluated so far, never null (but can be empty for root entries).
-     * @param config the config value. Could be a single value or a collection type.
-     * @param values the properties where items identified must be written into. These properties are going to be
-     *               returned as result of the format reading operation ans integrated into the overall configuration
-     *               map.
-     */
-    @SuppressWarnings("unchecked")
-	protected void mapYamlIntoProperties(String prefix, Object config, HashMap<String, String> values) {
-        // add further data types supported by yaml, e.g. date, ...
-        if(config instanceof List){
-            StringBuilder b = new StringBuilder();
-            for(Object val:((List<Object>)config)){
-                b.append(mapValueToString(val));
-                b.append(",");
+    private void addArray(List<Object> array, PropertyValue parent, String arrayKey) {
+        array.forEach(val -> {
+            PropertyValue dataNode = parent.createChild(arrayKey, true);
+            if (val instanceof List) {
+                addArray((List) val, dataNode, "");
+            } else if (val instanceof Map) {
+                addObject((Map) val, dataNode, null);
+            } else{
+                dataNode.setValue(String.valueOf(val));
             }
-            if(b.length()>0){
-                b.setLength(b.length()-1);
-            }
-            values.put(prefix, b.toString());
-            values.put("_"+prefix+".collection-type", "List");
-        } else if(config instanceof Map){
-            for(Map.Entry<String,Object> en:((Map<String,Object>)config).entrySet()){
-                String newPrefix = prefix.isEmpty()?en.getKey():prefix +"."+en.getKey();
-                mapYamlIntoProperties(newPrefix, en.getValue(), values);
-            }
-        } else{
-            values.put(prefix, mapValueToString(config));
-        }
-    }
-
-    protected String mapValueToString(Object val) {
-        return String.valueOf(val);
+        });
     }
 
 }

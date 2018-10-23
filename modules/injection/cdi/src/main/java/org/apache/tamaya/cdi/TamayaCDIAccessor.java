@@ -25,7 +25,7 @@ import javax.enterprise.inject.spi.Extension;
 
 /**
  * Tamaya main integration with CDI, storing the BeanManager reference for implementation, where no
- * JNDI is available or {@code java:comp/env/BeanManager} is not set correctly.
+ * JNDI is available or {@code java:comp/env/BeanManager} is not setCurrent correctly.
  */
 public class TamayaCDIAccessor implements Extension {
     /** The BeanManager references stored. */

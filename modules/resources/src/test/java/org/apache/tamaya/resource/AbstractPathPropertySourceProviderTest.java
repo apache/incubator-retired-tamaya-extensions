@@ -101,7 +101,7 @@ public class AbstractPathPropertySourceProviderTest {
         }
 
         /**
-         * Returns the  default ordinal used, when no ordinal is set, or the ordinal was not parseable to an int value.
+         * Returns the  default ordinal used, when no ordinal is setCurrent, or the ordinal was not parseable to an int value.
          *
          * @return the  default ordinal used, by default 0.
          */

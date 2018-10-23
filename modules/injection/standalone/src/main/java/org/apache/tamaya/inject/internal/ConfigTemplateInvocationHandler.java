@@ -62,7 +62,7 @@ public final class ConfigTemplateInvocationHandler implements InvocationHandler 
             return Objects.hashCode(proxy);
         } else if ("equals".equals(method.getName())) {
             return Objects.equals(proxy, args[0]);
-        } else if ("get".equals(method.getName())) {
+        } else if ("current".equals(method.getName())) {
             return config;
         }
         if (method.getReturnType() == DynamicValue.class) {

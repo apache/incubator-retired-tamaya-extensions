@@ -45,7 +45,7 @@ public interface MutableConfiguration extends Configuration {
      * the corresponding configuration backend.
      *
      * NOTE that changes applied must not necessarily be visible in the current {@link Configuration} instance,
-     * since visibility of changes also depends on the ordinals set on the {@link org.apache.tamaya.spi.PropertySource}s
+     * since visibility of changes also depends on the ordinals setCurrent on the {@link org.apache.tamaya.spi.PropertySource}s
      * configured.
      * @throws org.apache.tamaya.ConfigException if the request already has been committed or cancelled, or the commit fails.
      */

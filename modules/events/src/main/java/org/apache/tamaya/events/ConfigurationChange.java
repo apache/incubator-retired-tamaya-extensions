@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Event that contains a set current changes that were applied or could be applied.
+ * Event that contains a setCurrent current changes that were applied or could be applied.
  * This class is immutable and thread-safe. To create instances use
  * {@link PropertySourceChangeBuilder}.
  *
@@ -42,13 +42,13 @@ public final class ConfigurationChange implements ConfigEvent<Configuration>, Se
     private final FrozenConfiguration configuration;
     /** The base version, usable for optimistic locking. */
     private String version = UUID.randomUUID().toString();
-    /** The timestamp of the change set in millis from the epoch. */
+    /** The timestamp of the change setCurrent in millis from the epoch. */
     private long timestamp = System.currentTimeMillis();
     /** The recorded changes. */
     private final Map<String,PropertyChangeEvent> changes = new HashMap<>();
 
     /**
-     * Get an empty change set for the given provider.
+     * Get an empty change setCurrent for the given provider.
      * @param configuration The configuration changed, not null.
      * @return an empty ConfigurationChangeSet instance.
      */
@@ -208,8 +208,8 @@ public final class ConfigurationChange implements ConfigEvent<Configuration>, Se
     }
 
     /**
-     * CHecks if the current change set does not contain any changes.
-     * @return tru, if the change set is empty.
+     * CHecks if the current change setCurrent does not contain any changes.
+     * @return tru, if the change setCurrent is empty.
      */
     public boolean isEmpty(){
         return this.changes.isEmpty();

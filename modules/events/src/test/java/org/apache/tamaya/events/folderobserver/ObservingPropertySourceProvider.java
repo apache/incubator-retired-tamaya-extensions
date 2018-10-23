@@ -68,7 +68,7 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     /**
-     * Constructor using an explicit directory, ignoring all kind of configuration, if set.
+     * Constructor using an explicit directory, ignoring all kind of configuration, if setCurrent.
      *
      * @param directory the target directory. If null, the default configuration and system property are used.
      */

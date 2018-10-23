@@ -19,15 +19,14 @@
 package org.apache.tamaya.format.formats;
 
 import org.apache.tamaya.format.ConfigurationData;
-import org.apache.tamaya.format.ConfigurationDataBuilder;
 import org.apache.tamaya.format.ConfigurationFormat;
+import org.apache.tamaya.spi.PropertyValue;
 import org.osgi.service.component.annotations.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Implementation of a {@link org.apache.tamaya.format.ConfigurationFormat} for -properties files.
@@ -54,6 +53,12 @@ public class PropertiesFormat implements ConfigurationFormat {
     public ConfigurationData readConfiguration(String resource, InputStream inputStream)throws IOException {
             final Properties p = new Properties();
             p.load(inputStream);
-            return ConfigurationDataBuilder.of(resource, this).addDefaultProperties(Map.class.cast(p)).build();
+            Set<PropertyValue> data = new HashSet<>();
+            for(Map.Entry en:p.entrySet()) {
+                PropertyValue pv = PropertyValue.of(en.getKey().toString(), en.getValue().toString(), resource)
+                        .setMeta(ConfigurationFormat.class, this);
+                data.add(pv);
+            }
+            return new ConfigurationData(resource, this, data);
     }
 }

@@ -21,6 +21,7 @@ package org.apache.tamaya.resolver;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
 import org.apache.tamaya.resolver.spi.ExpressionResolver;
+import org.apache.tamaya.spi.ServiceContext;
 import org.apache.tamaya.spi.ServiceContextManager;
 
 import java.util.Collection;
@@ -36,17 +37,35 @@ public final class Resolver {
     private Resolver(){}
 
     /**
-     * Evaluates the current expression.
+     * Evaluates the current expression using the current thread's context classloader.
      * @param key the key, not null.
      * @param value the value to be filtered/evaluated.
      * @return the filtered/evaluated value, including null.
      */
     public static String evaluateExpression(String key, String value){
-        return evaluator().evaluateExpression(key, value, true);
+        return evaluator(Thread.currentThread().getContextClassLoader()).evaluateExpression(key, value, true);
     }
 
-    private static ExpressionEvaluator evaluator() {
-        ExpressionEvaluator evaluator = ServiceContextManager.getServiceContext().getService(ExpressionEvaluator.class);
+    /**
+     * Evaluates the current expression.
+     * @param key the key, not null.
+     * @param value the value to be filtered/evaluated.
+     * @param classLoader the classloader to be used, not null.
+     * @return the filtered/evaluated value, including null.
+     */
+    public static String evaluateExpression(String key, String value, ClassLoader classLoader){
+        return evaluator(classLoader).evaluateExpression(key, value, true);
+    }
+
+    /**
+     * Get the evaluator.
+     * @param classLoader the classloader to be used, not null.
+     * @return the evaluator, never null.
+     * @throws ConfigException if the evaluator cannot be evaluated.
+     */
+    private static ExpressionEvaluator evaluator(ClassLoader classLoader) {
+        ExpressionEvaluator evaluator = ServiceContextManager.getServiceContext(classLoader)
+                .getService(ExpressionEvaluator.class);
         if(evaluator==null){
             throw new ConfigException("No ExpressionEvaluator registered.");
         }
@@ -54,12 +73,34 @@ public final class Resolver {
     }
 
     /**
-     * Evaluates the current expression.
+     * Evaluates the current expression using the current thread's context classloader.
      * @param value the value to be filtered/evaluated.
      * @return the filtered/evaluated value, including null.
      */
     public static String evaluateExpression(String value){
-        return evaluateExpression(value, true);
+
+        return evaluateExpression(value, true, Thread.currentThread().getContextClassLoader());
+    }
+
+    /**
+     * Evaluates the current expression.
+     * @param value the value to be filtered/evaluated.
+     * @param classLoader the classloader to be used, not null.
+     * @return the filtered/evaluated value, including null.
+     */
+    public static String evaluateExpression(String value, ClassLoader classLoader){
+        return evaluateExpression(value, true, classLoader);
+    }
+
+    /**
+     * Evaluates the current expression using the current thread's context classloader.
+     * @param value the value to be filtered/evaluated.
+     * @param maskNotFound if true, not found expression parts will be replaced vy surrounding with [].
+     *                     Setting to false will replace the value with an empty String.
+     * @return the filtered/evaluated value, including null.
+     */
+    public static String evaluateExpression(String value, boolean maskNotFound){
+        return evaluateExpression(value, maskNotFound, Thread.currentThread().getContextClassLoader());
     }
 
     /**
@@ -67,17 +108,20 @@ public final class Resolver {
      * @param value the value to be filtered/evaluated.
      * @param maskNotFound if true, not found expression parts will be replaced vy surrounding with [].
      *                     Setting to false will replace the value with an empty String.
+     * @param classLoader the classloader to be used, not null.
      * @return the filtered/evaluated value, including null.
      */
-    public static String evaluateExpression(String value, boolean maskNotFound){
-        return evaluator().evaluateExpression(null, value, maskNotFound);
+    public static String evaluateExpression(String value, boolean maskNotFound, ClassLoader classLoader){
+        return evaluator(classLoader).evaluateExpression(null, value, maskNotFound);
     }
 
     /**
      * Access a collection with the currently registered {@link ExpressionResolver} instances.
      * @return the resolvers currently known, never null.
+     * @deprecated will be removed.
      */
+    @Deprecated
     public static Collection<ExpressionResolver> getResolvers(){
-        return evaluator().getResolvers();
+        return evaluator(Thread.currentThread().getContextClassLoader()).getResolvers();
     }
 }

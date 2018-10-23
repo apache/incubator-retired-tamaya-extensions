@@ -83,7 +83,7 @@ public class ConfiguredFieldImpl implements ConfiguredField{
                 public Object run() throws Exception {
                     annotatedField.setAccessible(true);
                     annotatedField.set(target,
-                            DefaultDynamicValue.of(target, annotatedField, ConfigurationProvider.getConfiguration()));
+                            DefaultDynamicValue.of(target, annotatedField, Configuration.current()));
                     return annotatedField;
                 }
             });
@@ -98,7 +98,7 @@ public class ConfiguredFieldImpl implements ConfiguredField{
      *
      * @param target      the target instance, not null.
      * @param config The configuration to be used.
-     * @param resolve     set to true, if expression resolution should be applied on the keys passed.
+     * @param resolve     setCurrent to true, if expression resolution should be applied on the keys passed.
      * @throws ConfigException if the configuration required could not be resolved or converted.
      */
     private void applyValue(Object target, Configuration config, boolean resolve) throws ConfigException {

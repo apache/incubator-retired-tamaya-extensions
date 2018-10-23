@@ -20,6 +20,7 @@ package org.apache.tamaya.format;
 
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
+import org.apache.tamaya.spi.PropertyValue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,7 +38,7 @@ import java.util.logging.Logger;
  * Implementation of a {@link PropertySourceProvider} that reads configuration from some given resource paths
  * and using the given formats. The resource path are resolved as classpath resources. This can be changed by
  * overriding {@link #getPropertySources()}.
- * For each resource found the configuration formats passed get a chance to read the resource, if they succeed the
+ * For each resource found the configuration formats passed getChild a chance to read the resource, if they succeed the
  * result is taken as the providers PropertySources to be exposed.
  */
 public abstract class BaseFormatPropertySourceProvider implements PropertySourceProvider {
@@ -129,8 +130,8 @@ public abstract class BaseFormatPropertySourceProvider implements PropertySource
     protected abstract Collection<PropertySource> getPropertySources(ConfigurationData data);
 
     /**
-     * This method does dynamically resolve the paths using the current ClassLoader set. If no ClassLoader was
-     * explcitly set during creation the current Thread context ClassLoader is used. If none of the supported
+     * This method does dynamically resolve the paths using the current ClassLoader setCurrent. If no ClassLoader was
+     * explcitly setCurrent during creation the current Thread context ClassLoader is used. If none of the supported
      * formats is able to parse a resource a WARNING log is written.
      *
      * @return the PropertySources successfully read

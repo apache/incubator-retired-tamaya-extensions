@@ -29,13 +29,11 @@ import static org.junit.Assert.assertEquals;
  * This tests is using testing the classpath collector functionality, either by accessing/searching entries
  * from the java.annotation jar as well from the current (file-based classpath).
  */
-@Ignore
-// Tests work within IDE, but not with maven...
 public class ClasspathCollectorTest {
 
     @org.junit.Test
     public void testCollectAllClasses() throws Exception {
-        ClasspathCollector cpc = new ClasspathCollector(ClassLoader.getSystemClassLoader());
+        ClasspathCollector cpc = new ClasspathCollector(Thread.currentThread().getContextClassLoader());
         Collection<URL> found = cpc.collectFiles("classpath:javax/annotation/*.class");
         assertEquals(8, found.size()); // 7 ordinary, 1 inner class.
         Collection<URL> found2 = cpc.collectFiles("javax/annotation/*.class");
@@ -44,7 +42,7 @@ public class ClasspathCollectorTest {
 
     @org.junit.Test
     public void testCollectAllInPackage() throws Exception {
-        ClasspathCollector cpc = new ClasspathCollector(ClassLoader.getSystemClassLoader());
+        ClasspathCollector cpc = new ClasspathCollector(Thread.currentThread().getContextClassLoader());
         Collection<URL> found = cpc.collectFiles("classpath:javax/**/sql/*.class");
         assertEquals(2, found.size());
         Collection<URL> found2 = cpc.collectFiles("javax/**/sql/*.class");
@@ -53,7 +51,7 @@ public class ClasspathCollectorTest {
 
     @org.junit.Test
     public void testCollectClassNames() throws Exception {
-        ClasspathCollector cpc = new ClasspathCollector(ClassLoader.getSystemClassLoader());
+        ClasspathCollector cpc = new ClasspathCollector(Thread.currentThread().getContextClassLoader());
         Collection<URL> found = cpc.collectFiles("classpath:javax/annotation/**/R*.class");
         assertEquals(2, found.size());
         Collection<URL> found2 = cpc.collectFiles("javax/annotation/**/R*.class");
@@ -62,7 +60,7 @@ public class ClasspathCollectorTest {
 
     @org.junit.Test
     public void testCollectWithExpression() throws Exception {
-        ClasspathCollector cpc = new ClasspathCollector(ClassLoader.getSystemClassLoader());
+        ClasspathCollector cpc = new ClasspathCollector(Thread.currentThread().getContextClassLoader());
         Collection<URL> found = cpc.collectFiles("classpath:javax/annotation/R?so*.class");
         assertEquals(3, found.size());
         Collection<URL> found2 = cpc.collectFiles("javax/annotation/R?so*.class");
@@ -71,7 +69,7 @@ public class ClasspathCollectorTest {
 
     @org.junit.Test
     public void testCollectResources() throws Exception {
-        ClasspathCollector cpc = new ClasspathCollector(ClassLoader.getSystemClassLoader());
+        ClasspathCollector cpc = new ClasspathCollector(Thread.currentThread().getContextClassLoader());
         Collection<URL> found = cpc.collectFiles("classpath:META-INF/maven/org.apache.geronimo.specs/**/*");
         assertEquals(3, found.size());
         Collection<URL> found2 = cpc.collectFiles("META-INF/maven/org.apache.geronimo.specs/**/*");
@@ -80,7 +78,7 @@ public class ClasspathCollectorTest {
 
     @org.junit.Test
     public void testCollectResourcesFromLocalFSPath() throws Exception {
-        ClasspathCollector cpc = new ClasspathCollector(ClassLoader.getSystemClassLoader());
+        ClasspathCollector cpc = new ClasspathCollector(Thread.currentThread().getContextClassLoader());
         Collection<URL> found = cpc.collectFiles("classpath:resources_testroot/**/*.file");
         assertEquals(7, found.size());
         Collection<URL> found2 = cpc.collectFiles("resources_testroot/**/*.file");

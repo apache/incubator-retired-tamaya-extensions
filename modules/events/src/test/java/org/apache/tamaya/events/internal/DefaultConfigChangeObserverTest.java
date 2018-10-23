@@ -57,7 +57,7 @@ public class DefaultConfigChangeObserverTest {
 
         observer.checkConfigurationUpdate();
 
-        assertThat(observer.getLastConfig()).describedAs("After the firt check last configuration must be set.")
+        assertThat(observer.getLastConfig()).describedAs("After the firt check last configuration must be setCurrent.")
                                             .isNotNull();
     }
 
@@ -71,7 +71,7 @@ public class DefaultConfigChangeObserverTest {
         observer.checkConfigurationUpdate();
         FrozenConfiguration config2 = observer.getLastConfig();
 
-        assertThat(config1).describedAs("After the firt check last configuration must be set.")
+        assertThat(config1).describedAs("After the firt check last configuration must be setCurrent.")
                                             .isNotEqualTo(config2);
     }
 }

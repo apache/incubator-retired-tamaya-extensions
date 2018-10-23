@@ -18,29 +18,21 @@
  */
 package org.apache.tamaya.format;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import org.apache.tamaya.spi.PropertyValue;
+
+import java.util.*;
 
 /**
- * <p>Data that abstracts the data read from a configuration resources using a certain format. The data can be divided
+ * Data that abstracts the data read from a configuration resources using a certain format. The data can be divided
  * into different sections, similar to ini-files. Herebey different sections the best map to entries with different
- * priorities to be applied, when integrated into PropertySource instances.</p>
- * New instances of this class can be created using a {@link org.apache.tamaya.format.ConfigurationDataBuilder}.
- * <h3>Implementation Specification</h3>
- * This class is
- * <ul>
- *     <li>immutable</li>
- *     <li>thread-safe</li>
- * </ul>
+ * priorities to be applied, when integrated into PropertySource instances.
  */
 public final class ConfigurationData {
     public static final String DEFAULT_SECTION_NAME = "default";
     /**
      * The sections read.
      */
-    private Map<String, Map<String, String>> namedSections = new HashMap<>();
+    private List<PropertyValue> data = new ArrayList<>();
     /** The format instance used to read this instance. */
     private final ConfigurationFormat format;
     /** The resource read. */
@@ -49,12 +41,26 @@ public final class ConfigurationData {
 
     /**
      * COnstructor used by builder.
-     * @param builder the builder instance passing the read configuration data.
+     * @param data the data read, not null.
+     * @param format the format, not null.
+     * @param resource the underlying resource, not null.
      */
-    ConfigurationData(ConfigurationDataBuilder builder){
-        this.format = builder.format;
-        this.resource = builder.resource;
-        this.namedSections.putAll(builder.namedSections);
+    public ConfigurationData(String resource, ConfigurationFormat format, Collection<PropertyValue> data){
+        this.format = Objects.requireNonNull(format);
+        this.resource =Objects.requireNonNull(resource);
+        this.data.addAll(Objects.requireNonNull(data));
+    }
+
+    /**
+     * COnstructor used by builder.
+     * @param data the data read, not null.
+     * @param format the format, not null.
+     * @param resource the underlying resource, not null.
+     */
+    public ConfigurationData(String resource, ConfigurationFormat format, PropertyValue... data){
+        this.format = Objects.requireNonNull(format);
+        this.resource =Objects.requireNonNull(resource);
+        this.data.addAll(Arrays.asList(data));
     }
 
     /**
@@ -75,72 +81,10 @@ public final class ConfigurationData {
 
     /**
      * Access an immutable Set of all present section names, including the default section (if any).
-     * @return the set of present section names, never null.
+     * @return the setCurrent of present section names, never null.
      */
-    public Set<String> getSectionNames() {
-        if (namedSections == null) {
-            return Collections.emptySet();
-        }
-        return namedSections.keySet();
-    }
-
-    /**
-     * Get a section's data.
-     * @param name the section name, not null.
-     * @return the unmodifiable data of this section, or null,
-     *         if no such section exists.
-     */
-    public Map<String, String> getSection(String name) {
-        return this.namedSections.get(name);
-    }
-
-    /**
-     * Convenience accessor for accessing the 'default' section.
-     * @return the default section's data, or null, if no such section exists.
-     */
-    public Map<String, String> getDefaultProperties() {
-        Map<String,String> props = getSection(DEFAULT_SECTION_NAME);
-        if(props!=null){
-            return Collections.unmodifiableMap(props);
-        }
-        return Collections.emptyMap();
-    }
-
-    /**
-     * Get combined properties for this config data instance, which contains all
-     * properties of all sections in the form {@code Entry<section::property,value>}.
-     *
-     * @return the normalized properties.
-     */
-    public Map<String, String> getCombinedProperties() {
-        Map<String, String> combinedProperties = new HashMap<>();
-        // populate it with sections...
-        for (String sectionName : getSectionNames()) {
-            Map<String, String> section = getSection(sectionName);
-            for (Map.Entry<String, String> en : section.entrySet()) {
-                String key = sectionName + "::" + en.getKey();
-                combinedProperties.put(key, en.getValue());
-            }
-        }
-        return combinedProperties;
-    }
-
-    /**
-     * Immutable accessor to ckeck, if there are default properties present.
-     * @param section the section, not null.
-     * @return true, if default properties are present.
-     */
-    public boolean containsSection(String section) {
-        return this.namedSections.containsKey(section);
-    }
-
-    /**
-     * Immutable accessor to ckeck, if there are default properties present.
-     *
-     * @return true, if default properties are present.
-     */
-    public boolean hasDefaultProperties() {
-        return containsSection(DEFAULT_SECTION_NAME);
+    public List<PropertyValue> getData() {
+        return data;
     }
 
     /**
@@ -149,17 +93,16 @@ public final class ConfigurationData {
      * @return true, if no properties are contained in this data item.
      */
     public boolean isEmpty() {
-        return !namedSections.isEmpty();
+        return data.isEmpty();
     }
 
     @Override
     public String toString() {
         return "ConfigurationData{" +
                 "\n  format        = " + format +
-                "\n, resource      = " + resource +
-                "\n, sections      = " + namedSections.keySet() +
-                "\n  default count = " + getDefaultProperties().size() +
-                '}';
+                "\n  resource      = " + resource +
+                "\n  data          = " + data +
+                "\n}";
     }
 
 }

@@ -21,6 +21,6 @@ the above expressions above are equivalent to
   file:c:\temp\**\*
 
 Most benefits are created, when also using the formats module, which provides an implementation of a 
-PropertySourceProvider taking a set of paths to be resolved and a number of supported formats.
+PropertySourceProvider taking a setCurrent of paths to be resolved and a number of supported formats.
 
 

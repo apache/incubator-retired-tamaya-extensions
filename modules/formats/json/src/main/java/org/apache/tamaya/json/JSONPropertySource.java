@@ -131,14 +131,8 @@ public class JSONPropertySource implements PropertySource {
         try (InputStream is = urlResource.openStream()) {
             JsonStructure root = this.readerFactory.createReader(is, Charset.forName("UTF-8")).read();
 
-            // Test added. H. Saly, 15. Aug. 2015
-            if (!(root instanceof JsonObject)) {
-                throw new ConfigException("Currently only JSON objects are supported");
-            }
-
-            Map<String, String> values = new HashMap<>();
-            JSONVisitor visitor = new JSONVisitor((JsonObject)root, values);
-            visitor.run();
+            JSONDataBuilder visitor = new JSONDataBuilder(urlResource.toString(), root);
+            Map<String, String> values = visitor.build().asMap();
             Map<String, PropertyValue> result = new HashMap<>();
             for(Map.Entry<String,String> en:values.entrySet()){
                 result.put(en.getKey(), PropertyValue.of(en.getKey(), en.getValue(), getName()));

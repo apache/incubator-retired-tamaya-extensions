@@ -64,7 +64,7 @@ public final class MutableConfigurationProvider {
      */
     public static MutableConfiguration createMutableConfiguration(){
         return spi().createMutableConfiguration(
-                ConfigurationProvider.getConfiguration(), getApplyMostSignificantOnlyChangePolicy());
+                Configuration.current(), getApplyMostSignificantOnlyChangePolicy());
     }
 
     /**
@@ -76,7 +76,7 @@ public final class MutableConfigurationProvider {
      */
     public static MutableConfiguration createMutableConfiguration(ChangePropagationPolicy changePropgationPolicy){
         return spi().createMutableConfiguration(
-                ConfigurationProvider.getConfiguration(), changePropgationPolicy);
+                Configuration.current(), changePropgationPolicy);
     }
 
 

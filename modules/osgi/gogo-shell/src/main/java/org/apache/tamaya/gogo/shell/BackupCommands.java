@@ -46,7 +46,7 @@ public class BackupCommands {
     public void tm_backup_create(@Parameter(absentValue = Parameter.UNSPECIFIED, names={"-p", "--pid"})
                                   @Descriptor("The PID (requred)") String pid,
                                  @Parameter(absentValue = Parameter.UNSPECIFIED, names={"-f", "--force"})
-                                  @Descriptor("If set any existing backup will be overriden, default is false.") Boolean force) throws IOException {
+                                  @Descriptor("If setCurrent any existing backup will be overriden, default is false.") Boolean force) throws IOException {
         System.out.println(org.apache.tamaya.osgi.commands.BackupCommands.createBackup(
                 getService(TamayaConfigService.class),
                 getService(ConfigurationAdmin.class), pid, force));

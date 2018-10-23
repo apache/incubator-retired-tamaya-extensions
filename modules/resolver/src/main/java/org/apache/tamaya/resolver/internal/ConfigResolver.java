@@ -18,17 +18,21 @@
  */
 package org.apache.tamaya.resolver.internal;
 
-import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.Configuration;
 import org.apache.tamaya.resolver.spi.ExpressionResolver;
+import org.apache.tamaya.spi.ClassloaderAware;
 
 import javax.annotation.Priority;
+import java.util.Objects;
 
 /**
  * Property resolver implementation that interprets the resolver expression as a reference to another configuration
  * entry. It can be explicitly addressed by prefixing {@code conf:}, e.g. {@code ${conf:my.other.config.value}}.
  */
 @Priority(200)
-public final class ConfigResolver implements ExpressionResolver{
+public final class ConfigResolver implements ExpressionResolver, ClassloaderAware {
+
+    private ClassLoader classLoader;
 
     @Override
     public String getResolverPrefix() {
@@ -37,7 +41,16 @@ public final class ConfigResolver implements ExpressionResolver{
 
     @Override
     public String evaluate(String expression){
-        return ConfigurationProvider.getConfiguration().get(expression);
+        return Configuration.current(classLoader).get(expression);
     }
 
+    @Override
+    public void init(ClassLoader classLoader) {
+        this.classLoader = Objects.requireNonNull(classLoader);
+    }
+
+    @Override
+    public ClassLoader getClassLoader() {
+        return classLoader;
+    }
 }

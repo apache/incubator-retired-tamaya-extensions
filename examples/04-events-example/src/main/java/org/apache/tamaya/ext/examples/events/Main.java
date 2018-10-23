@@ -64,7 +64,7 @@ public class Main {
         ConfigEventManager.addListener(new ConfigurationChangeListener());
         ConfigEventManager.setChangeMonitoringPeriod(1_000L);
         ConfigEventManager.enableChangeMonitoring(true);
-        Configuration configuration = ConfigurationProvider.getConfiguration();
+        Configuration configuration = Configuration.current();
 
         for (Map.Entry<String, String> e : configuration.getProperties().entrySet()) {
             System.out.println(e.getKey() + ": " + e.getValue());

@@ -26,7 +26,7 @@ import org.apache.tamaya.osgi.commands.TamayaConfigService;
 
 import java.io.IOException;
 
-@Command(scope = "tamaya", name = "tm_history_maxsize", description="Gets the maximal size of stored getHistory entries.")
+@Command(scope = "tamaya", name = "tm_history_maxsize", description="Gets the maximal getNumChilds of stored getHistory entries.")
 @Service
 public class HistoryMaxsizeCommand implements Action{
 

@@ -77,17 +77,7 @@ public class TamayaConfiguration implements Configuration{
     }
 
     @Override
-    public Configuration with(ConfigOperator operator) {
-        return operator.operate(this);
-    }
-
-    @Override
-    public <T> T query(ConfigQuery<T> query) {
-        return query.query(this);
-    }
-
-    @Override
     public ConfigurationContext getContext() {
-        return null;
+        return ConfigurationContext.EMPTY;
     }
 }

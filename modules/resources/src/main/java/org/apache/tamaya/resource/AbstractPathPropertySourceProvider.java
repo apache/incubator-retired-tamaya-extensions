@@ -31,6 +31,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.tamaya.spi.ClassloaderAware;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
 import org.apache.tamaya.spi.PropertyValue;
@@ -40,12 +41,13 @@ import org.apache.tamaya.spi.PropertyValue;
  * included into the configuration. This is especially useful, when the current configuration policy in place
  * does not define the exact file names, but the file locations, where configuration can be provided.
  */
-public abstract class AbstractPathPropertySourceProvider implements PropertySourceProvider{
+public abstract class AbstractPathPropertySourceProvider implements PropertySourceProvider, ClassloaderAware {
     /** The log used. */
     private static final Logger LOG = Logger.getLogger(AbstractPathPropertySourceProvider.class.getName());
     /** The resource paths. */
     private String[] resourcePaths;
 
+    private ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
     /**
      * Creates a new instance using the given resource paths.
@@ -60,11 +62,21 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
     }
 
     @Override
+    public void init(ClassLoader classLoader){
+        this.classLoader = Objects.requireNonNull(classLoader);
+    }
+
+    @Override
+    public ClassLoader getClassLoader(){
+        return classLoader;
+    }
+
+    @Override
     public Collection<PropertySource> getPropertySources() {
         List<PropertySource> propertySources = new ArrayList<>();
         for (String resource : getResourcePaths()) {
             try {
-                Collection<URL> resources = ConfigResources.getResourceResolver().getResources(resource);
+                Collection<URL> resources = ConfigResources.getResourceResolver().getResources(classLoader, resource);
                 for (URL url : resources) {
                     try {
                         Collection<PropertySource>  propertySourcesToInclude = getPropertySources(url);
@@ -168,7 +180,7 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
         }
 
         /**
-         * Returns the  default ordinal used, when no ordinal is set, or the ordinal was not parseable to an int value.
+         * Returns the  default ordinal used, when no ordinal is setCurrent, or the ordinal was not parseable to an int value.
          *
          * @return the  default ordinal used, by default 0.
          */

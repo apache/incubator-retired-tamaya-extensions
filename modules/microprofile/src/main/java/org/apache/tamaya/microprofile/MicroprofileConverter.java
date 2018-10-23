@@ -44,7 +44,13 @@ public class MicroprofileConverter<T> implements Converter<T> {
 
     @Override
     public T convert(String value) {
-        return delegate.convert(value, new ConversionContext.Builder("microprofile:no-key", TypeLiteral.of(
-                TypeLiteral.of(getClass()).getType())).build());
+        ConversionContext ctx = new ConversionContext.Builder("microprofile:no-key", TypeLiteral.of(
+                TypeLiteral.of(getClass()).getType())).build();
+        ConversionContext.set(ctx);
+        try{
+            return delegate.convert(value);
+        }finally {
+            ConversionContext.reset();
+        }
     }
 }

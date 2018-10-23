@@ -166,7 +166,7 @@ public class ConfiguredTypeImpl implements ConfiguredType{
      * @param instance       The instance to be configured.
      */
     public void configure(Object instance) {
-        configure(instance, ConfigurationProvider.getConfiguration());
+        configure(instance, Configuration.current());
     }
 
     @Override

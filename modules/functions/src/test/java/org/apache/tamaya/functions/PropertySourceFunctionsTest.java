@@ -28,9 +28,12 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Set;
 
+import static junit.framework.TestCase.assertNotNull;
 import static org.apache.tamaya.functions.PropertySourceFunctions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class PropertySourceFunctionsTest {
 
@@ -281,7 +284,6 @@ public class PropertySourceFunctionsTest {
                           .isNotEmpty()
                           .contains("abc", "abc.def", "a", "b", "<root>");
 
-
     }
 
 
@@ -355,13 +357,10 @@ public class PropertySourceFunctionsTest {
     @Ignore
     @Test
     public void testEmptyPropertySource() throws Exception {
-        PropertySource ps = PropertySourceFunctions.emptyPropertySource();
-//        assertNotNull(ps);
-//        assertNotNull(ps.getProperties());
-//        assertTrue(ps.getProperties().isEmpty());
-//        assertEquals(ps.getName(), "<empty>" );
-//        assertTrue(ps.isScannable());
-
-        throw new RuntimeException("Not implement or look at me!");
+        PropertySource ps = PropertySource.EMPTY;
+        assertNotNull(ps);
+        assertNotNull(ps.getProperties());
+        assertTrue(ps.getProperties().isEmpty());
+        assertEquals(ps.getName(), "<empty>" );
     }
 }

@@ -74,7 +74,7 @@ public class EnrichedPropertySourceTest {
      */
 
     /*
-     * Tests for get(String)
+     * Tests for current(String)
      */
 
     @Test

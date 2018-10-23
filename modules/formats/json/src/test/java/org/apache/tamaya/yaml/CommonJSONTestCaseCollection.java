@@ -22,6 +22,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -80,6 +81,8 @@ public abstract class CommonJSONTestCaseCollection {
 
         PropertySource properties = getPropertiesFrom(configURL);
 
+        System.out.println("simple-nested-string-only-config-1.json -> " + properties.getProperties().values());
+
         assertTrue(properties.getProperties().keySet().size()>=5);
 
         PropertyValue keyB = properties.get("b");
@@ -121,7 +124,7 @@ public abstract class CommonJSONTestCaseCollection {
         assertThat(keyDP.getValue(), is("P"));
     }
 
-    @Test(expected = IOException.class)
+    @Test
     public void canHandleIllegalJSONFileWhichContainsAnArray() throws Exception {
         URL configURL = CommonJSONTestCaseCollection.class.getResource("/configs/invalid/with-array.json");
 
@@ -167,7 +170,7 @@ public abstract class CommonJSONTestCaseCollection {
 
         PropertySource properties = getPropertiesFrom(configURL);
 
-        assertTrue(properties.getProperties().keySet().size()>=3);
+        assertEquals(3, properties.getProperties().size());
 
         PropertyValue keyA = properties.get("a");
         PropertyValue keyB = properties.get("b");

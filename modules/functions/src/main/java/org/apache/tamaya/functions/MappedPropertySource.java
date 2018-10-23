@@ -90,7 +90,7 @@ class MappedPropertySource implements PropertySource {
      * </p>
      *
      * @param key the property's key, not {@code null}.
-     * @return the property value map, where {@code map.get(key) == value},
+     * @return the property value map, where {@code map.current(key) == value},
      *         including also any metadata. In case a value is {@code null},
      *         simply return {@code null}.
      */
@@ -107,8 +107,8 @@ class MappedPropertySource implements PropertySource {
 
                 if (mappedKey.equals(newKey)) {
                     String mappedName = getName();
-                    return property.toBuilder().mapKey(newKey)
-                                   .setSource(mappedName).build();
+                    return property.setKey(newKey)
+                                   .setMeta("source", mappedName);
                 }
             }
         }

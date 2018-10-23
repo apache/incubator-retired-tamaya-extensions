@@ -41,58 +41,10 @@ import java.util.Collection;
  *     /user/home/A*b101_?.pid
  *     /var/logs&#47;**&#47;*.log
  * </pre>
+ * @deprecated Will be removed, covered by default methods.
  */
+@Deprecated
 public abstract class BaseResourceResolver implements ResourceResolver {
-
-    /**
-     * Resolves resource expressions to a list of {@link URL}s. Hereby
-     * the ordering of format matches the input of the resolved expressions. Nevertheless be aware that
-     * there is no determined ordering of format located within a classloader.
-     *
-     * @param expressions the expressions to be resolved, not empty.
-     * @return the corresponding collection of current {@link URL}s found, never
-     * null.
-     * .
-     */
-    @Override
-    public Collection<URL> getResources(Collection<String> expressions) {
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        if (cl == null) {
-            cl = getClass().getClassLoader();
-        }
-        return getResources(cl, expressions);
-    }
-
-    /**
-     * Resolves resource expressions to a list of {@link URL}s. Hereby
-     * the ordering of format matches the input of the resolved expressions. Nevertheless be aware that
-     * there is no determined ordering of format located within a classloader.
-     *
-     * @param expressions the expressions to be resolved, not empty.
-     * @return the corresponding collection of current {@link URL}s found, never
-     * null.
-     * .
-     */
-    @Override
-    public Collection<URL> getResources(String... expressions) {
-        return getResources(Arrays.asList(expressions));
-    }
-
-    /**
-     * Resolves resource expressions to a list of {@link URL}s, considerubg
-     * the given classloader for classloader dependent format. Hereby
-     * the ordering of format matches the input of the resolved expressions. Nevertheless be aware that
-     * there is no determined ordering of format located within a classloader.
-     *
-     * @param expressions the expressions to be resolved, not empty.
-     * @return the corresponding collection of current {@link URL}s found, never
-     * null.
-     * .
-     */
-    @Override
-    public Collection<URL> getResources(ClassLoader classLoader, String... expressions) {
-        return getResources(classLoader, Arrays.asList(expressions));
-    }
 
     /**
      * Resolves resource expressions to a list of {@link URL}s, considerubg

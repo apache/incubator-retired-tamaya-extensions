@@ -79,7 +79,7 @@ public class HistoryCommandsTest extends AbstractOSGITest {
         String result = HistoryCommands.getMaxHistorySize(tamayaConfigPlugin);
         assertEquals(result, String.valueOf(tamayaConfigPlugin.getMaxHistorySize()));
         result = HistoryCommands.setMaxHistorySize(tamayaConfigPlugin, 111);
-        assertEquals(result, "tamaya-max-getHistory-size=111");
+        assertEquals(result, "tamaya-max-getHistory-getNumChilds=111");
         result = HistoryCommands.getMaxHistorySize(tamayaConfigPlugin);
         assertEquals(result, "111");
     }

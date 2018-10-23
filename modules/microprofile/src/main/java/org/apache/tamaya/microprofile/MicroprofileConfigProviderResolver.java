@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
-import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.Configuration;
 import org.apache.tamaya.spi.ConfigurationBuilder;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.spi.ConfigBuilder;
@@ -44,7 +44,7 @@ public class MicroprofileConfigProviderResolver extends ConfigProviderResolver {
     public Config getConfig(ClassLoader loader) {
         Config config = this.configs.get(loader);
         if(config==null){
-        	ConfigurationBuilder builder = ConfigurationProvider.getConfigurationBuilder();
+        	ConfigurationBuilder builder = Configuration.createConfigurationBuilder();
             builder.addDefaultPropertyConverters();
             MicroprofileConfigBuilder microConfigBuilder = new MicroprofileConfigBuilder(builder);
             microConfigBuilder.addDefaultSources();
@@ -57,7 +57,7 @@ public class MicroprofileConfigProviderResolver extends ConfigProviderResolver {
 
     @Override
     public ConfigBuilder getBuilder() {
-        return new MicroprofileConfigBuilder(ConfigurationProvider.getConfigurationBuilder());
+        return new MicroprofileConfigBuilder(Configuration.createConfigurationBuilder());
     }
 
     @Override

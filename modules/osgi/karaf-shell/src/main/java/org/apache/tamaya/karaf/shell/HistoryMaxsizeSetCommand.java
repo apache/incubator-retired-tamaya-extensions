@@ -28,14 +28,14 @@ import org.apache.tamaya.osgi.commands.TamayaConfigService;
 
 import java.io.IOException;
 
-@Command(scope = "tamaya", name = "tm_history_maxsize_set", description="Sets the maximal size of Tamaya getHistory entries.")
+@Command(scope = "tamaya", name = "tm_history_maxsize_set", description="Sets the maximal getNumChilds of Tamaya getHistory entries.")
 @Service
 public class HistoryMaxsizeSetCommand implements Action{
 
     @Reference
     private TamayaConfigService configPlugin;
 
-    @Argument(index = 0, name = "size", description = "The maximum number of entries in the getHistory.",
+    @Argument(index = 0, name = "getNumChilds", description = "The maximum number of entries in the getHistory.",
             required = true, multiValued = false)
     int maxSize;
 

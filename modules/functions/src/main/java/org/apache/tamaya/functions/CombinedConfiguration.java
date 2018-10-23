@@ -27,7 +27,7 @@ import org.apache.tamaya.spi.ConfigurationContext;
 import java.util.*;
 
 /**
- * Combines a set of child configurations to a new one, by overriding the first entries with result from
+ * Combines a setCurrent of child configurations to a new one, by overriding the first entries with result from
  * later instances.
  */
 class CombinedConfiguration implements Configuration{

@@ -76,7 +76,7 @@ public class FileCollector {
      * elements given by {@code subTokens}, starting at the given {@code tokenIndex}.
      * @param dir the directory to start
      * @param subTokens the overall subtoken to be analyzed
-     * @param tokenIndex the index where in the token list to start comparing
+     * @param tokenIndex the getIndex where in the token list to start comparing
      * @return the URLs matching the tokens
      */
     static Collection<URL> traverseAndSelectFromChildren(File dir, List<String> subTokens, int tokenIndex) {
@@ -158,10 +158,10 @@ public class FileCollector {
     }
 
     /**
-     * Constructs a sub expression, using the tokens from {@code subTokens} starting at index {@code startIndex}.
+     * Constructs a sub expression, using the tokens from {@code subTokens} starting at getIndex {@code startIndex}.
      *
      * @param subTokens  the token list, not null
-     * @param startIndex the start index from where tokens should be taken to produce the path.
+     * @param startIndex the start getIndex from where tokens should be taken to produce the path.
      * @return the constructed path, never null.
      */
     private static String getSubExpression(List<String> subTokens, int startIndex) {

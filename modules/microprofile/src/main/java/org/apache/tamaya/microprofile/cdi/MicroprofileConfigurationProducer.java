@@ -32,7 +32,6 @@ import javax.inject.Provider;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
@@ -83,15 +82,14 @@ public class MicroprofileConfigurationProducer {
 
     static ConversionContext createConversionContext(String key, InjectionPoint injectionPoint) {
         final Type targetType = injectionPoint.getAnnotated().getBaseType();
-        Configuration config = ConfigurationProvider.getConfiguration();
+        Configuration config = Configuration.current();
         ConversionContext.Builder builder = new ConversionContext.Builder(config,
-                ConfigurationProvider.getConfiguration().getContext(), key, TypeLiteral.of(targetType));
+                key, TypeLiteral.of(targetType));
         if(targetType instanceof ParameterizedType){
             ParameterizedType pt = (ParameterizedType)targetType;
             if(pt.getRawType().equals(Provider.class)) {
                 builder = new ConversionContext.Builder(config,
-                        ConfigurationProvider.getConfiguration().getContext(), key,
-                        TypeLiteral.of(pt.getActualTypeArguments()[0]));
+                        key, TypeLiteral.of(pt.getActualTypeArguments()[0]));
             }
         }
         if (injectionPoint.getMember() instanceof AnnotatedElement) {
@@ -123,11 +121,11 @@ public class MicroprofileConfigurationProducer {
         Object value = null;
         if (textValue != null || Optional.class.equals(context.getTargetType().getRawType())) {
             LOGGER.log(Level.FINEST, () -> "Converting KEY: " + context.getKey() + "("+context.getTargetType()+"), textValue: " + textValue);
-			List<PropertyConverter> converters = ConfigurationProvider.getConfiguration().getContext()
+			List<PropertyConverter> converters = Configuration.current().getContext()
                     .getPropertyConverters((TypeLiteral)context.getTargetType());
             for (PropertyConverter<Object> converter : converters) {
                 try {
-                    value = converter.convert(textValue, context);
+                    value = converter.convert(textValue);
                     if (value != null) {
                         LOGGER.log(Level.FINEST, "Parsed default value from '" + textValue + "' into " +
                                 injectionPoint);

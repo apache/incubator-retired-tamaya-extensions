@@ -117,22 +117,26 @@ public final class FrozenConfiguration implements Configuration, Serializable {
         if (value != null) {
             List<PropertyConverter<T>> converters = getContext()
                     .getPropertyConverters(type);
-            ConversionContext context = new ConversionContext.Builder(this,
-                    getContext(), key,type).build();
-            for (PropertyConverter<T> converter : converters) {
-                try {
-                    T t = converter.convert(value, context);
-                    if (t != null) {
-                        return t;
+            ConversionContext context = new ConversionContext.Builder(this, key,type).build();
+            try {
+                ConversionContext.set(context);
+                for (PropertyConverter<T> converter : converters) {
+                    try {
+                        T t = converter.convert(value);
+                        if (t != null) {
+                            return t;
+                        }
+                    } catch (Exception e) {
+                        Logger.getLogger(getClass().getName())
+                                .log(Level.FINEST, "PropertyConverter: " + converter + " failed to convert value: " + value,
+                                        e);
                     }
-                } catch (Exception e) {
-                    Logger.getLogger(getClass().getName())
-                            .log(Level.FINEST, "PropertyConverter: " + converter + " failed to convert value: " + value,
-                                    e);
                 }
+                throw new ConfigException("Unparseable config value for type: " + type.getRawType().getName() + ": " + key
+                        + ", supported formats: " + context.getSupportedFormats());
+            }finally{
+                ConversionContext.reset();
             }
-            throw new ConfigException("Unparseable config value for type: " + type.getRawType().getName() + ": " + key
-                    + ", supported formats: " + context.getSupportedFormats());
         }
 
         return null;

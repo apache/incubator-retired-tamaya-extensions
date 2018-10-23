@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 
 /**
  * <p>A accessor for a single configured value. This can be used to support values that may change during runtime,
- * reconfigured or final. Hereby external code (could be Tamaya configuration listners or client code), can set a
+ * reconfigured or final. Hereby external code (could be Tamaya configuration listners or client code), can setCurrent a
  * new value. Depending on the {@link UpdatePolicy} the new value is immedeately active or it requires an active commit
  * by client code. Similarly an instance also can ignore all later changes to the value.</p>
  *
@@ -143,7 +143,7 @@ public interface DynamicValue<T> {
      *
      * @param other a {@code ConfiguredItemSupplier} whose result is returned if no value
      * is present
-     * @return the value if present otherwise the result of {@code other.get()}
+     * @return the value if present otherwise the result of {@code other.current()}
      * @throws NullPointerException if value is not present and {@code other} is
      * null
      */
