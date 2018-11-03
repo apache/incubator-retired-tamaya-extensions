@@ -23,18 +23,18 @@ package org.apache.tamaya.optional;
  * It is the {@link EvaluationPolicy} that also must be passed, when creating an {@link OptionalConfiguration},
  * which is defining if values from this provider are overriding values from Tamaya (if available) or vice
  * versa. This provider interface must be implemented by the client that wants to optionally enhance its
- * code with optional Tamaya configuration support to create a bridge between his code and the values optionally
+ * code with optional Tamaya configuration support to createObject a bridge between his code and the values optionally
  * returned by Tamaya.
  */
 @FunctionalInterface
 public interface ValueProvider {
 
     /**
-     * Access a typed value given a (non empty) key.
+     * Access a typed createValue given a (non empty) key.
      * @param key the key, not null.
      * @param type the type, not null.
      * @param <T> the type
-     * @return the value found, or null.
+     * @return the createValue found, or null.
      */
     <T> T get(String key, Class<T> type);
 

@@ -19,12 +19,15 @@
 package org.apache.tamaya.events.internal;
 
 import org.apache.tamaya.events.FrozenConfiguration;
+import org.apache.tamaya.spi.ServiceContextManager;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DefaultConfigChangeObserverTest {
-    private DefaultConfigChangeObserver sut = new DefaultConfigChangeObserver();
+    private DefaultConfigChangeObserver sut = new DefaultConfigChangeObserver(
+            ServiceContextManager.getDefaultClassLoader()
+    );
 
     @Test
     public void enableMonitoringCalledWithTrueEnablesMonitoring() {
@@ -50,7 +53,9 @@ public class DefaultConfigChangeObserverTest {
 
     @Test
     public void lastConfigIsSetByTheFirstCheckForChangesInTheConfiguration() {
-        DefaultConfigChangeObserver observer = new DefaultConfigChangeObserver();
+        DefaultConfigChangeObserver observer = new DefaultConfigChangeObserver(
+                ServiceContextManager.getDefaultClassLoader()
+        );
 
         assertThat(observer.getLastConfig()).describedAs("There must be no last configuration after creation.")
                                             .isNull();
@@ -63,7 +68,9 @@ public class DefaultConfigChangeObserverTest {
 
     @Test
     public void lastConfigIsUpdatedByASubSequentCheckForChangesInTheConfigration() {
-        DefaultConfigChangeObserver observer = new DefaultConfigChangeObserver();
+        DefaultConfigChangeObserver observer = new DefaultConfigChangeObserver(
+                ServiceContextManager.getDefaultClassLoader()
+        );
 
         observer.checkConfigurationUpdate();
 

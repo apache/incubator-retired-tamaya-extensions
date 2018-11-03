@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.filter.internal;
 
-import org.apache.tamaya.filter.ConfigurationFilter;
+import org.apache.tamaya.filter.ThreadBasedConfigurationFilter;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spi.FilterContext;
@@ -34,7 +34,7 @@ public final class DefaultMetadataFilter implements PropertyFilter{
             // When accessing keys explicitly, do not hide anything.
             return valueToBeFiltered;
         }
-        if(ConfigurationFilter.isMetadataFiltered()) {
+        if(ThreadBasedConfigurationFilter.isMetadataFiltered()) {
             if (context.getProperty().getKey().startsWith("_")) {
                 // Hide metadata entries.
                 return null;

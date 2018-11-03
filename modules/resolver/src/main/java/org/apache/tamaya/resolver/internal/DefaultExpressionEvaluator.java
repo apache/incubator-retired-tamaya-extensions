@@ -104,10 +104,10 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
      * </ul>
      *
      * @param key the key to be filtered
-     * @param value value to be analyzed for expressions
+     * @param value createValue to be analyzed for expressions
      * @param maskUnresolved if true, not found expression parts will be replaced by surrounding with [].
-     *                     Setting to false will replace the value with an empty String.
-     * @return the resolved value, or the input in case where no expression was detected.
+     *                     Setting to false will replace the createValue with an empty String.
+     * @return the resolved createValue, or the input in case where no expression was detected.
      */
     @Override
     public String evaluateExpression(String key, String value, boolean maskUnresolved){
@@ -217,7 +217,7 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
      * based on priority.
      * @param unresolvedExpression the parsed, but unresolved expression
      * @param maskUnresolved if true, not found expression parts will be replaced by surrounding with [].
-     *                     Setting to false will replace the value with an empty String.
+     *                     Setting to false will replace the createValue with an empty String.
      * @return the resolved expression, or null.
      */
     private String evaluateInternal(String unresolvedExpression, boolean maskUnresolved) {

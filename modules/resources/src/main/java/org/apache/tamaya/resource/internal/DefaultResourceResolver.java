@@ -18,8 +18,9 @@
  */
 package org.apache.tamaya.resource.internal;
 
-import org.apache.tamaya.resource.BaseResourceResolver;
 import org.apache.tamaya.resource.ResourceLocator;
+import org.apache.tamaya.resource.ResourceResolver;
+import org.apache.tamaya.spi.ClassloaderAware;
 import org.apache.tamaya.spi.ServiceContextManager;
 import org.osgi.service.component.annotations.Component;
 
@@ -28,6 +29,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 /**
@@ -35,12 +37,13 @@ import java.util.logging.Logger;
  */
 @Priority(0)
 @Component
-public class DefaultResourceResolver extends BaseResourceResolver {
+public class DefaultResourceResolver implements ResourceResolver, ClassloaderAware {
 
     private static final Logger LOG = Logger.getLogger(DefaultResourceResolver.class.getName());
+    private ClassLoader classLoader = ServiceContextManager.getDefaultClassLoader();
 
     @Override
-    public List<URL> getResources(ClassLoader classLoader, Collection<String> expressions) {
+    public List<URL> getResources(Collection<String> expressions) {
         List<URL> resources = new ArrayList<>();
         for (String expression : expressions) {
             for(ResourceLocator locator: getResourceLocators()){
@@ -56,9 +59,16 @@ public class DefaultResourceResolver extends BaseResourceResolver {
 
     @Override
     public Collection<ResourceLocator> getResourceLocators() {
-        return ServiceContextManager.getServiceContext(
-                Thread.currentThread().getContextClassLoader()
-        ).getServices(ResourceLocator.class);
+        return ServiceContextManager.getServiceContext(classLoader).getServices(ResourceLocator.class);
     }
 
+    @Override
+    public void init(ClassLoader classLoader) {
+        this.classLoader = Objects.requireNonNull(classLoader);
+    }
+
+    @Override
+    public ClassLoader getClassLoader() {
+        return classLoader;
+    }
 }

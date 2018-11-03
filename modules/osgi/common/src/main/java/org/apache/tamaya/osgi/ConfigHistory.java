@@ -48,9 +48,9 @@ public final class ConfigHistory implements Serializable{
     private long timestamp = System.currentTimeMillis();
     /** The entry type. */
     private TaskType type;
-    /** The previous value. */
+    /** The previous createValue. */
     private Object previousValue;
-    /** The current value. */
+    /** The current createValue. */
     private Object value;
     /** The key. */
     private String key;
@@ -98,8 +98,8 @@ public final class ConfigHistory implements Serializable{
      * Creates and registers an entry when a property has been changed.
      * @param pid the PID
      * @param key the key, not null.
-     * @param previousValue the previous value.
-     * @param value the new value.
+     * @param previousValue the previous createValue.
+     * @param value the new createValue.
      * @return the entry, never null.
      */
     public static ConfigHistory propertySet(String pid, String key, Object value, Object previousValue){
@@ -219,7 +219,7 @@ public final class ConfigHistory implements Serializable{
         return "ConfigHistory{" +
                 "timestamp=" + timestamp +
                 ", previousValue=" + previousValue +
-                ", value=" + value +
+                ", createValue=" + value +
                 ", key='" + key + '\'' +
                 '}';
     }

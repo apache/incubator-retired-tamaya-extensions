@@ -37,11 +37,11 @@ public class ConfigEventManagerTest {
                 testAddListenerValue = event.getResource();
             }
         };
-        ConfigEventManager.addListener(testListener);
-        ConfigEventManager.fireEvent(new SimpleEvent("Event1"));
+        ConfigEventManager.getInstance().addListener(testListener);
+        ConfigEventManager.getInstance().fireEvent(new SimpleEvent("Event1"));
         assertEquals(testAddListenerValue, "Event1");
-        ConfigEventManager.removeListener(testListener);
-        ConfigEventManager.fireEvent(new SimpleEvent("Event2"));
+        ConfigEventManager.getInstance().removeListener(testListener);
+        ConfigEventManager.getInstance().fireEvent(new SimpleEvent("Event2"));
         assertEquals(testAddListenerValue, "Event1");
     }
 
@@ -53,11 +53,11 @@ public class ConfigEventManagerTest {
                 testAddListenerValue = event.getResource();
             }
         };
-        ConfigEventManager.addListener(testListener);
-        ConfigEventManager.fireEvent(new SimpleEvent("Event1"));
+        ConfigEventManager.getInstance().addListener(testListener);
+        ConfigEventManager.getInstance().fireEvent(new SimpleEvent("Event1"));
         assertEquals(testAddListenerValue, "Event1");
-        ConfigEventManager.removeListener(testListener);
-        ConfigEventManager.fireEvent(new SimpleEvent("Event2"));
+        ConfigEventManager.getInstance().removeListener(testListener);
+        ConfigEventManager.getInstance().fireEvent(new SimpleEvent("Event2"));
         assertEquals(testAddListenerValue, "Event1");
     }
 

@@ -60,7 +60,7 @@ public class FilePropertySourceProvider extends AbstractPathPropertySourceProvid
                 }
 
                 for (String key : props.stringPropertyNames()) {
-                    properties.put(key, PropertyValue.of(key, props.getProperty(key), getName()));
+                    properties.put(key, PropertyValue.createValue(key, props.getProperty(key)).setMeta("source", getName()));
                 }
             } catch (IOException e) {
                 throw new ConfigException("Error loading properties from " + propertiesFile, e);

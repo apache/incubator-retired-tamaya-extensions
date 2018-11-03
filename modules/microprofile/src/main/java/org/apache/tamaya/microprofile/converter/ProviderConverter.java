@@ -53,7 +53,7 @@ public class ProviderConverter implements PropertyConverter<Provider> {
 				ConvertQuery converter = new ConvertQuery(value, TypeLiteral.of(targetType));
                 return context.getConfiguration().adapt(converter);
             }catch(Exception e){
-                throw new ConfigException("Error evaluating configuration value.", e);
+                throw new ConfigException("Error evaluating configuration createValue.", e);
             }
         };
     }

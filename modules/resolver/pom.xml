@@ -28,7 +28,7 @@ under the License.
     </parent>
 
     <artifactId>tamaya-resolver</artifactId>
-    <name>Apache Tamaya Resolver Services</name>
+    <name>Apache Tamaya Modules - Placeholder Resolver</name>
     <packaging>jar</packaging>
 
     <dependencies>

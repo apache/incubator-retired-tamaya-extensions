@@ -30,8 +30,8 @@ public class ObservedConfigTest {
 
     @Test
     public void testChangingConfig() throws IOException {
-        ConfigEventManager.setChangeMonitoringPeriod(100L);
-        ConfigEventManager.enableChangeMonitoring(true);
+        ConfigEventManager.getInstance().setChangeMonitoringPeriod(100L);
+        ConfigEventManager.getInstance().enableChangeMonitoring(true);
         while(MyConfigObserver.event==null) {
             try {
                 Thread.sleep(100);

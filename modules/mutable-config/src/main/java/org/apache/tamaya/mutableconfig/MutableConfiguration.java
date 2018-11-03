@@ -19,6 +19,9 @@
 package org.apache.tamaya.mutableconfig;
 
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.mutableconfig.spi.MutableConfigurationProviderSpi;
+import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
+import org.apache.tamaya.spi.ServiceContextManager;
 
 import java.util.Collection;
 import java.util.Map;
@@ -36,7 +39,7 @@ import java.util.Map;
  *
  * This class should only used in a single threaded context, though all methods inherited from {@link Configuration}
  * must be thread-safe. Methods handling configuration changes are expected to be used in a single threaded environment
- * only. For multi-threaded us create a new instance of {@link MutableConfiguration} for each thread.
+ * only. For multi-threaded us createObject a new instance of {@link MutableConfiguration} for each thread.
  */
 public interface MutableConfiguration extends Configuration {
 
@@ -70,9 +73,9 @@ public interface MutableConfiguration extends Configuration {
      * Sets a property.
      *
      * @param key   the property's key, not null.
-     * @param value the property's value, not null.
-     * @return the former property value, or null.
-     * @throws org.apache.tamaya.ConfigException if the key/value cannot be added, or the request is read-only.
+     * @param value the property's createValue, not null.
+     * @return the former property createValue, or null.
+     * @throws org.apache.tamaya.ConfigException if the key/createValue cannot be added, or the request is read-only.
      */
     MutableConfiguration put(String key, String value);
 
@@ -121,5 +124,85 @@ public interface MutableConfiguration extends Configuration {
      * @throws org.apache.tamaya.ConfigException if any of the given keys could not be removedProperties, or the request is read-only.
      */
     MutableConfiguration remove(String... keys);
+
+    /**
+     * Creates a new {@link MutableConfiguration} for the given default configuration
+     * (based on the current classloader), using all
+     * {@link MutablePropertySource} instances found in its context and {@code autoCommit = false}.
+     *
+     * @return a new MutableConfiguration instance
+     * @see ServiceContextManager#getDefaultClassLoader()
+     */
+    static MutableConfiguration create(){
+        return create(ServiceContextManager.getDefaultClassLoader());
+    }
+
+    /**
+     * Creates a new {@link MutableConfiguration} for the given default configuration for
+     * the given target classloader, using all
+     * {@link MutablePropertySource} instances found in its context and {@code autoCommit = false}.
+     *
+     * @param classLoader the target classloader, not null.
+     * @return a new MutableConfiguration instance
+     */
+    static MutableConfiguration create(ClassLoader classLoader){
+        return MutableConfigurationProvider.getInstance(classLoader).createMutableConfiguration();
+    }
+
+    /**
+     * Creates a new {@link MutableConfiguration} for the given default configuration for the current
+     * default classloader, using all
+     * {@link MutablePropertySource} instances found in its context and {@code autoCommit = false}.
+     * @param changePropgationPolicy policy that defines how a change is written back and which property
+     *                               sources are finally eligible for a write operation.
+     * @return a new MutableConfiguration instance, with the given change policy active.
+     * @see ServiceContextManager#getDefaultClassLoader()
+     */
+    static MutableConfiguration create(ChangePropagationPolicy changePropgationPolicy){
+        return create(changePropgationPolicy,
+                ServiceContextManager.getDefaultClassLoader());
+    }
+
+    /**
+     * Creates a new {@link MutableConfiguration} for the configuration based on the given classloader, using all
+     * {@link MutablePropertySource} instances found in its context and {@code autoCommit = false}.
+     * @param changePropgationPolicy policy that defines how a change is written back and which property
+     *                               sources are finally eligible for a write operation.
+     * @param classLoader the target classloader, not null.
+     * @return a new MutableConfiguration instance, with the given change policy active.
+     */
+    static MutableConfiguration create(ChangePropagationPolicy changePropgationPolicy, ClassLoader classLoader){
+        return MutableConfigurationProvider.getInstance(classLoader).createMutableConfiguration(changePropgationPolicy);
+    }
+
+
+    /**
+     * Creates a new {@link MutableConfiguration} for the given configuration, using all
+     * {@link MutablePropertySource} instances found in its context and {@code MOST_SIGNIFICANT_ONLY_POLICY}
+     * configuration writing policy.
+     *
+     * @param configuration the configuration to use to write the changes/config.
+     * @return a new MutableConfiguration instance
+     */
+    static MutableConfiguration create(Configuration configuration){
+        return MutableConfigurationProvider.getInstance(
+                configuration.getContext().getServiceContext().getClassLoader())
+                .createMutableConfiguration(configuration);
+    }
+
+    /**
+     * Creates a new {@link MutableConfiguration} for the given configuration, using all
+     * {@link MutablePropertySource} instances found in its context and {@code ALL_POLICY}
+     * configuration writing policy.
+     *
+     * @param configuration the configuration to use to write the changes/config.
+     * @param changePropagationPolicy the configuration writing policy.
+     * @return a new MutableConfiguration instance
+     */
+    static MutableConfiguration create(Configuration configuration, ChangePropagationPolicy changePropagationPolicy){
+        return MutableConfigurationProvider.getInstance(
+                configuration.getContext().getServiceContext().getClassLoader())
+                .createMutableConfiguration(configuration, changePropagationPolicy);
+    }
 
 }

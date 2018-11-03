@@ -31,7 +31,7 @@ import java.util.List;
  * A setCurrent of property filter and accessor methods. This class is built for
  * usage within a single threaded context, so it is NOT thread-safe.
  */
-public final class CompositeFilter implements PropertyFilter{
+public final class ThreadFilterContext implements PropertyFilter{
     /** The filters. */
     private List<PropertyFilter> filters = new ArrayList<>();
 

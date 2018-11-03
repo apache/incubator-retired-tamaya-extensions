@@ -31,12 +31,12 @@ import static org.junit.Assert.*;
 public class MutableConfigurationProviderTest {
     @Test
     public void createMutableConfiguration() throws Exception {
-        assertNotNull(MutableConfigurationProvider.createMutableConfiguration());
+        assertNotNull(MutableConfigurationProvider.getInstance().createMutableConfiguration());
     }
 
     @Test
     public void createMutableConfiguration1() throws Exception {
-        MutableConfiguration cfg = MutableConfigurationProvider
+        MutableConfiguration cfg = MutableConfigurationProvider.getInstance()
                 .createMutableConfiguration(Configuration.current());
         assertNotNull(cfg);
         assertEquals(cfg.getChangePropagationPolicy(),
@@ -46,7 +46,7 @@ public class MutableConfigurationProviderTest {
     @Test
     public void createMutableConfiguration2() throws Exception {
         ChangePropagationPolicy policy = MutableConfigurationProvider.getApplySelectiveChangePolicy("blabla");
-        MutableConfiguration cfg = MutableConfigurationProvider
+        MutableConfiguration cfg = MutableConfigurationProvider.getInstance()
                 .createMutableConfiguration(Configuration.current(),
                         policy);
         assertNotNull(cfg);
@@ -56,7 +56,7 @@ public class MutableConfigurationProviderTest {
     @Test
     public void createMutableConfiguration3() throws Exception {
         ChangePropagationPolicy policy = MutableConfigurationProvider.getApplySelectiveChangePolicy("gugus");
-        MutableConfiguration cfg = MutableConfigurationProvider
+        MutableConfiguration cfg = MutableConfigurationProvider.getInstance()
                 .createMutableConfiguration(policy);
         assertNotNull(cfg);
         assertEquals(cfg.getChangePropagationPolicy(), policy);

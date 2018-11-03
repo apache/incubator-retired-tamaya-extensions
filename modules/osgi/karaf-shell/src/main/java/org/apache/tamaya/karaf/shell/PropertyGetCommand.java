@@ -35,7 +35,7 @@ public class PropertyGetCommand implements Action{
             required = false, multiValued = false)
     String key = null;
 
-    @Option(name="extended", aliases = "e", description = "Also print extended property value attributes.")
+    @Option(name="extended", aliases = "e", description = "Also print extended property createValue attributes.")
     boolean extended;
 
     @Option(name = "propertysource", aliases = "ps", description = "The target property source id.",

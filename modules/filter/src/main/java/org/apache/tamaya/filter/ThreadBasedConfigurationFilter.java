@@ -36,11 +36,11 @@ import org.apache.tamaya.spi.FilterContext;
  *     For both variants individual filter rules can be applied here. All filters configured are managed on a
  *     thread-local level, so this class is typically used to temporarely filter out some values. Do not forget to
  *     restore its state, when not using a thread anymore (especially important in multi-threaded environments), not
- *     doing so will create nasty side effects of configuration not being visisble depending on the thread
+ *     doing so will createObject nasty side effects of configuration not being visisble depending on the thread
  *     active.
  */
 @Component
-public final class ConfigurationFilter implements PropertyFilter{
+public final class ThreadBasedConfigurationFilter implements PropertyFilter{
 
     static final ThreadLocal<Boolean> THREADED_METADATA_FILTERED = new ThreadLocal<Boolean>(){
         @Override
@@ -49,17 +49,17 @@ public final class ConfigurationFilter implements PropertyFilter{
         }
     };
 
-    private static final ThreadLocal<CompositeFilter> THREADED_MAP_FILTERS = new ThreadLocal<CompositeFilter>(){
+    private static final ThreadLocal<ThreadFilterContext> THREADED_MAP_FILTERS = new ThreadLocal<ThreadFilterContext>(){
         @Override
-        protected CompositeFilter initialValue() {
-            return new CompositeFilter();
+        protected ThreadFilterContext initialValue() {
+            return new ThreadFilterContext();
         }
     };
 
-    private static final ThreadLocal<CompositeFilter> THREADED_VALUE_FILTERS = new ThreadLocal<CompositeFilter>(){
+    private static final ThreadLocal<ThreadFilterContext> THREADED_VALUE_FILTERS = new ThreadLocal<ThreadFilterContext>(){
         @Override
-        protected CompositeFilter initialValue() {
-            return new CompositeFilter();
+        protected ThreadFilterContext initialValue() {
+            return new ThreadFilterContext();
         }
     };
 
@@ -87,7 +87,7 @@ public final class ConfigurationFilter implements PropertyFilter{
      *
      * @return the filtering config, never null.
      */
-    public static CompositeFilter getSingleValueFilterContext(){
+    public static ThreadFilterContext getSingleValueFilterContext(){
         return THREADED_VALUE_FILTERS.get();
     }
 
@@ -97,7 +97,7 @@ public final class ConfigurationFilter implements PropertyFilter{
      * map.
      * @return the filtering config, never null.
      */
-    public static CompositeFilter getMapFilterContext(){
+    public static ThreadFilterContext getMapFilterContext(){
         return THREADED_MAP_FILTERS.get();
     }
 

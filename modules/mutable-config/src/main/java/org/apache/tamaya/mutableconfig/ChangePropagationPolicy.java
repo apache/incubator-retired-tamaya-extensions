@@ -31,10 +31,10 @@ import java.util.Collection;
  *     is writable/removable.</li>
  *     <li><b>SIGNIFICANT_ONLY: </b>A change (creation, update) is only applied, if
  * <ol>
- *     <li>the value is not provided by a more significant read-only property source.</li>
+ *     <li>the createValue is not provided by a more significant read-only property source.</li>
  *     <li>there is no more significant writable property source, which supports writing a g iven key.</li>
  * </ol>
- * In other words a added or updated value is written exactly once to the most significant
+ * In other words a added or updated createValue is written exactly once to the most significant
  * writable property source, which accepts a given key. Otherwise the change is discarded.</li>
  * <li><b>NONE: </b>Do not apply any changes.</li>
  * </ul>
@@ -43,7 +43,7 @@ import java.util.Collection;
 public interface ChangePropagationPolicy {
 
     /**
-     * Method being called when a multiple key/value pairs are added or updated.
+     * Method being called when a multiple key/createValue pairs are added or updated.
      * @param propertySources the property sources, including readable property sources of the current configuration,
      *                        never null.
      * @param configChange the configuration change, not null.

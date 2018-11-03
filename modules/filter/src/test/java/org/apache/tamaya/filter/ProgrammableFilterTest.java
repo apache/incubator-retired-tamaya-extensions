@@ -33,7 +33,7 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 /**
- * Tests for {@link CompositeFilter}. Created by atsticks on 11.02.16.
+ * Tests for {@link ThreadFilterContext}. Created by atsticks on 11.02.16.
  */
 public class ProgrammableFilterTest {
 
@@ -44,7 +44,7 @@ public class ProgrammableFilterTest {
 
     @Test
     public void testAddRemoveFilter() throws Exception {
-        CompositeFilter filter = new CompositeFilter();
+        ThreadFilterContext filter = new ThreadFilterContext();
         Map<String,PropertyValue> map = new HashMap<>();
         FilterContext context1 = new FilterContext(test1Property, map, context);
         FilterContext context2 = new FilterContext(test2Property, map, context);
@@ -86,7 +86,7 @@ public class ProgrammableFilterTest {
 
     @Test
     public void testClearFilters() throws Exception {
-        CompositeFilter filter = new CompositeFilter();
+        ThreadFilterContext filter = new ThreadFilterContext();
         RegexPropertyFilter regexFilter = new RegexPropertyFilter();
         regexFilter.setIncludes("test1.*");
         Map<String,String> map = new HashMap<>();
@@ -125,7 +125,7 @@ public class ProgrammableFilterTest {
 
     @Test
     public void testSetFilters() throws Exception {
-        CompositeFilter filter = new CompositeFilter();
+        ThreadFilterContext filter = new ThreadFilterContext();
         RegexPropertyFilter regexFilter = new RegexPropertyFilter();
         regexFilter.setIncludes("test\\..*");
         Map<String,PropertyValue> map = new HashMap<>();
@@ -157,7 +157,7 @@ public class ProgrammableFilterTest {
 
     @Test
     public void testSetFilters1() throws Exception {
-        CompositeFilter filter = new CompositeFilter();
+        ThreadFilterContext filter = new ThreadFilterContext();
         RegexPropertyFilter regexFilter = new RegexPropertyFilter();
         regexFilter.setIncludes("test1.*");
 
@@ -185,7 +185,7 @@ public class ProgrammableFilterTest {
 
     @Test
     public void testGetFilters() throws Exception {
-        CompositeFilter filter = new CompositeFilter();
+        ThreadFilterContext filter = new ThreadFilterContext();
         assertNotNull(filter.getFilters());
         assertTrue(filter.getFilters().isEmpty());
         RegexPropertyFilter regexFilter = new RegexPropertyFilter();
@@ -199,7 +199,7 @@ public class ProgrammableFilterTest {
 
     @Test
     public void testToString() throws Exception {
-        CompositeFilter filter = new CompositeFilter();
+        ThreadFilterContext filter = new ThreadFilterContext();
         assertFalse(filter.toString().contains("test\\..*"));
         assertTrue(filter.toString().contains("ProgrammableFilter"));
         assertFalse(filter.toString().contains("RegexPropertyFilter"));

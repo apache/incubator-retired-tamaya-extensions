@@ -42,9 +42,9 @@ public class ChangeableGlobalPropertySource extends BasePropertySource{
     }
 
     /**
-     * Put a value (globally) into this property source.
+     * Put a createValue (globally) into this property source.
      * @param key the key, not null
-     * @param value the value, not null
+     * @param value the createValue, not null
      * @return the entry replaced, or null.
      */
     public static String put(String key, String value){

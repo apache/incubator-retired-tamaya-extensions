@@ -60,7 +60,7 @@ public class FrozenConfigurationTest {
     @Test
     public void twoFrozenAreDifferentIfTheyHaveADifferentIdAndFrozenAtTimestamp() {
         Map<String, String> properties = new HashMap<>();
-        properties.put("key", "value");
+        properties.put("key", "createValue");
 
         Configuration configuration = Mockito.mock(Configuration.class);
         doReturn(properties).when(configuration).getProperties();

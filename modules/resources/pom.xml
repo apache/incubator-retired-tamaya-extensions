@@ -28,7 +28,7 @@ under the License.
     </parent>
 
     <artifactId>tamaya-resources</artifactId>
-    <name>Apache Tamaya Resource Services</name>
+    <name>Apache Tamaya Modules - Resource Locator</name>
     <packaging>jar</packaging>
 
     <dependencies>

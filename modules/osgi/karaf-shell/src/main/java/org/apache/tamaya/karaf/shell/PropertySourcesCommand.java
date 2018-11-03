@@ -28,7 +28,7 @@ import org.apache.tamaya.spi.PropertySource;
 
 import java.io.IOException;
 
-@Command(scope = "tamaya", name = "tm_propertysources", description="Get a list of currently registered propertysources.")
+@Command(scope = "tamaya", name = "tm_propertysources", description="Get a createList of currently registered propertysources.")
 @Service
 public class PropertySourcesCommand implements Action{
 

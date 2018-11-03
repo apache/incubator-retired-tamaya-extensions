@@ -24,46 +24,51 @@ import javax.json.JsonString;
 import javax.json.JsonValue;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.spi.ListValue;
+import org.apache.tamaya.spi.ObjectValue;
 import org.apache.tamaya.spi.PropertyValue;
+
+import java.util.Objects;
 
 /**
  * Visitor implementation to read a JSON asString input source.
  */
 class JSONDataBuilder {
 
-    private PropertyValue data = PropertyValue.create();
+    private String resource;
+    private PropertyValue data;
     private JsonValue root;
 
     JSONDataBuilder(String resource, JsonValue root) {
-        data.setMeta("resource", resource);
-        data.setMeta("format", "json");
+        this.resource = Objects.requireNonNull(resource);
         this.root = root;
     }
 
-    private void addJsonObject(JsonObject jsonObject, PropertyValue parent, String objectKey){
-        PropertyValue dataNode = objectKey==null?parent:parent.getOrCreateChild(objectKey);
+    private void addJsonObject(JsonObject jsonObject, ObjectValue dataNode){
         jsonObject.forEach((key,val) -> {
             switch(val.getValueType()) {
                 case FALSE:
-                    dataNode.addProperty(key, Boolean.FALSE.toString());
+                    dataNode.setField(key, Boolean.FALSE.toString());
                     break;
                 case TRUE:
-                    dataNode.addProperty(key, Boolean.TRUE.toString());
+                    dataNode.setField(key, Boolean.TRUE.toString());
                     break;
                 case NUMBER:
-                    dataNode.addProperty(key, val.toString());
+                    dataNode.setField(key, val.toString());
                     break;
                 case STRING:
-                    dataNode.addProperty(key, ((JsonString) val).getString());
+                    dataNode.setField(key, ((JsonString) val).getString());
                     break;
                 case NULL:
-                    dataNode.addProperty(key, null);
+                    dataNode.setField(key, null);
                     break;
                 case OBJECT:
-                    addJsonObject((JsonObject)val, dataNode, key);
+                    ObjectValue oval = dataNode.setFieldObject(key);
+                    addJsonObject((JsonObject)val, oval);
                     break;
                 case ARRAY:
-                    addArray((JsonArray)val, dataNode, key);
+                    ListValue aval = dataNode.setFieldList(key);
+                    addArray((JsonArray)val, aval);
                     break;
                 default:
                     throw new ConfigException("Internal failure while processing JSON document.");
@@ -71,29 +76,30 @@ class JSONDataBuilder {
         });
     }
 
-    private void addArray(JsonArray array, PropertyValue parent, String arrayKey) {
+    private void addArray(JsonArray array, ListValue dataNode) {
         array.forEach(val -> {
-            PropertyValue dataNode = parent.createChild(arrayKey, true);
             switch(val.getValueType()) {
                 case NULL:
                     break;
                 case FALSE:
-                    dataNode.setValue(Boolean.FALSE.toString());
+                    dataNode.addValue(Boolean.FALSE.toString());
                     break;
                 case TRUE:
-                    dataNode.setValue(Boolean.TRUE.toString());
+                    dataNode.addValue(Boolean.TRUE.toString());
                     break;
                 case NUMBER:
-                    dataNode.setValue(val.toString());
+                    dataNode.addValue(val.toString());
                     break;
                 case STRING:
-                    dataNode.setValue(((JsonString) val).getString());
+                    dataNode.addValue(((JsonString) val).getString());
                     break;
                 case OBJECT:
-                    addJsonObject((JsonObject)val, dataNode, null);
+                    ObjectValue oval = dataNode.addObject();
+                    addJsonObject((JsonObject)val, oval);
                     break;
                 case ARRAY:
-                    addArray((JsonArray)val, dataNode, "");
+                    ListValue aval = dataNode.addList();
+                    addArray((JsonArray)val, aval);
                     break;
                 default:
                     throw new ConfigException("Internal failure while processing JSON document.");
@@ -103,13 +109,17 @@ class JSONDataBuilder {
 
     public PropertyValue build() {
         if (root instanceof JsonObject) {
-            addJsonObject((JsonObject)root, data, null);
+            data = PropertyValue.createObject("");
+            addJsonObject((JsonObject)root, (ObjectValue) data);
         } else if (root instanceof JsonArray) {
             JsonArray array = (JsonArray)root;
-            addArray(array, data, "");
+            data = PropertyValue.createList("");
+            addArray(array, (ListValue)data);
         } else {
             throw new ConfigException("Unknown JsonType encountered: " + root.getClass().getName());
         }
+        data.setMeta("resource", resource);
+        data.setMeta("format", "json");
         return data;
     }
 

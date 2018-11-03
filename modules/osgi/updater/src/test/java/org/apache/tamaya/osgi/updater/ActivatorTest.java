@@ -33,12 +33,12 @@ public class ActivatorTest extends AbstractOSGITest{
 
     @Test
     public void startStop() throws Exception {
-        int size = ConfigEventManager.getListeners().size();
+        int size = ConfigEventManager.getInstance().getListeners().size();
         Activator activator = new Activator();
         activator.start(super.bundleContext);
-        assertEquals(ConfigEventManager.getListeners().size(), size+1);
+        assertEquals(ConfigEventManager.getInstance().getListeners().size(), size+1);
         activator.stop(super.bundleContext);
-        assertEquals(ConfigEventManager.getListeners().size(), size);
+        assertEquals(ConfigEventManager.getInstance().getListeners().size(), size);
     }
 
 }

@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.functions;
 
-import org.apache.tamaya.ConfigOperator;
-import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConfigurationContext;
@@ -98,16 +96,6 @@ class FilteredConfiguration implements Configuration {
             }
         }
         return result;
-    }
-
-    @Override
-    public Configuration with(ConfigOperator operator) {
-        return null;
-    }
-
-    @Override
-    public <T> T query(ConfigQuery<T> query) {
-        return query.query(this);
     }
 
     @Override

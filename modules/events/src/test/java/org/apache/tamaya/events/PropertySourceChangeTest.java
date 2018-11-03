@@ -106,7 +106,7 @@ public class PropertySourceChangeTest {
     @Test
     public void testGetUpdatedSizeWithUpdates() throws Exception {
         Map<String, String> addableMap = new HashMap<>();
-        addableMap.put("java.home", "/new/java/home/value");
+        addableMap.put("java.home", "/new/java/home/createValue");
 
         PropertySourceChange change = PropertySourceChangeBuilder.of(myPS)
                 .addChanges(

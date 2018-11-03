@@ -20,30 +20,30 @@ package org.apache.tamaya.mutableconfig;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.mutableconfig.spi.MutableConfigurationProviderSpi;
 import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.ServiceContextManager;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 
 
 /**
  * Accessor for creating {@link MutableConfiguration} instances to change configuration and commit changes.
+ * @deprecated Use static methods on {@link MutableConfiguration}.
  */
+@Deprecated
 public final class MutableConfigurationProvider {
 
     private static final Logger LOG = Logger.getLogger(MutableConfigurationProvider.class.getName());
+    private ClassLoader classLoader;
+
     /**
      * URIs used by this query instance to identify the backends to use for write operations.
      */
-    private static MutableConfigurationProviderSpi spi(){
-            MutableConfigurationProviderSpi spi = ServiceContextManager.getServiceContext().getService(
+    private static MutableConfigurationProviderSpi spi(ClassLoader classLoader){
+            MutableConfigurationProviderSpi spi = ServiceContextManager.getServiceContext(classLoader).getService(
                     MutableConfigurationProviderSpi.class)  ;
         if(spi==null){
             throw new ConfigException("Failed to initialize MutableConfigurationProviderSpi - " +
@@ -52,9 +52,29 @@ public final class MutableConfigurationProvider {
         return spi;
     }
 
+    /**
+     * Get the current mutable config provider for the default classloader.
+     * @return the corresponding provider, not null.
+     * @see ServiceContextManager#getDefaultClassLoader()
+     */
+    public static MutableConfigurationProvider getInstance(){
+        return getInstance(ServiceContextManager.getDefaultClassLoader());
+    }
+
+    /**
+     * Get the current mutable config provider for the given classloader.
+     * @param classLoader the target classloader, not null.
+     * @return the corresponding provider, not null.
+     */
+    public static MutableConfigurationProvider getInstance(ClassLoader classLoader){
+        return ServiceContextManager.getServiceContext().getService(MutableConfigurationProvider.class,
+                () -> new MutableConfigurationProvider(classLoader));
+    }
 
     /** Singleton constructor. */
-    private MutableConfigurationProvider(){}
+    private MutableConfigurationProvider(ClassLoader classLoader){
+        this.classLoader = Objects.requireNonNull(classLoader);
+    }
 
     /**
      * Creates a new {@link MutableConfiguration} for the given default configuration, using all
@@ -62,9 +82,9 @@ public final class MutableConfigurationProvider {
      *
      * @return a new MutableConfiguration instance
      */
-    public static MutableConfiguration createMutableConfiguration(){
-        return spi().createMutableConfiguration(
-                Configuration.current(), getApplyMostSignificantOnlyChangePolicy());
+    public MutableConfiguration createMutableConfiguration(){
+        return spi(classLoader).createMutableConfiguration(
+                Configuration.current(classLoader), getApplyMostSignificantOnlyChangePolicy());
     }
 
     /**
@@ -74,9 +94,9 @@ public final class MutableConfigurationProvider {
      *                               sources are finally eligible for a write operation.
      * @return a new MutableConfiguration instance, with the given change policy active.
      */
-    public static MutableConfiguration createMutableConfiguration(ChangePropagationPolicy changePropgationPolicy){
-        return spi().createMutableConfiguration(
-                Configuration.current(), changePropgationPolicy);
+    public MutableConfiguration createMutableConfiguration(ChangePropagationPolicy changePropgationPolicy){
+        return spi(classLoader).createMutableConfiguration(
+                Configuration.current(classLoader), changePropgationPolicy);
     }
 
 
@@ -88,7 +108,7 @@ public final class MutableConfigurationProvider {
      * @param configuration the configuration to use to write the changes/config.
      * @return a new MutableConfiguration instance
      */
-    public static MutableConfiguration createMutableConfiguration(Configuration configuration){
+    public MutableConfiguration createMutableConfiguration(Configuration configuration){
         return createMutableConfiguration(configuration, MOST_SIGNIFICANT_ONLY_POLICY);
     }
 
@@ -101,8 +121,9 @@ public final class MutableConfigurationProvider {
      * @param changePropagationPolicy the configuration writing policy.
      * @return a new MutableConfiguration instance
      */
-    public static MutableConfiguration createMutableConfiguration(Configuration configuration, ChangePropagationPolicy changePropagationPolicy){
-        return spi().createMutableConfiguration(configuration, changePropagationPolicy);
+    public MutableConfiguration createMutableConfiguration(Configuration configuration, ChangePropagationPolicy changePropagationPolicy){
+        return spi(configuration.getContext().getServiceContext().getClassLoader())
+                .createMutableConfiguration(configuration, changePropagationPolicy);
     }
 
     /**
@@ -196,6 +217,14 @@ public final class MutableConfigurationProvider {
             LOG.warning("Cannot store changes '"+change+"': prohibited by change policy (read-only).");
         }
     };
+
+    /**
+     * Get the provider's classloader.
+     * @return the classloader, not null.
+     */
+    public ClassLoader getClassLoader() {
+        return classLoader;
+    }
 
     /**
      * This propagation policy writes through all changes to all mutable property sources, where applicable.

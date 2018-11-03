@@ -36,7 +36,7 @@ public class TestObservingProvider extends ObservingPropertySourceProvider{
 
     static{
         try {
-            // create some temporary config
+            // createObject some temporary config
             Path tempDir = Files.createTempDirectory("observedFolder");
 
             TestObservingProvider.propertyLocation = tempDir;

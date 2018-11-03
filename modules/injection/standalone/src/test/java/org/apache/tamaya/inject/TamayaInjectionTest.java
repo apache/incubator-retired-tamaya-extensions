@@ -117,7 +117,7 @@ public class TamayaInjectionTest {
     public void testConfigTemplate_WithCustomConfig(){
         Map<String,String> properties = new HashMap<>();
         properties.put("env.stage", "custom-stage");
-        properties.put("simple_value", "custom-value");
+        properties.put("simple_value", "custom-createValue");
         properties.put("host.name", "custom-hostname");
         properties.put("anotherValue", "custom-HALLO!");
         properties.put("foo.bar.myprop", "custom-parameter");
@@ -129,7 +129,7 @@ public class TamayaInjectionTest {
                 .createTemplate(AnnotatedConfigTemplate.class, customConfig);
         assertEquals(testInstance.hostName(), "custom-hostname");
         assertEquals(testInstance.myParameter(), "custom-parameter");
-        assertEquals(testInstance.simpleValue(), "custom-value");
+        assertEquals(testInstance.simpleValue(), "custom-createValue");
         assertNotNull(testInstance.getDynamicValue());
         assertTrue(testInstance.getDynamicValue().isPresent());
         assertEquals(testInstance.getDynamicValue().get(), "custom-hostname");

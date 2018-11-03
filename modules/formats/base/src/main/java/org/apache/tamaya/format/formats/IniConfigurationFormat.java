@@ -21,6 +21,7 @@ package org.apache.tamaya.format.formats;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.format.ConfigurationData;
 import org.apache.tamaya.format.ConfigurationFormat;
+import org.apache.tamaya.spi.ObjectValue;
 import org.apache.tamaya.spi.PropertyValue;
 import org.osgi.service.component.annotations.Component;
 
@@ -52,7 +53,7 @@ public class IniConfigurationFormat implements ConfigurationFormat {
     @Override
     public ConfigurationData readConfiguration(String resource, InputStream inputStream)
     throws IOException{
-        PropertyValue data = PropertyValue.create();
+        PropertyValue data = PropertyValue.createObject();
         data.setMeta("resource", resource);
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"))) {
             String line = reader.readLine();
@@ -81,17 +82,17 @@ public class IniConfigurationFormat implements ConfigurationFormat {
                     String value = line.substring(sep + 1);
                     if (section != null) {
                         final String sectionName = section;
-                        PropertyValue sectionPV = sections.computeIfAbsent(section,
-                                s -> PropertyValue.of(sectionName, "", resource)
+                        ObjectValue sectionPV = (ObjectValue)sections.computeIfAbsent(section,
+                                s -> PropertyValue.createObject(sectionName)
                         .setMeta(ConfigurationFormat.class, this));
-                        sectionPV.addChild(PropertyValue.of(key, value, resource)
-                                .setMeta(ConfigurationFormat.class, this));
+                        sectionPV.setField(key, value).setMeta("source", resource)
+                                .setMeta(ConfigurationFormat.class, this);
                     } else {
                         String finalSection = "default";
-                        PropertyValue sectionBuilder = sections.computeIfAbsent(section,
-                                s -> PropertyValue.of(finalSection, "", resource));
-                        sectionBuilder.addChild(PropertyValue.of(key, value, resource)
-                                .setMeta(ConfigurationFormat.class, this));
+                        ObjectValue sectionBuilder = (ObjectValue)sections.computeIfAbsent(section,
+                                s -> PropertyValue.createObject(finalSection).setMeta("source", resource));
+                        sectionBuilder.setField(key, value).setMeta("source", resource)
+                                .setMeta(ConfigurationFormat.class, this);
                     }
                 }
                 line = reader.readLine();

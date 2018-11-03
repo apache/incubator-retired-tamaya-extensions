@@ -62,7 +62,7 @@ public final class OptionalConfiguration {
     }
 
     /**
-     * Default value provider returning Strings from system properties and the system environment.
+     * Default createValue provider returning Strings from system properties and the system environment.
      * In all other cases {@code null} is returned.
      */
     public static final ValueProvider DEFAULT_PROVIDER = new ValueProvider() {
@@ -81,7 +81,7 @@ public final class OptionalConfiguration {
     };
 
     /**
-     * Default value provider that always returns {@code null}.
+     * Default createValue provider that always returns {@code null}.
      */
     public static final ValueProvider NULLPROVIDER = new ValueProvider() {
         @Override
@@ -91,7 +91,7 @@ public final class OptionalConfiguration {
     };
 
     /**
-     * Delegating value getter used to evaluate values, depending on the fallback policy.
+     * Delegating createValue getter used to evaluate values, depending on the fallback policy.
      */
     private final ValueProvider provider;
 
@@ -103,7 +103,7 @@ public final class OptionalConfiguration {
     /**
      * Creates a new instance.
      *
-     * @param policy   the policy how a value should be evaluated depending if Tamaya is available or not.
+     * @param policy   the policy how a createValue should be evaluated depending if Tamaya is available or not.
      * @param provider the non Tamaya-based provider to be used to evaluate values.
      */
     private OptionalConfiguration(EvaluationPolicy policy, ValueProvider provider) {
@@ -114,7 +114,7 @@ public final class OptionalConfiguration {
     /**
      * Returns an instance of OptionalConfiguration, which uses the given provider and policy for evaluating the values.
      *
-     * @param policy   the policy how a value should be evaluated depending if Tamaya is available or not.
+     * @param policy   the policy how a createValue should be evaluated depending if Tamaya is available or not.
      * @param provider the non Tamaya-based provider to be used to evaluate values.
      * @return a default OptionalConfiguration instance, never null.
      */
@@ -126,7 +126,7 @@ public final class OptionalConfiguration {
      * Returns a default instance, which uses a default provider returning values from system properties and environment
      * only.
      *
-     * @param policy the policy how a value should be evaluated depending if Tamaya is available or not.
+     * @param policy the policy how a createValue should be evaluated depending if Tamaya is available or not.
      * @return a default OptionalConfiguration instance, never null.
      */
     public static OptionalConfiguration of(EvaluationPolicy policy) {
@@ -134,21 +134,21 @@ public final class OptionalConfiguration {
     }
 
     /**
-     * Access a String value.
+     * Access a String createValue.
      *
      * @param key the key, not null.
-     * @return the value found, or null.
+     * @return the createValue found, or null.
      */
     public String get(String key) {
         return get(key, String.class);
     }
 
     /**
-     * Access a String value.
+     * Access a String createValue.
      *
      * @param key          the key, not null.
-     * @param defaultValue the default value, returned if no such key is found in the configuration.
-     * @return the value found, or null.
+     * @param defaultValue the default createValue, returned if no such key is found in the configuration.
+     * @return the createValue found, or null.
      */
     public String getOrDefault(String key, String defaultValue) {
         final String value = get(key, String.class);
@@ -159,13 +159,13 @@ public final class OptionalConfiguration {
     }
 
     /**
-     * Method that returns the corresponding value, depending on the availability of Tamaya, the
+     * Method that returns the corresponding createValue, depending on the availability of Tamaya, the
      * registered provider and evaluation policy.
      *
      * @param key  the key, not null.
      * @param type the target type, not null.
      * @param <T>  the type param.
-     * @return the value, or null.
+     * @return the createValue, or null.
      */
     public <T> T get(String key, Class<T> type) {
         final T value = provider.get(key, type);
@@ -190,13 +190,13 @@ public final class OptionalConfiguration {
     }
 
     /**
-     * Access a String value.
+     * Access a String createValue.
      *
      * @param key          the key, not null.
      * @param type         the target type, not null.
      * @param <T>          the type param.
-     * @param defaultValue the default value, returned if no such key is found in the configuration.
-     * @return the value found, or null.
+     * @param defaultValue the default createValue, returned if no such key is found in the configuration.
+     * @return the createValue found, or null.
      */
     public <T> T getOrDefault(String key, Class<T> type, T defaultValue) {
         final T value = get(key, type);
@@ -207,12 +207,12 @@ public final class OptionalConfiguration {
     }
 
     /**
-     * Internal method that evaluates a value from Tamaya, when Tamaya is loaded.
+     * Internal method that evaluates a createValue from Tamaya, when Tamaya is loaded.
      *
      * @param key  the key, not null.
      * @param type the target type, not null.
      * @param <T>  The type param
-     * @return the corresponding value from Tamaya, or null.
+     * @return the corresponding createValue from Tamaya, or null.
      * @throws IllegalStateException if Tamaya is not loaded.
      * @see #isTamayaLoaded()
      */

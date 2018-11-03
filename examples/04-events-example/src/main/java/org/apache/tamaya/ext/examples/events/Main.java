@@ -19,7 +19,6 @@
 package org.apache.tamaya.ext.examples.events;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.events.ConfigEvent;
 import org.apache.tamaya.events.ConfigEventListener;
 import org.apache.tamaya.events.ConfigEventManager;
@@ -61,9 +60,9 @@ public class Main {
 
         installCleanupHook(getPropertiesFilePath());
 
-        ConfigEventManager.addListener(new ConfigurationChangeListener());
-        ConfigEventManager.setChangeMonitoringPeriod(1_000L);
-        ConfigEventManager.enableChangeMonitoring(true);
+        ConfigEventManager.getInstance().addListener(new ConfigurationChangeListener());
+        ConfigEventManager.getInstance().setChangeMonitoringPeriod(1_000L);
+        ConfigEventManager.getInstance().enableChangeMonitoring(true);
         Configuration configuration = Configuration.current();
 
         for (Map.Entry<String, String> e : configuration.getProperties().entrySet()) {

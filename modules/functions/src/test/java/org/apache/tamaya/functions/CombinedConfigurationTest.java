@@ -210,7 +210,7 @@ public class CombinedConfigurationTest {
                 cc.getOrDefault("a", TypeLiteral.of(Integer.class), null);
             }
         }).isInstanceOf(NullPointerException.class)
-          .hasMessage("Default value must be given.");
+          .hasMessage("Default createValue must be given.");
     }
 
     @Test
@@ -284,7 +284,7 @@ public class CombinedConfigurationTest {
                 cc.getOrDefault("a", Integer.class, null);
             }
         }).isInstanceOf(NullPointerException.class)
-          .hasMessage("Default value must be given.");
+          .hasMessage("Default createValue must be given.");
     }
 
     @Test

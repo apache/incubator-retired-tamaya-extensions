@@ -21,6 +21,7 @@ package org.apache.tamaya.events.internal;
 import org.apache.tamaya.events.ConfigEvent;
 import org.apache.tamaya.events.ConfigEventListener;
 import org.apache.tamaya.events.spi.ConfigEventManagerSpi;
+import org.apache.tamaya.spi.ClassloaderAware;
 import org.apache.tamaya.spi.ServiceContextManager;
 import org.osgi.service.component.annotations.Component;
 
@@ -37,7 +38,7 @@ import java.util.logging.Logger;
  */
 @SuppressWarnings("rawtypes")
 @Component
-public class DefaultConfigEventManagerSpi implements ConfigEventManagerSpi {
+public class DefaultConfigEventManagerSpi implements ConfigEventManagerSpi, ClassloaderAware {
 
     private static final Logger LOG = Logger.getLogger(DefaultConfigEventManagerSpi.class.getName());
 
@@ -45,7 +46,9 @@ public class DefaultConfigEventManagerSpi implements ConfigEventManagerSpi {
 
     private final ExecutorService publisher = Executors.newCachedThreadPool();
 
-    private final DefaultConfigChangeObserver changeObserver = new DefaultConfigChangeObserver();
+    private ClassLoader classLoader;
+
+    private DefaultConfigChangeObserver changeObserver;
 
     /**
      * Constructor. Also loads all registered listeners.
@@ -183,6 +186,17 @@ public class DefaultConfigEventManagerSpi implements ConfigEventManagerSpi {
     @Override
     public void enableChangeMonitor(boolean enable) {
         changeObserver.enableMonitoring(enable);
+    }
+
+    @Override
+    public void init(ClassLoader classLoader) {
+        this.classLoader = Objects.requireNonNull(classLoader);
+        changeObserver = new DefaultConfigChangeObserver(classLoader);
+    }
+
+    @Override
+    public ClassLoader getClassLoader() {
+        return classLoader;
     }
 
 

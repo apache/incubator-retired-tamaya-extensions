@@ -26,10 +26,10 @@ package org.apache.tamaya.functions;
 public interface PropertyMapper {
 
     /**
-     * Maps the given key/value to another value.
+     * Maps the given key/createValue to another createValue.
      * @param key the key, not null.
-     * @param value the value, not null.
-     * @return the new value, not null.
+     * @param value the createValue, not null.
+     * @return the new createValue, not null.
      */
     String mapProperty(String key, String value);
 

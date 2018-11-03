@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
 public class FormatPropertySourceProviderTest
         extends BaseFormatPropertySourceProvider {
     public FormatPropertySourceProviderTest() {
-        super(ConfigurationFormats.getFormats(), "Test.ini", "Test.properties");
+        super(ConfigurationFormats.getInstance().getFormats(), "Test.ini", "Test.properties");
     }
 
     @Test

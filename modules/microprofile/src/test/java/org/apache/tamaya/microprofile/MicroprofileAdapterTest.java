@@ -161,7 +161,7 @@ public class MicroprofileAdapterTest {
     @Test
     public void toStringMap() throws Exception {
         Map<String,PropertyValue> props = new HashMap<>();
-        props.put("a", PropertyValue.create("a","b").setMeta("source", "toStringMap"));
+        props.put("a", PropertyValue.createValue("a","b").setMeta("source", "toStringMap"));
         Map<String, String> mpProps = MicroprofileAdapter.toStringMap(props);
         assertNotNull(mpProps);
         assertEquals(props.keySet(), mpProps.keySet());

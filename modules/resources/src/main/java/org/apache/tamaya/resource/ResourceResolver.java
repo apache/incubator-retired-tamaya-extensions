@@ -18,6 +18,9 @@
  */
 package org.apache.tamaya.resource;
 
+import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.spi.ServiceContextManager;
+
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
@@ -45,7 +48,7 @@ import java.util.Collection;
 public interface ResourceResolver {
 
     /**
-     * Resolves resource expressions to a list of {@link URL}s. Hereby
+     * Resolves resource expressions to a createList of {@link URL}s. Hereby
      * the ordering of format matches the input of the resolved expressions. Nevertheless be aware that
      * there is no determined ordering of format located within a classloader.
      *
@@ -54,16 +57,10 @@ public interface ResourceResolver {
      * null.
      * .
      */
-    default Collection<URL> getResources(Collection<String> expressions) {
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        if (cl == null) {
-            cl = getClass().getClassLoader();
-        }
-        return getResources(cl, expressions);
-    }
+    Collection<URL> getResources(Collection<String> expressions);
 
     /**
-     * Resolves resource expressions to a list of {@link URL}s. Hereby
+     * Resolves resource expressions to a createList of {@link URL}s. Hereby
      * the ordering of format matches the input of the resolved expressions. Nevertheless be aware that
      * there is no determined ordering of format located within a classloader.
      *
@@ -77,36 +74,37 @@ public interface ResourceResolver {
     }
 
     /**
-     * Resolves resource expressions to a list of {@link URL}s, considerubg
-     * the given classloader for classloader dependent format. Hereby
-     * the ordering of format matches the input of the resolved expressions. Nevertheless be aware that
-     * there is no determined ordering of format located within a classloader.
-     *
-     * @param classLoader classloader to use for resolving.
-     * @param expressions the expressions to be resolved, not empty.
-     * @return the corresponding collection of current {@link URL}s found, never {@code null}.
-     */
-    default Collection<URL> getResources(ClassLoader classLoader, String... expressions){
-        return getResources(classLoader, Arrays.asList(expressions));
-    }
-
-    /**
-     * Resolves resource expressions to a list of {@link URL}s, considerubg
-     * the given classloader for classloader dependent format. Hereby
-     * the ordering of format matches the input of the resolved expressions. Nevertheless be aware that
-     * there is no determined ordering of format located within a classloader.
-     *
-     * @param classLoader classloader to use for resolving.
-     * @param expressions the expressions to be resolved, not empty.
-     * @return the corresponding collection of current {@link URL}s found,
-     * never {@code null}.
-     */
-    Collection<URL> getResources(ClassLoader classLoader, Collection<String> expressions);
-
-    /**
      * Access the currently registered {@link ResourceLocator} instances.
      * @return the currently known {@link ResourceLocator} instances, never null.
      */
     Collection<ResourceLocator> getResourceLocators();
+
+    /**
+     * <p>Access the current ResourceResolver using the default classloader.</p>
+     *
+     * @throws ConfigException if no ResourceResolver is available (should not happen).
+     *
+     * @return the current ResourceResolver instance, never null.
+     * @see ServiceContextManager#getDefaultClassLoader()
+     */
+    static ResourceResolver current() throws ConfigException {
+        return current(ServiceContextManager.getDefaultClassLoader());
+    }
+
+    /**
+     * <p>Access the current ResourceResolver.</p>
+     *
+     * @throws ConfigException if no ResourceResolver is available (should not happen).
+     *
+     * @return the current ResourceResolver instance, never null.
+     */
+    static ResourceResolver current(ClassLoader classLoader) throws ConfigException {
+        ResourceResolver resolver = ServiceContextManager.getServiceContext(classLoader)
+                .getService(ResourceResolver.class);
+        if (resolver == null) {
+            throw new ConfigException("ResourceResolver not available.");
+        }
+        return resolver;
+    }
 
 }

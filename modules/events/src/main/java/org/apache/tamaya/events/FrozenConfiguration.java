@@ -36,7 +36,7 @@ import java.util.logging.Logger;
 /**
  * /**
  * Configuration implementation that stores all current values of a given (possibly dynamic, contextual and non server
- * capable instance) and is fully serializable. Note that hereby only the scannable key/value pairs are considered.
+ * capable instance) and is fully serializable. Note that hereby only the scannable key/createValue pairs are considered.
  */
 public final class FrozenConfiguration implements Configuration, Serializable {
     private static final long serialVersionUID = -6373137316556444171L;
@@ -101,15 +101,15 @@ public final class FrozenConfiguration implements Configuration, Serializable {
     }
 
     /**
-     * Accesses the current String value for the given key and tries to convert it
+     * Accesses the current String createValue for the given key and tries to convert it
      * using the {@link org.apache.tamaya.spi.PropertyConverter} instances provided by the current
      * {@link org.apache.tamaya.spi.ConfigurationContext}.
      *
      * @param key  the property's absolute, or relative path, e.g. @code
      *             a/b/c/d.myProperty}.
      * @param type The target type required, not null.
-     * @param <T>  the value type
-     * @return the converted value, never null.
+     * @param <T>  the createValue type
+     * @return the converted createValue, never null.
      */
     @Override
     public <T> T get(String key, TypeLiteral<T> type) {
@@ -128,11 +128,11 @@ public final class FrozenConfiguration implements Configuration, Serializable {
                         }
                     } catch (Exception e) {
                         Logger.getLogger(getClass().getName())
-                                .log(Level.FINEST, "PropertyConverter: " + converter + " failed to convert value: " + value,
+                                .log(Level.FINEST, "PropertyConverter: " + converter + " failed to convert createValue: " + value,
                                         e);
                     }
                 }
-                throw new ConfigException("Unparseable config value for type: " + type.getRawType().getName() + ": " + key
+                throw new ConfigException("Unparseable config createValue for type: " + type.getRawType().getName() + ": " + key
                         + ", supported formats: " + context.getSupportedFormats());
             }finally{
                 ConversionContext.reset();

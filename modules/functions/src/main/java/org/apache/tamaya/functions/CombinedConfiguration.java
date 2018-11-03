@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.functions;
 
-import org.apache.tamaya.ConfigOperator;
-import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConfigurationContext;
@@ -90,7 +88,7 @@ class CombinedConfiguration implements Configuration{
     public <T> T getOrDefault(String key, Class<T> type, T defaultValue) {
         Objects.requireNonNull(type, "Type must be given.");
         Objects.requireNonNull(key, "Key must be given.");
-        Objects.requireNonNull(defaultValue, "Default value must be given.");
+        Objects.requireNonNull(defaultValue, "Default createValue must be given.");
 
         T val = get(key, type);
         if(val==null){
@@ -127,7 +125,7 @@ class CombinedConfiguration implements Configuration{
     public <T> T getOrDefault(String key, TypeLiteral<T> type, T defaultValue) {
         Objects.requireNonNull(key, "Key must be given.");
         Objects.requireNonNull(type, "Type must be given.");
-        Objects.requireNonNull(defaultValue, "Default value must be given.");
+        Objects.requireNonNull(defaultValue, "Default createValue must be given.");
 
         T val = get(key, type);
         if(val==null){
@@ -143,20 +141,6 @@ class CombinedConfiguration implements Configuration{
             result.putAll(ps.getProperties());
         }
         return result;
-    }
-
-    @Override
-    public Configuration with(ConfigOperator operator) {
-        Objects.requireNonNull(operator, "Operator must be given.");
-
-        return operator.operate(this);
-    }
-
-    @Override
-    public <T> T query(ConfigQuery<T> query) {
-        Objects.requireNonNull(query, "Query must be given.");
-
-        return query.query(this);
     }
 
     @Override

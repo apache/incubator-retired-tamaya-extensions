@@ -19,6 +19,7 @@
 package org.apache.tamaya.cdi;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.spi.ClassloaderAware;
 import org.apache.tamaya.spi.ServiceContext;
 import org.apache.tamaya.spisupport.PriorityServiceComparator;
 
@@ -28,6 +29,7 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -50,10 +52,10 @@ final class ServiceLoaderServiceContext implements ServiceContext {
     private ClassLoader classLoader;
 
     @Override
-    public <T> T getService(Class<T> serviceType) {
+    public <T> T getService(Class<T> serviceType, Supplier<T> supplier) {
         Object cached = singletons.get(serviceType);
         if (cached == null) {
-            cached = create(serviceType);
+            cached = create(serviceType, supplier);
             if(cached!=null) {
                 singletons.put(serviceType, cached);
             }
@@ -62,11 +64,18 @@ final class ServiceLoaderServiceContext implements ServiceContext {
     }
 
     @Override
-    public <T> T create(Class<T> serviceType) {
+    public <T> T create(Class<T> serviceType, Supplier<T> supplier) {
         Class<? extends T> implType = factoryTypes.get(serviceType);
         if(implType==null) {
             Collection<T> services = getServices(serviceType);
             if (services.isEmpty()) {
+                if(supplier!=null){
+                    T instance = supplier.get();
+                    if(instance instanceof ClassloaderAware){
+                        ((ClassloaderAware)instance).init(this.classLoader);
+                    }
+                    return instance;
+                }
                 return null;
             } else {
                 return getServiceWithHighestPriority(services, serviceType);
@@ -75,7 +84,10 @@ final class ServiceLoaderServiceContext implements ServiceContext {
         try {
             return implType.newInstance();
         } catch (Exception e) {
-            LOG.log(Level.SEVERE, "Failed to create instance of " + implType.getName(), e);
+            LOG.log(Level.SEVERE, "Failed to createObject instance of " + implType.getName(), e);
+            if(supplier!=null){
+                return supplier.get();
+            }
             return  null;
         }
     }
@@ -88,14 +100,23 @@ final class ServiceLoaderServiceContext implements ServiceContext {
      * @return the items found, never {@code null}.
      */
     @Override
-    public <T> List<T> getServices(final Class<T> serviceType) {
+    public <T> List<T> getServices(final Class<T> serviceType, Supplier<List<T>> supplier) {
         List<T> found = (List<T>) servicesLoaded.get(serviceType);
         if (found != null) {
             return found;
         }
+        List<T> services = loadServices(serviceType, supplier);
+        final List<T> previousServices = List.class.cast(servicesLoaded.putIfAbsent(serviceType, (List<Object>) services));
+        return previousServices != null ? previousServices : services;
+    }
+
+    private <T> List<T> loadServices(Class<T> serviceType, Supplier<List<T>> supplier) {
         List<T> services = new ArrayList<>();
         try {
             for (T t : ServiceLoader.load(serviceType)) {
+                if(t instanceof ClassloaderAware){
+                    ((ClassloaderAware)t).init(classLoader);
+                }
                 services.add(t);
             }
             Collections.sort(services, PriorityServiceComparator.getInstance());
@@ -107,12 +128,20 @@ final class ServiceLoaderServiceContext implements ServiceContext {
                 services = Collections.emptyList();
             }
         }
-        final List<T> previousServices = List.class.cast(servicesLoaded.putIfAbsent(serviceType, (List<Object>) services));
-        return previousServices != null ? previousServices : services;
+        if(services.isEmpty() && supplier!=null){
+            List<T> ts = supplier.get();
+            for (T t : ts) {
+                if(t instanceof ClassloaderAware){
+                    ((ClassloaderAware)t).init(classLoader);
+                }
+                services.add(t);
+            }
+        }
+        return services;
     }
 
     /**
-     * Checks the given instance for a @Priority annotation. If present the annotation's value s evaluated. If no such
+     * Checks the given instance for a @Priority annotation. If present the annotation's createValue s evaluated. If no such
      * annotation is present, a default priority is returned (1);
      * @param o the instance, not null.
      * @return a priority, by default 1.
@@ -136,7 +165,7 @@ final class ServiceLoaderServiceContext implements ServiceContext {
      */
     private <T> T getServiceWithHighestPriority(Collection<T> services, Class<T> serviceType) {
         T highestService = null;
-        // we do not need the priority stuff if the list contains only one element
+        // we do not need the priority stuff if the createList contains only one element
         if (services.size() == 1) {
             highestService = services.iterator().next();
             this.factoryTypes.put(serviceType, highestService.getClass());
@@ -195,6 +224,16 @@ final class ServiceLoaderServiceContext implements ServiceContext {
     @Override
     public URL getResource(String resource){
         return classLoader.getResource(resource);
+    }
+
+    @Override
+    public <T> T register(Class<T> type, T instance, boolean force) {
+        return null;
+    }
+
+    @Override
+    public <T> List<T> register(Class<T> type, List<T> instances, boolean force) {
+        return null;
     }
 
 }

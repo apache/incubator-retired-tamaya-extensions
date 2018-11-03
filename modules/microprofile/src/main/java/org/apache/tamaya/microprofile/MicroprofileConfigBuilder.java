@@ -46,7 +46,6 @@ final class MicroprofileConfigBuilder implements ConfigBuilder {
         this.configurationBuilder = Objects.requireNonNull(configurationBuilder);
         configurationBuilder.addDefaultPropertyConverters();
     }
-    
     public ConfigurationBuilder getConfigurationBuilder() {
     	return configurationBuilder;
     }
@@ -80,11 +79,14 @@ final class MicroprofileConfigBuilder implements ConfigBuilder {
      */
     @Override
     public ConfigBuilder addDiscoveredSources() {
-        for(ConfigSource configSource: ServiceContextManager.getServiceContext().getServices(ConfigSource.class)){
+        for(ConfigSource configSource: ServiceContextManager.getServiceContext(
+                configurationBuilder.getClassLoader()).getServices(ConfigSource.class)){
         	configurationBuilder.addPropertySources(MicroprofileAdapter.toPropertySource(configSource));
         }
 
-        for(ConfigSourceProvider configSourceProvider: ServiceContextManager.getServiceContext().getServices(ConfigSourceProvider.class)){
+        for(ConfigSourceProvider configSourceProvider: ServiceContextManager.getServiceContext(
+                configurationBuilder.getClassLoader()
+        ).getServices(ConfigSourceProvider.class)){
         	configurationBuilder.addPropertySources(MicroprofileAdapter.toPropertySources(configSourceProvider.getConfigSources(
                     Thread.currentThread().getContextClassLoader()
             )));
@@ -100,7 +102,9 @@ final class MicroprofileConfigBuilder implements ConfigBuilder {
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
     public ConfigBuilder addDiscoveredConverters() {
-        for(Converter<?> converter: ServiceContextManager.getServiceContext().getServices(Converter.class)){
+        for(Converter<?> converter: ServiceContextManager.getServiceContext(
+                configurationBuilder.getClassLoader()
+        ).getServices(Converter.class)){
 			TypeLiteral targetType = TypeLiteral.of(
                     TypeLiteral.getGenericInterfaceTypeParameters(converter.getClass(),Converter.class)[0]);
             
@@ -147,10 +151,10 @@ final class MicroprofileConfigBuilder implements ConfigBuilder {
     
     @Override
     public Config build() {
-    	Configuration.setCurrent(
-        		getConfigurationBuilder().build());
+        Configuration config = getConfigurationBuilder().build();
+    	Configuration.setCurrent(config);
     	
-        return MicroprofileAdapter.toConfig(Configuration.current());
+        return MicroprofileAdapter.toConfig(config);
     }
 
 }

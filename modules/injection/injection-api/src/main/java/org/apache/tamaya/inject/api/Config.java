@@ -46,9 +46,9 @@ import java.lang.annotation.Target;
  *     <li>The current valid Configuration is evaluated by calling {@code Configuration cfg = Configuration.current();}</li>
  *     <li>The current possible property keys are evaluated by calling {@code cfg.current("a.b.ConfigureItem.aValue");},
  *     {@code cfg.current("ConfigureItem.aValue");}, {@code cfg.current("aValue");}</li>
- *     <li>if not successful, and since no @ConfigDefault annotation is present, the configured default value is used.
- *     <li>If no value could be evaluated a ({@link org.apache.tamaya.ConfigException} is thrown.</li>
- *     <li>On success, since no type conversion is involved, the value is injected.</li>
+ *     <li>if not successful, and since no @ConfigDefault annotation is present, the configured default createValue is used.
+ *     <li>If no createValue could be evaluated a ({@link org.apache.tamaya.ConfigException} is thrown.</li>
+ *     <li>On success, since no type conversion is involved, the createValue is injected.</li>
  * </ul>
  *
  * <h3>Explicit annotations</h3>
@@ -57,14 +57,14 @@ import java.lang.annotation.Target;
  * &amp;ConfigDefaultSections("section1")
  * public class ConfiguredItem {
  *
- *   &amp;Config(value = {"b", "[a.b.deprecated.keys]", "a"}, defaultValue = "myDefaultValue")
+ *   &amp;Config(createValue = {"b", "[a.b.deprecated.keys]", "a"}, defaultValue = "myDefaultValue")
  *   private String aValue;
  * }
  * </pre>
  *
  * Within this example we evaluate multiple possible keys: {@code section1.b, a.b.deprecated.keys, section1.a}.
  * Evaluation is aborted if a key is resolved successfully. Hereby the ordering of the annotation values
- * define the ordering of resolution. If no value can be found, the configured default {@code myDefaultValue} is
+ * define the ordering of resolution. If no createValue can be found, the configured default {@code myDefaultValue} is
  * injected.
  *
  * <h3>Using explicit field annotation only</h3>
@@ -75,7 +75,7 @@ import java.lang.annotation.Target;
  *
  * public class ConfiguredItem {
  *
- *   &amp;Config(value = {"b", "[a.b.deprecated.keys]", "a"}, defaultValue = "myDefaultValue")
+ *   &amp;Config(createValue = {"b", "[a.b.deprecated.keys]", "a"}, defaultValue = "myDefaultValue")
  *   private String aValue;
  * }
  * </pre>
@@ -93,8 +93,8 @@ public @interface Config {
     String UNCONFIGURED_VALUE = "org.apache.tamaya.config.configproperty.unconfigureddvalue";
 
     /**
-     * Defines the configuration property keys to be used. Hereby the first non null value evaluated is injected as
-     * property value.
+     * Defines the configuration property keys to be used. Hereby the first non null createValue evaluated is injected as
+     * property createValue.
      *
      * @return the property keys, not null. If empty, the field or property name (of a setter method) being injected
      * is used by default.
@@ -103,13 +103,13 @@ public @interface Config {
     String[] value() default {};
 
     /**
-     * The default value to be injected, if none of the configuration keys could be resolved. If no key has been
-     * resolved and no default value is defined, it is, by default, handled as a deployment error. Depending on the
+     * The default createValue to be injected, if none of the configuration keys could be resolved. If no key has been
+     * resolved and no default createValue is defined, it is, by default, handled as a deployment error. Depending on the
      * extension loaded default values can be fixed Strings or even themselves resolvable. For typed configuration of
-     * type T entries that are not Strings the default value must be a valid input to a corresponding
+     * type T entries that are not Strings the default createValue must be a valid input to a corresponding
      * {@link org.apache.tamaya.spi.PropertyConverter}.
      * 
-     * @return default value used in case resolution fails.
+     * @return default createValue used in case resolution fails.
      */
     @Nonbinding
     String defaultValue() default UNCONFIGURED_VALUE;
@@ -118,7 +118,7 @@ public @interface Config {
      * Flag that defines if a configuration property is required. If a required
      * property is missing, a {@link org.apache.tamaya.ConfigException} is raised.
      * Default is {@code true}.
-     * @return the flag value.
+     * @return the flag createValue.
      */
     @Nonbinding
     boolean required() default true;

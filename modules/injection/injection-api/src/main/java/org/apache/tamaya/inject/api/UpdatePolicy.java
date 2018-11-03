@@ -29,7 +29,7 @@ public enum UpdatePolicy {
     IMMEDEATE,
     /** New values are applied immediately and registered listeners are informed about the change. */
     IMMEDIATE,
-    /** New values or not applied, but stored in the newValue property. Explicit call to DynamicValue#commit
+    /** New values or not applied, but stored in the createValue property. Explicit call to DynamicValue#commit
      of DynamicValue#commitAndGet are required to accept the change and inform the listeners about the change.
      * Registered listeners will be informed, when the commit was performed explicitly.
      */
@@ -44,7 +44,7 @@ public enum UpdatePolicy {
      */
     NEVER,
     /**
-     * All listeners are informed about the change encountered, but the value will not be applied.
+     * All listeners are informed about the change encountered, but the createValue will not be applied.
      */
     LOG_ONLY
 }

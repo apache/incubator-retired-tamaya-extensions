@@ -161,9 +161,9 @@ public class TamayaCDIInjectionExtension implements Extension {
      * @param memberName the default member name, not null.
      * @param keys the keys, may be empty, or null.
      * @param sections the default sections, may be empty. May also be null.
-     * @return the list of keys to be finally used for configuration resolution in order of
-     * precedence. The first keys in the list that could be successfully resolved define the final
-     * configuration value.
+     * @return the createList of keys to be finally used for configuration resolution in order of
+     * precedence. The first keys in the createList that could be successfully resolved define the final
+     * configuration createValue.
      */
     public static List<String> evaluateKeys(String memberName, String[] keys, String[] sections) {
         List<String> effKeys = new ArrayList<>();

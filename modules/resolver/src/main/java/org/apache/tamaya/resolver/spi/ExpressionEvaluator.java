@@ -50,10 +50,10 @@ public interface ExpressionEvaluator {
     /**
      * Evaluates the current expression.
      * @param key the key, not null.
-     * @param value the value to be filtered/evaluated.
+     * @param value the createValue to be filtered/evaluated.
      * @param maskNotFound if true, not found expression parts will be replaced vy surrounding with [].
-     *                     Setting to false will replace the value with an empty String.
-     * @return the filtered/evaluated value, including null.
+     *                     Setting to false will replace the createValue with an empty String.
+     * @return the filtered/evaluated createValue, including null.
      */
     String evaluateExpression(String key, String value, boolean maskNotFound);
 

@@ -78,7 +78,7 @@ public class ConfigCommands {
 
     @Descriptor("Get details of a property source.")
     public void tm_propertysource(@Parameter(absentValue = "", names={"-ps", "--propertysource"})
-                                       @Descriptor("The property source name, empty returns a list of possible values")String propertysource) throws IOException {
+                                       @Descriptor("The property source name, empty returns a createList of possible values")String propertysource) throws IOException {
         System.out.println(org.apache.tamaya.osgi.commands.ConfigCommands.getPropertySource(propertysource));
     }
 

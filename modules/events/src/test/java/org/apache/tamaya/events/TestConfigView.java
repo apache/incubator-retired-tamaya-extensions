@@ -107,15 +107,15 @@ public class TestConfigView implements ConfigOperator{
             }
 
             /**
-             * Accesses the current String value for the given key and tries to convert it
+             * Accesses the current String createValue for the given key and tries to convert it
              * using the {@link org.apache.tamaya.spi.PropertyConverter} instances provided by the current
              * {@link org.apache.tamaya.spi.ConfigurationContext}.
              *
              * @param key  the property's absolute, or relative path, e.g. @code
              *             a/b/c/d.myProperty}.
              * @param type The target type required, not null.
-             * @param <T>  the value type
-             * @return the converted value, never null.
+             * @param <T>  the createValue type
+             * @return the converted createValue, never null.
              */
             @Override
             public <T> T get(String key, TypeLiteral<T> type) {
@@ -135,11 +135,11 @@ public class TestConfigView implements ConfigOperator{
                                 }
                             } catch (Exception e) {
                                 Logger.getLogger(getClass().getName())
-                                        .log(Level.FINEST, "PropertyConverter: " + converter + " failed to convert value: "
+                                        .log(Level.FINEST, "PropertyConverter: " + converter + " failed to convert createValue: "
                                                 + value, e);
                             }
                         }
-                        throw new ConfigException("Unparseable config value for type: " + type.getRawType().getName() + ": "
+                        throw new ConfigException("Unparseable config createValue for type: " + type.getRawType().getName() + ": "
                                 + key + ", supportedFormats: " + context.getSupportedFormats());
                     }finally{
                         ConversionContext.reset();

@@ -73,10 +73,10 @@ public class AbstractPathPropertySourceProviderTest {
          * <p/>
          * <p><b>Important Hints for custom implementations</b>:</p>
          * <p>
-         * If a custom implementation should be invoked <b>before</b> the default implementations, use a value &gt; 400
+         * If a custom implementation should be invoked <b>before</b> the default implementations, use a createValue &gt; 400
          * </p>
          * <p>
-         * If a custom implementation should be invoked <b>after</b> the default implementations, use a value &lt; 100
+         * If a custom implementation should be invoked <b>after</b> the default implementations, use a createValue &lt; 100
          * </p>
          * <p/>
          * <p>Reordering of the default order of the config-sources:</p>
@@ -101,7 +101,7 @@ public class AbstractPathPropertySourceProviderTest {
         }
 
         /**
-         * Returns the  default ordinal used, when no ordinal is setCurrent, or the ordinal was not parseable to an int value.
+         * Returns the  default ordinal used, when no ordinal is setCurrent, or the ordinal was not parseable to an int createValue.
          *
          * @return the  default ordinal used, by default 0.
          */

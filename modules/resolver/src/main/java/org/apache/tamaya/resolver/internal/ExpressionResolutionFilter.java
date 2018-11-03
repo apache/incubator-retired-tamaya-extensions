@@ -91,8 +91,8 @@ public class ExpressionResolutionFilter implements PropertyFilter, ClassloaderAw
      * <li><code>\${resolverId:expression}foo${resolverId2:expression2}bar</code> (first expression is escaped).</li>
      * </ul>
      *
-     * @param valueToBeFiltered value to be analyzed for expressions
-     * @return the resolved value, or the input in case where no expression was detected.
+     * @param valueToBeFiltered createValue to be analyzed for expressions
+     * @return the resolved createValue, or the input in case where no expression was detected.
      */
     @Override
     public PropertyValue filterProperty(PropertyValue valueToBeFiltered){

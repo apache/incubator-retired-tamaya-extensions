@@ -127,12 +127,12 @@ public class MicroprofileConfigurationProducer {
                 try {
                     value = converter.convert(textValue);
                     if (value != null) {
-                        LOGGER.log(Level.FINEST, "Parsed default value from '" + textValue + "' into " +
+                        LOGGER.log(Level.FINEST, "Parsed default createValue from '" + textValue + "' into " +
                                 injectionPoint);
                         break;
                     }
                 } catch (Exception e) {
-                    LOGGER.log(Level.FINEST, "Failed to convert value '" + textValue + "' for " +
+                    LOGGER.log(Level.FINEST, "Failed to convert createValue '" + textValue + "' for " +
                             injectionPoint, e);
                 }
             }

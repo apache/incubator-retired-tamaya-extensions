@@ -42,7 +42,7 @@ public class DefaultEnableCommand implements Action{
     @Reference
     private TamayaConfigService configPlugin;
 
-    @Argument(index = 0, name = "enabled", description = "The boolean value to enabled/disable Tamaya by default.",
+    @Argument(index = 0, name = "enabled", description = "The boolean createValue to enabled/disable Tamaya by default.",
             required = true, multiValued = false)
     boolean enabled;
 

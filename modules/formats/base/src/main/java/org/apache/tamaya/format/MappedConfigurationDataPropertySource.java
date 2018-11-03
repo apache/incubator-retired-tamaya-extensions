@@ -43,7 +43,7 @@ public class MappedConfigurationDataPropertySource extends BasePropertySource {
      * Constructor, uses hereby the flattened config data read from an URL by a
      * ${@link org.apache.tamaya.format.ConfigurationFormat}.
      * Hereby it reads the <i>default</i> properties as is and adds properties
-     * contained in a section as {@code Entry<section.propertyName,value>}.
+     * contained in a section as {@code Entry<section.propertyName,createValue>}.
      * @see ConfigurationData#getCombinedProperties()
      */
     public MappedConfigurationDataPropertySource(String name, final Supplier<ConfigurationData> dataSupplier) {
@@ -54,7 +54,7 @@ public class MappedConfigurationDataPropertySource extends BasePropertySource {
      * Constructor, uses hereby the flattened config data read from an URL by a
      * ${@link org.apache.tamaya.format.ConfigurationFormat}.
      * Hereby it reads the <i>default</i> properties as is and adds properties
-     * contained in a section as {@code Entry<section.propertyName,value>}.
+     * contained in a section as {@code Entry<section.propertyName,createValue>}.
      * @see ConfigurationData#getCombinedProperties()
      */
     public MappedConfigurationDataPropertySource(final ConfigurationData data) {
@@ -65,7 +65,7 @@ public class MappedConfigurationDataPropertySource extends BasePropertySource {
      * Constructor, uses hereby the flattened config data read from an URL by a
      * ${@link org.apache.tamaya.format.ConfigurationFormat}.
      * Hereby it reads the <i>default</i> properties as is and adds properties
-     * contained in a section as {@code Entry<section.propertyName,value>}.
+     * contained in a section as {@code Entry<section.propertyName,createValue>}.
      * @see ConfigurationData#getCombinedProperties()
      */
     public MappedConfigurationDataPropertySource(int defaultOrdinal, final ConfigurationData data) {
@@ -76,7 +76,7 @@ public class MappedConfigurationDataPropertySource extends BasePropertySource {
      * Constructor, uses hereby the flattened config data read from an URL by a
      * ${@link org.apache.tamaya.format.ConfigurationFormat}.
      * Hereby it reads the <i>default</i> properties as is and adds properties
-     * contained in a section as {@code Entry<section.propertyName,value>}.
+     * contained in a section as {@code Entry<section.propertyName,createValue>}.
      * @see ConfigurationData#getCombinedProperties()
      */
     public MappedConfigurationDataPropertySource(String name, int defaultOrdinal, Supplier<ConfigurationData> dataSupplier) {

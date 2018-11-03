@@ -59,7 +59,7 @@ class VfsSupport {
         ClassLoader loader = VfsSupport.class.getClassLoader();
         try {
             Class<?> vfsClass = loader.loadClass(VFS3_PKG + VFS_PROTOCOL);
-            methodGetRootUrl = findMethod(vfsClass, "getChild", URL.class);
+            methodGetRootUrl = findMethod(vfsClass, "getField", URL.class);
             Class<?> virtualFile = loader.loadClass(VFS3_PKG + "VirtualFile");
             methodToUrl = findMethod(virtualFile, "toURL");
             methodGetPathName = findMethod(virtualFile, "getPathName");
@@ -182,7 +182,7 @@ class VfsSupport {
      * @param name       the name of the method
      * @param paramTypes the parameter types of the method
      *                   (may be {@code null} to indicate any signature)
-     * @return the Method object, or {@code null} if none found
+     * @return the Method createObject, or {@code null} if none found
      */
     private static Method findMethod(Class<?> clazz, String name, Class<?>... paramTypes) {
         Objects.requireNonNull(clazz, "Class must not be null");
@@ -203,15 +203,15 @@ class VfsSupport {
 
 
     /**
-     * Get the field represented by the supplied {@link Field field object} on the
-     * specified {@link Object target object}. In accordance with {@link Field#get(Object)}
-     * semantics, the returned value is automatically wrapped if the underlying field
+     * Get the field represented by the supplied {@link Field field createObject} on the
+     * specified {@link Object target createObject}. In accordance with {@link Field#get(Object)}
+     * semantics, the returned createValue is automatically wrapped if the underlying field
      * has a primitive type.
      * <p>Thrown exceptions are rethrown as {@link IllegalStateException}.
      *
      * @param field  the field to current
-     * @param target the target object from which to current the field
-     * @return the field's current value
+     * @param target the target createObject from which to current the field
+     * @return the field's current createValue
      */
     private static Object readField(Field field, Object target) {
         try {
@@ -231,7 +231,7 @@ class VfsSupport {
      *
      * @param clazz the class to introspect
      * @param name  the name of the field
-     * @return the corresponding Field object, or {@code null} if not found
+     * @return the corresponding Field createObject, or {@code null} if not found
      */
     private static Field findField(Class<?> clazz, String name) {
         Objects.requireNonNull(clazz, "Class must not be null");

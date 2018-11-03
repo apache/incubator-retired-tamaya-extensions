@@ -57,7 +57,7 @@ public final class ConfigChangeRequest {
     }
 
     /**
-     * Sets the started at value. By default {@link #startedAt} is already setCurrent on instance creation to
+     * Sets the started at createValue. By default {@link #startedAt} is already setCurrent on instance creation to
      * {@code System.currentTimeMillis()}.
      * @param startedAt the new UTC POSIX timestamp in millis.
      */
@@ -82,8 +82,8 @@ public final class ConfigChangeRequest {
     }
 
     /**
-     * Get an unmodifiable key/value map of properties added or updated.
-     * @return an unmodifiable key/value map of properties added or updated, never null.
+     * Get an unmodifiable key/createValue map of properties added or updated.
+     * @return an unmodifiable key/createValue map of properties added or updated, never null.
      */
     public Map<String,String> getAddedProperties(){
         return Collections.unmodifiableMap(addedProperties);
@@ -98,9 +98,9 @@ public final class ConfigChangeRequest {
     }
 
     /**
-     * Adds/updates a new key/value pair.
+     * Adds/updates a new key/createValue pair.
      * @param key the key, not null.
-     * @param value the value, not null.
+     * @param value the createValue, not null.
      */
     public void put(String key, String value) {
         this.addedProperties.put(key, value);

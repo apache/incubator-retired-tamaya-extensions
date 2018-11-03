@@ -50,6 +50,7 @@ public interface ConfigurationInjector {
      * @param instance the instance to be configured
      * @param config the configuration to be used for injection.
      * @return the configured instance (allows chaining of operations).
+     * @throws IllegalArgumentException if the configuration's and the injector's classloader do not match.
      */
     <T> T configure(T instance, Configuration config);
 
@@ -69,6 +70,7 @@ public interface ConfigurationInjector {
      * @param config the configuration to be used for backing the template.
      * @param templateType the type of the template to be created.
      * @return the configured template.
+     * @throws IllegalArgumentException if the configuration's and the injector's classloader do not match.
      */
     <T> T createTemplate(Class<T> templateType, Configuration config);
 
@@ -76,7 +78,7 @@ public interface ConfigurationInjector {
     /**
      * Creates a supplier for configured instances of the given type {@code T}.
      * 
-     * @param supplier the supplier to create new instances.
+     * @param supplier the supplier to createObject new instances.
      * @param <T> the target type.
      * @return a supplier creating configured instances of {@code T}.
      */
@@ -85,10 +87,11 @@ public interface ConfigurationInjector {
     /**
      * Creates a supplier for configured instances of the given type {@code T}.
      * 
-     * @param supplier the supplier to create new instances.
+     * @param supplier the supplier to createObject new instances.
      * @param config the configuration to be used for backing the supplier.
      * @param <T> the target type.
      * @return a supplier creating configured instances of {@code T}.
+     * @throws IllegalArgumentException if the configuration's and the injector's classloader do not match.
      */
     <T> Supplier<T> getConfiguredSupplier(Supplier<T> supplier, Configuration config);
 

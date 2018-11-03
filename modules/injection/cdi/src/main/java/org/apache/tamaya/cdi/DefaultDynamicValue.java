@@ -36,10 +36,10 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 /**
- * A accessor for a single configured value. This can be used to support values that may change during runtime,
+ * A accessor for a single configured createValue. This can be used to support values that may change during runtime,
  * reconfigured or final. Hereby external code (could be Tamaya configuration listeners or client code), can setCurrent a
- * new value. Depending on the {@link UpdatePolicy} the new value is immediately active or it requires an active commit
- * by client code. Similarly an instance also can ignore all later changes to the value.
+ * new createValue. Depending on the {@link UpdatePolicy} the new createValue is immediately active or it requires an active commit
+ * by client code. Similarly an instance also can ignore all later changes to the createValue.
  * <h3>Implementation Details</h3>
  * This class is
  * <ul>
@@ -47,15 +47,9 @@ import java.util.*;
  * <li>Thread safe</li>
  * </ul>
  *
- * @param <T> The type of the value.
+ * @param <T> The type of the createValue.
  */
 final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
-
-    /**
-     * Back reference to the base configuration instance. This reference is used reevalaute the given property and
-     * compare the result with the previous value after a configuration change was triggered.
-     */
-    private final Configuration configuration;
 
     /**
      * The property converter to be applied, may be null. In the ladder case targetType is not null.
@@ -78,8 +72,7 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
     private DefaultDynamicValue(Object owner, String propertyName, Configuration configuration, TypeLiteral<T> targetType,
                                 PropertyConverter<T> customConverter, List<String> keys, LoadPolicy loadPolicy,
                                 UpdatePolicy updatePolicy) {
-        super(owner, propertyName, targetType, keys);
-        this.configuration = Objects.requireNonNull(configuration);
+        super(owner, propertyName, targetType, keys, configuration);
         this.customConverter = customConverter;
         this.loadPolicy = Objects.requireNonNull(loadPolicy);
         setUpdatePolicy(updatePolicy);
@@ -176,13 +169,6 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
                 loadPolicy, updatePolicy);
     }
 
-
-    @Override
-    protected Configuration getConfiguration() {
-        return configuration;
-    }
-
-
     @Override
     protected PropertyConverter<T> getCustomConverter() {
         return customConverter;
@@ -191,11 +177,11 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
     @Override
     public String toString() {
         return "DefaultDynamicValue{" +
-                "configuration=" + configuration +
+                "configuration=" + getConfiguration() +
                 ", customConverter=" + customConverter +
                 ", loadPolicy=" + loadPolicy +
-                ", value=" + value +
-                ", newValue=" + newValue +
+                ", createValue=" + value +
+                ", createValue=" + newValue +
                 ", defaultValue=" + getDefaultValue() +
                 ", discarded=" + discarded +
                 ", keys=" + getKeys() +

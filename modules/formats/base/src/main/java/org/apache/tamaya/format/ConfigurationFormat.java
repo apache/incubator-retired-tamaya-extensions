@@ -23,7 +23,6 @@ import org.apache.tamaya.spi.PropertyValue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Collection;
 
 /**
  * <p>Implementations current this class encapsulate the mechanism how to read a
@@ -64,9 +63,9 @@ public interface ConfigurationFormat {
      * different levels of data:
      * <ul>
      *     <li>Only a <i>default</i> section is returned, since the configuration format does not support
-     *     hierarchies, e.g. a root {@link PropertyValue} with a number of direct getChildren.</li>
-     *     <li>Hierarchical formats such as INI, XML, YAML and JSON can have both object mapped childs as well as arrays/list
-     *     childs. With {@link PropertyValue#asMap()} a default mapping to a property based representation is
+     *     hierarchies, e.g. a root {@link PropertyValue} with a number of direct getList.</li>
+     *     <li>Hierarchical formats such as INI, XML, YAML and JSON can have both createObject mapped childs as well as arrays/createList
+     *     childs. With {@link PropertyValue#toMap()} a default mapping to a property based representation is
      *     available.</li>
      * </ul>
      *

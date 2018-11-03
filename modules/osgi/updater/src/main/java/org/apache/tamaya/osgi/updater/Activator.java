@@ -51,14 +51,14 @@ public class Activator implements BundleActivator {
     @Override
     public void start(BundleContext context) throws Exception {
         listener = new EventListener(context);
-        ConfigEventManager.addListener(listener, ConfigurationChange.class);
+        ConfigEventManager.getInstance().addListener(listener, ConfigurationChange.class);
         LOG.info("Registered Tamaya getConfig trigger for OSGI.");
         ServiceReference<TamayaConfigService> pluginRef = context.getServiceReference(TamayaConfigService.class);
         TamayaConfigService tamayaPlugin = context.getService(pluginRef);
         updateTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                ConfigEventManager.enableChangeMonitoring(tamayaPlugin.isAutoUpdateEnabled());
+                ConfigEventManager.getInstance().enableChangeMonitoring(tamayaPlugin.isAutoUpdateEnabled());
             }
         }, DELAY, PERIOD);
     }
@@ -67,9 +67,9 @@ public class Activator implements BundleActivator {
     public void stop(BundleContext context) throws Exception {
         updateTimer.cancel();
         if (listener != null) {
-            ConfigEventManager.removeListener(this.listener, ConfigurationChange.class);
+            ConfigEventManager.getInstance().removeListener(this.listener, ConfigurationChange.class);
             LOG.info("Unregistered Tamaya getConfig trigger for OSGI.");
-            ConfigEventManager.enableChangeMonitoring(false);
+            ConfigEventManager.getInstance().enableChangeMonitoring(false);
         }
     }
 

@@ -23,10 +23,10 @@ import java.util.function.Supplier;
 
 
 /**
- * <p>A accessor for a single configured value. This can be used to support values that may change during runtime,
+ * <p>A accessor for a single configured createValue. This can be used to support values that may change during runtime,
  * reconfigured or final. Hereby external code (could be Tamaya configuration listners or client code), can setCurrent a
- * new value. Depending on the {@link UpdatePolicy} the new value is immedeately active or it requires an active commit
- * by client code. Similarly an instance also can ignore all later changes to the value.</p>
+ * new createValue. Depending on the {@link UpdatePolicy} the new createValue is immedeately active or it requires an active commit
+ * by client code. Similarly an instance also can ignore all later changes to the createValue.</p>
  *
  * <p>Types of this interface can be used as injection targets in injected beans or as template resiult on configuration
  * templates.</p>
@@ -38,74 +38,74 @@ import java.util.function.Supplier;
  *     <li>Thread safe</li>
  * </ul>
  *
- * @param <T> The type of the value.
+ * @param <T> The type of the createValue.
  */
 public interface DynamicValue<T> {
 
     /**
-     * Performs a commit, if necessary, and returns the current value.
+     * Performs a commit, if necessary, and returns the current createValue.
      *
-     * @return the non-null value held by this {@code DynamicValue}
-     * @throws org.apache.tamaya.ConfigException if there is no value present
+     * @return the non-null createValue held by this {@code DynamicValue}
+     * @throws org.apache.tamaya.ConfigException if there is no createValue present
      *
      * @see DynamicValue#isPresent()
      */
     T commitAndGet();
 
     /**
-     * Commits a new value that has not been committed yet, make it the new value of the instance. On change any
+     * Commits a new createValue that has not been committed yet, make it the new createValue of the instance. On change any
      * registered listeners will be triggered.
      */
     void commit();
 
     /**
-     * Discards a new value that has been published and ignore all future evaluations to the last discarded
-     * value. If a different new value than the discarded value will be evaluated a value change
+     * Discards a new createValue that has been published and ignore all future evaluations to the last discarded
+     * createValue. If a different new createValue than the discarded createValue will be evaluated a createValue change
      * will be flagged and handled as defined by the {@link UpdatePolicy}.
      * No listeners will be triggered.
      */
     void discard();
 
     /**
-     * Access the {@link UpdatePolicy} used for updating this value.
+     * Access the {@link UpdatePolicy} used for updating this createValue.
      * @return the update policy, never null.
      */
     UpdatePolicy getUpdatePolicy();
 
     /**
-     * Add a listener to be called as weak reference, when this value has been changed.
+     * Add a listener to be called as weak reference, when this createValue has been changed.
      * @param l the listener, not null
      */
     void addListener(PropertyChangeListener l);
 
     /**
-     * Removes a listener to be called, when this value has been changed.
+     * Removes a listener to be called, when this createValue has been changed.
      * @param l the listner to be removed, not null
      */
     void removeListener(PropertyChangeListener l);
 
     /**
-     * If a value is present in this {@code DynamicValue}, returns the value,
+     * If a createValue is present in this {@code DynamicValue}, returns the createValue,
      * otherwise throws {@code ConfigException}.
      *
-     * @return the non-null value held by this {@code Optional}
-     * @throws org.apache.tamaya.ConfigException if there is no value present
+     * @return the non-null createValue held by this {@code Optional}
+     * @throws org.apache.tamaya.ConfigException if there is no createValue present
      *
      * @see DynamicValue#isPresent()
      */
     T get();
 
     /**
-     * Method to check for and apply a new value. Depending on the {@link  UpdatePolicy}
-     * the value is immediately or deferred visible (or it may even be ignored completely).
-     * @return true, if a new value has been detected. The value may not be visible depending on the current
+     * Method to check for and apply a new createValue. Depending on the {@link  UpdatePolicy}
+     * the createValue is immediately or deferred visible (or it may even be ignored completely).
+     * @return true, if a new createValue has been detected. The createValue may not be visible depending on the current
      * {@link UpdatePolicy} in place.
      */
     boolean updateValue();
 
     /**
-     * Evaluates the current value dynamically from the underlying configuration.
-     * @return the current actual value, or null.
+     * Evaluates the current createValue dynamically from the underlying configuration.
+     * @return the current actual createValue, or null.
      */
     T evaluateValue();
 
@@ -116,53 +116,53 @@ public interface DynamicValue<T> {
     void setUpdatePolicy(UpdatePolicy updatePolicy);
 
     /**
-     * Access a new value that has not yet been committed.
-     * @return the uncommitted new value, or null.
+     * Access a new createValue that has not yet been committed.
+     * @return the uncommitted new createValue, or null.
      */
     T getNewValue();
 
     /**
-     * Return {@code true} if there is a value present, otherwise {@code false}.
+     * Return {@code true} if there is a createValue present, otherwise {@code false}.
      *
-     * @return {@code true} if there is a value present, otherwise {@code false}
+     * @return {@code true} if there is a createValue present, otherwise {@code false}
      */
     boolean isPresent();
 
     /**
-     * Return the value if present, otherwise return {@code other}.
+     * Return the createValue if present, otherwise return {@code other}.
      *
-     * @param other the value to be returned if there is no value present, may
+     * @param other the createValue to be returned if there is no createValue present, may
      * be null
-     * @return the value, if present, otherwise {@code other}
+     * @return the createValue, if present, otherwise {@code other}
      */
     T orElse(T other);
 
     /**
-     * Return the value if present, otherwise invoke {@code other} and return
+     * Return the createValue if present, otherwise invoke {@code other} and return
      * the result of that invocation.
      *
-     * @param other a {@code ConfiguredItemSupplier} whose result is returned if no value
+     * @param other a {@code ConfiguredItemSupplier} whose result is returned if no createValue
      * is present
-     * @return the value if present otherwise the result of {@code other.current()}
-     * @throws NullPointerException if value is not present and {@code other} is
+     * @return the createValue if present otherwise the result of {@code other.current()}
+     * @throws NullPointerException if createValue is not present and {@code other} is
      * null
      */
     T orElseGet(Supplier<? extends T> other);
 
     /**
-     * Return the contained value, if present, otherwise throw an exception
+     * Return the contained createValue, if present, otherwise throw an exception
      * to be created by the provided supplier.
      *
      * NOTE A method reference to the exception constructor with an empty
-     * argument list can be used as the supplier. For example,
+     * argument createList can be used as the supplier. For example,
      * {@code IllegalStateException::new}
      *
      * @param <X> Type of the exception to be thrown
      * @param exceptionSupplier The supplier which will return the exception to
      * be thrown
-     * @return the present value
-     * @throws X if there is no value present
-     * @throws NullPointerException if no value is present and
+     * @return the present createValue
+     * @throws X if there is no createValue present
+     * @throws NullPointerException if no createValue is present and
      * {@code exceptionSupplier} is null
      */
     <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X;

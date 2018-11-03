@@ -88,7 +88,7 @@ public class MyTestPropertySource implements PropertySource{
 
     @Override
     public PropertyValue get(String key) {
-        return PropertyValue.of(key, properties.get(key), getName());
+        return PropertyValue.createValue(key, properties.get(key)).setMeta("source", getName());
     }
 
     @Override
@@ -100,8 +100,4 @@ public class MyTestPropertySource implements PropertySource{
         return res;
     }
 
-    @Override
-    public boolean isScannable() {
-        return true;
-    }
 }

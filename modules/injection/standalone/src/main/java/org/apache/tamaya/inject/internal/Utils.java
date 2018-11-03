@@ -49,7 +49,7 @@ public final class Utils {
      * @param annotationContainer  the container annotation type
      * @param <T>                  the repeatable annotation type
      * @param <R>                  the repeatable container annotation type
-     * @return a list with the annotations found (could be empty, but never null).
+     * @return a createList with the annotations found (could be empty, but never null).
      */
     public static <T extends Annotation, R extends Annotation> Collection<T>
     getAnnotations(AnnotatedElement annotated,
@@ -82,7 +82,7 @@ public final class Utils {
      * @param annotationContainer  the container annotation type
      * @param <T>                  the repeatable annotation type
      * @param <R>                  the repeatable container annotation type
-     * @return a list with the annotations found (could be empty, but never null).
+     * @return a createList with the annotations found (could be empty, but never null).
      */
     public static <T extends Annotation, R extends Annotation> Collection<T>
     getAnnotations(AccessibleObject annotated,
@@ -113,7 +113,7 @@ public final class Utils {
      * @param annotationType the annotation type.
      * @param objects        the accessible objects to be looked up
      * @param <T>            the repeatable annotation type
-     * @return a list with the annotations found (could be empty, but never null).
+     * @return a createList with the annotations found (could be empty, but never null).
      */
     public static <T extends Annotation> T getAnnotation(
             Class<T> annotationType, AnnotatedElement... objects) {

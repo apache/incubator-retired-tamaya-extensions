@@ -23,6 +23,7 @@ import org.apache.tamaya.events.spi.ConfigEventManagerSpi;
 import org.apache.tamaya.spi.ServiceContextManager;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Singleton accessor for accessing the event support component that distributes change events of
@@ -30,32 +31,53 @@ import java.util.Collection;
  */
 @SuppressWarnings("rawtypes")
 public final class ConfigEventManager {
+
+    private ClassLoader classLoader;
+
+    private ConfigEventManager(ClassLoader classLoader){
+        this.classLoader = Objects.requireNonNull(classLoader);
+    }
+
     /**
      * The backing SPI.
      */
-    private static final ConfigEventManagerSpi spi(){
-        ConfigEventManagerSpi spi = ServiceContextManager.getServiceContext(
-                Thread.currentThread().getContextClassLoader())
+    private static final ConfigEventManagerSpi spi(ClassLoader classLoader){
+        ConfigEventManagerSpi spi = ServiceContextManager.getServiceContext(classLoader)
                 .getService(ConfigEventManagerSpi.class);
         if(spi==null){
-            throw new ConfigException("No SPI registered for " +
-                    ConfigEventManager.class.getName());
+            throw new ConfigException("No SPI registered: " +
+                    ConfigEventManagerSpi.class.getName());
         }
         return spi;
     }
 
     /**
-     * Private singleton constructor.
+     * Access the event manager using the current classloader.
+     *
+     * @see ServiceContextManager#getDefaultClassLoader()
+     * @return the event manager, not null.
      */
-    private ConfigEventManager() {
+    public static ConfigEventManager getInstance(){
+        return getInstance(ServiceContextManager.getDefaultClassLoader());
+    }
+
+    /**
+     * Access the event manager using the given classloader.
+     * @param classLoader the target classloader, not null.
+     * @return the event manager, not null.
+     */
+    public static ConfigEventManager getInstance(ClassLoader classLoader){
+        return ServiceContextManager.getServiceContext(
+                Thread.currentThread().getContextClassLoader()).getService(
+                ConfigEventManager.class, () -> new ConfigEventManager(classLoader));
     }
 
     /**
      * Adds a Config listener that listens to all kind of {@link ConfigEvent}.
      * @param l the listener not null.
      */
-    public static void addListener(ConfigEventListener l) {
-        spi().addListener(l);
+    public void addListener(ConfigEventListener l) {
+        spi(classLoader).addListener(l);
     }
 
     /**
@@ -64,8 +86,8 @@ public final class ConfigEventManager {
      * @param l the listener not null.
      * @param eventType the event type to which this listener listens to.
      */
-	public static <T extends ConfigEvent> void addListener(ConfigEventListener l, Class<T> eventType) {
-        spi().addListener(l);
+	public <T extends ConfigEvent> void addListener(ConfigEventListener l, Class<T> eventType) {
+        spi(classLoader).addListener(l);
     }
 
     /**
@@ -73,8 +95,8 @@ public final class ConfigEventManager {
      *
      * @param l the listener not null.
      */
-    public static void removeListener(ConfigEventListener l) {
-        spi().removeListener(l);
+    public void removeListener(ConfigEventListener l) {
+        spi(classLoader).removeListener(l);
     }
 
     /**
@@ -84,30 +106,30 @@ public final class ConfigEventManager {
      * @param l the listener, not null.
      * @param eventType the event type to which this listener listens to.
      */
-	public static <T extends ConfigEvent> void removeListener(ConfigEventListener l, Class<T> eventType) {
-        spi().removeListener(l);
+	public <T extends ConfigEvent> void removeListener(ConfigEventListener l, Class<T> eventType) {
+        spi(classLoader).removeListener(l);
     }
 
     /**
      * Access all registered ConfigEventListeners listening to a given event type.
      * @param type the event type
      * @param <T> type param
-     * @return a list with the listeners found, never null.
+     * @return a createList with the listeners found, never null.
      */
-	public static <T extends ConfigEvent>
+	public <T extends ConfigEvent>
         Collection<? extends ConfigEventListener> getListeners(Class<T> type) {
-        return spi().getListeners(type);
+        return spi(classLoader).getListeners(type);
     }
 
     /**
      * Access all registered ConfigEventListeners listening to a all kind of event types globally.
      * 
      * @param <T> the type of the event.
-     * @return a list with the listeners found, never null.
+     * @return a createList with the listeners found, never null.
      */
-    public static <T extends ConfigEvent>
+    public <T extends ConfigEvent>
     Collection<? extends ConfigEventListener> getListeners() {
-        return spi().getListeners();
+        return spi(classLoader).getListeners();
     }
 
     /**
@@ -116,8 +138,8 @@ public final class ConfigEventManager {
      * @param <T> the type of the event.
      * @param event the event, not null.
      */
-    public static <T> void fireEvent(ConfigEvent<?> event) {
-        spi().fireEvent(event);
+    public <T> void fireEvent(ConfigEvent<?> event) {
+        spi(classLoader).fireEvent(event);
     }
 
     /**
@@ -126,8 +148,8 @@ public final class ConfigEventManager {
      * @param <T> the type of the event.
      * @param event the event, not null.
      */
-    public static <T> void fireEventAsynch(ConfigEvent<?> event) {
-        spi().fireEventAsynch(event);
+    public <T> void fireEventAsynch(ConfigEvent<?> event) {
+        spi(classLoader).fireEventAsynch(event);
     }
 
     /**
@@ -142,8 +164,8 @@ public final class ConfigEventManager {
      * @see #isChangeMonitoring()
      * @see #getChangeMonitoringPeriod()
      */
-    public static void enableChangeMonitoring(boolean enable) {
-        spi().enableChangeMonitor(enable);
+    public void enableChangeMonitoring(boolean enable) {
+        spi(classLoader).enableChangeMonitor(enable);
     }
 
     /**
@@ -152,8 +174,8 @@ public final class ConfigEventManager {
      * @return true, if the change monitoring service is currently running.
      * @see #enableChangeMonitoring(boolean)
      */
-    public static boolean isChangeMonitoring() {
-        return spi().isChangeMonitorActive();
+    public boolean isChangeMonitoring() {
+        return spi(classLoader).isChangeMonitorActive();
     }
 
     /**
@@ -161,8 +183,8 @@ public final class ConfigEventManager {
      *
      * @return the check period in ms.
      */
-    public static long getChangeMonitoringPeriod(){
-        return spi().getChangeMonitoringPeriod();
+    public long getChangeMonitoringPeriod(){
+        return spi(classLoader).getChangeMonitoringPeriod();
     }
 
     /**
@@ -172,8 +194,15 @@ public final class ConfigEventManager {
      * @see #enableChangeMonitoring(boolean)
      * @see #isChangeMonitoring()
      */
-    public static void setChangeMonitoringPeriod(long millis){
-        spi().setChangeMonitoringPeriod(millis);
+    public void setChangeMonitoringPeriod(long millis){
+        spi(classLoader).setChangeMonitoringPeriod(millis);
     }
 
+    /**
+     * Get the underlying target classloader.
+     * @return the classloader, not null.
+     */
+    public ClassLoader getClassLoader() {
+        return this.classLoader;
+    }
 }

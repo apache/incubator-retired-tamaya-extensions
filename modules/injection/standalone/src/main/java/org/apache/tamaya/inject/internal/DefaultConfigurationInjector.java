@@ -36,6 +36,7 @@ import org.apache.tamaya.inject.api.NoConfig;
 import org.apache.tamaya.inject.api.Config;
 import org.apache.tamaya.inject.api.ConfigDefaultSections;
 import org.apache.tamaya.inject.spi.ConfiguredType;
+import org.apache.tamaya.spi.ClassloaderAware;
 import org.osgi.service.component.annotations.Component;
 
 /**
@@ -43,13 +44,15 @@ import org.osgi.service.component.annotations.Component;
  */
 @Priority(0)
 @Component
-public class DefaultConfigurationInjector implements ConfigurationInjector {
+public class DefaultConfigurationInjector implements ConfigurationInjector, ClassloaderAware {
 
     private final Map<Class<?>, ConfiguredType> configuredTypes = new ConcurrentHashMap<>();
 
     private static final Logger LOG = Logger.getLogger(DefaultConfigurationInjector.class.getName());
 
     private boolean autoConfigureEnabled = true;
+
+    private ClassLoader classLoader;
 
     /**
      * Extract the configuration annotation config and registers it per class, for later reuse.
@@ -65,7 +68,7 @@ public class DefaultConfigurationInjector implements ConfigurationInjector {
             }
             confType = new ConfiguredTypeImpl(type);
             configuredTypes.put(type, confType);
-            InjectionHelper.sendConfigurationEvent(confType);
+            InjectionHelper.sendConfigurationEvent(confType, classLoader);
         }
         return confType;
     }
@@ -117,7 +120,7 @@ public class DefaultConfigurationInjector implements ConfigurationInjector {
      */
     @Override
     public <T> T configure(T instance) {
-        return configure(instance, Configuration.current());
+        return configure(instance, Configuration.current(classLoader));
     }
 
     /**
@@ -126,9 +129,13 @@ public class DefaultConfigurationInjector implements ConfigurationInjector {
      *
      * @param instance the instance to be configured
      * @param config the target configuration, not null.
+     * @throws IllegalArgumentException if the configuration's and the injector's classloader do not match.
      */
     @Override
     public <T> T configure(T instance, Configuration config) {
+        if(config.getContext().getServiceContext().getClassLoader()!=this.classLoader){
+            throw new IllegalArgumentException("Classloader mismatch.");
+        }
         Class<?> type = Objects.requireNonNull(instance).getClass();
         ConfiguredType configuredType = registerType(type);
         if(configuredType!=null){
@@ -146,7 +153,7 @@ public class DefaultConfigurationInjector implements ConfigurationInjector {
      */
     @Override
     public <T> T createTemplate(Class<T> templateType) {
-        return createTemplate(templateType, Configuration.current());
+        return createTemplate(templateType, Configuration.current(classLoader));
     }
 
     /**
@@ -154,9 +161,13 @@ public class DefaultConfigurationInjector implements ConfigurationInjector {
      *
      * @param templateType the type of the template to be created.
      * @param config the target configuration, not null.
+     * @throws IllegalArgumentException if the configuration's and the injector's classloader do not match.
      */
     @Override
     public <T> T createTemplate(Class<T> templateType, Configuration config) {
+        if(config.getContext().getServiceContext().getClassLoader()!=this.classLoader){
+            throw new IllegalArgumentException("Classloader mismatch.");
+        }
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         if(cl==null){
             cl = this.getClass().getClassLoader();
@@ -167,15 +178,28 @@ public class DefaultConfigurationInjector implements ConfigurationInjector {
 
     @Override
     public <T> Supplier<T> getConfiguredSupplier(final Supplier<T> supplier) {
-        return getConfiguredSupplier(supplier, Configuration.current());
+        return getConfiguredSupplier(supplier, Configuration.current(classLoader));
     }
 
     @Override
     public <T> Supplier<T> getConfiguredSupplier(final Supplier<T> supplier, final Configuration config) {
+        if(config.getContext().getServiceContext().getClassLoader()!=this.classLoader){
+            throw new IllegalArgumentException("Classloader mismatch.");
+        }
         return new Supplier<T>() {
             public T get() {
                 return configure(supplier.get(), config);
             }
         };
+    }
+
+    @Override
+    public void init(ClassLoader classLoader) {
+        this.classLoader = Objects.requireNonNull(classLoader);
+    }
+
+    @Override
+    public ClassLoader getClassLoader() {
+        return classLoader;
     }
 }

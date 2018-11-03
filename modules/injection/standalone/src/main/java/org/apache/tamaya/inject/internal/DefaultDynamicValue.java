@@ -41,10 +41,10 @@ import java.util.Objects;
 import java.util.logging.Logger;
 
 /**
- * A accessor for a single configured value. This can be used to support values that may change during runtime,
+ * A accessor for a single configured createValue. This can be used to support values that may change during runtime,
  * reconfigured or final. Hereby external code (could be Tamaya configuration listeners or client code), can setCurrent a
- * new value. Depending on the {@link UpdatePolicy} the new value is immediately active or it requires an active commit
- * by client code. Similarly an instance also can ignore all later changes to the value.
+ * new createValue. Depending on the {@link UpdatePolicy} the new createValue is immediately active or it requires an active commit
+ * by client code. Similarly an instance also can ignore all later changes to the createValue.
  * <h3>Implementation Details</h3>
  * This class is
  * <ul>
@@ -52,17 +52,12 @@ import java.util.logging.Logger;
  * <li>Thread safe</li>
  * </ul>
  *
- * @param <T> The type of the value.
+ * @param <T> The type of the createValue.
  */
 final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
 
     private static final long serialVersionUID = -2071172847144537443L;
 
-    /**
-     * Back reference to the base configuration instance. This reference is used reevaluate the given property and
-     * compare the result with the previous value after a configuration change was triggered.
-     */
-    private final Configuration configuration;
     /**
      * The property converter to be applied, may be null. In the ladder case targetType is not null.
      */
@@ -85,8 +80,7 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
     private DefaultDynamicValue(Object owner, String propertyName, Configuration configuration, TypeLiteral<T> targetType,
                                 PropertyConverter<T> propertyConverter, List<String> keys, LoadPolicy loadPolicy,
                                 UpdatePolicy updatePolicy) {
-        super(owner, propertyName, targetType, keys);
-        this.configuration = Objects.requireNonNull(configuration);
+        super(owner, propertyName, targetType, keys, configuration);
         this.propertyConverter = propertyConverter;
         this.loadPolicy = Objects.requireNonNull(loadPolicy);
         setUpdatePolicy(updatePolicy);
@@ -108,7 +102,8 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-	public static DynamicValue<?> of(Object owner, Field annotatedField, Configuration configuration, LoadPolicy loadPolicy, UpdatePolicy updatePolicy) {
+	public static DynamicValue<?> of(Object owner, Field annotatedField, Configuration configuration,
+                                     LoadPolicy loadPolicy, UpdatePolicy updatePolicy) {
         // Check for adapter/filter
         Type targetType = annotatedField.getGenericType();
         if (targetType == null) {
@@ -153,7 +148,8 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
     }
 
     @SuppressWarnings("unchecked")
-	public static DynamicValue<?> of(Object owner, Method method, Configuration configuration, LoadPolicy loadPolicy, UpdatePolicy updatePolicy) {
+	public static DynamicValue<?> of(Object owner, Method method, Configuration configuration,
+                                     LoadPolicy loadPolicy, UpdatePolicy updatePolicy) {
         // Check for adapter/filter
         Type targetType = method.getGenericReturnType();
         if (targetType == null) {
@@ -189,17 +185,12 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
         return this.propertyConverter;
     }
 
-    @Override
-    protected Configuration getConfiguration() {
-        return configuration;
-    }
-
     /**
-     * If a value is present in this {@code DynamicValue}, returns the value,
+     * If a createValue is present in this {@code DynamicValue}, returns the createValue,
      * otherwise throws {@code ConfigException}.
      *
-     * @return the non-null value held by this {@code Optional}
-     * @throws ConfigException if there is no value present
+     * @return the non-null createValue held by this {@code Optional}
+     * @throws ConfigException if there is no createValue present
      * @see DefaultDynamicValue#isPresent()
      */
     public T get() {
@@ -236,10 +227,10 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
     }
 
     /**
-     * Method to check for and apply a new value. Depending on the {@link  UpdatePolicy}
-     * the value is immediately or deferred visible (or it may even be ignored completely).
+     * Method to check for and apply a new createValue. Depending on the {@link  UpdatePolicy}
+     * the createValue is immediately or deferred visible (or it may even be ignored completely).
      *
-     * @return true, if a new value has been detected. The value may not be visible depending on the current
+     * @return true, if a new createValue has been detected. The createValue may not be visible depending on the current
      * {@link UpdatePolicy} in place.
      */
     public boolean updateValue() {
@@ -253,7 +244,7 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
         }
         switch (getUpdatePolicy()) {
             case LOG_ONLY:
-                Logger.getLogger(getClass().getName()).info("Discard change on " + this + ", newValue=" + newValue);
+                Logger.getLogger(getClass().getName()).info("Discard change on " + this + ", createValue=" + newValue);
                 publishChangeEvent(value, newValue);
                 this.newValue = null;
                 break;
@@ -271,9 +262,9 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
     }
 
     /**
-     * Access a new value that has not yet been committed.
+     * Access a new createValue that has not yet been committed.
      *
-     * @return the uncommitted new value, or null.
+     * @return the uncommitted new createValue, or null.
      */
     public T getNewValue() {
         @SuppressWarnings("unchecked")
@@ -295,7 +286,7 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
     /**
      * Reads an instance from the input stream.
      *
-     * @param ois the object input stream
+     * @param ois the createObject input stream
      * @throws IOException            if deserialization fails.
      * @throws ClassNotFoundException
      */

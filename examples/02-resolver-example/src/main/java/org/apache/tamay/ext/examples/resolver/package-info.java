@@ -18,6 +18,6 @@
  */
 
 /**
- * Example illustrating the usage of value resolver expressions (placeholders).
+ * Example illustrating the usage of createValue resolver expressions (placeholders).
  */
 package org.apache.tamay.ext.examples.resolver;

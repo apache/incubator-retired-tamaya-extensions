@@ -24,7 +24,9 @@ import org.apache.tamaya.spi.ServiceContextManager;
 
 /**
  * Singleton Accessor for accessing the current {@link org.apache.tamaya.resource.ResourceResolver} instance.
+ * @deprecated Use static methods on {@link ResourceResolver}
  */
+@Deprecated
 public final class ConfigResources {
 
     /**
@@ -33,16 +35,15 @@ public final class ConfigResources {
     private ConfigResources(){}
 
     /**
-     * <p>Access the current ResourceResolver.</p>
+     * <p>Access the current ResourceResolver using the default classloader.</p>
      *
      * @throws ConfigException if no ResourceResolver is available (should not happen).
      *
      * @return the current ResourceResolver instance, never null.
-     * @deprecated Use {@link #getResourceResolver(ClassLoader)}
+     * @see ServiceContextManager#getDefaultClassLoader()
      */
-    @Deprecated
     public static ResourceResolver getResourceResolver() throws ConfigException {
-        return getResourceResolver(Thread.currentThread().getContextClassLoader());
+        return getResourceResolver(ServiceContextManager.getDefaultClassLoader());
     }
 
     /**

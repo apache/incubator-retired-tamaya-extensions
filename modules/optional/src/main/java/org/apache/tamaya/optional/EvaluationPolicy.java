@@ -24,9 +24,9 @@ package org.apache.tamaya.optional;
 public enum EvaluationPolicy {
     /** Values from Tamaya (if available) always override values from the default provider. */
     TAMAYA_OVERRIDES_OTHER,
-    /** Values from value provider always override values from Tamaya (if available). */
+    /** Values from createValue provider always override values from Tamaya (if available). */
     OTHER_OVERRIDES_TAMAYA,
-    /** No overrides are allowed. If both the value provider and Tamaya return values not equal a RuntimeException
+    /** No overrides are allowed. If both the createValue provider and Tamaya return values not equal a RuntimeException
      * is thrown.
      */
     THROWS_EXCEPTION

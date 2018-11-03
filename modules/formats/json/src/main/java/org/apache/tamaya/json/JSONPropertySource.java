@@ -34,7 +34,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.json.Json;
-import javax.json.JsonObject;
 import javax.json.JsonReaderFactory;
 import javax.json.JsonStructure;
 
@@ -132,7 +131,7 @@ public class JSONPropertySource implements PropertySource {
             JsonStructure root = this.readerFactory.createReader(is, Charset.forName("UTF-8")).read();
 
             JSONDataBuilder visitor = new JSONDataBuilder(urlResource.toString(), root);
-            Map<String, String> values = visitor.build().asMap();
+            Map<String, String> values = visitor.build().toMap();
             Map<String, PropertyValue> result = new HashMap<>();
             for(Map.Entry<String,String> en:values.entrySet()){
                 result.put(en.getKey(), PropertyValue.of(en.getKey(), en.getValue(), getName()));

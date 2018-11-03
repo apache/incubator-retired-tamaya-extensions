@@ -32,6 +32,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.functions.Predicate;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.ServiceContextManager;
 
@@ -45,10 +46,31 @@ public final class ConfigurationFormats {
      */
     private static final Logger LOG = Logger.getLogger(ConfigurationFormats.class.getName());
 
+    private ClassLoader classLoader;
+
     /**
      * Singleton constructor.
      */
-    private ConfigurationFormats() {
+    private ConfigurationFormats(ClassLoader classLoader) {
+        this.classLoader = Objects.requireNonNull(classLoader);
+    }
+
+    /**
+     * Access the format manager using the default classloader.
+     * @return the corresponding format manager, not null.
+     * @see ServiceContextManager#getDefaultClassLoader()
+     */
+    public static ConfigurationFormats getInstance(){
+        return getInstance(ServiceContextManager.getDefaultClassLoader());
+    }
+
+    /**
+     * Access the format manager targeting the given classloader.
+     * @return the corresponding format manager, not null.
+     */
+    public static ConfigurationFormats getInstance(ClassLoader classLoader){
+        return ServiceContextManager.getServiceContext(classLoader)
+        .getService(ConfigurationFormats.class, () -> new ConfigurationFormats(classLoader));
     }
 
     /**
@@ -56,8 +78,8 @@ public final class ConfigurationFormats {
      *
      * @return the currently available formats, never null.
      */
-    public static List<ConfigurationFormat> getFormats() {
-        return ServiceContextManager.getServiceContext().getServices(ConfigurationFormat.class);
+    public List<ConfigurationFormat> getFormats() {
+        return ServiceContextManager.getServiceContext(classLoader).getServices(ConfigurationFormat.class);
     }
 
     /**
@@ -66,7 +88,7 @@ public final class ConfigurationFormats {
      * @param formatNames available formats to be ordered.
      * @return the currently available formats, never null.
      */
-    public static List<ConfigurationFormat> getFormats(String... formatNames) {
+    public List<ConfigurationFormat> getFormats(String... formatNames) {
         final List<ConfigurationFormat> result = new ArrayList<>();
         final Set<String> names = new HashSet<>(Arrays.asList(formatNames));
         for (final ConfigurationFormat f : getFormats()) {
@@ -77,29 +99,13 @@ public final class ConfigurationFormats {
         return result;
     }
 
-    // Activate for JDK 8...
-//    /**
-//     * Get all currently available formats, ordered by priority.
-//     *
-//     * @return the currently available formats, never null.
-//     */
-//    public static List<ConfigurationFormat> getFormats(Predicate<String> namePredicate) {
-//        List<ConfigurationFormat> result = new ArrayList<>();
-//        for(ConfigurationFormat f:getFormats()){
-//            if(namePredicate.test(f.name()){
-//                result.addNode(f);
-//            }
-//        }
-//        return result;
-//    }
-
     /**
      * Get all currently available formats, ordered by priority.
      *
      * @param url source to read configuration from.
      * @return the currently available formats, never null.
      */
-    public static List<ConfigurationFormat> getFormats(final URL url) {
+    public List<ConfigurationFormat> getFormats(final URL url) {
         final List<ConfigurationFormat> formats = getFormats();
         final List<ConfigurationFormat> result = new ArrayList<>();
         for (final ConfigurationFormat f : formats) {
@@ -118,7 +124,7 @@ public final class ConfigurationFormats {
      * @return the ConfigurationData read, or null.
      * @throws IOException if the resource cannot be read.
      */
-    public static ConfigurationData readConfigurationData(final URL url) throws IOException {
+    public ConfigurationData readConfigurationData(final URL url) throws IOException {
         final List<ConfigurationFormat> formats = getFormats(url);
         return readConfigurationData(url, formats.toArray(new ConfigurationFormat[formats.size()]));
     }
@@ -131,7 +137,7 @@ public final class ConfigurationFormats {
      * @return the ConfigurationData read, or null.
      * @throws IOException if the resource cannot be read.
      */
-    public static ConfigurationData readConfigurationData(URL url, ConfigurationFormat... formats) throws IOException {
+    public ConfigurationData readConfigurationData(URL url, ConfigurationFormat... formats) throws IOException {
         return readConfigurationData(url, Arrays.asList(formats));
     }
 
@@ -143,7 +149,7 @@ public final class ConfigurationFormats {
      * @return the ConfigurationData read, or null.
      * @throws IOException if the resource cannot be read.
      */
-    public static ConfigurationData readConfigurationData(URL url, Collection<ConfigurationFormat> formats) throws IOException {
+    public ConfigurationData readConfigurationData(URL url, Collection<ConfigurationFormat> formats) throws IOException {
         return readConfigurationData(url.toString(), url.openStream(), formats);
     }
 
@@ -153,7 +159,7 @@ public final class ConfigurationFormats {
      * @return the {@link org.apache.tamaya.format.ConfigurationData} of the files successfully decoded by the
      * given formats.
      */
-    public static Collection<ConfigurationData> readConfigurationData(Collection<URL> urls, ConfigurationFormat... formats) {
+    public Collection<ConfigurationData> readConfigurationData(Collection<URL> urls, ConfigurationFormat... formats) {
         return readConfigurationData(urls, Arrays.asList(formats));
     }
 
@@ -163,7 +169,7 @@ public final class ConfigurationFormats {
      * @return the {@link org.apache.tamaya.format.ConfigurationData} of the files successfully decoded by the
      * given formats.
      */
-    public static Collection<ConfigurationData> readConfigurationData(Collection<URL> urls, Collection<ConfigurationFormat> formats) {
+    public Collection<ConfigurationData> readConfigurationData(Collection<URL> urls, Collection<ConfigurationFormat> formats) {
         final List<ConfigurationData> dataRead = new ArrayList<>();
         for (final URL url : urls) {
             try {
@@ -187,7 +193,7 @@ public final class ConfigurationFormats {
      * @return the ConfigurationData read, or null.
      * @throws IOException if the resource cannot be read.
      */
-    public static ConfigurationData readConfigurationData(String resource, InputStream inputStream,
+    public ConfigurationData readConfigurationData(String resource, InputStream inputStream,
                                                           ConfigurationFormat... formats) throws IOException {
         return readConfigurationData(resource, inputStream, Arrays.asList(formats));
     }
@@ -202,9 +208,12 @@ public final class ConfigurationFormats {
      * @throws ConfigException if the resource cannot be read.
      * @throws IOException if reading the input fails.
      */
-    public static ConfigurationData readConfigurationData(String resource, InputStream inputStream,
+    public ConfigurationData readConfigurationData(String resource, InputStream inputStream,
                                                           Collection<ConfigurationFormat> formats) throws IOException {
         Objects.requireNonNull(resource, "Config resource required for traceability.");
+        if(formats.isEmpty()){
+            formats = getFormats();
+        }
         try(InputStreamFactory isFactory = new InputStreamFactory(Objects.requireNonNull(inputStream))) {
             for (final ConfigurationFormat format : formats) {
                 try (InputStream is = isFactory.createInputStream()) {
@@ -232,7 +241,7 @@ public final class ConfigurationFormats {
      * @throws ConfigException if the resource cannot be read.
      * @throws IOException if the URL's stream can not be opened.
      */
-    public static PropertySource createPropertySource(URL url, ConfigurationFormat... formats)throws IOException{
+    public PropertySource createPropertySource(URL url, ConfigurationFormat... formats)throws IOException{
         return createPropertySource(url.toString(), url.openStream(), formats);
     }
 
@@ -247,7 +256,7 @@ public final class ConfigurationFormats {
      * @throws ConfigException if the resource cannot be read.
      * @throws IOException if the URL's stream can not be opened.
      */
-    public static PropertySource createPropertySource(URL url, Collection<ConfigurationFormat> formats)throws IOException{
+    public PropertySource createPropertySource(URL url, Collection<ConfigurationFormat> formats)throws IOException{
         return createPropertySource(url.toString(), url.openStream(), formats);
     }
 
@@ -262,7 +271,7 @@ public final class ConfigurationFormats {
      * @return a corresponding property source, or null.
      * @throws ConfigException if the resource cannot be read.
      */
-    public static PropertySource createPropertySource(String resource, InputStream inputStream,
+    public PropertySource createPropertySource(String resource, InputStream inputStream,
                                                       ConfigurationFormat... formats){
         return createPropertySource(resource, inputStream, Arrays.asList(formats));
     }
@@ -279,7 +288,7 @@ public final class ConfigurationFormats {
      * @return a corresponding property source, or null.
      * @throws ConfigException if the resource cannot be read.
      */
-    public static PropertySource createPropertySource(String resource, InputStream inputStream,
+    public PropertySource createPropertySource(String resource, InputStream inputStream,
                                                        Collection<ConfigurationFormat> formats) {
         Objects.requireNonNull(resource, "Config resource required for traceability.");
         try(InputStreamFactory isFactory = new InputStreamFactory(Objects.requireNonNull(inputStream))) {

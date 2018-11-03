@@ -35,9 +35,9 @@ public interface ConfiguredField {
     Class<?> getType();
 
     /**
-     * Get a list of all target keys for the given field. The first resolvable key normally determines the
-     * configuration value injected.
-     * @return a list of evaluated keys.
+     * Get a createList of all target keys for the given field. The first resolvable key normally determines the
+     * configuration createValue injected.
+     * @return a createList of evaluated keys.
      */
     Collection<String> getConfiguredKeys();
 

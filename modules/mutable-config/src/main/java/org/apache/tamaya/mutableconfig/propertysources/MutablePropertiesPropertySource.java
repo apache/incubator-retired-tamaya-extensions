@@ -125,10 +125,10 @@ implements MutablePropertySource{
         if(!file.exists()){
             try {
                 if(!file.createNewFile()){
-                    throw new ConfigException("Failed to create config file " + file);
+                    throw new ConfigException("Failed to createObject config file " + file);
                 }
             } catch (IOException e) {
-                throw new ConfigException("Failed to create config file " + file, e);
+                throw new ConfigException("Failed to createObject config file " + file, e);
             }
         }
         for(Map.Entry<String,String> en:change.getAddedProperties().entrySet()){

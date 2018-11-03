@@ -19,7 +19,6 @@
 package org.apache.tamaya.events.internal;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.events.ConfigEventManager;
 import org.apache.tamaya.events.ConfigurationChange;
 import org.apache.tamaya.events.ConfigurationChangeBuilder;
@@ -45,10 +44,13 @@ public class DefaultConfigChangeObserver {
 
     private volatile boolean running;
 
+    private ClassLoader classLoader;
+
     /**
      * Constructor. Also loads all registered listeners.
      */
-    public DefaultConfigChangeObserver() {
+    public DefaultConfigChangeObserver(ClassLoader classLoader) {
+        this.classLoader = Objects.requireNonNull(classLoader);
         LOG.info("Registering config change observer, rechecking config changes every " + checkPeriod + " ms.");
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -62,7 +64,7 @@ public class DefaultConfigChangeObserver {
 
     public void checkConfigurationUpdate() {
         LOG.finest("Checking configuration for changes...");
-        FrozenConfiguration frozenConfig = FrozenConfiguration.of(Configuration.current());
+        FrozenConfiguration frozenConfig = FrozenConfiguration.of(Configuration.current(classLoader));
         ConfigurationChange changes;
 
         if (getLastConfig() != null) {
@@ -70,12 +72,10 @@ public class DefaultConfigChangeObserver {
                                                 .build();
             if(!changes.isEmpty()) {
                 LOG.info("Identified configuration changes, publishing changes:\n" + changes);
-                ConfigEventManager.fireEvent(changes);
+                ConfigEventManager.getInstance(classLoader).fireEvent(changes);
             }
         }
         setLastConfig(frozenConfig);
-
-
     }
 
     protected FrozenConfiguration getLastConfig() {

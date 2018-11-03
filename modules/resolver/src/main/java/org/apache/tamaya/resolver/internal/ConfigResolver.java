@@ -27,7 +27,7 @@ import java.util.Objects;
 
 /**
  * Property resolver implementation that interprets the resolver expression as a reference to another configuration
- * entry. It can be explicitly addressed by prefixing {@code conf:}, e.g. {@code ${conf:my.other.config.value}}.
+ * entry. It can be explicitly addressed by prefixing {@code conf:}, e.g. {@code ${conf:my.other.config.createValue}}.
  */
 @Priority(200)
 public final class ConfigResolver implements ExpressionResolver, ClassloaderAware {

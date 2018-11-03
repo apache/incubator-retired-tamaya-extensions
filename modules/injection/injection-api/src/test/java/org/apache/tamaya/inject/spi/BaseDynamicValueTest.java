@@ -20,7 +20,6 @@ package org.apache.tamaya.inject.spi;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.inject.api.UpdatePolicy;
 import org.junit.Test;
@@ -33,18 +32,18 @@ public class BaseDynamicValueTest {
 
     @Test
     public void create(){
-        new MyDynamicValue("a", "b");
+        new MyDynamicValue(Configuration.current(),"a", "b");
     }
 
     @Test(expected = ConfigException.class)
     public void create_nokeys(){
-        new MyDynamicValue();
+        new MyDynamicValue(Configuration.current());
     }
 
     @Test
     public void commitAndGet() throws Exception {
         System.setProperty("commitAndGet", "yes");
-        MyDynamicValue dv = new MyDynamicValue("commitAndGet");
+        MyDynamicValue dv = new MyDynamicValue(Configuration.current(),"commitAndGet");
         System.setProperty("commitAndGet", "no");
         dv.setUpdatePolicy(UpdatePolicy.EXPLICIT);
         assertTrue(dv.updateValue());
@@ -57,29 +56,29 @@ public class BaseDynamicValueTest {
 
     @Test
     public void isPresent() throws Exception {
-        assertFalse(new MyDynamicValue("a", "b").isPresent());
-        assertTrue(new MyDynamicValue("java.version").isPresent());
+        assertFalse(new MyDynamicValue(Configuration.current(),"a", "b").isPresent());
+        assertTrue(new MyDynamicValue(Configuration.current(),"java.version").isPresent());
     }
 
     @Test
     public void orElse() throws Exception {
-        assertEquals(new MyDynamicValue("a", "b").orElse("foo"), "foo");
+        assertEquals(new MyDynamicValue(Configuration.current(),"a", "b").orElse("foo"), "foo");
     }
 
     @Test
     public void orElseGet() throws Exception {
-        assertEquals(new MyDynamicValue("a", "b").orElseGet(() -> "foo"), "foo");
+        assertEquals(new MyDynamicValue(Configuration.current(),"a", "b").orElseGet(() -> "foo"), "foo");
     }
 
     @Test(expected = NoSuchFieldException.class)
     public void orElseThrow() throws Throwable {
-        new MyDynamicValue("foo").orElseThrow(() -> new NoSuchFieldException("Test"));
+        new MyDynamicValue(Configuration.current(),"foo").orElseThrow(() -> new NoSuchFieldException("Test"));
     }
 
     private static final class MyDynamicValue extends BaseDynamicValue{
 
-        public MyDynamicValue(String... keys){
-            super(null, "test", TypeLiteral.of(String.class), Arrays.asList(keys));
+        public MyDynamicValue(Configuration config, String... keys){
+            super(null, "test", TypeLiteral.of(String.class), Arrays.asList(keys), config);
         }
 
         @Override

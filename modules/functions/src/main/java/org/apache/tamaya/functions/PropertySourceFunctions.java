@@ -18,9 +18,10 @@
  */
 package org.apache.tamaya.functions;
 
-import org.apache.tamaya.ConfigurationProvider;
+import org.apache.tamaya.Configuration;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.spi.ServiceContextManager;
 
 import java.util.*;
 
@@ -360,11 +361,24 @@ public final class PropertySourceFunctions {
      * {@link org.apache.tamaya.spi.ConfigurationContext} that are assignable to the given type.
      *
      * @param expression the regular expression to match the source's name.
-     * @return the list of all {@link PropertySource} instances matching, never null.
+     * @return the createList of all {@link PropertySource} instances matching, never null.
      */
     public static Collection<? extends PropertySource> findPropertySourcesByName(String expression) {
+        return findPropertySourcesByName(ServiceContextManager.getDefaultClassLoader(), expression);
+    }
+
+    /**
+     * Find all {@link PropertySource} instances managed by the current
+     * {@link org.apache.tamaya.spi.ConfigurationContext} that are assignable to the given type.
+     *
+     * @param classLoader the target classloader, not null.
+     * @param expression the regular expression to match the source's name.
+     * @param classLoader the target classloader, not null.
+     * @return the createList of all {@link PropertySource} instances matching, never null.
+     */
+    public static Collection<? extends PropertySource> findPropertySourcesByName(ClassLoader classLoader, String expression) {
         List result = new ArrayList<>();
-        for (PropertySource src : ConfigurationProvider.getConfigurationContext().getPropertySources()) {
+        for (PropertySource src : Configuration.current(classLoader).getContext().getPropertySources()) {
             if (src.getName().matches(expression)) {
                 result.add(src);
             }
@@ -373,16 +387,30 @@ public final class PropertySourceFunctions {
     }
 
     /**
-     * Get a list of all {@link PropertySource} instances managed by the current
+     * Get a createList of all {@link PropertySource} instances managed by the current
+     * {@link org.apache.tamaya.spi.ConfigurationContext} that are assignable to the given type.
+     *
+     * @param <T> the type of the property source instances requested
+     * @param type target type to filter for property sources.
+     * @return the createList of all {@link PropertySource} instances matching, never null.
+     * @see ServiceContextManager#getDefaultClassLoader()
+     */
+    public static <T> Collection<T> getPropertySources(Class<T> type) {
+        return getPropertySources(ServiceContextManager.getDefaultClassLoader(), type);
+    }
+
+    /**
+     * Get a createList of all {@link PropertySource} instances managed by the current
      * {@link org.apache.tamaya.spi.ConfigurationContext} that are assignable to the given type.
      *
      * @param <T> the type of the property source instances requested 
      * @param type target type to filter for property sources. 
-     * @return the list of all {@link PropertySource} instances matching, never null.
+     * @param classLoader the target classloader, not null.
+     * @return the createList of all {@link PropertySource} instances matching, never null.
      */
-    public static <T> Collection<T> getPropertySources(Class<T> type) {
+    public static <T> Collection<T> getPropertySources(ClassLoader classLoader, Class<T> type) {
         List<T> result = new ArrayList<>();
-        for (PropertySource src : ConfigurationProvider.getConfigurationContext().getPropertySources()) {
+        for (PropertySource src : Configuration.current().getContext().getPropertySources()) {
             if (type.isAssignableFrom(src.getClass())) {
                 result.add((T) src);
             }
@@ -391,15 +419,28 @@ public final class PropertySourceFunctions {
     }
 
     /**
-     * Get a list of all {@link PropertySource} instances managed by the current
+     * Get a createList of all {@link PropertySource} instances managed by the current
      * {@link org.apache.tamaya.spi.ConfigurationContext} that are assignable to the given type.
      *
      * @param <T> the type of the property source instances requested
-     * @param type target type to filter for property sources. 
-     * @return the list of all {@link PropertySource} instances matching, never null.
+     * @param type target type to filter for property sources.
+     * @return the createList of all {@link PropertySource} instances matching, never null.
      */
     public static <T> T getPropertySource(Class<T> type) {
-        for (PropertySource src : ConfigurationProvider.getConfigurationContext().getPropertySources()) {
+        return getPropertySource(ServiceContextManager.getDefaultClassLoader(), type);
+    }
+
+    /**
+     * Get a createList of all {@link PropertySource} instances managed by the current
+     * {@link org.apache.tamaya.spi.ConfigurationContext} that are assignable to the given type.
+     *
+     * @param <T> the type of the property source instances requested
+     * @param type target type to filter for property sources.
+     * @param classLoader the target classloader, not null.
+     * @return the createList of all {@link PropertySource} instances matching, never null.
+     */
+    public static <T> T getPropertySource(ClassLoader classLoader, Class<T> type) {
+        for (PropertySource src : Configuration.current(classLoader).getContext().getPropertySources()) {
             if (type.isAssignableFrom(src.getClass())) {
                 return (T) src;
             }

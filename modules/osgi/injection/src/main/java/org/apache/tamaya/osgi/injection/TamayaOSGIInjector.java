@@ -108,7 +108,7 @@ public class TamayaOSGIInjector{
     }
 
     /**
-     * Get or create an injector for injecting OSGI configuration using Tamaya's injection API.
+     * Get or createObject an injector for injecting OSGI configuration using Tamaya's injection API.
      * @param pid the PID, not nbull.
      * @param location the optional location.
      * @return a injector, never null.

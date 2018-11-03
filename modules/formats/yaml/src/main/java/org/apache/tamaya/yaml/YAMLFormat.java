@@ -21,6 +21,8 @@ package org.apache.tamaya.yaml;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.format.ConfigurationData;
 import org.apache.tamaya.format.ConfigurationFormat;
+import org.apache.tamaya.spi.ListValue;
+import org.apache.tamaya.spi.ObjectValue;
 import org.apache.tamaya.spi.PropertyValue;
 import org.yaml.snakeyaml.Yaml;
 
@@ -61,14 +63,18 @@ public class YAMLFormat implements ConfigurationFormat {
     public ConfigurationData readConfiguration(String resource, InputStream inputStream) {
         try{
             Yaml yaml = new Yaml();
-            PropertyValue data = PropertyValue.create();
-            data.setMeta("resource", resource);
-            data.setMeta("format", "yaml");
+            PropertyValue data;
             Object config = yaml.load(inputStream);
             if(config instanceof Map){
-                addObject((Map)config, data, null);
+                data = PropertyValue.createObject("");
+                data.setMeta("resource", resource);
+                data.setMeta("format", "yaml");
+                addObject((Map)config, (ObjectValue)data);
             }else if(config instanceof List){
-                addArray((List)config, data, null);
+                data = PropertyValue.createList("");
+                data.setMeta("resource", resource);
+                data.setMeta("format", "yaml");
+                addList((List)config, (ListValue)data);
             }else {
                 throw new ConfigException("Unknown YamlType encountered: " + config.getClass().getName());
             }
@@ -83,26 +89,28 @@ public class YAMLFormat implements ConfigurationFormat {
     }
 
 
-    private void addObject(Map<String,Object> object, PropertyValue parent, String objectKey){
-        PropertyValue dataNode = objectKey==null?parent:parent.getOrCreateChild(objectKey);
-        object.entrySet().forEach(en -> {
+    private void addObject(Map<String,Object> values, ObjectValue dataNode){
+        values.entrySet().forEach(en -> {
             if (en.getValue() instanceof List) {
-                addArray((List) en.getValue(), dataNode, en.getKey());
+                ListValue list = dataNode.setFieldList(en.getKey());
+                addList((List) en.getValue(), list);
             } else if (en.getValue() instanceof Map) {
-                addObject((Map) en.getValue(), dataNode, en.getKey());
+                ObjectValue object = dataNode.setFieldObject(en.getKey());
+                addObject((Map) en.getValue(), object);
             } else{
-                dataNode.createChild(en.getKey(), String.valueOf(en.getValue()));
+                dataNode.setField(en.getKey(), String.valueOf(en.getValue()));
             }
         });
     }
 
-    private void addArray(List<Object> array, PropertyValue parent, String arrayKey) {
-        array.forEach(val -> {
-            PropertyValue dataNode = parent.createChild(arrayKey, true);
+    private void addList(List<Object> values, ListValue dataNode) {
+        values.forEach(val -> {
             if (val instanceof List) {
-                addArray((List) val, dataNode, "");
+                ListValue list = dataNode.addList();
+                addList((List) val, list);
             } else if (val instanceof Map) {
-                addObject((Map) val, dataNode, null);
+                ObjectValue ov = dataNode.addObject();
+                addObject((Map) val, ov);
             } else{
                 dataNode.setValue(String.valueOf(val));
             }

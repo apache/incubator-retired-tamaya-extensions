@@ -29,7 +29,7 @@ under the License.
     </parent>
 
     <artifactId>tamaya-formats</artifactId>
-    <name>Apache Tamaya Modules Formats Common</name>
+    <name>Apache Tamaya Modules - Formats Common</name>
     <packaging>jar</packaging>
 
     <dependencies>
@@ -54,7 +54,7 @@ under the License.
             <artifactId>tamaya-functions</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- Test scope only, do not create a code dependency! -->
+        <!-- Test scope only, do not createObject a code dependency! -->
         <dependency>
             <groupId>org.apache.tamaya</groupId>
             <artifactId>tamaya-core</artifactId>

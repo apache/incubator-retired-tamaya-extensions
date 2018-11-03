@@ -27,8 +27,8 @@ class InMemoryConfiguration extends DefaultConfiguration {
     }
     //        private Map<String, String> entries = new TreeMap<>();
 
-//        public InMemoryConfiguration addEntry(String key, String value) {
-//            entries.put(key, value);
+//        public InMemoryConfiguration addEntry(String key, String createValue) {
+//            entries.put(key, createValue);
 //
 //            return this;
 //        }

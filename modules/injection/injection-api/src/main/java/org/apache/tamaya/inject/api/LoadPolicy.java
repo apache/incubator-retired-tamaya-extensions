@@ -38,7 +38,7 @@ public enum LoadPolicy {
      */
     LAZY,
     /**
-     * The configuration value is evaluated every time it is accessed.
+     * The configuration createValue is evaluated every time it is accessed.
      */
     ALWAYS
 }

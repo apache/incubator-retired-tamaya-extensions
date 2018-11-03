@@ -114,7 +114,7 @@ public final class Features {
      * @return true, if <i>tamaya-filter</i> is on the classpath.
      */
     public static boolean filterSupportAvailable() {
-        return checkClassIsLoadable("org.apache.tamaya.filter.ConfigurationFilter");
+        return checkClassIsLoadable("org.apache.tamaya.filter.ThreadFilterContext");
     }
 
     /**

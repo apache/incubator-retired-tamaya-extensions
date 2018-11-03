@@ -59,10 +59,10 @@ final class InjectionHelper {
     private static boolean checkForEvents() {
         try{
             Class.forName("org.apache.tamaya.events.FrozenConfiguration");
-            LOG.info("Detected tamaya-events is loaded, will trigger ConfigEvents...");
+            LOG.info("Detected tamaya-events, will trigger ConfigEvents...");
             return true;
         } catch(Exception e){
-            LOG.info("Detected tamaya-events not found, will not trigger any ConfigEvents...");
+            LOG.info("tamaya-events not installed, will not trigger any ConfigEvents...");
             return false;
         }
     }
@@ -70,8 +70,10 @@ final class InjectionHelper {
     private static boolean checkResolutionModuleLoaded() {
         try {
             Class.forName("org.apache.tamaya.resolver.internal.DefaultExpressionEvaluator");
+            LOG.info("Detected tamaya-resolver...");
             return true;
         } catch (ClassNotFoundException e) {
+            LOG.finest("tamaya-resolver not installed.");
             return false;
         }
     }
@@ -124,7 +126,8 @@ final class InjectionHelper {
      *
      * @return the keys to be returned, or null.
      */
-    private static String getConfigValueInternal(AnnotatedElement element, ConfigDefaultSections areasAnnot, String[] retKey, Configuration config) {
+    private static String getConfigValueInternal(AnnotatedElement element, ConfigDefaultSections areasAnnot,
+                                                 String[] retKey, Configuration config) {
         Config prop = element.getAnnotation(Config.class);
         List<String> keys;
         if (prop == null) {
@@ -209,7 +212,7 @@ final class InjectionHelper {
 
     /**
      * Method that allows to statically check, if the resolver module is loaded. If the module is loaded
-     * value expressions are automatically forwarded to the resolver module for resolution.
+     * createValue expressions are automatically forwarded to the resolver module for resolution.
      *
      * @return true, if the resolver module is on the classpath.
      */
@@ -223,11 +226,12 @@ final class InjectionHelper {
      * @param expression the expression, not null.
      * @return the evaluated expression.
      */
-    public static String evaluateValue(String expression) {
+    public static String evaluateValue(String expression, ClassLoader classLoader) {
         if (!RESOLUTION_MODULE_LOADED) {
             return expression;
         }
-        ExpressionEvaluator evaluator = ServiceContextManager.getServiceContext().getService(ExpressionEvaluator.class);
+        ExpressionEvaluator evaluator = ServiceContextManager.getServiceContext(classLoader)
+                .getService(ExpressionEvaluator.class);
         if (evaluator != null) {
             return evaluator.evaluateExpression("<injection>", expression, true);
         }
@@ -239,9 +243,9 @@ final class InjectionHelper {
      * When Tamaya events are not available, the call simply returns.
      * @param event the event to be distributed, not null.
      */
-    static void sendConfigurationEvent(ConfiguredType event) {
+    static void sendConfigurationEvent(ConfiguredType event, ClassLoader classLoader) {
         if(EVENTS_AVAILABLE){
-            ConfigEventManager.fireEvent(new BaseConfigEvent<ConfiguredType>(event, ConfiguredType.class) {});
+            ConfigEventManager.getInstance(classLoader).fireEvent(new BaseConfigEvent<ConfiguredType>(event, ConfiguredType.class) {});
         }
     }
 }

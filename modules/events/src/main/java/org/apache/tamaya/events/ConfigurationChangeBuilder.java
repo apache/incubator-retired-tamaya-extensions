@@ -36,7 +36,7 @@ import java.util.TreeMap;
  * contains the changed {@link org.apache.tamaya.spi.PropertySource} (Note: the reference to a property source is never affected by a
  * change, its only the data of the property source).</li>
  * <li>If so corresponding actions might be taken, such as reevaluating the configuration values (depending on
- * the update policy) or reevaluating the complete {@link org.apache.tamaya.Configuration} to create a change
+ * the update policy) or reevaluating the complete {@link org.apache.tamaya.Configuration} to createObject a change
  * event on configuration level.
  * </ol>
  */
@@ -161,10 +161,10 @@ public final class ConfigurationChangeBuilder {
     }
 
     /**
-     * Applies a single key/value change.
+     * Applies a single key/createValue change.
      *
      * @param key   the changed key
-     * @param value the new value.
+     * @param value the new createValue.
      * @return this instance for chaining.
      */
     public ConfigurationChangeBuilder addChange(String key, String value) {
@@ -215,7 +215,7 @@ public final class ConfigurationChangeBuilder {
      * <ul>
      * <li>the registered codecs provider provides codecs for the corresponding keys, or </li>
      * <li>default codecs are present for the given type, or</li>
-     * <li>the value is an instanceof String</li>
+     * <li>the createValue is an instanceof String</li>
      * </ul>
      *
      * @param changes the changes to be applied, not null.
@@ -229,7 +229,7 @@ public final class ConfigurationChangeBuilder {
     }
 
     /**
-     * This method will create a change setCurrent that clears all entries fromMap the given base configuration/properties.
+     * This method will createObject a change setCurrent that clears all entries fromMap the given base configuration/properties.
      *
      * @return the builder for chaining.
      */

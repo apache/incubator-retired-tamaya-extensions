@@ -30,7 +30,7 @@ import java.util.UUID;
 
 /**
  * Event that contains a setCurrent current changes that were applied or could be applied.
- * This class is immutable and thread-safe. To create instances use
+ * This class is immutable and thread-safe. To createObject instances use
  * {@link PropertySourceChangeBuilder}.
  *
  * Created by Anatole on 22.10.2014.

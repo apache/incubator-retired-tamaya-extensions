@@ -28,7 +28,7 @@ import java.util.Collection;
 public interface ResourceLocator {
 
     /**
-     * Method to lookup a given list of URLs, identified by the given expression.
+     * Method to lookup a given createList of URLs, identified by the given expression.
      * @param classLoader the classloader to be used, if necessary.
      * @param expression the expression.
      * @return a collection of URL found.

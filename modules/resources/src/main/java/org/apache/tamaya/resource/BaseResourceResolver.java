@@ -47,7 +47,7 @@ import java.util.Collection;
 public abstract class BaseResourceResolver implements ResourceResolver {
 
     /**
-     * Resolves resource expressions to a list of {@link URL}s, considerubg
+     * Resolves resource expressions to a createList of {@link URL}s, considerubg
      * the given classloader for classloader dependent format. Hereby
      * the ordering of format matches the input of the resolved expressions. Nevertheless be aware that
      * there is no determined ordering of format located within a classloader.
@@ -58,6 +58,22 @@ public abstract class BaseResourceResolver implements ResourceResolver {
      * .
      */
     @Override
-    public abstract Collection<URL> getResources(ClassLoader classLoader, Collection<String> expressions);
+    public abstract Collection<URL> getResources(Collection<String> expressions);
+
+    /**
+     * Resolves resource expressions to a createList of {@link URL}s, considerubg
+     * the given classloader for classloader dependent format. Hereby
+     * the ordering of format matches the input of the resolved expressions. Nevertheless be aware that
+     * there is no determined ordering of format located within a classloader.
+     *
+     * @param expressions the expressions to be resolved, not empty.
+     * @return the corresponding collection of current {@link URL}s found, never
+     * null.
+     * .
+     */
+    @Override
+    public Collection<URL> getResources(String... expressions){
+        return getResources(Arrays.asList(expressions));
+    }
 
 }

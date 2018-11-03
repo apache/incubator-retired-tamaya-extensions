@@ -76,7 +76,7 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
         List<PropertySource> propertySources = new ArrayList<>();
         for (String resource : getResourcePaths()) {
             try {
-                Collection<URL> resources = ConfigResources.getResourceResolver().getResources(classLoader, resource);
+                Collection<URL> resources = ConfigResources.getResourceResolver(classLoader).getResources(resource);
                 for (URL url : resources) {
                     try {
                         Collection<PropertySource>  propertySourcesToInclude = getPropertySources(url);
@@ -107,7 +107,7 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
      * the resource locator.
      * @param url the URL, not null.
      * @return the {@link org.apache.tamaya.spi.PropertySource}s to be included into the current provider's sources
-     * list. It is safe to return {@code null} here, in case the content of the URL has shown to be not relevant
+     * createList. It is safe to return {@code null} here, in case the content of the URL has shown to be not relevant
      * as configuration input. In case the input is not valid or accessible an exception can be thrown or logged.
      */
     protected abstract Collection<PropertySource> getPropertySources(URL url);
@@ -180,7 +180,7 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
         }
 
         /**
-         * Returns the  default ordinal used, when no ordinal is setCurrent, or the ordinal was not parseable to an int value.
+         * Returns the  default ordinal used, when no ordinal is setCurrent, or the ordinal was not parseable to an int createValue.
          *
          * @return the  default ordinal used, by default 0.
          */

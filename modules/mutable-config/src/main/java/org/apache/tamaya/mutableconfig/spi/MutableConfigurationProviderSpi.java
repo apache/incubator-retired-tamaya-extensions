@@ -25,7 +25,7 @@ import org.apache.tamaya.mutableconfig.MutableConfiguration;
 
 /**
  * Provider SPI used by {@link org.apache.tamaya.mutableconfig.MutableConfigurationProvider}. Providers may override
- * other providers registering with a higher {@link javax.annotation.Priority} value annotated.
+ * other providers registering with a higher {@link javax.annotation.Priority} createValue annotated.
  */
 public interface MutableConfigurationProviderSpi {
 

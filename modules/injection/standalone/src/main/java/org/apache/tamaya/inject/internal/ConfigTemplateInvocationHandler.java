@@ -51,7 +51,7 @@ public final class ConfigTemplateInvocationHandler implements InvocationHandler 
             throw new IllegalArgumentException("Can only proxy interfaces as configuration templates.");
         }
         this.config = Objects.requireNonNull(config);
-        InjectionHelper.sendConfigurationEvent(this.type);
+        InjectionHelper.sendConfigurationEvent(this.type, config.getContext().getServiceContext().getClassLoader());
     }
 
     @Override

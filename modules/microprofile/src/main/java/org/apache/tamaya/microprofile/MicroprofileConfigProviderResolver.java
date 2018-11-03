@@ -45,6 +45,7 @@ public class MicroprofileConfigProviderResolver extends ConfigProviderResolver {
         Config config = this.configs.get(loader);
         if(config==null){
         	ConfigurationBuilder builder = Configuration.createConfigurationBuilder();
+        	builder.setClassLoader(loader);
             builder.addDefaultPropertyConverters();
             MicroprofileConfigBuilder microConfigBuilder = new MicroprofileConfigBuilder(builder);
             microConfigBuilder.addDefaultSources();

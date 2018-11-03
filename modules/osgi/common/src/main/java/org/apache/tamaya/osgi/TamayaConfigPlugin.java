@@ -303,10 +303,10 @@ public class TamayaConfigPlugin implements TamayaConfigService,BundleListener, S
             if(props!=null) {
                 props.put(key, value);
                 setPluginConfig(props);
-                LOG.finest("Updated Tamaya Plugin value: " + key + "=" + value);
+                LOG.finest("Updated Tamaya Plugin createValue: " + key + "=" + value);
             }
         } catch (Exception e) {
-            LOG.log(Level.WARNING, "Error writing Tamaya config value: " + key, e);
+            LOG.log(Level.WARNING, "Error writing Tamaya config createValue: " + key, e);
         }
     }
 
@@ -317,7 +317,7 @@ public class TamayaConfigPlugin implements TamayaConfigService,BundleListener, S
                 return props.get(key);
             }
         } catch (Exception e) {
-            LOG.log(Level.WARNING, "Error reading Tamaya config value.", e);
+            LOG.log(Level.WARNING, "Error reading Tamaya config createValue.", e);
         }
         return null;
     }

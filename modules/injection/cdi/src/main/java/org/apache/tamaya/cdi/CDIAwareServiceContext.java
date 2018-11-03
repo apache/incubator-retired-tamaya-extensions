@@ -19,6 +19,7 @@
 package org.apache.tamaya.cdi;
 
 import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.spi.ClassloaderAware;
 import org.apache.tamaya.spi.ServiceContext;
 
 import javax.annotation.Priority;
@@ -30,6 +31,7 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -48,7 +50,7 @@ import java.util.logging.Logger;
  * <p>This class uses an ordinal of {@code 10}, so it overrides any default {@link ServiceContext} implementations
  * provided with the Tamaya core modules.</p>
  */
-public class CDIAwareServiceContext implements ServiceContext {
+public class CDIAwareServiceContext implements ServiceContext, ClassloaderAware {
 
     private static final Logger LOG = Logger.getLogger(CDIAwareServiceContext.class.getName());
     /**
@@ -60,15 +62,18 @@ public class CDIAwareServiceContext implements ServiceContext {
 
 
     @Override
-    public <T> T getService(Class<T> serviceType) {
+    public <T> T getService(Class<T> serviceType, Supplier<T> supplier) {
         Object cached = singletons.get(serviceType);
 
         if (cached == null) {
-            Collection<T> services = getServices(serviceType);
+            Collection<T> services = getServices(serviceType, null);
             if (services.isEmpty()) {
                 cached = null;
             } else {
                 cached = getServiceWithHighestPriority(services, serviceType);
+            }
+            if(cached==null && supplier!=null){
+                cached = supplier.get();
             }
             if (cached != null) {
                 singletons.put(serviceType, cached);
@@ -78,15 +83,18 @@ public class CDIAwareServiceContext implements ServiceContext {
     }
 
     @Override
-    public <T> T create(Class<T> serviceType) {
+    public <T> T create(Class<T> serviceType, Supplier<T> supplier) {
         T serv = getService(serviceType);
         if(serv!=null){
             try {
                 return (T)serv.getClass().newInstance();
             } catch (Exception e) {
                 Logger.getLogger(getClass().getName())
-                        .log(Level.SEVERE, "Failed to create new instance of: " +serviceType.getName(), e);
+                        .log(Level.SEVERE, "Failed to createObject new instance of: " +serviceType.getName(), e);
             }
+        }
+        if(supplier!=null){
+            return supplier.get();
         }
         return null;
     }
@@ -99,16 +107,20 @@ public class CDIAwareServiceContext implements ServiceContext {
      * @return the items found, never {@code null}.
      */
     @Override
-    public <T> List<T> getServices(final Class<T> serviceType) {
+    public <T> List<T> getServices(final Class<T> serviceType, Supplier<List<T>> supplier) {
         List<T> found = defaultServiceContext.getServices(serviceType);
         try {
             BeanManager beanManager = TamayaCDIAccessor.getBeanManager();
             Instance<T> cdiInstances = null;
             if(beanManager!=null) {
-                Set<Bean<?>> instanceBeans = beanManager.getBeans(Instance.class);
-                Bean<?> bean = instanceBeans.iterator().next();
-                cdiInstances = (Instance<T>) beanManager.getReference(bean, Instance.class,
-                        beanManager.createCreationalContext(bean));
+                try {
+                    Set<Bean<?>> instanceBeans = beanManager.getBeans(Instance.class);
+                    Bean<?> bean = instanceBeans.iterator().next();
+                    cdiInstances = (Instance<T>) beanManager.getReference(bean, Instance.class,
+                            beanManager.createCreationalContext(bean));
+                }catch(Exception e){
+                    LOG.log(Level.WARNING, "Failed to access BeanManager", e);
+                }
             }
             if(cdiInstances!=null){
                 for(T t:cdiInstances.select(serviceType)){
@@ -117,6 +129,9 @@ public class CDIAwareServiceContext implements ServiceContext {
             }
         }catch(Exception e){
             LOG.log(Level.SEVERE, "Failed to access BeanManager.", e);
+        }
+        if(found.isEmpty() && supplier!=null){
+            return supplier.get();
         }
         return found;
     }
@@ -131,8 +146,18 @@ public class CDIAwareServiceContext implements ServiceContext {
         return defaultServiceContext.getResource(resource);
     }
 
+    @Override
+    public <T> T register(Class<T> type, T instance, boolean force) {
+        return defaultServiceContext.register(type, instance, force);
+    }
+
+    @Override
+    public <T> List<T> register(Class<T> type, List<T> instances, boolean force) {
+        return defaultServiceContext.register(type, instances, force);
+    }
+
     /**
-     * Checks the given instance for a @Priority annotation. If present the annotation's value s evaluated. If no such
+     * Checks the given instance for a @Priority annotation. If present the annotation's createValue s evaluated. If no such
      * annotation is present, a default priority is returned (1);
      * @param o the instance, not null.
      * @return a priority, by default 1.
@@ -156,7 +181,7 @@ public class CDIAwareServiceContext implements ServiceContext {
      */
     private <T> T getServiceWithHighestPriority(Collection<T> services, Class<T> serviceType) {
 
-        // we do not need the priority stuff if the list contains only one element
+        // we do not need the priority stuff if the createList contains only one element
         if (services.size() == 1) {
             return services.iterator().next();
         }

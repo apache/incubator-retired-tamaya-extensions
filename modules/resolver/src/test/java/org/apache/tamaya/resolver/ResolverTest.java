@@ -29,41 +29,40 @@ public class ResolverTest {
 
     @Test
     public void testEvaluateExpression_withMask_NoKey() throws Exception {
-        assertEquals(Resolver.evaluateExpression("Version ${java.foo}", true),
+        assertEquals(Resolver.getInstance().evaluateExpression("Version ${java.foo}", true),
                 "Version ?{java.foo}");
     }
 
     @Test
     public void testEvaluateExpression_withMask_Classloader() throws Exception {
-        assertEquals(Resolver.evaluateExpression("Version ${java.foo}", true,
-                Thread.currentThread().getContextClassLoader()),
+        assertEquals(Resolver.getInstance(Thread.currentThread().getContextClassLoader())
+                .evaluateExpression("Version ${java.foo}", true),
                 "Version ?{java.foo}");
     }
 
 
     @Test
     public void testEvaluateExpression() throws Exception {
-        assertEquals(Resolver.evaluateExpression("myKey", "Version ${java.version}"),
+        assertEquals(Resolver.getInstance().evaluateExpression("myKey", "Version ${java.version}"),
                 "Version " + System.getProperty("java.version"));
     }
 
     @Test
     public void testEvaluateExpression_NoKey() throws Exception {
-        assertEquals(Resolver.evaluateExpression("Version ${java.version}"),
+        assertEquals(Resolver.getInstance().evaluateExpression("Version ${java.version}"),
                 "Version " + System.getProperty("java.version"));
     }
 
     @Test
     public void testEvaluateExpression_ClassLoader() throws Exception {
-        assertEquals(Resolver.evaluateExpression("myKey", "Version ${java.version}",
+        assertEquals(Resolver.getInstance().evaluateExpression("myKey", "Version ${java.version}",
                 Thread.currentThread().getContextClassLoader()),
                 "Version " + System.getProperty("java.version"));
     }
 
     @Test
     public void testEvaluateExpression1_NoKey_ClassLoader() throws Exception {
-        assertEquals(Resolver.evaluateExpression("Version ${java.version}",
-                Thread.currentThread().getContextClassLoader()),
+        assertEquals(Resolver.getInstance().evaluateExpression("Version ${java.version}"),
                 "Version " + System.getProperty("java.version"));
     }
 }

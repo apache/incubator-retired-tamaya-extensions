@@ -64,11 +64,11 @@ public class YAMLPropertySource implements PropertySource {
         this.ordinal = defaultOrdinal; // may be overriden by read...
         ConfigurationData data = format.readConfiguration(urlResource.toString(), resource.openStream());
         this.values = new HashMap<>();
-        for(Map.Entry<String,String> en:data.getData().get(0).asMap().entrySet()){
+        for(Map.Entry<String,String> en:data.getData().get(0).toMap().entrySet()){
             this.values.put(en.getKey(), PropertyValue.of(en.getKey(), en.getValue(), getName()));
         }
-        if (data.getData().get(0).asMap().containsKey(TAMAYA_ORDINAL)) {
-            this.ordinal = Integer.parseInt(data.getData().get(0).asMap().get(TAMAYA_ORDINAL));
+        if (data.getData().get(0).toMap().containsKey(TAMAYA_ORDINAL)) {
+            this.ordinal = Integer.parseInt(data.getData().get(0).toMap().get(TAMAYA_ORDINAL));
         }
     }
 

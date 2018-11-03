@@ -32,11 +32,23 @@ public final class ConfigurationInjection {
     }
 
     /**
-     * Get the current injector instance.
+     * Get the current injector instance, using the default classloader.
      *
      * @return the current injector, not null.
      */
     public static ConfigurationInjector getConfigurationInjector() {
-        return ServiceContextManager.getServiceContext().getService(ConfigurationInjector.class);
+        return ServiceContextManager.getServiceContext(ServiceContextManager.getDefaultClassLoader())
+                .getService(ConfigurationInjector.class);
+    }
+
+    /**
+     * Get the current injector instance, using the given target classloader.
+     *
+     * @param classLoader the classloader, not null.
+     * @return the current injector, not null.
+     */
+    public static ConfigurationInjector getConfigurationInjector(ClassLoader classLoader) {
+        return ServiceContextManager.getServiceContext(classLoader)
+                .getService(ConfigurationInjector.class);
     }
 }

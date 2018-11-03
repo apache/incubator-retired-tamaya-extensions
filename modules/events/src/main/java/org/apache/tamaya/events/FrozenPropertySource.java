@@ -29,7 +29,7 @@ import java.util.Map;
 
 /**
  * PropertySource implementation that stores all current values of a given (possibly dynamic, contextual and non server
- * capable instance) and is fully serializable. Note that hereby only the scannable key/value pairs are considered.
+ * capable instance) and is fully serializable. Note that hereby only the scannable key/createValue pairs are considered.
  */
 public final class FrozenPropertySource implements PropertySource, Serializable {
     private static final long serialVersionUID = -6373137316556444171L;

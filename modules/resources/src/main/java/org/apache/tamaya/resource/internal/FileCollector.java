@@ -76,7 +76,7 @@ public class FileCollector {
      * elements given by {@code subTokens}, starting at the given {@code tokenIndex}.
      * @param dir the directory to start
      * @param subTokens the overall subtoken to be analyzed
-     * @param tokenIndex the getIndex where in the token list to start comparing
+     * @param tokenIndex the getIndex where in the token createList to start comparing
      * @return the URLs matching the tokens
      */
     static Collection<URL> traverseAndSelectFromChildren(File dir, List<String> subTokens, int tokenIndex) {
@@ -146,21 +146,21 @@ public class FileCollector {
      *
      * @param file the file, not null.
      * @return the URL, never null.
-     * @throws java.lang.IllegalStateException if it fails to create the URL
+     * @throws java.lang.IllegalStateException if it fails to createObject the URL
      */
     private static URL getURL(File file) {
         Objects.requireNonNull(file);
         try {
             return file.toURI().toURL();
         } catch (Exception e) {
-            throw new IllegalStateException("Failed to create URL from file: " + file);
+            throw new IllegalStateException("Failed to createObject URL from file: " + file);
         }
     }
 
     /**
      * Constructs a sub expression, using the tokens from {@code subTokens} starting at getIndex {@code startIndex}.
      *
-     * @param subTokens  the token list, not null
+     * @param subTokens  the token createList, not null
      * @param startIndex the start getIndex from where tokens should be taken to produce the path.
      * @return the constructed path, never null.
      */

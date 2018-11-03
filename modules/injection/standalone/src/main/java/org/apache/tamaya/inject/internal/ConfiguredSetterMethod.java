@@ -61,7 +61,8 @@ public class ConfiguredSetterMethod implements ConfiguredMethod {
         Objects.requireNonNull(target);
         try {
             String evaluatedString = configValue != null
-                    ? InjectionHelper.evaluateValue(configValue)
+                    ? InjectionHelper.evaluateValue(configValue,
+                    config.getContext().getServiceContext().getClassLoader())
                     : configValue;
 
             // Check for adapter/filter

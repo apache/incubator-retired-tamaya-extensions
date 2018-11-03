@@ -29,6 +29,7 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 
+import org.apache.tamaya.spi.ObjectValue;
 import org.apache.tamaya.spi.PropertyValue;
 import org.junit.Test;
 
@@ -37,7 +38,7 @@ public class JSONVisitorTest {
 	@Test
 	public void ensureJSONisParsedProperlyWithDifferentValueTypesFilteringOutEmptyValues() {
 		JsonObject startNode = Json.createObjectBuilder().//
-				add("key.sub", "value").//
+				add("key.sub", "createValue").//
 				add("anotherKey", true).//
 				add("notAnotherKey", false).//
 				add("number", 4711).//
@@ -49,13 +50,14 @@ public class JSONVisitorTest {
 		PropertyValue data = visitor.build();
 		assertThat(data).isNotNull();
 
-		assertThat(data.getChildren().size() == 6);
-		assertEquals(data.getNumChilds(), 6);
-		assertThat(data.asMap()).containsKeys("key.sub", "anotherKey", "notAnotherKey", "number", "null");
-		assertThat(data.asMap()).containsEntry("key.sub", "value");
-		assertThat(data.asMap()).containsEntry("null", null);
-		assertThat(data.asMap()).containsEntry("anotherKey", "true");
-		assertThat(data.asMap()).containsEntry("empty", null);
+		ObjectValue ov = data.toObjectValue();
+		assertThat(ov.getFields().size() == 6);
+		assertEquals(data.getSize(), 6);
+		assertThat(data.toMap()).containsKeys("key.sub", "anotherKey", "notAnotherKey", "number", "null");
+		assertThat(data.toMap()).containsEntry("key.sub", "createValue");
+		assertThat(data.toMap()).containsEntry("null", null);
+		assertThat(data.toMap()).containsEntry("anotherKey", "true");
+		assertThat(data.toMap()).doesNotContainEntry("empty", null);
 	}
 
 	@Test

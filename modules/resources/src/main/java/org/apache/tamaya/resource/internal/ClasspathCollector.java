@@ -279,8 +279,8 @@ public class ClasspathCollector {
 
     /**
      * Method that collects resources from a JBoss classloading system using Vfs.
-     * @param rootResource the root resource for evaluating its getChildren.
-     * @param locationPattern the sub pattern that all getChildren must mach, so they are selected.
+     * @param rootResource the root resource for evaluating its getList.
+     * @param locationPattern the sub pattern that all getList must mach, so they are selected.
      * @return the resources found, never null.
      * @throws IOException
      */
@@ -355,7 +355,7 @@ public class ClasspathCollector {
         /**
          * Visitor method.
          *
-         * @param vfsResource the vfsResource object.
+         * @param vfsResource the vfsResource createObject.
          */
         public void visit(Object vfsResource) {
             String subPath = VfsSupport.getPath(vfsResource).substring(this.rootPath.length());

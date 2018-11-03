@@ -20,7 +20,6 @@ package org.apache.tamaya.integration.spring;
 
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.springframework.core.env.PropertySource;
 
 /**

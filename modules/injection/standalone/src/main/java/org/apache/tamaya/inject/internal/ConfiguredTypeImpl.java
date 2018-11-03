@@ -44,11 +44,11 @@ public class ConfiguredTypeImpl implements ConfiguredType{
     /** The log used. */
     private static final Logger LOG = Logger.getLogger(ConfiguredTypeImpl.class.getName());
     /**
-     * A list with all annotated instance variables.
+     * A createList with all annotated instance variables.
      */
     private final List<ConfiguredField> configuredFields = new ArrayList<>();
     /**
-     * A list with all annotated methods (templates).
+     * A createList with all annotated methods (templates).
      */
     private final List<ConfiguredMethod> configuredSetterMethods = new ArrayList<>();
     /**

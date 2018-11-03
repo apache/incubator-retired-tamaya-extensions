@@ -70,7 +70,7 @@ public class ConfiguredFieldImpl implements ConfiguredField{
 
 
     /**
-     * This method instantiates and assigns a dynamic value.
+     * This method instantiates and assigns a dynamic createValue.
      *
      * @param target the target instance, not null.
      * @throws ConfigException if the configuration required could not be resolved or converted.
@@ -108,7 +108,8 @@ public class ConfiguredFieldImpl implements ConfiguredField{
             String configValue = InjectionHelper.getConfigValue(this.annotatedField, retKey, config);
             // Next step perform expression resolution, if any
             String evaluatedValue = resolve && configValue != null
-                    ? InjectionHelper.evaluateValue(configValue)
+                    ? InjectionHelper.evaluateValue(configValue,
+                    config.getContext().getServiceContext().getClassLoader())
                     : configValue;
 
             // Check for adapter/filter

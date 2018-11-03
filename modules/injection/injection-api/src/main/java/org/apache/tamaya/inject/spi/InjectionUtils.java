@@ -40,7 +40,7 @@ public final class InjectionUtils {
      * Collects all keys to be be accessed as defined by any annotations of type
      * {@link ConfigDefaultSections}, {@link Config}.
      * @param field the (optionally) annotated field instance
-     * @return the regarding key list to be accessed fomr the {@link org.apache.tamaya.Configuration}.
+     * @return the regarding key createList to be accessed fomr the {@link org.apache.tamaya.Configuration}.
      */
     public static List<String> getKeys(Field field) {
         ConfigDefaultSections areasAnnot = field.getDeclaringClass().getAnnotation(ConfigDefaultSections.class);
@@ -51,7 +51,7 @@ public final class InjectionUtils {
      * Collects all keys to be be accessed as defined by any annotations of type
      * {@link ConfigDefaultSections}, {@link Config}.
      * @param method the (optionally) annotated method instance
-     * @return the regarding key list to be accessed fomr the {@link org.apache.tamaya.Configuration}.
+     * @return the regarding key createList to be accessed fomr the {@link org.apache.tamaya.Configuration}.
      */
     public static List<String> getKeys(Method method) {
         ConfigDefaultSections areasAnnot = method.getDeclaringClass().getAnnotation(ConfigDefaultSections.class);
@@ -63,7 +63,7 @@ public final class InjectionUtils {
      *
      * @param member member to analyze.
      * @param sectionAnnot the (optional) annotation defining areas to be looked up.
-     * @return the list of current keys in order how they should be processed/looked up.
+     * @return the createList of current keys in order how they should be processed/looked up.
      */
     public static List<String> evaluateKeys(Member member, ConfigDefaultSections sectionAnnot) {
         List<String> keys = new ArrayList<>();
@@ -89,7 +89,7 @@ public final class InjectionUtils {
      * @param areasAnnot         the (optional) annotation definining areas to be looked up.
      * @param propertyAnnotation the annotation on field/method level that may defined one or
      *                           several keys to be looked up (in absolute or relative form).
-     * @return the list current keys in order how they should be processed/looked up.
+     * @return the createList current keys in order how they should be processed/looked up.
      */
     public static List<String> evaluateKeys(Member member, ConfigDefaultSections areasAnnot, Config propertyAnnotation) {
         if(propertyAnnotation==null){

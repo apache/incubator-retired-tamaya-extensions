@@ -37,20 +37,52 @@ import static org.junit.Assert.*;
  */
 public class MutableConfigurationTest {
 
+    @Test
+    public void createMutableConfiguration() throws Exception {
+        assertNotNull(MutableConfiguration.create());
+    }
+
+    @Test
+    public void createMutableConfiguration1() throws Exception {
+        MutableConfiguration cfg = MutableConfiguration.create(Configuration.current());
+        assertNotNull(cfg);
+        assertEquals(cfg.getChangePropagationPolicy(),
+                MutableConfigurationProvider.getApplyMostSignificantOnlyChangePolicy());
+    }
+
+    @Test
+    public void createMutableConfiguration2() throws Exception {
+        ChangePropagationPolicy policy = MutableConfigurationProvider.getApplySelectiveChangePolicy("blabla");
+        MutableConfiguration cfg = MutableConfiguration
+                .create(Configuration.current(),
+                        policy);
+        assertNotNull(cfg);
+        assertEquals(cfg.getChangePropagationPolicy(), policy);
+    }
+
+    @Test
+    public void createMutableConfiguration3() throws Exception {
+        ChangePropagationPolicy policy = MutableConfigurationProvider.getApplySelectiveChangePolicy("gugus");
+        MutableConfiguration cfg = MutableConfiguration
+                .create(policy);
+        assertNotNull(cfg);
+        assertEquals(cfg.getChangePropagationPolicy(), policy);
+    }
+
     /**
-     * Test create change request.
+     * Test createObject change request.
      *
      * @throws Exception the exception
      */
     @Test
     public void testCreateMutableConfiguration() throws Exception {
         File f = File.createTempFile("ConfigChangeRequest",".properties");
-        MutableConfiguration cfg1 = MutableConfigurationProvider.createMutableConfiguration(
+        MutableConfiguration cfg1 = MutableConfiguration.create(
                 Configuration.current(),
                 MutableConfigurationProvider.getApplyAllChangePolicy());
         assertNotNull(cfg1);
         assertNotNull(cfg1.getConfigChangeRequest());
-        MutableConfiguration cfg2 = MutableConfigurationProvider.createMutableConfiguration(
+        MutableConfiguration cfg2 = MutableConfiguration.create(
                 Configuration.current());
         assertNotNull(cfg2);
         assertNotNull(cfg2.getConfigChangeRequest());
@@ -59,24 +91,24 @@ public class MutableConfigurationTest {
     }
 
     /**
-     * Test null create change request.
+     * Test null createObject change request.
      *
      * @throws Exception the exception
      */
     @Test(expected=NullPointerException.class)
     public void testNullCreateMutableConfiguration1() throws Exception {
-        MutableConfigurationProvider.createMutableConfiguration(
+        MutableConfiguration.create(
                 (Configuration) null);
     }
 
     /**
-     * Test null create change request.
+     * Test null createObject change request.
      *
      * @throws Exception the exception
      */
     @Test(expected=NullPointerException.class)
     public void testNullCreateMutableConfiguration2() throws Exception {
-        MutableConfigurationProvider.createMutableConfiguration(
+        MutableConfiguration.create(
                 (ChangePropagationPolicy) null);
     }
 
@@ -88,7 +120,7 @@ public class MutableConfigurationTest {
     @Test
     public void testReadWriteProperties_WithCancel() throws IOException {
         WritablePropertiesSource.target.delete();
-        MutableConfiguration mutConfig = MutableConfigurationProvider.createMutableConfiguration(
+        MutableConfiguration mutConfig = MutableConfiguration.create(
                 Configuration.current()
         );
         mutConfig.put("key1", "value1");
@@ -105,7 +137,7 @@ public class MutableConfigurationTest {
     @Test
     public void testReadWriteProperties_WithCommit() throws IOException {
         WritablePropertiesSource.target.delete();
-        MutableConfiguration mutConfig = MutableConfigurationProvider.createMutableConfiguration(
+        MutableConfiguration mutConfig = MutableConfiguration.create(
                 Configuration.current()
         );
         mutConfig.put("key1", "value1");
@@ -115,7 +147,7 @@ public class MutableConfigurationTest {
         mutConfig.putAll(cm);
         mutConfig.store();
         assertTrue(WritablePropertiesSource.target.exists());
-        MutableConfiguration mmutConfig2 = MutableConfigurationProvider.createMutableConfiguration(
+        MutableConfiguration mmutConfig2 = MutableConfiguration.create(
                 Configuration.current()
         );
         mmutConfig2.remove("foo");
@@ -139,7 +171,7 @@ public class MutableConfigurationTest {
     @Test
     public void testReadWriteXmlProperties_WithCommit() throws IOException {
         WritableXmlPropertiesSource.target.delete();
-        MutableConfiguration cfg = MutableConfigurationProvider.createMutableConfiguration(
+        MutableConfiguration cfg = MutableConfiguration.create(
                 Configuration.current(), MutableConfigurationProvider.getApplyAllChangePolicy());
         cfg.put("key1", "value1");
         Map<String,String> cm = new HashMap<>();
@@ -148,7 +180,7 @@ public class MutableConfigurationTest {
         cfg.putAll(cm);
         cfg.store();
         assertTrue(WritableXmlPropertiesSource.target.exists());
-        MutableConfiguration cfg2 = MutableConfigurationProvider.createMutableConfiguration(
+        MutableConfiguration cfg2 = MutableConfiguration.create(
                 Configuration.current());
         assertTrue(cfg != cfg2);
         cfg2.remove("foo");
@@ -171,7 +203,7 @@ public class MutableConfigurationTest {
     @Test
     public void testWriteWithNoChangePolicy() throws IOException {
         WritableXmlPropertiesSource.target.delete();
-        MutableConfiguration cfg = MutableConfigurationProvider.createMutableConfiguration(
+        MutableConfiguration cfg = MutableConfiguration.create(
                 Configuration.current(),
                 MutableConfigurationProvider.getApplyNonePolicy());
         cfg.put("key1", "value1");

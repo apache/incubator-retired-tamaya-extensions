@@ -19,7 +19,6 @@
 package org.apache.tamaya.resolver;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

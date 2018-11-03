@@ -107,10 +107,11 @@ public final class ResourceResolver implements ExpressionResolver, ClassloaderAw
 
     private URL getUrl(String expression, ClassLoader... classLoaders) {
         if (IS_RESOURCE_MODULE_AVAILABLE) {
-            org.apache.tamaya.resource.ResourceResolver resolver = ServiceContextManager.getServiceContext()
-                    .getService(org.apache.tamaya.resource.ResourceResolver.class);
             for (ClassLoader cl : classLoaders) {
-                Collection<URL> resources = resolver.getResources(cl, expression);
+                org.apache.tamaya.resource.ResourceResolver resolver = ServiceContextManager.getServiceContext(cl)
+                    .getService(org.apache.tamaya.resource.ResourceResolver.class);
+
+                Collection<URL> resources = resolver.getResources(expression);
                 if (!resources.isEmpty()) {
                     if (resources.size() != 1) {
                         LOG.log(Level.WARNING, "Unresolvable expression (ambiguous resource): " + expression);

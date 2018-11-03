@@ -204,7 +204,7 @@ public class EnrichedConfigurationTest {
                 sut.getOrDefault("v", null);
             }
         }).isInstanceOf(NullPointerException.class)
-          .hasMessage("Default value must be given.");
+          .hasMessage("Default createValue must be given.");
     }
 
     @Test
@@ -293,7 +293,7 @@ public class EnrichedConfigurationTest {
                 sut.getOrDefault("b", String.class, null);
             }
         }).isInstanceOf(NullPointerException.class)
-          .hasMessage("Default value not given.");
+          .hasMessage("Default createValue not given.");
     }
 
     @Test
@@ -321,7 +321,7 @@ public class EnrichedConfigurationTest {
                 sut.getOrDefault("b", String.class, null);
             }
         }).isInstanceOf(NullPointerException.class)
-          .hasMessage("Default value not given.");
+          .hasMessage("Default createValue not given.");
     }
 
     @Test
@@ -442,7 +442,7 @@ public class EnrichedConfigurationTest {
                 sut.getOrDefault("b", TypeLiteral.<String>of(String.class), null);
             }
         }).isInstanceOf(NullPointerException.class)
-          .hasMessage("Default value not given.");
+          .hasMessage("Default createValue not given.");
 
     }
 
@@ -472,7 +472,7 @@ public class EnrichedConfigurationTest {
                 sut.getOrDefault("b", TypeLiteral.<String>of(String.class), null);
             }
         }).isInstanceOf(NullPointerException.class)
-          .hasMessage("Default value not given.");
+          .hasMessage("Default createValue not given.");
     }
 
     @Test
