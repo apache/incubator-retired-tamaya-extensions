@@ -125,25 +125,20 @@ public class TestConfigView implements ConfigOperator{
                             .getPropertyConverters(type);
                     ConversionContext context = new ConversionContext.Builder(
                             key,type).build();
-                    try {
-                        ConversionContext.set(context);
-                        for (PropertyConverter<T> converter : converters) {
-                            try {
-                                T t = converter.convert(value);
-                                if (t != null) {
-                                    return t;
-                                }
-                            } catch (Exception e) {
-                                Logger.getLogger(getClass().getName())
-                                        .log(Level.FINEST, "PropertyConverter: " + converter + " failed to convert createValue: "
-                                                + value, e);
+                    for (PropertyConverter<T> converter : converters) {
+                        try {
+                            T t = converter.convert(value, context);
+                            if (t != null) {
+                                return t;
                             }
+                        } catch (Exception e) {
+                            Logger.getLogger(getClass().getName())
+                                    .log(Level.FINEST, "PropertyConverter: " + converter + " failed to convert createValue: "
+                                            + value, e);
                         }
-                        throw new ConfigException("Unparseable config createValue for type: " + type.getRawType().getName() + ": "
-                                + key + ", supportedFormats: " + context.getSupportedFormats());
-                    }finally{
-                        ConversionContext.reset();
                     }
+                    throw new ConfigException("Unparseable config createValue for type: " + type.getRawType().getName() + ": "
+                            + key + ", supportedFormats: " + context.getSupportedFormats());
                 }
                 return null;
             }

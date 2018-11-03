@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.filter;
 
+import org.apache.tamaya.spi.FilterContext;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertyValue;
 
@@ -102,9 +103,9 @@ public final class ThreadFilterContext implements PropertyFilter{
     }
 
     @Override
-    public PropertyValue filterProperty(PropertyValue valueToBeFiltered) {
+    public PropertyValue filterProperty(PropertyValue valueToBeFiltered, FilterContext context) {
         for(PropertyFilter filter:filters){
-            valueToBeFiltered = filter.filterProperty(valueToBeFiltered);
+            valueToBeFiltered = filter.filterProperty(valueToBeFiltered, context);
         }
         return valueToBeFiltered;
     }

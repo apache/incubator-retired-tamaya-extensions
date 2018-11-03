@@ -19,10 +19,7 @@
 package org.apache.tamaya.microprofile;
 
 import org.apache.tamaya.*;
-import org.apache.tamaya.spi.ConfigurationContext;
-import org.apache.tamaya.spi.PropertyConverter;
-import org.apache.tamaya.spi.PropertySource;
-import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.spi.*;
 import org.apache.tamaya.spisupport.propertysource.BuildablePropertySource;
 import org.assertj.core.api.Assertions;
 import org.eclipse.microprofile.config.Config;
@@ -142,7 +139,7 @@ public class MicroprofileAdapterTest {
     public void toPropertyConverter() throws Exception {
         PropertyConverter<String> tamayaConverter = MicroprofileAdapter.toPropertyConverter(new UppercaseConverter());
         assertNotNull(tamayaConverter);
-        assertEquals("ABC", tamayaConverter.convert("aBC"));
+        assertEquals("ABC", tamayaConverter.convert("aBC", null));
     }
 
     @Test
@@ -176,7 +173,7 @@ public class MicroprofileAdapterTest {
         assertNotNull(tamayaProps);
         assertEquals(tamayaProps.keySet(), props.keySet());
         assertEquals(tamayaProps.get("a").getValue(), "b");
-        assertEquals("toPropertyValueMap", tamayaProps.get("a").getSource());
+        assertEquals("toPropertyValueMap", tamayaProps.get("a").getMeta("source"));
     }
 
     static class MyConfig implements Config {

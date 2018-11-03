@@ -95,7 +95,7 @@ public class ExpressionResolutionFilter implements PropertyFilter, ClassloaderAw
      * @return the resolved createValue, or the input in case where no expression was detected.
      */
     @Override
-    public PropertyValue filterProperty(PropertyValue valueToBeFiltered){
+    public PropertyValue filterProperty(PropertyValue valueToBeFiltered, FilterContext context){
         LOG.finest("Resolving " + valueToBeFiltered);
         String newVal = evaluator().evaluateExpression(valueToBeFiltered.getKey(), valueToBeFiltered.getValue(), true);
         if(newVal!=null){

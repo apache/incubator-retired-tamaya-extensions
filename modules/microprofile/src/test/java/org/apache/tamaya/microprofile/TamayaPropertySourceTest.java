@@ -33,13 +33,6 @@ public class TamayaPropertySourceTest {
     private ConfigSource configSource;
 
     @Test
-    public void isScannable() throws Exception {
-        TamayaPropertySource source = new TamayaPropertySource(configSource);
-
-        assertThat(source.isScannable()).isTrue();
-    }
-
-    @Test
     public void ordinalIsTheSameAsOfTheConfigSource() throws Exception {
         when(configSource.getOrdinal()).thenReturn(44);
 

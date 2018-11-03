@@ -19,7 +19,6 @@
 package org.apache.tamaya.osgi.injection;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.inject.ConfigurationInjection;
 import org.osgi.service.cm.ConfigurationAdmin;
 
@@ -59,12 +58,11 @@ final class OSGIConfigurationInjector{
         this.cm = Objects.requireNonNull(cm);
         this.pid = Objects.requireNonNull(pid);
         this.location = location;
-        tamayaOSGIConfiguration = ConfigurationProvider.createConfiguration(
-                ConfigurationProvider.getConfigurationContextBuilder()
+        tamayaOSGIConfiguration = Configuration.createConfigurationBuilder()
                 .addDefaultPropertyConverters()
                 .addDefaultPropertyFilters()
                 .addPropertySources(new OSGIConfigAdminPropertySource(cm, pid, location))
-                .build());
+                .build();
     }
 
     /**

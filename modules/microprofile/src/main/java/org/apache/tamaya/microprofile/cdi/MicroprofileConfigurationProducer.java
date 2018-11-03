@@ -125,7 +125,7 @@ public class MicroprofileConfigurationProducer {
                     .getPropertyConverters((TypeLiteral)context.getTargetType());
             for (PropertyConverter<Object> converter : converters) {
                 try {
-                    value = converter.convert(textValue);
+                    value = converter.convert(textValue, context);
                     if (value != null) {
                         LOGGER.log(Level.FINEST, "Parsed default createValue from '" + textValue + "' into " +
                                 injectionPoint);

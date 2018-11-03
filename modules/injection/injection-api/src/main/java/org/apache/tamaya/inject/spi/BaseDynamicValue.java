@@ -289,7 +289,7 @@ public abstract class BaseDynamicValue<T> implements DynamicValue<T> {
                 }
                 for(PropertyConverter<T> conv:converters){
                     try{
-                        value = conv.convert(stringVal);
+                        value = conv.convert(stringVal, ctx);
                         if(value!=null){
                             break;
                         }
@@ -301,20 +301,15 @@ public abstract class BaseDynamicValue<T> implements DynamicValue<T> {
         }
         if(value == null && defaultValue!=null){
             ConversionContext ctx = new ConversionContext.Builder("<defaultValue>", targetType).build();
-            try {
-                ConversionContext.set(ctx);
-                for (PropertyConverter<T> conv : converters) {
-                    try {
-                        value = conv.convert(defaultValue);
-                        if (value != null) {
-                            break;
-                        }
-                    } catch (Exception e) {
-                        LOG.warning("failed to convert: " + ctx);
+            for (PropertyConverter<T> conv : converters) {
+                try {
+                    value = conv.convert(defaultValue, ctx);
+                    if (value != null) {
+                        break;
                     }
+                } catch (Exception e) {
+                    LOG.warning("failed to convert: " + ctx);
                 }
-            }finally{
-                ConversionContext.reset();
             }
         }
         return value;

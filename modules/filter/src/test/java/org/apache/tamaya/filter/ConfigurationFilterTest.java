@@ -19,6 +19,7 @@
 package org.apache.tamaya.filter;
 
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.spi.FilterContext;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertyValue;
 import org.junit.Test;
@@ -44,7 +45,7 @@ public class ConfigurationFilterTest {
         assertNotNull(ThreadBasedConfigurationFilter.getSingleValueFilterContext());
         PropertyFilter testFilter = new PropertyFilter() {
             @Override
-            public PropertyValue filterProperty(PropertyValue value) {
+            public PropertyValue filterProperty(PropertyValue value, FilterContext ctx) {
                 return value.setValue(value.getKey() + ":testGetSingleFilters");
             }
         };
@@ -60,7 +61,7 @@ public class ConfigurationFilterTest {
         assertNotNull(ThreadBasedConfigurationFilter.getSingleValueFilterContext());
         PropertyFilter testFilter = new PropertyFilter() {
             @Override
-            public PropertyValue filterProperty(PropertyValue value) {
+            public PropertyValue filterProperty(PropertyValue value, FilterContext ctx) {
                 return value.setValue(value.getKey() + ":testGetSingleFilters");
             }
         };
@@ -76,7 +77,7 @@ public class ConfigurationFilterTest {
         assertNotNull(ThreadBasedConfigurationFilter.getMapFilterContext());
         PropertyFilter testFilter = new PropertyFilter() {
             @Override
-            public PropertyValue filterProperty(PropertyValue value) {
+            public PropertyValue filterProperty(PropertyValue value, FilterContext ctx) {
                 return value.setValue(value.getKey() + ":testGetMapFilters");
             }
         };
@@ -92,7 +93,7 @@ public class ConfigurationFilterTest {
         assertNotNull(ThreadBasedConfigurationFilter.getMapFilterContext());
         PropertyFilter testFilter = new PropertyFilter() {
             @Override
-            public PropertyValue filterProperty(PropertyValue value) {
+            public PropertyValue filterProperty(PropertyValue value, FilterContext ctx) {
                 return value.setValue(value.getKey() + ":testGetMapFilters");
             }
         };
@@ -108,7 +109,7 @@ public class ConfigurationFilterTest {
         assertNotNull(ThreadBasedConfigurationFilter.getSingleValueFilterContext());
         PropertyFilter testFilter = new PropertyFilter() {
             @Override
-            public PropertyValue filterProperty(PropertyValue value) {
+            public PropertyValue filterProperty(PropertyValue value, FilterContext ctx) {
                 return value.setValue(value.getKey() + ":testGetSingleFilters");
             }
         };

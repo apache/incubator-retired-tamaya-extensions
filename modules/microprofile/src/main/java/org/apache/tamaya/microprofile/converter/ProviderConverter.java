@@ -42,13 +42,9 @@ public class ProviderConverter implements PropertyConverter<Provider> {
 
     @SuppressWarnings({"unchecked"})
 	@Override
-    public Provider convert(String value) {
+    public Provider convert(String value, ConversionContext context) {
         return () -> {
-            ConversionContext context = ConversionContext.current();
             try{
-                if(context==null){
-                    return null;
-                }
                 Type targetType = context.getTargetType().getType();
 				ConvertQuery converter = new ConvertQuery(value, TypeLiteral.of(targetType));
                 return context.getConfiguration().adapt(converter);
@@ -83,24 +79,19 @@ public class ProviderConverter implements PropertyConverter<Provider> {
             List<PropertyConverter<T>> converters = config.getContext().getPropertyConverters(type);
             ConversionContext context = new ConversionContext.Builder(type).setConfiguration(config)
                     .setConfiguration(config).setKey(ConvertQuery.class.getName()).build();
-            try{
-                ConversionContext.set(context);
-                for(PropertyConverter<?> conv: converters) {
-                    try{
-                        if(conv instanceof ProviderConverter){
-                            continue;
-                        }
-                        @SuppressWarnings("unchecked")
-                        T result = (T)conv.convert(rawValue);
-                        if(result!=null){
-                            return result;
-                        }
-                    }catch(Exception e){
-                        LOG.log(Level.FINEST,  e, () -> "Converter "+ conv +" failed to convert to " + type);
+            for(PropertyConverter<?> conv: converters) {
+                try{
+                    if(conv instanceof ProviderConverter){
+                        continue;
                     }
+                    @SuppressWarnings("unchecked")
+                    T result = (T)conv.convert(rawValue, context);
+                    if(result!=null){
+                        return result;
+                    }
+                }catch(Exception e){
+                    LOG.log(Level.FINEST,  e, () -> "Converter "+ conv +" failed to convert to " + type);
                 }
-            }finally {
-                ConversionContext.reset();
             }
             return null;
         }

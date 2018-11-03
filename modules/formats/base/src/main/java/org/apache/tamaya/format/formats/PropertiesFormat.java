@@ -55,7 +55,8 @@ public class PropertiesFormat implements ConfigurationFormat {
             p.load(inputStream);
             Set<PropertyValue> data = new HashSet<>();
             for(Map.Entry en:p.entrySet()) {
-                PropertyValue pv = PropertyValue.of(en.getKey().toString(), en.getValue().toString(), resource)
+                PropertyValue pv = PropertyValue.createValue(en.getKey().toString(), en.getValue().toString())
+                        .setMeta("source", resource)
                         .setMeta(ConfigurationFormat.class, this);
                 data.add(pv);
             }

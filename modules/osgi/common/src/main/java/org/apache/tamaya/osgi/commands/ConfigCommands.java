@@ -19,7 +19,6 @@
 package org.apache.tamaya.osgi.commands;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.functions.ConfigurationFunctions;
 import org.apache.tamaya.osgi.Policy;
 import org.apache.tamaya.spi.PropertySource;

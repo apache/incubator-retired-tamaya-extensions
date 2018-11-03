@@ -144,8 +144,4 @@ public class JSONPropertySource implements PropertySource {
         }
     }
 
-    @Override
-    public boolean isScannable() {
-        return true;
-    }
 }

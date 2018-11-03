@@ -111,15 +111,14 @@ public final class ThreadBasedConfigurationFilter implements PropertyFilter{
     }
 
     @Override
-    public PropertyValue filterProperty(PropertyValue valueToBeFiltered) {
-        FilterContext context = FilterContext.get();
-        if(context==null || context.isSinglePropertyScoped()){
+    public PropertyValue filterProperty(PropertyValue valueToBeFiltered, FilterContext context) {
+        if(context.isSinglePropertyScoped()){
             for(PropertyFilter pred: THREADED_VALUE_FILTERS.get().getFilters()){
-                valueToBeFiltered = pred.filterProperty(valueToBeFiltered);
+                valueToBeFiltered = pred.filterProperty(valueToBeFiltered, context);
             }
         }else{
             for(PropertyFilter pred: THREADED_MAP_FILTERS.get().getFilters()){
-                valueToBeFiltered = pred.filterProperty(valueToBeFiltered);
+                valueToBeFiltered = pred.filterProperty(valueToBeFiltered, context);
             }
         }
         return valueToBeFiltered;

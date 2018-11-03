@@ -100,9 +100,4 @@ public class YAMLPropertySource implements PropertySource {
         return Collections.unmodifiableMap(values);
     }
 
-
-    @Override
-    public boolean isScannable() {
-        return true;
-    }
 }

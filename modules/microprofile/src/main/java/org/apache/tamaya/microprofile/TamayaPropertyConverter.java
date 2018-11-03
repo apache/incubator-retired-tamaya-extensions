@@ -19,6 +19,7 @@
 package org.apache.tamaya.microprofile;
 
 
+import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.eclipse.microprofile.config.spi.Converter;
@@ -41,7 +42,7 @@ public class TamayaPropertyConverter<T> implements PropertyConverter<T> {
     }
 
     @Override
-    public T convert(String value) {
+    public T convert(String value, ConversionContext context) {
         return delegate.convert(value);
     }
 }

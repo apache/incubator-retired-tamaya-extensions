@@ -28,9 +28,8 @@ import org.apache.tamaya.spi.FilterContext;
  */
 public final class DefaultMetadataFilter implements PropertyFilter{
     @Override
-    public PropertyValue filterProperty(PropertyValue valueToBeFiltered) {
-        FilterContext context = FilterContext.get();
-        if(context==null || context.isSinglePropertyScoped()){
+    public PropertyValue filterProperty(PropertyValue valueToBeFiltered, FilterContext context) {
+        if(context.isSinglePropertyScoped()){
             // When accessing keys explicitly, do not hide anything.
             return valueToBeFiltered;
         }

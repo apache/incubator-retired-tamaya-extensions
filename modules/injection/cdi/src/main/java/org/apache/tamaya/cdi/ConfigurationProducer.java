@@ -140,46 +140,41 @@ public class ConfigurationProducer {
     static Object convertValue(String textValue, ConversionContext conversionContext, InjectionPoint injectionPoint,
                                PropertyConverter customConverter) {
         Object value = null;
-        try {
-            ConversionContext.set(conversionContext);
-            if (customConverter != null) {
-                return customConverter.convert(textValue);
+        if (customConverter != null) {
+            return customConverter.convert(textValue, conversionContext);
+        }
+        if (String.class.equals(conversionContext.getTargetType().getRawType())) {
+            return textValue;
+        }
+        ParameterizedType pt = null;
+        Type toType = injectionPoint.getAnnotated().getBaseType();
+        if (toType instanceof ParameterizedType) {
+            pt = (ParameterizedType) toType;
+            if (Provider.class.equals(pt.getRawType()) || Instance.class.equals(pt.getRawType())
+                    || Optional.class.equals(pt.getRawType())) {
+                toType = pt.getActualTypeArguments()[0];
             }
-            if (String.class.equals(conversionContext.getTargetType().getRawType())) {
-                return textValue;
+            if (toType.equals(String.class)) {
+                value = textValue;
             }
-            ParameterizedType pt = null;
-            Type toType = injectionPoint.getAnnotated().getBaseType();
-            if (toType instanceof ParameterizedType) {
-                pt = (ParameterizedType) toType;
-                if (Provider.class.equals(pt.getRawType()) || Instance.class.equals(pt.getRawType())
-                        || Optional.class.equals(pt.getRawType())) {
-                    toType = pt.getActualTypeArguments()[0];
+        }
+        List<PropertyConverter<Object>> converters = Configuration.current().getContext()
+                .getPropertyConverters(TypeLiteral.of(toType));
+        for (PropertyConverter<Object> converter : converters) {
+            try {
+                value = converter.convert(textValue, conversionContext);
+                if (value != null) {
+                    LOGGER.log(Level.INFO, "Parsed createValue from '" + textValue + "' into " +
+                            injectionPoint);
+                    break;
                 }
-                if (toType.equals(String.class)) {
-                    value = textValue;
-                }
+            } catch (Exception e) {
+                LOGGER.log(Level.INFO, "Failed to convert createValue '" + textValue + "' for " +
+                        injectionPoint, e);
             }
-            List<PropertyConverter<Object>> converters = Configuration.current().getContext()
-                    .getPropertyConverters(TypeLiteral.of(toType));
-            for (PropertyConverter<Object> converter : converters) {
-                try {
-                    value = converter.convert(textValue);
-                    if (value != null) {
-                        LOGGER.log(Level.INFO, "Parsed createValue from '" + textValue + "' into " +
-                                injectionPoint);
-                        break;
-                    }
-                } catch (Exception e) {
-                    LOGGER.log(Level.INFO, "Failed to convert createValue '" + textValue + "' for " +
-                            injectionPoint, e);
-                }
-            }
-            if (pt != null && Optional.class.equals(pt.getRawType())) {
-                return Optional.ofNullable(value);
-            }
-        }finally{
-            ConversionContext.reset();
+        }
+        if (pt != null && Optional.class.equals(pt.getRawType())) {
+            return Optional.ofNullable(value);
         }
         return value;
     }

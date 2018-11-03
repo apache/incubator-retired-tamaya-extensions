@@ -101,13 +101,13 @@ public class MappedConfigurationDataPropertySource extends BasePropertySource {
             if(this.properties==null) {
                 this.properties = new HashMap<>();
             }
-            this.properties.put("_meta.propertysource."+getName()+"exception",
-                    PropertyValue.of("_meta.propertysource."+getName()+"exception",
-                            e.getLocalizedMessage(),
+            this.properties.put("[error]propertysource."+getName()+".exception",
+                    PropertyValue.createValue("[meta]propertysource."+getName()+".exception",
+                            e.getLocalizedMessage()).setMeta("source",
                             data.getResource()));
-            this.properties.put("_meta.propertysource."+getName()+"exception",
-                    PropertyValue.of("_meta.propertysource."+getName()+"state",
-                            "ERROR",
+            this.properties.put("[error]propertysource."+getName()+".exception",
+                    PropertyValue.createValue("[meta]propertysource."+getName()+".state",
+                            "ERROR").setMeta("source",
                             data.getResource()));
         }
     }

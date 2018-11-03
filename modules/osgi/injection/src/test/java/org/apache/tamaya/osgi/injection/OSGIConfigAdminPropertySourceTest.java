@@ -62,11 +62,6 @@ public class OSGIConfigAdminPropertySourceTest extends AbstractOSGITest{
     }
 
     @Test
-    public void isScannable() throws Exception {
-        assertEquals(true, propertySource.isScannable());
-    }
-
-    @Test
     public void get() throws Exception {
         PropertyValue val = propertySource.get("java.home");
         assertNotNull(val);

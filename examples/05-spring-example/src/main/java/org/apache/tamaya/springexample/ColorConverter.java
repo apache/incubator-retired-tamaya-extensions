@@ -15,6 +15,7 @@
  */
 package org.apache.tamaya.springexample;
 
+import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
 import java.awt.*;
@@ -25,7 +26,7 @@ import java.awt.*;
 public class ColorConverter implements PropertyConverter<Color>{
 
     @Override
-    public Color convert(String value) {
+    public Color convert(String value, ConversionContext ctx) {
         if(value.length()<7){
             return null;
         }

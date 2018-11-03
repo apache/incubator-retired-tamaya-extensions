@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.microprofile;
 
+import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
 import java.util.Locale;
@@ -25,7 +26,7 @@ import java.util.Locale;
 public class UppercasePropertyConverter implements PropertyConverter<String> {
 
     @Override
-    public String convert(String s) {
+    public String convert(String s, ConversionContext context) {
         if(s==null){
             return null;
         }

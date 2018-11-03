@@ -74,7 +74,8 @@ public class OSGIConfigAdminPropertySource extends BasePropertySource{
             if(props!=null){
                 Object value = props.get(key);
                 if(value!=null) {
-                    return PropertyValue.of(key, String.valueOf(value), "OSGI ConfigAdmin: " + pid);
+                    return PropertyValue.createValue(key, String.valueOf(value))
+                            .setMeta("source", "OSGI ConfigAdmin: " + pid);
                 }
             }
         } catch (IOException e) {
