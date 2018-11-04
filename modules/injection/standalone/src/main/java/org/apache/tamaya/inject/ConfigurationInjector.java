@@ -20,6 +20,7 @@ package org.apache.tamaya.inject;
 
 
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.spi.ServiceContextManager;
 
 import java.util.function.Supplier;
 
@@ -94,5 +95,26 @@ public interface ConfigurationInjector {
      * @throws IllegalArgumentException if the configuration's and the injector's classloader do not match.
      */
     <T> Supplier<T> getConfiguredSupplier(Supplier<T> supplier, Configuration config);
+
+    /**
+     * Get the current injector instance, using the default classloader.
+     *
+     * @return the current injector, not null.
+     */
+    static ConfigurationInjector getInstance() {
+        return ServiceContextManager.getServiceContext(ServiceContextManager.getDefaultClassLoader())
+                .getService(ConfigurationInjector.class);
+    }
+
+    /**
+     * Get the current injector instance, using the given target classloader.
+     *
+     * @param classLoader the classloader, not null.
+     * @return the current injector, not null.
+     */
+    static ConfigurationInjector getInstance(ClassLoader classLoader) {
+        return ServiceContextManager.getServiceContext(classLoader)
+                .getService(ConfigurationInjector.class);
+    }
 
 }

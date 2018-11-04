@@ -87,8 +87,8 @@ public interface ResourceResolver {
      * @return the current ResourceResolver instance, never null.
      * @see ServiceContextManager#getDefaultClassLoader()
      */
-    static ResourceResolver current() throws ConfigException {
-        return current(ServiceContextManager.getDefaultClassLoader());
+    static ResourceResolver getInstance() throws ConfigException {
+        return getInstance(ServiceContextManager.getDefaultClassLoader());
     }
 
     /**
@@ -98,7 +98,7 @@ public interface ResourceResolver {
      *
      * @return the current ResourceResolver instance, never null.
      */
-    static ResourceResolver current(ClassLoader classLoader) throws ConfigException {
+    static ResourceResolver getInstance(ClassLoader classLoader) throws ConfigException {
         ResourceResolver resolver = ServiceContextManager.getServiceContext(classLoader)
                 .getService(ResourceResolver.class);
         if (resolver == null) {

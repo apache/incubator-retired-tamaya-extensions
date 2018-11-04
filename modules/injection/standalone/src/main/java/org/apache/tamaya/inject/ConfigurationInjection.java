@@ -22,7 +22,9 @@ import org.apache.tamaya.spi.ServiceContextManager;
 
 /**
  * Singleton accessor class for accessing {@link ConfigurationInjector} instances.
+ * @deprecated Use {@link ConfigurationInjector}
  */
+@Deprecated
 public final class ConfigurationInjection {
 
     /**
