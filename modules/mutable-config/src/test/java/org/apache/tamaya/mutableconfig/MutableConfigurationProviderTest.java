@@ -16,11 +16,9 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-
 package org.apache.tamaya.mutableconfig;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -40,12 +38,12 @@ public class MutableConfigurationProviderTest {
                 .createMutableConfiguration(Configuration.current());
         assertNotNull(cfg);
         assertEquals(cfg.getChangePropagationPolicy(),
-                MutableConfigurationProvider.getApplyMostSignificantOnlyChangePolicy());
+                ChangePropagationPolicy.MOST_SIGNIFICANT_ONLY_POLICY);
     }
 
     @Test
     public void createMutableConfiguration2() throws Exception {
-        ChangePropagationPolicy policy = MutableConfigurationProvider.getApplySelectiveChangePolicy("blabla");
+        ChangePropagationPolicy policy = ChangePropagationPolicy.getApplySelectiveChangePolicy("blabla");
         MutableConfiguration cfg = MutableConfigurationProvider.getInstance()
                 .createMutableConfiguration(Configuration.current(),
                         policy);
@@ -55,7 +53,7 @@ public class MutableConfigurationProviderTest {
 
     @Test
     public void createMutableConfiguration3() throws Exception {
-        ChangePropagationPolicy policy = MutableConfigurationProvider.getApplySelectiveChangePolicy("gugus");
+        ChangePropagationPolicy policy = ChangePropagationPolicy.getApplySelectiveChangePolicy("gugus");
         MutableConfiguration cfg = MutableConfigurationProvider.getInstance()
                 .createMutableConfiguration(policy);
         assertNotNull(cfg);

@@ -19,7 +19,6 @@
 package org.apache.tamaya.mutableconfig;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.mutableconfig.internal.WritablePropertiesSource;
 import org.apache.tamaya.mutableconfig.internal.WritableXmlPropertiesSource;
 import org.junit.Test;
@@ -47,12 +46,12 @@ public class MutableConfigurationTest {
         MutableConfiguration cfg = MutableConfiguration.create(Configuration.current());
         assertNotNull(cfg);
         assertEquals(cfg.getChangePropagationPolicy(),
-                MutableConfigurationProvider.getApplyMostSignificantOnlyChangePolicy());
+                ChangePropagationPolicy.MOST_SIGNIFICANT_ONLY_POLICY);
     }
 
     @Test
     public void createMutableConfiguration2() throws Exception {
-        ChangePropagationPolicy policy = MutableConfigurationProvider.getApplySelectiveChangePolicy("blabla");
+        ChangePropagationPolicy policy = ChangePropagationPolicy.getApplySelectiveChangePolicy("blabla");
         MutableConfiguration cfg = MutableConfiguration
                 .create(Configuration.current(),
                         policy);
@@ -62,7 +61,7 @@ public class MutableConfigurationTest {
 
     @Test
     public void createMutableConfiguration3() throws Exception {
-        ChangePropagationPolicy policy = MutableConfigurationProvider.getApplySelectiveChangePolicy("gugus");
+        ChangePropagationPolicy policy = ChangePropagationPolicy.getApplySelectiveChangePolicy("gugus");
         MutableConfiguration cfg = MutableConfiguration
                 .create(policy);
         assertNotNull(cfg);
@@ -79,7 +78,7 @@ public class MutableConfigurationTest {
         File f = File.createTempFile("ConfigChangeRequest",".properties");
         MutableConfiguration cfg1 = MutableConfiguration.create(
                 Configuration.current(),
-                MutableConfigurationProvider.getApplyAllChangePolicy());
+                ChangePropagationPolicy.ALL_POLICY);
         assertNotNull(cfg1);
         assertNotNull(cfg1.getConfigChangeRequest());
         MutableConfiguration cfg2 = MutableConfiguration.create(
@@ -172,7 +171,7 @@ public class MutableConfigurationTest {
     public void testReadWriteXmlProperties_WithCommit() throws IOException {
         WritableXmlPropertiesSource.target.delete();
         MutableConfiguration cfg = MutableConfiguration.create(
-                Configuration.current(), MutableConfigurationProvider.getApplyAllChangePolicy());
+                Configuration.current(), ChangePropagationPolicy.ALL_POLICY);
         cfg.put("key1", "value1");
         Map<String,String> cm = new HashMap<>();
         cm.put("key2", "value2");
@@ -205,7 +204,7 @@ public class MutableConfigurationTest {
         WritableXmlPropertiesSource.target.delete();
         MutableConfiguration cfg = MutableConfiguration.create(
                 Configuration.current(),
-                MutableConfigurationProvider.getApplyNonePolicy());
+                ChangePropagationPolicy.NONE_POLICY);
         cfg.put("key1", "value1");
         Map<String,String> cm = new HashMap<>();
         cm.put("key2", "value2");
@@ -214,6 +213,5 @@ public class MutableConfigurationTest {
         cfg.store();
         assertFalse(WritableXmlPropertiesSource.target.exists());
     }
-
 
 }

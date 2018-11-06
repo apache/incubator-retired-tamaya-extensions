@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.inject.internal;
 
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.inject.api.DynamicValue;
 import org.apache.tamaya.inject.api.Config;
 import org.apache.tamaya.inject.api.UpdatePolicy;
@@ -63,8 +62,8 @@ public class DefaultDynamicValueTest {
     };
 
     private Map<String,PropertyValue> properties = new HashMap<>();
-    private Configuration config = ConfigurationProvider.createConfiguration(
-            ConfigurationProvider.getConfigurationContextBuilder().addPropertySources(
+    private Configuration config =
+            Configuration.createConfigurationBuilder().addPropertySources(
             new PropertySource() {
                 @Override
                 public int getOrdinal() {
@@ -85,13 +84,8 @@ public class DefaultDynamicValueTest {
                 public Map<String, PropertyValue> getProperties() {
                     return properties;
                 }
-
-                @Override
-                public boolean isScannable() {
-                    return false;
-                }
             }
-    ).build());
+    ).build();
 
     @Test
     public void testOf_Field() throws Exception {

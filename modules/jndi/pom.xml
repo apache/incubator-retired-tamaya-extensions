@@ -32,6 +32,24 @@ under the License.
     <name>Apache Tamaya JNDI Support</name>
     <packaging>jar</packaging>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.revapi</groupId>
+                <artifactId>revapi-maven-plugin</artifactId>
+                <configuration>
+                    <oldArtifacts>
+                        <artifact>${project.groupId}:${project.artifactId}:${released_version}</artifact>
+                    </oldArtifacts>
+                    <newArtifacts>
+                        <artifact>${project.groupId}:${project.artifactId}:${project.version}</artifact>
+                    </newArtifacts>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
     <dependencies>
         <dependency>
             <groupId>org.apache.tamaya</groupId>

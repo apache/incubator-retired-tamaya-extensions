@@ -84,15 +84,15 @@ public class IniConfigurationFormat implements ConfigurationFormat {
                         final String sectionName = section;
                         ObjectValue sectionPV = (ObjectValue)sections.computeIfAbsent(section,
                                 s -> PropertyValue.createObject(sectionName)
-                        .setMeta(ConfigurationFormat.class, this));
+                        .setMeta(ConfigurationFormat.class.getName(), this));
                         sectionPV.setField(key, value).setMeta("source", resource)
-                                .setMeta(ConfigurationFormat.class, this);
+                                .setMeta(ConfigurationFormat.class.getName(), this);
                     } else {
                         String finalSection = "default";
                         ObjectValue sectionBuilder = (ObjectValue)sections.computeIfAbsent(section,
                                 s -> PropertyValue.createObject(finalSection).setMeta("source", resource));
                         sectionBuilder.setField(key, value).setMeta("source", resource)
-                                .setMeta(ConfigurationFormat.class, this);
+                                .setMeta(ConfigurationFormat.class.getName(), this);
                     }
                 }
                 line = reader.readLine();

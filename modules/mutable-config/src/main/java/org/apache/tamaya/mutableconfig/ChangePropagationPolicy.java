@@ -18,9 +18,15 @@
  */
 package org.apache.tamaya.mutableconfig;
 
+import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
 import org.apache.tamaya.spi.PropertySource;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * Policy that defines how changes are applied to the available
@@ -49,5 +55,98 @@ public interface ChangePropagationPolicy {
      * @param configChange the configuration change, not null.
      */
     void applyChange(ConfigChangeRequest configChange, Collection<PropertySource> propertySources);
+
+
+
+    /**
+     * This propagation policy writes changes only once to the most significant property source, where a change is
+     * applicable.
+     * @param propertySourceNames the names of the mutable property sources to be considered for writing any changes to.
+     * @return a corresponding {@link ChangePropagationPolicy} implementation, never null.
+     */
+    static ChangePropagationPolicy getApplySelectiveChangePolicy(final String... propertySourceNames){
+        return new ChangePropagationPolicy() {
+
+            private Set<String> sourceNames = new HashSet<>(Arrays.asList(propertySourceNames));
+
+            @Override
+            public void applyChange(ConfigChangeRequest change, Collection<PropertySource> propertySources) {
+                for(PropertySource propertySource: propertySources){
+                    if(propertySource instanceof MutablePropertySource){
+                        if(this.sourceNames.contains(propertySource.getName())) {
+                            MutablePropertySource target = (MutablePropertySource) propertySource;
+                            try{
+                                target.applyChange(change);
+                            }catch(ConfigException e){
+                                Logger.getLogger(ChangePropagationPolicy.class.getName())
+                                        .warning("Failed to store changes '"+change+"' not applicable to "+target.getName()
+                                        +"("+target.getClass().getName()+").");
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        };
+    }
+
+    /**
+     * This propagation policy writes through all changes to all mutable property sources, where applicable.
+     */
+    ChangePropagationPolicy ALL_POLICY = new ChangePropagationPolicy() {
+        @Override
+        public void applyChange(ConfigChangeRequest change, Collection<PropertySource> propertySources) {
+            for(PropertySource propertySource: propertySources){
+                if(propertySource instanceof MutablePropertySource){
+                    MutablePropertySource target = (MutablePropertySource)propertySource;
+                    try{
+                        target.applyChange(change);
+                    }catch(ConfigException e){
+                        Logger.getLogger(ChangePropagationPolicy.class.getName())
+                                .warning("Failed to store changes '"+change+"' not applicable to "+target.getName()
+                                +"("+target.getClass().getName()+").");
+                    }
+                }
+            }
+        }
+
+    };
+
+    /**
+     * This propagation policy writes changes only once to the most significant property source, where a change is
+     * applicable.
+     */
+    ChangePropagationPolicy MOST_SIGNIFICANT_ONLY_POLICY = new ChangePropagationPolicy() {
+        @Override
+        public void applyChange(ConfigChangeRequest change, Collection<PropertySource> propertySources) {
+            for(PropertySource propertySource: propertySources){
+                if(propertySource instanceof MutablePropertySource){
+                    MutablePropertySource target = (MutablePropertySource)propertySource;
+                    try{
+                        target.applyChange(change);
+                    }catch(ConfigException e){
+                        Logger.getLogger(ChangePropagationPolicy.class.getName())
+                                .warning("Failed to store changes '"+change+"' not applicable to "+target.getName()
+                                +"("+target.getClass().getName()+").");
+                    }
+                    break;
+                }
+            }
+        }
+
+    };
+
+    /**
+     * This propagation policy writes changes only once to the most significant property source, where a change is
+     * applicable.
+     */
+    ChangePropagationPolicy NONE_POLICY = new ChangePropagationPolicy() {
+        @Override
+        public void applyChange(ConfigChangeRequest change, Collection<PropertySource> propertySources) {
+            Logger.getLogger(ChangePropagationPolicy.class.getName())
+                    .warning("Cannot store changes '"+change+"': prohibited by change policy (read-only).");
+        }
+    };
+
 
 }

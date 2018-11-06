@@ -22,7 +22,7 @@ import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.FilterContext;
 import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertyValue;
-import org.apache.tamaya.spisupport.DefaultConfigurationContextBuilder;
+import org.apache.tamaya.spisupport.DefaultConfigurationBuilder;
 import org.apache.tamaya.spisupport.RegexPropertyFilter;
 import org.junit.Test;
 
@@ -37,10 +37,10 @@ import static org.junit.Assert.*;
  */
 public class ProgrammableFilterTest {
 
-    private static ConfigurationContext context = new DefaultConfigurationContextBuilder().build();
-    private static PropertyValue test1Property = PropertyValue.of("test1","test1","test");
-    private static PropertyValue test2Property = PropertyValue.of("test2","test2","test");
-    private static PropertyValue test3Property = PropertyValue.of("test.test3","test.test3","test");
+    private static ConfigurationContext context = new DefaultConfigurationBuilder().build().getContext();
+    private static PropertyValue test1Property = PropertyValue.createValue("test1","test1");
+    private static PropertyValue test2Property = PropertyValue.createValue("test2","test2");
+    private static PropertyValue test3Property = PropertyValue.createValue("test.test3","test.test3");
 
     @Test
     public void testAddRemoveFilter() throws Exception {

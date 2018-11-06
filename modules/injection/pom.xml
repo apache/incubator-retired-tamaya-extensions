@@ -29,6 +29,23 @@
     <name>Apache Tamaya Modules - Injection Parent</name>
     <packaging>pom</packaging>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.revapi</groupId>
+                <artifactId>revapi-maven-plugin</artifactId>
+                <configuration>
+                    <oldArtifacts>
+                        <artifact>${project.groupId}:${project.artifactId}:${released_version}</artifact>
+                    </oldArtifacts>
+                    <newArtifacts>
+                        <artifact>${project.groupId}:${project.artifactId}:${project.version}</artifact>
+                    </newArtifacts>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
     <modules>
         <module>injection-api</module>
         <module>standalone</module>

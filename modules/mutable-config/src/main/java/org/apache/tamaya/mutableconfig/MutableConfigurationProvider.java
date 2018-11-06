@@ -109,7 +109,7 @@ public final class MutableConfigurationProvider {
      * @return a new MutableConfiguration instance
      */
     public MutableConfiguration createMutableConfiguration(Configuration configuration){
-        return createMutableConfiguration(configuration, MOST_SIGNIFICANT_ONLY_POLICY);
+        return createMutableConfiguration(configuration, ChangePropagationPolicy.MOST_SIGNIFICANT_ONLY_POLICY);
     }
 
     /**
@@ -132,7 +132,7 @@ public final class MutableConfigurationProvider {
      * @return default all policy.
      */
     public static ChangePropagationPolicy getApplyAllChangePolicy(){
-        return ALL_POLICY;
+        return ChangePropagationPolicy.ALL_POLICY;
     }
 
     /**
@@ -141,7 +141,7 @@ public final class MutableConfigurationProvider {
      * @return a corresponding {@link ChangePropagationPolicy} implementation, never null.
      */
     public static ChangePropagationPolicy getApplyMostSignificantOnlyChangePolicy(){
-        return MOST_SIGNIFICANT_ONLY_POLICY;
+        return ChangePropagationPolicy.MOST_SIGNIFICANT_ONLY_POLICY;
     }
 
     /**
@@ -151,7 +151,7 @@ public final class MutableConfigurationProvider {
      * @return a corresponding {@link ChangePropagationPolicy} implementation, never null.
      */
     public static ChangePropagationPolicy getApplySelectiveChangePolicy(String... propertySourceNames){
-        return new SelectiveChangeApplyPolicy(propertySourceNames);
+        return ChangePropagationPolicy.getApplySelectiveChangePolicy(propertySourceNames);
     }
 
     /**
@@ -160,63 +160,8 @@ public final class MutableConfigurationProvider {
      * @return a corresponding {@link ChangePropagationPolicy} implementation, never null.
      */
     public static ChangePropagationPolicy getApplyNonePolicy(){
-        return NONE_POLICY;
+        return ChangePropagationPolicy.NONE_POLICY;
     }
-
-    /**
-     * This propagation policy writes through all changes to all mutable property sources, where applicable.
-     */
-    private static final ChangePropagationPolicy ALL_POLICY = new ChangePropagationPolicy() {
-        @Override
-        public void applyChange(ConfigChangeRequest change, Collection<PropertySource> propertySources) {
-            for(PropertySource propertySource: propertySources){
-                if(propertySource instanceof MutablePropertySource){
-                    MutablePropertySource target = (MutablePropertySource)propertySource;
-                    try{
-                        target.applyChange(change);
-                    }catch(ConfigException e){
-                        LOG.warning("Failed to store changes '"+change+"' not applicable to "+target.getName()
-                        +"("+target.getClass().getName()+").");
-                    }
-                }
-            }
-        }
-
-    };
-
-    /**
-     * This propagation policy writes changes only once to the most significant property source, where a change is
-     * applicable.
-     */
-    private static final ChangePropagationPolicy MOST_SIGNIFICANT_ONLY_POLICY = new ChangePropagationPolicy() {
-        @Override
-        public void applyChange(ConfigChangeRequest change, Collection<PropertySource> propertySources) {
-            for(PropertySource propertySource: propertySources){
-                if(propertySource instanceof MutablePropertySource){
-                    MutablePropertySource target = (MutablePropertySource)propertySource;
-                    try{
-                        target.applyChange(change);
-                    }catch(ConfigException e){
-                        LOG.warning("Failed to store changes '"+change+"' not applicable to "+target.getName()
-                                +"("+target.getClass().getName()+").");
-                    }
-                    break;
-                }
-            }
-        }
-
-    };
-
-    /**
-     * This propagation policy writes changes only once to the most significant property source, where a change is
-     * applicable.
-     */
-    private static final ChangePropagationPolicy NONE_POLICY = new ChangePropagationPolicy() {
-        @Override
-        public void applyChange(ConfigChangeRequest change, Collection<PropertySource> propertySources) {
-            LOG.warning("Cannot store changes '"+change+"': prohibited by change policy (read-only).");
-        }
-    };
 
     /**
      * Get the provider's classloader.
@@ -225,36 +170,5 @@ public final class MutableConfigurationProvider {
     public ClassLoader getClassLoader() {
         return classLoader;
     }
-
-    /**
-     * This propagation policy writes through all changes to all mutable property sources, where applicable.
-     */
-    private static final class SelectiveChangeApplyPolicy implements ChangePropagationPolicy {
-
-        private Set<String> propertySourceNames = new HashSet<>();
-
-        SelectiveChangeApplyPolicy(String... propertySourceNames){
-            this.propertySourceNames.addAll(Arrays.asList(propertySourceNames));
-        }
-
-        @Override
-        public void applyChange(ConfigChangeRequest change, Collection<PropertySource> propertySources) {
-            for(PropertySource propertySource: propertySources){
-                if(propertySource instanceof MutablePropertySource){
-                    if(this.propertySourceNames.contains(propertySource.getName())) {
-                        MutablePropertySource target = (MutablePropertySource) propertySource;
-                        try{
-                            target.applyChange(change);
-                        }catch(ConfigException e){
-                            LOG.warning("Failed to store changes '"+change+"' not applicable to "+target.getName()
-                                    +"("+target.getClass().getName()+").");
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-    };
-
 
 }

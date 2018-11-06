@@ -91,7 +91,7 @@ public class MappedConfigurationDataPropertySource extends BasePropertySource {
         if(data==null){
             return;
         }
-        Map<String, Object> meta = new HashMap<>();
+        Map<String, String> meta = new HashMap<>();
         meta.put("source", data.getResource());
         meta.put("timestamp",String.valueOf(System.currentTimeMillis()));
         try{
@@ -119,7 +119,7 @@ public class MappedConfigurationDataPropertySource extends BasePropertySource {
      * @param meta the metadata to add.
      * @return the final properties to be included.
      */
-    protected Map<String, PropertyValue> populateData(ConfigurationData data, Map<String, Object> meta) {
+    protected Map<String, PropertyValue> populateData(ConfigurationData data, Map<String, String> meta) {
         Map<String, PropertyValue> result = new HashMap<>();
         for(PropertyValue val:data.getData()) {
             if(!val.getKey().isEmpty()) {
@@ -132,7 +132,7 @@ public class MappedConfigurationDataPropertySource extends BasePropertySource {
         return result;
     }
 
-    protected void addNode(PropertyValue val, Map<String, PropertyValue> map, Map<String, Object> meta){
+    protected void addNode(PropertyValue val, Map<String, PropertyValue> map, Map<String, String> meta){
         if(val.isLeaf()){
             val.setMeta(meta);
             map.put(val.getQualifiedKey(), val);

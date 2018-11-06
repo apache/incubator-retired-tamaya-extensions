@@ -189,12 +189,6 @@ public class ConfigurationProducer {
         return Configuration.current().getContext();
     }
 
-    @Deprecated
-    @Produces
-    public ConfigurationContextBuilder getConfigurationContextBuilder(){
-        return ConfigurationProvider.getConfigurationContextBuilder();
-    }
-
     @Produces
     public ConfigurationBuilder getConfigurationBuilder(){
         return Configuration.createConfigurationBuilder();
