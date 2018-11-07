@@ -45,6 +45,10 @@ under the License.
         <module>osgi</module>
         <module>microprofile</module>
         <module>injection</module>
+        <module>collections</module>
+        <module>hazelcast</module>
+        <module>etcd</module>
+        <module>consul</module>
     </modules>
 
 </project>
