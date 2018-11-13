@@ -44,12 +44,15 @@ public class TestPropertySource implements PropertySource{
         config.put("int1", "123456");
         config.put("int2", "111222");
         config.put("testProperty", "testPropertyValue!");
+        config.put("injectedTestProperty", "injectedTestPropertyValue!");
         config.put("booleanT", "true");
         config.put("double1", "1234.5678");
         config.put("BD", "123456789123456789123456789123456789.123456789123456789123456789123456789");
         config.put("testProperty", "keys current testProperty");
         config.put("runtimeVersion", "${java.version}");
         config.put("{meta}source.type:"+getClass().getName(), "PropertySource");
+        config.put("optionalStringWithValue", "Optional value");
+        config.put("injectedOptionalStringWithValue", "Injected Optional String");
     }
 
     public int getOrdinal() {

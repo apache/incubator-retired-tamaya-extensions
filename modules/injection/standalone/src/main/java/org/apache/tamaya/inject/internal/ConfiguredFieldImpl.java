@@ -113,7 +113,7 @@ public class ConfiguredFieldImpl implements ConfiguredField{
 
             // Check for adapter/filter
             Object value = InjectionHelper.adaptValue(this.annotatedField,
-                    TypeLiteral.of(this.annotatedField.getType()), retKey[0], evaluatedValue);
+                    TypeLiteral.of(this.annotatedField.getGenericType()), retKey[0], evaluatedValue);
             AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
                 @Override
                 public Object run() throws Exception {
