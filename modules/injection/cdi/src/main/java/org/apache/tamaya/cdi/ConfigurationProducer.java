@@ -78,6 +78,7 @@ public class ConfigurationProducer {
         // enforces the resolvability of the config
 
         String defaultTextValue = annotation.defaultValue().equals(Config.UNCONFIGURED_VALUE) ? null : annotation.defaultValue();
+        boolean required = annotation.required();
         String textValue = null;
         Configuration config = Configuration.current();
         if(operator!=null) {
@@ -98,9 +99,11 @@ public class ConfigurationProducer {
         ConversionContext conversionContext = createConversionContext(keyFound, keys, injectionPoint);
         Object value = convertValue(textValue, conversionContext, injectionPoint, customConverter);
         if (value == null) {
-            throw new ConfigException(String.format(
+            if (required){
+                throw new ConfigException(String.format(
                     "Can't resolve any of the possible config keys: %s to the required target type: %s, supported formats: %s",
                     keys, conversionContext.getTargetType(), conversionContext.getSupportedFormats().toString()));
+            }
         }
         LOGGER.finest(String.format("Injecting %s for key %s in class %s", keyFound, value.toString(), injectionPoint.toString()));
         return value;
