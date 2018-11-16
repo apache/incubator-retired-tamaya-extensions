@@ -24,6 +24,7 @@ import org.apache.tamaya.inject.api.Config;
 
 import javax.inject.Singleton;
 import java.math.BigDecimal;
+import java.util.Optional;
 
 /**
  * Class to be loaded from CDI to ensure fields are correctly configured using CDI injection mechanisms.
@@ -60,6 +61,12 @@ public class ConfiguredClass{
 
     @Config("double1")
     private double doubleValue;
+
+    @Config("double1")
+    private Optional<Double> existingDouble;
+
+    @Config("foo-bar")
+    private Optional<Double> nonExistingDouble;
 
     public String getTestProperty() {
         return testProperty;
@@ -99,6 +106,14 @@ public class ConfiguredClass{
 
     public double getDoubleValue() {
         return doubleValue;
+    }
+
+    public Optional<Double> getExistingDouble() {
+        return existingDouble;
+    }
+
+    public Optional<Double> getNonExistingDouble() {
+        return nonExistingDouble;
     }
 
     @Override

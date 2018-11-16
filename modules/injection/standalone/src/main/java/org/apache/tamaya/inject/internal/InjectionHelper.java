@@ -147,7 +147,7 @@ final class InjectionHelper {
     private static String evaluteConfigValue(List<String> keys, String[] retKey, Configuration config) {
         String configValue = null;
         for (String key : keys) {
-            configValue = config.get(key);
+            configValue = config.getOrDefault(key, null);
             if (configValue != null) {
                 if(retKey!=null && retKey.length>0){
                     retKey[0] = key;
@@ -184,9 +184,6 @@ final class InjectionHelper {
         if (String.class == targetType.getType()) {
             return (T) configValue;
         } else{
-            if(configValue==null) {
-                return null;
-            }
             ConfigurationContext configContext = Configuration.current().getContext();
             List<PropertyConverter<T>> converters = configContext
                     .getPropertyConverters(targetType);
@@ -199,7 +196,10 @@ final class InjectionHelper {
                 }
             }
         }
-        throw new ConfigException("Non convertible property type: " + element);
+        if(configValue!=null) {
+            throw new ConfigException("Non convertible property type: " + element);
+        }
+        return null;
     }
 
     /**

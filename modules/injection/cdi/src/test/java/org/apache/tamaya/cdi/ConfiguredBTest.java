@@ -34,6 +34,7 @@ import javax.enterprise.inject.spi.CDI;
 import javax.enterprise.inject.spi.Extension;
 
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -50,5 +51,9 @@ public class ConfiguredBTest extends BaseTestConfiguration {
         System.out.println("********************************************");
         double actual = 1234.5678;
         MatcherAssert.assertThat(item.getDoubleValue(), is(actual));
+        assertTrue(item.getExistingDouble()!=null);
+        assertTrue(item.getNonExistingDouble()!=null);
+        assertTrue(item.getExistingDouble().isPresent());
+        assertFalse(item.getNonExistingDouble().isPresent());
     }
 }

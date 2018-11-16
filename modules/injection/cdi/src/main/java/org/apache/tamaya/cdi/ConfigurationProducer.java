@@ -85,7 +85,7 @@ public class ConfigurationProducer {
         }
         String keyFound = null;
         for(String key:keys) {
-            textValue = config.get(key);
+            textValue = config.getOrDefault(key, null);
             if(textValue!=null) {
                 keyFound = key;
                 break;
