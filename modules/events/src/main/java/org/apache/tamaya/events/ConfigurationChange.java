@@ -19,6 +19,7 @@
 package org.apache.tamaya.events;
 
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationSnapshot;
 
 import java.beans.PropertyChangeEvent;
 import java.io.Serializable;
@@ -39,7 +40,7 @@ public final class ConfigurationChange implements ConfigEvent<Configuration>, Se
 
     private static final long serialVersionUID = 1L;
     /** The base property provider/configuration. */
-    private final FrozenConfiguration configuration;
+    private final ConfigurationSnapshot snapshot;
     /** The base version, usable for optimistic locking. */
     private String version = UUID.randomUUID().toString();
     /** The timestamp of the change setCurrent in millis from the epoch. */
@@ -61,7 +62,7 @@ public final class ConfigurationChange implements ConfigEvent<Configuration>, Se
      * @param builder The builder used, not null.
      */
     ConfigurationChange(ConfigurationChangeBuilder builder) {
-        this.configuration = FrozenConfiguration.of(builder.source);
+        this.snapshot = builder.source.getSnapshot();
         for(PropertyChangeEvent ev:builder.delta.values()){
             this.changes.put(ev.getPropertyName(), ev);
         }
@@ -84,7 +85,7 @@ public final class ConfigurationChange implements ConfigEvent<Configuration>, Se
      */
     @Override
     public Configuration getResource(){
-        return this.configuration;
+        return this.snapshot;
     }
 
     /**
@@ -219,7 +220,7 @@ public final class ConfigurationChange implements ConfigEvent<Configuration>, Se
     @Override
     public String toString() {
         return "ConfigurationChange{" +
-                "\n configuration-id = " + configuration.getOrDefault("_id", "-") +
+                "\n snapshot-id = " + snapshot.getOrDefault("_id", "-") +
                 "\n change-id        = " + version +
                 "\n timestamp        = " + timestamp +
                 "\n added            = " + this.getAddedSize() +

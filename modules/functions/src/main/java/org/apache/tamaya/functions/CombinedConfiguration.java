@@ -19,8 +19,10 @@
 package org.apache.tamaya.functions;
 
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationSnapshot;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spisupport.DefaultConfigurationSnapshot;
 
 import java.util.*;
 
@@ -147,6 +149,11 @@ class CombinedConfiguration implements Configuration{
     public ConfigurationContext getContext() {
         // TODO thjink on combining the participating contexts...
         return configurations.get(0).getContext();
+    }
+
+    @Override
+    public ConfigurationSnapshot getSnapshot(Iterable<String> keys) {
+        return new DefaultConfigurationSnapshot(this, keys);
     }
 
     @Override

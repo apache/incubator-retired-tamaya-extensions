@@ -19,9 +19,14 @@
 package org.apache.tamaya.events;
 
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationSnapshot;
+import org.apache.tamaya.spi.ConfigurationContext;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.omg.CORBA.Any;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,23 +36,11 @@ import static org.mockito.Mockito.doReturn;
 public class FrozenConfigurationTest {
 
     @Test
-    public void getFrozenAtReturnsTheCorrectTimestamp() {
-        Configuration source = Mockito.mock(Configuration.class);
-
-        long poiStart = System.nanoTime();
-
-        FrozenConfiguration fc = FrozenConfiguration.of(source);
-
-        long poiEnd = System.nanoTime();
-
-        assertThat(fc.getFrozenAt()).isGreaterThan(poiStart)
-                                    .isLessThan(poiEnd);
-    }
-
-
-    @Test
     public void idMustBeNotNull() {
         Configuration source = Mockito.mock(Configuration.class);
+
+        Mockito.when(source.getContext()).thenReturn(ConfigurationContext.EMPTY);
+        Mockito.when(source.getProperties()).thenReturn(Collections.emptyMap());
 
         FrozenConfiguration fc = FrozenConfiguration.of(source);
 
@@ -63,6 +56,7 @@ public class FrozenConfigurationTest {
         properties.put("key", "createValue");
 
         Configuration configuration = Mockito.mock(Configuration.class);
+        Mockito.when(configuration.getContext()).thenReturn(ConfigurationContext.EMPTY);
         doReturn(properties).when(configuration).getProperties();
 
         FrozenConfiguration fcA = FrozenConfiguration.of(configuration);

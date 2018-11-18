@@ -19,8 +19,10 @@
 package org.apache.tamaya.functions;
 
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationSnapshot;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spisupport.DefaultConfigurationSnapshot;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -110,6 +112,11 @@ class MappedConfiguration implements Configuration {
     @Override
     public ConfigurationContext getContext() {
         return baseConfiguration.getContext();
+    }
+
+    @Override
+    public ConfigurationSnapshot getSnapshot(Iterable<String> keys) {
+        return new DefaultConfigurationSnapshot(this, keys);
     }
 
     @Override

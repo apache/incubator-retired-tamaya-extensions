@@ -44,7 +44,7 @@ public class RandomPropertySource implements PropertySource{
     @Override
     public PropertyValue get(String key) {
         if(key.equals("random.new")){
-            return PropertyValue.of(key, String.valueOf(Math.random()),getName());
+            return PropertyValue.createValue(key, String.valueOf(Math.random()));
         }
         return null;
     }
@@ -52,14 +52,10 @@ public class RandomPropertySource implements PropertySource{
     @Override
     public Map<String, PropertyValue> getProperties() {
         synchronized(data) {
-            data.put("random.new", PropertyValue.of("random.new", String.valueOf(Math.random()), getName())
+            data.put("random.new", PropertyValue.createValue("random.new", String.valueOf(Math.random()))
             .setMeta("_random.new.timestamp", String.valueOf(System.currentTimeMillis())));
             return new HashMap<>(data);
         }
     }
 
-    @Override
-    public boolean isScannable() {
-        return true;
-    }
 }

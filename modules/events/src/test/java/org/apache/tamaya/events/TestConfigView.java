@@ -18,11 +18,7 @@
  */
 package org.apache.tamaya.events;
 
-import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.ConfigOperator;
-import org.apache.tamaya.ConfigQuery;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.*;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
@@ -30,24 +26,25 @@ import org.apache.tamaya.spi.PropertyConverter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.UnaryOperator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * Created by Anatole on 24.03.2015.
  */
-public class TestConfigView implements ConfigOperator{
+public class TestConfigView implements UnaryOperator<Configuration> {
 
     private static final TestConfigView INSTANCE = new TestConfigView();
 
     private TestConfigView(){}
 
-    public static ConfigOperator of(){
+    public static TestConfigView of(){
         return INSTANCE;
     }
 
     @Override
-    public Configuration operate(final Configuration config) {
+    public Configuration apply(final Configuration config) {
         return new Configuration() {
             @Override
             public Map<String, String> getProperties() {
@@ -58,23 +55,16 @@ public class TestConfigView implements ConfigOperator{
                     }
                 }
                 return result;
-//                return config.getProperties().entrySet().stream().filter(e -> e.getKey().startsWith("test")).collect(
-//                        Collectors.toMap(en -> en.getKey(), en -> en.getProperty()));
-            }
-
-            @Override
-            public Configuration with(ConfigOperator operator) {
-                return null;
-            }
-
-            @Override
-            public <T> T query(ConfigQuery<T> query) {
-                return null;
             }
 
             @Override
             public ConfigurationContext getContext() {
                 return config.getContext();
+            }
+
+            @Override
+            public ConfigurationSnapshot getSnapshot(Iterable<String> keys) {
+                return null;
             }
 
             @Override

@@ -19,6 +19,7 @@
 package org.apache.tamaya.events.internal;
 
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationSnapshot;
 import org.apache.tamaya.events.ConfigEventManager;
 import org.apache.tamaya.events.ConfigurationChange;
 import org.apache.tamaya.events.ConfigurationChangeBuilder;
@@ -40,7 +41,7 @@ public class DefaultConfigChangeObserver {
 
     private long checkPeriod = 2000L;
 
-    private volatile FrozenConfiguration lastConfig;
+    private volatile ConfigurationSnapshot lastConfig;
 
     private volatile boolean running;
 
@@ -64,7 +65,7 @@ public class DefaultConfigChangeObserver {
 
     public void checkConfigurationUpdate() {
         LOG.finest("Checking configuration for changes...");
-        FrozenConfiguration frozenConfig = FrozenConfiguration.of(Configuration.current(classLoader));
+        ConfigurationSnapshot frozenConfig = Configuration.current(classLoader).getSnapshot();
         ConfigurationChange changes;
 
         if (getLastConfig() != null) {
@@ -78,11 +79,11 @@ public class DefaultConfigChangeObserver {
         setLastConfig(frozenConfig);
     }
 
-    protected FrozenConfiguration getLastConfig() {
+    protected ConfigurationSnapshot getLastConfig() {
         return lastConfig;
     }
 
-    protected void setLastConfig(FrozenConfiguration newConfiguration) {
+    protected void setLastConfig(ConfigurationSnapshot newConfiguration) {
         lastConfig = newConfiguration;
     }
 

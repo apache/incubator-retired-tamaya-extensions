@@ -73,11 +73,6 @@ final class ConfigWrappingPropertySource implements PropertySource {
     }
 
     @Override
-    public boolean isScannable() {
-        return true;
-    }
-
-    @Override
     public String toString(){
         return "ConfigWrappingPropertySource(name="+name+", ordinal="+ordinal+", config="+config+")";
     }

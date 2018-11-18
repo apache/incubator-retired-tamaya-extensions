@@ -19,7 +19,6 @@
 package org.apache.tamaya.events;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.junit.Test;
 
 import java.util.Map;
@@ -48,7 +47,7 @@ public class ConfigurationChangeTest {
         assertTrue(change.getRemovedSize()==0);
         assertTrue(change.getChanges().size()==0);
         for (Map.Entry<String, String> en : config.getProperties().entrySet()) {
-            if (!"[getMeta]frozenAt".equals(en.getKey())) {
+            if (!"[meta]frozenAt".equals(en.getKey())) {
                 if(en.getKey().contains("random.new")){ // dynamic generated createValue!
                     continue;
                 }
@@ -156,7 +155,7 @@ public class ConfigurationChangeTest {
                 change.toString();
         assertTrue(toString.contains("timestamp"));
         assertTrue(toString.contains("change-id"));
-        assertTrue(toString.contains("configuration-id"));
+        assertTrue(toString.contains("snapshot-id"));
         assertFalse(toString.contains("key1"));
         assertFalse(toString.contains("key2"));
     }

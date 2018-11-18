@@ -20,66 +20,65 @@ package org.apache.tamaya.events;
 
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
-import org.apache.tamaya.spisupport.PropertySourceComparator;
+import org.apache.tamaya.spisupport.DefaultPropertySourceSnapshot;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * PropertySource implementation that stores all current values of a given (possibly dynamic, contextual and non server
  * capable instance) and is fully serializable. Note that hereby only the scannable key/createValue pairs are considered.
+ * @deprecated
  */
+@Deprecated
 public final class FrozenPropertySource implements PropertySource, Serializable {
-    private static final long serialVersionUID = -6373137316556444171L;
-    /**
-     * The ordinal.
-     */
-    private final int ordinal;
-    /**
-     * The properties read.
-     */
-    private Map<String, PropertyValue> properties = new HashMap<>();
-    /**
-     * The PropertySource's name.
-     */
-    private final String name;
+    private static final long serialVersionUID = -6373137316556444172L;
 
-    private long frozenAt = System.currentTimeMillis();
+    private DefaultPropertySourceSnapshot snapshot;
 
     /**
      * Constructor.
      *
-     * @param propertySource The base PropertySource.
+     * @param snapshot The base snapshot.
      */
-    private FrozenPropertySource(PropertySource propertySource) {
-        this.properties.putAll(propertySource.getProperties());
-        this.properties = Collections.unmodifiableMap(this.properties);
-        this.ordinal = PropertySourceComparator.getOrdinal(propertySource);
-        this.name = propertySource.getName();
+    private FrozenPropertySource(DefaultPropertySourceSnapshot snapshot) {
+        this.snapshot = snapshot;
     }
 
     /**
-     * Creates a new FrozenPropertySource instance based on a PropertySource given.
+     * Creates a new FrozenPropertySource instance based on a PropertySource and the target key set given. This method
+     * uses all keys available in the property map.
      *
      * @param propertySource the property source to be frozen, not null.
      * @return the frozen property source.
      */
     public static FrozenPropertySource of(PropertySource propertySource) {
-        if (propertySource instanceof FrozenPropertySource) {
-            return (FrozenPropertySource) propertySource;
-        }
-        return new FrozenPropertySource(propertySource);
+        return new FrozenPropertySource(DefaultPropertySourceSnapshot.of(propertySource));
+    }
+
+    /**
+     * Creates a new FrozenPropertySource instance based on a PropertySource and the target key set given.
+     *
+     * @param propertySource the property source to be frozen, not null.
+     * @param keys the keys to be evaluated for the snapshot. Only these keys will be contained in the resulting
+     *             snapshot.
+     * @return the frozen property source.
+     */
+    public static FrozenPropertySource of(PropertySource propertySource, Iterable<String> keys) {
+        return new FrozenPropertySource(DefaultPropertySourceSnapshot.of(propertySource, keys));
+    }
+
+    public Set<String> getKeys() {
+        return snapshot.getKeys();
     }
 
     @Override
     public String getName() {
-        return this.name;
+        return this.snapshot.getName();
     }
 
     public int getOrdinal() {
-        return this.ordinal;
+        return this.snapshot.getOrdinal();
     }
 
     /**
@@ -87,22 +86,17 @@ public final class FrozenPropertySource implements PropertySource, Serializable 
      * @return the creation timestamp
      */
     public long getFrozenAt(){
-        return frozenAt;
+        return snapshot.getFrozenAt();
     }
 
     @Override
     public PropertyValue get(String key) {
-        return this.properties.get(key);
+        return snapshot.get(key);
     }
 
     @Override
     public Map<String, PropertyValue> getProperties() {
-        return properties;
-    }
-
-    @Override
-    public boolean isScannable() {
-        return true;
+        return snapshot.getProperties();
     }
 
     @Override
@@ -114,22 +108,18 @@ public final class FrozenPropertySource implements PropertySource, Serializable 
             return false;
         }
         FrozenPropertySource that = (FrozenPropertySource) o;
-        return ordinal == that.ordinal && properties.equals(that.properties);
+        return Objects.equals(snapshot, that.snapshot);
     }
 
     @Override
     public int hashCode() {
-        int result = ordinal;
-        result = 31 * result + properties.hashCode();
-        return result;
+        return snapshot.hashCode();
     }
 
     @Override
     public String toString() {
         return "FrozenPropertySource{" +
-                "name=" + name +
-                ", ordinal=" + ordinal +
-                ", properties=" + properties +
+                "snapshot=" + snapshot +
                 '}';
     }
 }

@@ -20,6 +20,7 @@ package org.apache.tamaya.etcd;
 
 import org.apache.tamaya.mutableconfig.ConfigChangeRequest;
 import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
+import org.apache.tamaya.spi.ChangeSupport;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spisupport.propertysource.BasePropertySource;
 
@@ -180,6 +181,11 @@ public abstract class AbstractEtcdPropertySource extends BasePropertySource
     public Map<String, PropertyValue> getProperties() {
         checkRefresh();
         return configMap;
+    }
+
+    @Override
+    public ChangeSupport getChangeSupport(){
+        return ChangeSupport.SUPPORTED;
     }
 
     private Map<String, PropertyValue> mapPrefix(Map<String, String> props) {

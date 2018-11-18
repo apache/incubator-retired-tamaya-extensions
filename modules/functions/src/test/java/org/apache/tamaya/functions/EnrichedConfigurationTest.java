@@ -53,7 +53,7 @@ public class EnrichedConfigurationTest {
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                sut.get(null);
+                sut.get((String)null);
             }
         }).isInstanceOf(NullPointerException.class)
           .hasMessage("Key must be given.");
@@ -186,7 +186,7 @@ public class EnrichedConfigurationTest {
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                sut.getOrDefault(null, "v");
+                sut.getOrDefault((String)null, "v");
             }
         }).isInstanceOf(NullPointerException.class)
           .hasMessage("Key must be given.");

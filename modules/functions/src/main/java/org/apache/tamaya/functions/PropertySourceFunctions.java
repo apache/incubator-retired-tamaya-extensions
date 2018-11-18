@@ -57,11 +57,6 @@ public final class PropertySourceFunctions {
         }
 
         @Override
-        public boolean isScannable() {
-            return true;
-        }
-
-        @Override
         public String toString() {
             return "PropertySource<empty>";
         }

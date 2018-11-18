@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.events.internal;
 
-import org.apache.tamaya.events.FrozenConfiguration;
+import org.apache.tamaya.ConfigurationSnapshot;
 import org.apache.tamaya.spi.ServiceContextManager;
 import org.junit.Test;
 
@@ -74,9 +74,9 @@ public class DefaultConfigChangeObserverTest {
 
         observer.checkConfigurationUpdate();
 
-        FrozenConfiguration config1 = observer.getLastConfig();
+        ConfigurationSnapshot config1 = observer.getLastConfig();
         observer.checkConfigurationUpdate();
-        FrozenConfiguration config2 = observer.getLastConfig();
+        ConfigurationSnapshot config2 = observer.getLastConfig();
 
         assertThat(config1).describedAs("After the firt check last configuration must be setCurrent.")
                                             .isNotEqualTo(config2);

@@ -25,6 +25,7 @@ import com.orbitz.consul.KeyValueClient;
 import com.orbitz.consul.model.kv.Value;
 import org.apache.tamaya.mutableconfig.ConfigChangeRequest;
 import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
+import org.apache.tamaya.spi.ChangeSupport;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spisupport.propertysource.BasePropertySource;
 
@@ -203,6 +204,11 @@ implements MutablePropertySource{
     public Map<String, PropertyValue> getProperties() {
         checkRefresh();
         return Collections.unmodifiableMap(configMap);
+    }
+
+    @Override
+    public ChangeSupport getChangeSupport(){
+        return ChangeSupport.UNSUPPORTED;
     }
 
     @Override

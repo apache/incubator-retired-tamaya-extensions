@@ -19,6 +19,7 @@
 package org.apache.tamaya.events;
 
 import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spisupport.DefaultPropertySourceSnapshot;
 
 import java.beans.PropertyChangeEvent;
 import java.io.Serializable;
@@ -39,7 +40,7 @@ public final class PropertySourceChange implements ConfigEvent<PropertySource>, 
 
     private static final long serialVersionUID = 1L;
     /** The base property provider/configuration. */
-    private final FrozenPropertySource propertySource;
+    private final DefaultPropertySourceSnapshot propertySource;
     /** The base version, usable for optimistic locking. */
     private String version = UUID.randomUUID().toString();
     /** The timestamp of the change setCurrent in millis from the epoch. */
@@ -52,7 +53,7 @@ public final class PropertySourceChange implements ConfigEvent<PropertySource>, 
      * @param builder The builder used, not null.
      */
     PropertySourceChange(PropertySourceChangeBuilder builder) {
-        this.propertySource = FrozenPropertySource.of(builder.source);
+        this.propertySource = new DefaultPropertySourceSnapshot(builder.source);
         for (PropertyChangeEvent c : builder.delta.values()) {
             this.changes.put(c.getPropertyName(), c);
         }

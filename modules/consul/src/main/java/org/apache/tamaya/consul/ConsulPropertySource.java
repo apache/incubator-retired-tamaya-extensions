@@ -25,6 +25,7 @@ import com.orbitz.consul.KeyValueClient;
 import com.orbitz.consul.model.kv.Value;
 import org.apache.tamaya.mutableconfig.ConfigChangeRequest;
 import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
+import org.apache.tamaya.spi.ChangeSupport;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spisupport.propertysource.BasePropertySource;
 
@@ -62,5 +63,6 @@ public class ConsulPropertySource extends AbstractConsulPropertySource{
         this();
         setServer(Arrays.asList(backends));
     }
+
 
 }

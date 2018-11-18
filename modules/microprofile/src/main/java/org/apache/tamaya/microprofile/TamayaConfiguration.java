@@ -20,6 +20,7 @@ package org.apache.tamaya.microprofile;
 
 import org.apache.tamaya.*;
 import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spisupport.DefaultConfigurationSnapshot;
 import org.eclipse.microprofile.config.Config;
 
 import java.util.*;
@@ -79,5 +80,15 @@ public class TamayaConfiguration implements Configuration{
     @Override
     public ConfigurationContext getContext() {
         return ConfigurationContext.EMPTY;
+    }
+
+    @Override
+    public ConfigurationSnapshot getSnapshot(Iterable<String> keys) {
+        return new DefaultConfigurationSnapshot(this, keys);
+    }
+
+    @Override
+    public ConfigurationSnapshot getSnapshot() {
+        return new DefaultConfigurationSnapshot(this);
     }
 }

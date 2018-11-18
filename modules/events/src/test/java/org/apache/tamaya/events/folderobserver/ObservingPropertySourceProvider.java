@@ -137,7 +137,7 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
             final Map<String,PropertyValue> result = new HashMap<>();
             for(final Map.Entry<Object,Object> en:props.entrySet()){
                 String key = String.valueOf(en.getKey());
-                result.put(key, PropertyValue.of(key, String.valueOf(en.getValue()), file.toString()));
+                result.put(key, PropertyValue.createValue(key, String.valueOf(en.getValue())).setMeta("source", file.toString()));
             }
             return result;
         } catch (final Exception e) {

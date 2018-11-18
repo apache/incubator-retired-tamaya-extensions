@@ -122,7 +122,7 @@ public class CombinedConfigurationTest {
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                cc.getOrDefault(null, "d");
+                cc.getOrDefault((String)null, "d");
             }
         }).isInstanceOf(NullPointerException.class)
           .hasMessage("Key must be given.");
@@ -176,7 +176,7 @@ public class CombinedConfigurationTest {
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                cc.getOrDefault(null, TypeLiteral.of(Integer.class), 1);
+                cc.getOrDefault((String)null, TypeLiteral.of(Integer.class), 1);
             }
         }).isInstanceOf(NullPointerException.class)
           .hasMessage("Key must be given.");
@@ -252,7 +252,7 @@ public class CombinedConfigurationTest {
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                cc.getOrDefault(null, Integer.class, 1);
+                cc.getOrDefault((String)null, Integer.class, 1);
             }
         }).isInstanceOf(NullPointerException.class)
           .hasMessage("Key must be given.");

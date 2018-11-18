@@ -18,11 +18,9 @@
  */
 package org.apache.tamaya.functions;
 
-import org.apache.tamaya.ConfigOperator;
-import org.apache.tamaya.ConfigQuery;
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.*;
 import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spisupport.DefaultConfigurationSnapshot;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -155,18 +153,13 @@ class EnrichedConfiguration implements Configuration {
     }
 
     @Override
-    public Configuration with(ConfigOperator operator) {
-        return operator.operate(this);
-    }
-
-    @Override
-    public <T> T query(ConfigQuery<T> query) {
-        return query.query(this);
-    }
-
-    @Override
     public ConfigurationContext getContext() {
         return baseConfiguration.getContext();
+    }
+
+    @Override
+    public ConfigurationSnapshot getSnapshot(Iterable<String> keys) {
+        return new DefaultConfigurationSnapshot(this, keys);
     }
 
 }

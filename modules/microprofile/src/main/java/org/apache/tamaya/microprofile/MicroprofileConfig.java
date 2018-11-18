@@ -88,7 +88,7 @@ public class MicroprofileConfig implements Config, Serializable {
 
     private void writeObject(ObjectOutputStream out) throws IOException{
         if(!(this.delegate instanceof Serializable)){
-            out.writeObject(FrozenConfiguration.of(this.delegate));
+            out.writeObject(this.delegate.getSnapshot());
         }else {
             out.writeObject(this.delegate);
         }

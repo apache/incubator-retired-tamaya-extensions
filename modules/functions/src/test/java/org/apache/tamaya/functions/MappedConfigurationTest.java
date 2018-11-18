@@ -45,7 +45,7 @@ public class MappedConfigurationTest {
         MappedConfiguration mc = mock(MappedConfiguration.class);
         doCallRealMethod().when(mc).getOrDefault(anyString(), anyString());
 
-        mc.getOrDefault(null, "z");
+        mc.getOrDefault((String)null, "z");
     }
 
 }
