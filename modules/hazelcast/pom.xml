@@ -21,9 +21,8 @@
 
     <parent>
         <groupId>org.apache.tamaya.ext</groupId>
-        <artifactId>tamaya-sandbox</artifactId>
+        <artifactId>tamaya-extensions</artifactId>
         <version>0.4-incubating-SNAPSHOT</version>
-        <relativePath>..</relativePath>
     </parent>
 
     <artifactId>tamaya-hazelcast</artifactId>
