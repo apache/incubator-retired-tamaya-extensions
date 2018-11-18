@@ -87,8 +87,4 @@ public class TamayaConfiguration implements Configuration{
         return new DefaultConfigurationSnapshot(this, keys);
     }
 
-    @Override
-    public ConfigurationSnapshot getSnapshot() {
-        return new DefaultConfigurationSnapshot(this);
-    }
 }
