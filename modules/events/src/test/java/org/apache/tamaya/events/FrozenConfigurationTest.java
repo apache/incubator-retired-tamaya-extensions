@@ -24,7 +24,6 @@ import org.apache.tamaya.spi.ConfigurationContext;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.omg.CORBA.Any;
 
 import java.util.Collections;
 import java.util.HashMap;
