@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.consul;
 
-import com.google.common.base.Optional;
 import com.google.common.net.HostAndPort;
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.KeyValueClient;
