@@ -21,6 +21,7 @@ package org.apache.tamaya.mutableconfig.internal;
 import org.apache.tamaya.ConfigOperator;
 import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationSnapshot;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.mutableconfig.ChangePropagationPolicy;
 import org.apache.tamaya.mutableconfig.MutableConfiguration;
@@ -156,6 +157,11 @@ public class DefaultMutableConfiguration implements MutableConfiguration {
     @Override
     public ConfigurationContext getContext() {
         return config.getContext();
+    }
+
+    @Override
+    public ConfigurationSnapshot getSnapshot(Iterable<String> keys) {
+        return config.getSnapshot(keys);
     }
 
     private Collection<PropertySource> getPropertySources() {
