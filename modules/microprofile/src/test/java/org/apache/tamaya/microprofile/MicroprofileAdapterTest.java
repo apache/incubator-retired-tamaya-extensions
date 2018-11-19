@@ -238,6 +238,11 @@ public class MicroprofileAdapterTest {
         public ConfigurationContext getContext() {
             throw new RuntimeException("Not implemented yet!");
         }
+
+        @Override
+        public ConfigurationSnapshot getSnapshot(Iterable<String> keys) {
+            throw new RuntimeException("Not implemented yet!");
+        }
     }
 
 }
