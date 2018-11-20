@@ -28,6 +28,7 @@ import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,7 +43,7 @@ import java.util.logging.Logger;
  * <p>If a file was removed then the listener will load using all files left.</p>
  * @author otaviojava
  */
-class FileChangeListener implements Runnable {
+class FileChangeListener extends TimerTask {
 
     private static final Logger LOGGER = Logger.getLogger(FileChangeListener.class.getName());
 
@@ -71,42 +72,27 @@ class FileChangeListener implements Runnable {
         }
     }
 
-    /**
-     * Stops the listener service from observing the target directory.
-     */
-    public void stopListener(){
-        running = false;
-    }
-
     @Override
     public void run() {
         if (watchService!=null || directory!=null) {
             return;
         }
-        while (running) {
-            watchFolder();
-        }
-    }
-
-    /**
-     * Start watching the current folder.
-     */
-    private void watchFolder() {
         try {
-            WatchKey watckKey = watchService.take();
-            for (WatchEvent<?> event : watckKey.pollEvents()) {
-                Path filePath = (Path) watckKey.watchable();
-                if(event.kind().equals(StandardWatchEventKinds.ENTRY_CREATE)||
-                        event.kind().equals(StandardWatchEventKinds.ENTRY_MODIFY) ||
-                        event.kind().equals(StandardWatchEventKinds.ENTRY_DELETE)){
-                    LOGGER.info("File change detected in: " + filePath.getFileName());
-                    observer.directoryChanged(filePath);
+            WatchKey watckKey = watchService.poll();
+            if(watckKey!=null) {
+                for (WatchEvent<?> event : watckKey.pollEvents()) {
+                    Path filePath = (Path) watckKey.watchable();
+                    if (event.kind().equals(StandardWatchEventKinds.ENTRY_CREATE) ||
+                            event.kind().equals(StandardWatchEventKinds.ENTRY_MODIFY) ||
+                            event.kind().equals(StandardWatchEventKinds.ENTRY_DELETE)) {
+                        LOGGER.info("File change detected in: " + filePath.getFileName());
+                        observer.directoryChanged(filePath);
+                    }
                 }
+                watckKey.reset();
             }
-            watckKey.reset();
-            TimeUnit.SECONDS.sleep(1);
         } catch (Exception e) {
-            throw new FileChangeListenerException("An error happened when you tried to register to watch the folder", e);
+            throw new FileChangeListenerException("An error happened listening to watch the folder", e);
         }
     }
 

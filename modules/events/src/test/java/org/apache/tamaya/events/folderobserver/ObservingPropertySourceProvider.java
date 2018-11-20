@@ -25,15 +25,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -65,7 +57,9 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
     /**
      * The thread pool used.
      */
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final static Timer timer = new Timer("ObservingPropertySources", true);
+
+    private FileChangeListener changeListener;
 
     /**
      * Constructor using an explicit directory, ignoring all kind of configuration, if setCurrent.
@@ -76,14 +70,12 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
         if (directory == null) {
             directory = getDirectory();
         }
-        if (directory!=null){
+        if (directory!=null) {
             synchronized (this.propertySources) {
                 this.propertySources.addAll(readConfiguration(directory));
             }
-            final Runnable runnable = new FileChangeListener(directory, this);
-            executor.execute(runnable);
-        } else {
-            executor.shutdown();
+            changeListener = new FileChangeListener(directory, this);
+            timer.schedule(changeListener, 30000L, 30000L);
         }
     }
 
