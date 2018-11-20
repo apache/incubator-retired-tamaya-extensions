@@ -16,12 +16,11 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.apache.tamaya.yaml;
+package org.apache.tamaya.json;
 
 
 import org.apache.tamaya.format.ConfigurationData;
 import org.apache.tamaya.format.MappedConfigurationDataPropertySource;
-import org.apache.tamaya.json.JSONFormat;
 import org.apache.tamaya.spi.PropertySource;
 import org.junit.Test;
 

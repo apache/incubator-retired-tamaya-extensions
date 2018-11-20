@@ -18,6 +18,8 @@
  */
 package org.apache.tamaya.format;
 
+import org.apache.tamaya.spi.ChangeSupport;
+import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 
 import java.util.*;
@@ -94,6 +96,14 @@ public final class ConfigurationData {
      */
     public boolean isEmpty() {
         return data.isEmpty();
+    }
+
+    /**
+     * Creates a {@link PropertySource} from the given property data.
+     * @return a corresponding property source, never nhull.
+     */
+    public PropertySource toPropertySource() {
+        return new MappedConfigurationDataPropertySource(this).setChangeSupport(ChangeSupport.IMMUTABLE);
     }
 
     @Override
