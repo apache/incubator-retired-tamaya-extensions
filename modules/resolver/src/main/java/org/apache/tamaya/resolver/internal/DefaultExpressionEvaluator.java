@@ -20,6 +20,7 @@ package org.apache.tamaya.resolver.internal;
 
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
 import org.apache.tamaya.resolver.spi.ExpressionResolver;
+import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spi.ServiceContextManager;
 
 import javax.annotation.Priority;
@@ -69,83 +70,44 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
         }
     }
 
-    /**
-     * Resolves an expression in the form current <code>${resolverId:expression}</code> or
-     * <code>${&lt;prefix&gt;expression}</code>. The expression can be
-     * part current any type current literal text. Also multiple expressions with mixed matching resolvers are
-     * supported.
-     * All control characters (${}\) can be escaped using '\'.<br>
-     * So all the following are valid expressions:
-     * <ul>
-     * <li><code>${expression}</code></li>
-     * <li><code>bla bla ${expression}</code></li>
-     * <li><code>${expression} bla bla</code></li>
-     * <li><code>bla bla ${expression} bla bla</code></li>
-     * <li><code>${expression}${resolverId2:expression2}</code></li>
-     * <li><code>foo ${expression}${resolverId2:expression2}</code></li>
-     * <li><code>foo ${expression} bar ${resolverId2:expression2}</code></li>
-     * <li><code>${expression}foo${resolverId2:expression2}bar</code></li>
-     * <li><code>foor${expression}bar${resolverId2:expression2}more</code></li>
-     * <li><code>\${expression}foo${resolverId2:expression2}bar</code> (first expression is escaped).</li>
-     * </ul>
-     * Given {@code resolverId:} is a valid prefix targeting a {@link java.beans.Expression} explicitly, also the
-     * following expressions are valid:
-     * <ul>
-     * <li><code>${resolverId:expression}</code></li>
-     * <li><code>bla bla ${resolverId:expression}</code></li>
-     * <li><code>${resolverId:expression} bla bla</code></li>
-     * <li><code>bla bla ${resolverId:expression} bla bla</code></li>
-     * <li><code>${resolverId:expression}${resolverId2:expression2}</code></li>
-     * <li><code>foo ${resolverId:expression}${resolverId2:expression2}</code></li>
-     * <li><code>foo ${resolverId:expression} bar ${resolverId2:expression2}</code></li>
-     * <li><code>${resolverId:expression}foo${resolverId2:expression2}bar</code></li>
-     * <li><code>foor${resolverId:expression}bar${resolverId2:expression2}more</code></li>
-     * <li><code>\${resolverId:expression}foo${resolverId2:expression2}bar</code> (first expression is escaped).</li>
-     * </ul>
-     *
-     * @param key the key to be filtered
-     * @param value createValue to be analyzed for expressions
-     * @param maskUnresolved if true, not found expression parts will be replaced by surrounding with [].
-     *                     Setting to false will replace the createValue with an empty String.
-     * @return the resolved createValue, or the input in case where no expression was detected.
-     */
     @Override
-    public String evaluateExpression(String key, String value, boolean maskUnresolved){
-        if(value ==null){
+    public PropertyValue evaluateExpression(PropertyValue propertyValue, boolean maskUnresolved) {
+        if(propertyValue==null || propertyValue.getValue()==null){
             return null;
         }
+        String value = propertyValue.getValue();
         StringTokenizer tokenizer = new StringTokenizer(value, "${}", true);
         StringBuilder resolvedValue = new StringBuilder();
         StringBuilder current = new StringBuilder();
         while (tokenizer.hasMoreTokens()) {
             String token = tokenizer.nextToken();
-                switch (token) {
-                    case "$":
-                        String nextToken = tokenizer.hasMoreTokens()?tokenizer.nextToken():"";
-                        if (!"{".equals(nextToken)) {
-                            current.append(token);
-                            current.append(nextToken);
-                            break;
-                        }
-                        if(value.indexOf('}')<=0){
-                            current.append(token);
-                            current.append(nextToken);
-                            break;
-                        }
-                        String subExpression = parseSubExpression(tokenizer, value);
-                        String res = evaluateInternal(subExpression, maskUnresolved);
-                        if(res!=null) {
-                            current.append(res);
-                        }
-                        break;
-                    default:
+            switch (token) {
+                case "$":
+                    String nextToken = tokenizer.hasMoreTokens()?tokenizer.nextToken():"";
+                    if (!"{".equals(nextToken)) {
                         current.append(token);
+                        current.append(nextToken);
+                        break;
+                    }
+                    if(value.indexOf('}')<=0){
+                        current.append(token);
+                        current.append(nextToken);
+                        break;
+                    }
+                    String subExpression = parseSubExpression(tokenizer, value);
+                    String res = evaluateInternal(propertyValue, subExpression, maskUnresolved);
+                    if(res!=null) {
+                        current.append(res);
+                    }
+                    break;
+                default:
+                    current.append(token);
             }
         }
         if (current.length() > 0) {
             resolvedValue.append(current);
         }
-        return resolvedValue.toString();
+        return propertyValue.setValue(resolvedValue.toString());
     }
 
     @Override
@@ -215,32 +177,52 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
     /**
      * Evaluates the expression parsed, hereby checking for prefixes and trying otherwise all available resolvers,
      * based on priority.
+     *
+     * @param propertyValue
      * @param unresolvedExpression the parsed, but unresolved expression
      * @param maskUnresolved if true, not found expression parts will be replaced by surrounding with [].
      *                     Setting to false will replace the createValue with an empty String.
      * @return the resolved expression, or null.
      */
-    private String evaluateInternal(String unresolvedExpression, boolean maskUnresolved) {
+    private String evaluateInternal(PropertyValue propertyValue, String unresolvedExpression, boolean maskUnresolved) {
         String value = null;
         // 1 check for explicit prefix
+        String resolverRefs = propertyValue.getMeta("resolvers");
+        if(resolverRefs==null){
+            resolverRefs = "";
+        }
         Collection<ExpressionResolver> resolvers = getResolvers();
         for(ExpressionResolver resolver:resolvers){
             if(unresolvedExpression.startsWith(resolver.getResolverPrefix())){
                 value = resolver.evaluate(unresolvedExpression.substring(resolver.getResolverPrefix().length()));
+                if(value!=null){
+                    resolverRefs += resolver.getClass().getName() + ", ";
+                    propertyValue.setMeta("resolvers", resolverRefs);
+                }
                 break;
             }
         }
         // Lookup system and environment props as defaults...
         if(value==null){
             value = System.getProperty(unresolvedExpression);
+            if(value!=null){
+                resolverRefs += "system-property, ";
+                propertyValue.setMeta("resolvers", resolverRefs);
+            }
         }
         if(value==null){
             value = System.getenv(unresolvedExpression);
+            if(value!=null){
+                resolverRefs += "environment-property, ";
+                propertyValue.setMeta("resolvers", resolverRefs);
+            }
         }
         if(value==null){
             LOG.log(Level.WARNING, "Unresolvable expression encountered " + unresolvedExpression);
             if(maskUnresolved){
                 value = "?{" + unresolvedExpression + '}';
+                resolverRefs += "<unresolved>, ";
+                propertyValue.setMeta("resolvers", resolverRefs);
             }
         }
         return value;

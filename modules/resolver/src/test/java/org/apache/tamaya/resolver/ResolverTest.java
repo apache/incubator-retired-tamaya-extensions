@@ -18,6 +18,7 @@
  */
 package org.apache.tamaya.resolver;
 
+import org.apache.tamaya.spi.PropertyValue;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -65,4 +66,19 @@ public class ResolverTest {
         assertEquals(Resolver.getInstance().evaluateExpression("Version ${java.version}"),
                 "Version " + System.getProperty("java.version"));
     }
+
+    // TAMAYA-357
+    @Test
+    public void testEvaluateExpression_PropertyValue() throws Exception {
+        String envKey = System.getenv().keySet().iterator().next();
+        String expression = "Test ${java.version},${java.foo},${"+envKey+"}";
+        PropertyValue val = PropertyValue.createValue("AnyKey", expression);
+        PropertyValue evaluated = (Resolver.getInstance().evaluateExpression(val, true));
+        assertNotNull(evaluated);
+        assertNotNull(evaluated.getMeta("resolvers"));
+        assertEquals("Test "+System.getProperty("java.version")+",?{java.foo},"+System.getenv(envKey),
+                val.getValue());
+        assertEquals("system-property, <unresolved>, environment-property, ", evaluated.getMeta("resolvers"));
+    }
+
 }

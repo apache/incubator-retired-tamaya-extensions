@@ -19,6 +19,8 @@
 package org.apache.tamaya.resolver.spi;
 
 
+import org.apache.tamaya.spi.PropertyValue;
+
 import java.util.Collection;
 
 /**
@@ -47,15 +49,47 @@ import java.util.Collection;
  * are supported.
  */
 public interface ExpressionEvaluator {
+
     /**
-     * Evaluates the current expression.
-     * @param key the key, not null.
-     * @param value the createValue to be filtered/evaluated.
-     * @param maskNotFound if true, not found expression parts will be replaced vy surrounding with [].
+     * Resolves an expression in the form current <code>${resolverId:expression}</code> or
+     * <code>${&lt;prefix&gt;expression}</code>. The expression can be
+     * part current any type current literal text. Also multiple expressions with mixed matching resolvers are
+     * supported.
+     * All control characters (${}\) can be escaped using '\'.<br>
+     * So all the following are valid expressions:
+     * <ul>
+     * <li><code>${expression}</code></li>
+     * <li><code>bla bla ${expression}</code></li>
+     * <li><code>${expression} bla bla</code></li>
+     * <li><code>bla bla ${expression} bla bla</code></li>
+     * <li><code>${expression}${resolverId2:expression2}</code></li>
+     * <li><code>foo ${expression}${resolverId2:expression2}</code></li>
+     * <li><code>foo ${expression} bar ${resolverId2:expression2}</code></li>
+     * <li><code>${expression}foo${resolverId2:expression2}bar</code></li>
+     * <li><code>foor${expression}bar${resolverId2:expression2}more</code></li>
+     * <li><code>\${expression}foo${resolverId2:expression2}bar</code> (first expression is escaped).</li>
+     * </ul>
+     * Given {@code resolverId:} is a valid prefix targeting a {@link java.beans.Expression} explicitly, also the
+     * following expressions are valid:
+     * <ul>
+     * <li><code>${resolverId:expression}</code></li>
+     * <li><code>bla bla ${resolverId:expression}</code></li>
+     * <li><code>${resolverId:expression} bla bla</code></li>
+     * <li><code>bla bla ${resolverId:expression} bla bla</code></li>
+     * <li><code>${resolverId:expression}${resolverId2:expression2}</code></li>
+     * <li><code>foo ${resolverId:expression}${resolverId2:expression2}</code></li>
+     * <li><code>foo ${resolverId:expression} bar ${resolverId2:expression2}</code></li>
+     * <li><code>${resolverId:expression}foo${resolverId2:expression2}bar</code></li>
+     * <li><code>foor${resolverId:expression}bar${resolverId2:expression2}more</code></li>
+     * <li><code>\${resolverId:expression}foo${resolverId2:expression2}bar</code> (first expression is escaped).</li>
+     * </ul>
+     *
+     * @param propertyValue the property value to be evaluated, maybe null.
+     * @param maskUnresolved if true, not found expression parts will be replaced by surrounding with [].
      *                     Setting to false will replace the createValue with an empty String.
-     * @return the filtered/evaluated createValue, including null.
+     * @return the resolved createValue, or the input in case where no expression was detected.
      */
-    String evaluateExpression(String key, String value, boolean maskNotFound);
+    PropertyValue evaluateExpression(PropertyValue propertyValue, boolean maskUnresolved);
 
     /**
      * Access a collection with the currently registered {@link org.apache.tamaya.resolver.internal.ConfigResolver} instances.

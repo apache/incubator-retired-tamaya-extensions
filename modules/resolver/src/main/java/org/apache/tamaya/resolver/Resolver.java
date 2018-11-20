@@ -21,7 +21,7 @@ package org.apache.tamaya.resolver;
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
 import org.apache.tamaya.resolver.spi.ExpressionResolver;
-import org.apache.tamaya.spi.ServiceContext;
+import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spi.ServiceContextManager;
 
 import java.util.Collection;
@@ -66,9 +66,15 @@ public final class Resolver {
      * @param key the key, not null.
      * @param value the createValue to be filtered/evaluated.
      * @return the filtered/evaluated createValue, including null.
+     * @deprecated Use {@link #evaluateExpression(String, boolean)}
      */
+    @Deprecated
     public String evaluateExpression(String key, String value){
-        return evaluator().evaluateExpression(key, value, true);
+        PropertyValue val = evaluator(this.classLoader).evaluateExpression(PropertyValue.createValue(key, value), true);
+        if(val==null){
+            return null;
+        }
+        return val.getValue();
     }
 
     /**
@@ -77,9 +83,25 @@ public final class Resolver {
      * @param value the createValue to be filtered/evaluated.
      * @param classLoader the classloader to be used, not null.
      * @return the filtered/evaluated createValue, including null.
+     * @deprecated Use {@link #evaluateExpression(String, ClassLoader, boolean)}
      */
+    @Deprecated
     public String evaluateExpression(String key, String value, ClassLoader classLoader){
-        return evaluator().evaluateExpression(key, value, true);
+        return evaluateExpression(value, classLoader, true);
+    }
+
+    /**
+     * Evaluates the current expression.
+     * @param value the createValue to be filtered/evaluated.
+     * @param classLoader the classloader to be used, not null.
+     * @return the filtered/evaluated createValue, including null.
+     */
+    public String evaluateExpression(String value, ClassLoader classLoader, boolean maskUnresolved){
+        PropertyValue val = evaluator(classLoader).evaluateExpression(PropertyValue.createValue("", value), maskUnresolved);
+        if(val==null){
+            return null;
+        }
+        return val.getValue();
     }
 
     /**
@@ -87,7 +109,7 @@ public final class Resolver {
      * @return the evaluator, never null.
      * @throws ConfigException if the evaluator cannot be evaluated.
      */
-    private ExpressionEvaluator evaluator() {
+    private ExpressionEvaluator evaluator(ClassLoader classLoader) {
         ExpressionEvaluator evaluator = ServiceContextManager.getServiceContext(classLoader)
                 .getService(ExpressionEvaluator.class);
         if(evaluator==null){
@@ -113,7 +135,34 @@ public final class Resolver {
      * @return the filtered/evaluated createValue, including null.
      */
     public String evaluateExpression(String value, boolean maskNotFound){
-        return evaluator().evaluateExpression(null, value, maskNotFound);
+        PropertyValue val = evaluator(this.classLoader).evaluateExpression(PropertyValue.createValue("", value), maskNotFound);
+        if(val==null){
+            return null;
+        }
+        return val.getValue();
+    }
+
+    /**
+     * Evaluates the current expression using the current thread's context classloader.
+     * @param value the value to be filtered/evaluated.
+     * @param classLoader the target classloader, not null.
+     * @param maskNotFound if true, not found expression parts will be replaced vy surrounding with [].
+     *                     Setting to false will replace the createValue with an empty String.
+     * @return the filtered/evaluated createValue, including null.
+     */
+    public PropertyValue evaluateExpression(PropertyValue value, ClassLoader classLoader, boolean maskNotFound) {
+        return evaluator(classLoader).evaluateExpression(value, maskNotFound);
+    }
+
+    /**
+     * Evaluates the current expression using the current thread's context classloader.
+     * @param value the value to be filtered/evaluated.
+     * @param maskNotFound if true, not found expression parts will be replaced vy surrounding with [].
+     *                     Setting to false will replace the createValue with an empty String.
+     * @return the filtered/evaluated createValue, including null.
+     */
+    public PropertyValue evaluateExpression(PropertyValue value, boolean maskNotFound) {
+        return evaluator(this.classLoader).evaluateExpression(value, maskNotFound);
     }
 
     /**
@@ -123,7 +172,7 @@ public final class Resolver {
      */
     @Deprecated
     public Collection<ExpressionResolver> getResolvers(){
-        return evaluator().getResolvers();
+        return evaluator(this.classLoader).getResolvers();
     }
 
     @Override
@@ -132,4 +181,6 @@ public final class Resolver {
                 "classLoader=" + classLoader +
                 '}';
     }
+
+
 }
