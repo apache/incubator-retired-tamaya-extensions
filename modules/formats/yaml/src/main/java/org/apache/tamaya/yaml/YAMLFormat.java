@@ -98,7 +98,11 @@ public class YAMLFormat implements ConfigurationFormat {
                 ObjectValue object = dataNode.setFieldObject(en.getKey());
                 addObject((Map) en.getValue(), object);
             } else{
-                dataNode.setField(en.getKey(), String.valueOf(en.getValue()));
+                if (en.getValue() == null) {
+                    dataNode.setField(en.getKey(), null);
+                }else {
+                    dataNode.setField(en.getKey(), String.valueOf(en.getValue()));
+                }
             }
         });
     }

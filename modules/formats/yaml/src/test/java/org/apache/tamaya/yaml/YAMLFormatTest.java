@@ -20,6 +20,7 @@ package org.apache.tamaya.yaml;
 
 
 import org.apache.tamaya.format.ConfigurationData;
+import org.apache.tamaya.spi.PropertyValue;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -27,9 +28,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class YAMLFormatTest {
     private final YAMLFormat format = new YAMLFormat();
@@ -64,5 +63,25 @@ public class YAMLFormatTest {
             System.out.println(en.getKey() + " -> " + en.getValue());
         }
     }
+
+    @Test
+    public void testRead_nullValues() throws IOException {
+    	URL configURL = getContactYaml();
+        ConfigurationData data = loadConfigurationData(configURL);
+        for(PropertyValue val:data.getData()){
+            if(val.getKey().equals("summary")){
+                fail("Contains null yaml value");
+            }
+        }
+    }
+
+	private ConfigurationData loadConfigurationData(URL configURL) throws IOException {
+		return format.readConfiguration(configURL.toString(), configURL.openStream());
+	}
+
+	private URL getContactYaml() {
+		URL configURL = YAMLPropertySourceTest.class.getResource("/configs/valid/contact.yaml");
+		return configURL;
+	}
 
 }
