@@ -21,19 +21,7 @@ package org.apache.tamaya.hazelcast;
 import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IList;
-import com.hazelcast.core.IMap;
-import org.apache.tamaya.mutableconfig.ConfigChangeRequest;
-import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
-import org.apache.tamaya.spi.PropertyValue;
-import org.apache.tamaya.spisupport.propertysource.BasePropertySource;
-
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Distributed Propertysource using a in-memory hazelcast cluster.
