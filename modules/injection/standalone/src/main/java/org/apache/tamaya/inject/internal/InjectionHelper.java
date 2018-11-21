@@ -41,6 +41,7 @@ import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spi.ServiceContextManager;
 
 
@@ -225,7 +226,7 @@ final class InjectionHelper {
         ExpressionEvaluator evaluator = ServiceContextManager.getServiceContext(classLoader)
                 .getService(ExpressionEvaluator.class);
         if (evaluator != null) {
-            return evaluator.evaluateExpression("<injection>", expression, true);
+            return evaluator.evaluateExpression(PropertyValue.createValue("<injection>", expression), true).getValue();
         }
         return expression;
     }

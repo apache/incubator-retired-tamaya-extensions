@@ -36,13 +36,15 @@ import static org.junit.Assert.*;
  * Created by atsticks on 03.11.16.
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class HazelcaszPropertySourceTest {
+public class HazelcastPropertySourceTest {
 
-    private static HazelcastInstance hz = HazelcastUtil.getHazelcastInstance();
-    private HazelcastPropertySource hps = new HazelcastPropertySource();
+    private static HazelcastInstance hz;
+    private static HazelcastPropertySource hps;
 
     @BeforeClass
     public static void start() {
+        hps = new HazelcastPropertySource();
+        hz = hps.getHazelcastInstance();
         IMap<Object, Object> map = hz.getMap("config3");
         map.put("k1", "v1");
         map.put("k2", "v2");
