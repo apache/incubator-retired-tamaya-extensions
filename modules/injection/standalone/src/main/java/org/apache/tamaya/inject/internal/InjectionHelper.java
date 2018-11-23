@@ -38,8 +38,11 @@ import org.apache.tamaya.inject.spi.InjectionUtils;
 import org.apache.tamaya.inject.api.WithPropertyConverter;
 import org.apache.tamaya.inject.spi.ConfiguredType;
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
-import org.apache.tamaya.spi.*;
-
+import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spi.ConversionContext;
+import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.spi.ServiceContextManager;
 
 /**
  * Utility class containing several aspects used in this module.
