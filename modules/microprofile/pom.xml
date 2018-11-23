@@ -57,6 +57,7 @@ under the License.
                     <newArtifacts>
                         <artifact>${project.groupId}:${project.artifactId}:${project.version}</artifact>
                     </newArtifacts>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
         </plugins>
