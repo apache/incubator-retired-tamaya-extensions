@@ -24,8 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Created by Anatole on 25.09.2015.
@@ -39,23 +38,23 @@ public class SpringConfigTest {
 
     @Test
     public void assertBeanNotNull(){
-        assertNotNull(configuredBean);
+        assertThat(configuredBean).isNotNull();
     }
 
     @Test
     public void assert_JavaVersion_Injected(){
-        assertNotNull(configuredBean.getJavaVersion());
-        assertEquals(System.getProperty("java.version"), configuredBean.getJavaVersion());
+        assertThat(configuredBean.getJavaVersion()).isNotNull();
+        assertThat(System.getProperty("java.version")).isEqualTo(configuredBean.getJavaVersion());
     }
 
     @Test
     public void assert_Number_Injected(){
-        assertEquals(configuredBean.getTestNumber(), 23);
+        assertThat(configuredBean.getTestNumber()).isEqualTo(23);
     }
 
     @Test
     public void assert_Number_From_Environment(){
-        assertEquals("value11", configuredBean.getEnv().getProperty("myConfiguredValue"));
+        assertThat("value11").isEqualTo(configuredBean.getEnv().getProperty("myConfiguredValue"));
     }
 
 }

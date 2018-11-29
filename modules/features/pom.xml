@@ -128,7 +128,7 @@ under the License.
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>4.2.4.RELEASE</version>
+            <version>5.1.2.RELEASE</version>
             <scope>test</scope>
         </dependency>
         <dependency>
