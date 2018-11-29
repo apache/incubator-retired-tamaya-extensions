@@ -82,7 +82,7 @@ under the License.
         <jruby.version>1.7.26</jruby.version>
         <findbugs.version>3.0.4</findbugs.version>
         <mockito.version>1.10.19</mockito.version>
-        <pitest-plugin.version>1.3.1</pitest-plugin.version>
+        <pitest-plugin.version>1.4.3</pitest-plugin.version>
         <rat.version>0.12</rat.version>
         <surefire.version>2.21.0</surefire.version>
         <toolchains.plugin>1.1</toolchains.plugin>
