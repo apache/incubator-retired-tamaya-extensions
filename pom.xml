@@ -208,6 +208,16 @@ under the License.
             <email>pottlinger at apache.org</email>
             <timezone>+1</timezone>
         </developer>
+
+        <developer>
+          <id>acoburn</id>
+          <name>Aaron Coburn</name>
+          <email>acoburn AT apache.org</email>
+          <roles>
+            <role>Committer</role>
+          </roles>
+          <timezone>-5</timezone>
+        </developer>
     </developers>
 
     <modules>
