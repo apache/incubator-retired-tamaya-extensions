@@ -149,18 +149,18 @@ implements MutablePropertySource{
     public PropertyValue get(String key) {
         checkRefresh();
         String reqKey = key;
-        if(key.startsWith("[META]")){
-            reqKey = key.substring("[META]".length());
-            if(reqKey.endsWith(".createdIndex")){
-                reqKey = reqKey.substring(0,reqKey.length()-".createdIndex".length());
+        if(key.startsWith("[(META)")){
+            reqKey = key.substring("[(META)".length());
+            if(reqKey.endsWith("].createdIndex")){
+                reqKey = reqKey.substring(0,reqKey.length()-"].createdIndex".length());
             } else if(reqKey.endsWith(".modifiedIndex")){
-                reqKey = reqKey.substring(0,reqKey.length()-".modifiedIndex".length());
+                reqKey = reqKey.substring(0,reqKey.length()-"].modifiedIndex".length());
             } else if(reqKey.endsWith(".ttl")){
-                reqKey = reqKey.substring(0,reqKey.length()-".ttl".length());
+                reqKey = reqKey.substring(0,reqKey.length()-"].ttl".length());
             } else if(reqKey.endsWith(".expiration")){
-                reqKey = reqKey.substring(0,reqKey.length()-".expiration".length());
+                reqKey = reqKey.substring(0,reqKey.length()-"].expiration".length());
             } else if(reqKey.endsWith(".source")){
-                reqKey = reqKey.substring(0,reqKey.length()-".source".length());
+                reqKey = reqKey.substring(0,reqKey.length()-"].source".length());
             }
         }
         PropertyValue val = this.configMap.get(reqKey);

@@ -34,7 +34,7 @@ public final class DefaultMetadataFilter implements PropertyFilter{
             return valueToBeFiltered;
         }
         if(ThreadBasedConfigurationFilter.isMetadataFiltered()) {
-            if (context.getProperty().getKey().startsWith("[META]")) {
+            if (context.getProperty().getKey().startsWith("[(META)")) {
                 // Hide metadata entries.
                 return null;
             }

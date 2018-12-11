@@ -218,10 +218,10 @@ implements MutablePropertySource{
         for(String key: configChange.getRemovedProperties()){
             config.remove(key);
         }
-        IList<String> taList = getHazelcastInstance().getList("[META]tamaya.transactions");
+        IList<String> taList = getHazelcastInstance().getList("[(META)tamaya.transactions]");
         taList.add(configChange.getTransactionID());
-        config.put("[META]tamaya.transaction.lastId", configChange.getTransactionID(), 1, TimeUnit.DAYS);
-        config.put("[META]tamaya.transaction.startedAt", String.valueOf(configChange.getStartedAt()), 1, TimeUnit.DAYS);
+        config.put("[(META)tamaya.transaction].lastId", configChange.getTransactionID(), 1, TimeUnit.DAYS);
+        config.put("[(META)tamaya.transaction].startedAt", String.valueOf(configChange.getStartedAt()), 1, TimeUnit.DAYS);
         config.flush();
         refresh();
     }
