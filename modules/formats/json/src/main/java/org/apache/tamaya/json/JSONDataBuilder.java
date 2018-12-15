@@ -48,26 +48,26 @@ class JSONDataBuilder {
         jsonObject.forEach((key,val) -> {
             switch(val.getValueType()) {
                 case FALSE:
-                    dataNode.setField(key, Boolean.FALSE.toString());
+                    dataNode.setValue(key, Boolean.FALSE.toString());
                     break;
                 case TRUE:
-                    dataNode.setField(key, Boolean.TRUE.toString());
+                    dataNode.setValue(key, Boolean.TRUE.toString());
                     break;
                 case NUMBER:
-                    dataNode.setField(key, val.toString());
+                    dataNode.setValue(key, val.toString());
                     break;
                 case STRING:
-                    dataNode.setField(key, ((JsonString) val).getString());
+                    dataNode.setValue(key, ((JsonString) val).getString());
                     break;
                 case NULL:
-                    dataNode.setField(key, null);
+                    dataNode.setValue(key, null);
                     break;
                 case OBJECT:
-                    ObjectValue oval = dataNode.setFieldObject(key);
+                    ObjectValue oval = dataNode.setObject(key);
                     addJsonObject((JsonObject)val, oval);
                     break;
                 case ARRAY:
-                    ListValue aval = dataNode.setFieldList(key);
+                    ListValue aval = dataNode.setList(key);
                     addArray((JsonArray)val, aval);
                     break;
                 default:

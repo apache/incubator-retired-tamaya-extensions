@@ -67,32 +67,32 @@ public class MappedConfigurationDataPropertySourceTest {
 //    @Test
 //    public void testGet() throws Exception {
 //        MappedConfigurationDataPropertySource ps = new MappedConfigurationDataPropertySource(createConfigurationData("test2"));
-//        assertEquals("aValue", ps.getField("a").createValue());
-//        assertNotNull(ps.getField("section1.sectionKey1").createValue());
-//        assertNotNull(ps.getField("section2.sectionKey1").createValue());
-//        assertNull(ps.getField("sectionKey1"));
+//        assertEquals("aValue", ps.getValue("a").createValue());
+//        assertNotNull(ps.getValue("section1.sectionKey1").createValue());
+//        assertNotNull(ps.getValue("section2.sectionKey1").createValue());
+//        assertNull(ps.getValue("sectionKey1"));
 //        ps = new MappedConfigurationDataPropertySource(createConfigurationDataNoDefault("test2"));
-//        assertEquals("sectionValue11", ps.getField("section1.sectionKey1").createValue());
-//        assertEquals("sectionValue21", ps.getField("section2.sectionKey1").createValue());
-//        assertNull(ps.getField("a"));
-//        assertNull(ps.getField("section1"));
+//        assertEquals("sectionValue11", ps.getValue("section1.sectionKey1").createValue());
+//        assertEquals("sectionValue21", ps.getValue("section2.sectionKey1").createValue());
+//        assertNull(ps.getValue("a"));
+//        assertNull(ps.getValue("section1"));
 //    }
 //
 //    @Test
 //    public void testGetProperties() throws Exception {
 //        MappedConfigurationDataPropertySource ps = new MappedConfigurationDataPropertySource(createConfigurationData("test3"));
 //        assertNotNull(ps.getProperties());
-//        assertEquals("aValue", ps.getProperties().getField("a").createValue());
-//        assertNotNull(ps.getProperties().getField("section1.sectionKey1"));
-//        assertNotNull(ps.getProperties().getField("section2.sectionKey1"));
-//        assertNull(ps.getProperties().getField("section1.sectionKey2"));
-//        assertNull(ps.getProperties().getField("section2.sectionKey2"));
-//        assertNull(ps.getProperties().getField("sectionKey1"));
-//        assertNull(ps.getProperties().getField("sectionKey2"));
+//        assertEquals("aValue", ps.getProperties().getValue("a").createValue());
+//        assertNotNull(ps.getProperties().getValue("section1.sectionKey1"));
+//        assertNotNull(ps.getProperties().getValue("section2.sectionKey1"));
+//        assertNull(ps.getProperties().getValue("section1.sectionKey2"));
+//        assertNull(ps.getProperties().getValue("section2.sectionKey2"));
+//        assertNull(ps.getProperties().getValue("sectionKey1"));
+//        assertNull(ps.getProperties().getValue("sectionKey2"));
 //        ps = new MappedConfigurationDataPropertySource(createConfigurationDataNoDefault("test3"));
 //        assertNotNull(ps.getProperties());
-//        assertEquals("sectionValue11", ps.getProperties().getField("section1.sectionKey1").createValue());
-//        assertEquals("sectionValue21", ps.getProperties().getField("section2.sectionKey1").createValue());
-//        assertNull(ps.getField("section1"));
+//        assertEquals("sectionValue11", ps.getProperties().getValue("section1.sectionKey1").createValue());
+//        assertEquals("sectionValue21", ps.getProperties().getValue("section2.sectionKey1").createValue());
+//        assertNull(ps.getValue("section1"));
 //    }
 }

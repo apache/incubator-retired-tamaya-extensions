@@ -51,7 +51,7 @@ public class JSONVisitorTest {
 		assertThat(data).isNotNull();
 
 		ObjectValue ov = data.toObjectValue();
-		assertThat(ov.getFields().size() == 6);
+		assertThat(ov.getValues().size() == 6);
 		assertEquals(data.getSize(), 6);
 		assertThat(data.toMap()).containsKeys("key.sub", "anotherKey", "notAnotherKey", "number", "null");
 		assertThat(data.toMap()).containsEntry("key.sub", "createValue");

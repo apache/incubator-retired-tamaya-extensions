@@ -38,7 +38,7 @@ import java.util.logging.Logger;
  * Implementation of a {@link PropertySourceProvider} that reads configuration from some given resource paths
  * and using the given formats. The resource path are resolved as classpath resources. This can be changed by
  * overriding {@link #getPropertySources()}.
- * For each resource found the configuration formats passed getField a chance to read the resource, if they succeed the
+ * For each resource found the configuration formats passed value a chance to read the resource, if they succeed the
  * result is taken as the providers PropertySources to be exposed.
  */
 public abstract class BaseFormatPropertySourceProvider implements PropertySourceProvider {

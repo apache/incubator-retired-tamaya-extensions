@@ -92,16 +92,16 @@ public class YAMLFormat implements ConfigurationFormat {
     private void addObject(Map<String,Object> values, ObjectValue dataNode){
         values.entrySet().forEach(en -> {
             if (en.getValue() instanceof List) {
-                ListValue list = dataNode.setFieldList(en.getKey());
+                ListValue list = dataNode.setList(en.getKey());
                 addList((List) en.getValue(), list);
             } else if (en.getValue() instanceof Map) {
-                ObjectValue object = dataNode.setFieldObject(en.getKey());
+                ObjectValue object = dataNode.setObject(en.getKey());
                 addObject((Map) en.getValue(), object);
             } else{
                 if (en.getValue() == null) {
-                    dataNode.setField(en.getKey(), null);
+                    dataNode.setValue(en.getKey(), null);
                 }else {
-                    dataNode.setField(en.getKey(), String.valueOf(en.getValue()));
+                    dataNode.setValue(en.getKey(), String.valueOf(en.getValue()));
                 }
             }
         });
