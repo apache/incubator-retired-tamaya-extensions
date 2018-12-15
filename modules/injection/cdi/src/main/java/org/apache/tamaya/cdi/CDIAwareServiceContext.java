@@ -45,7 +45,7 @@ import java.util.logging.Logger;
  * declared services) are loaded multiple times, when going up the classloader hierarchy.</p>
  *
  * <p>Finally classloaders are not stored by reference by this class, to ensure they still can be garbage collected.
- * Refer also the inherited getParent class for further details.</p>
+ * Refer also the inherited parent class for further details.</p>
  *
  * <p>This class uses an ordinal of {@code 10}, so it overrides any default {@link ServiceContext} implementations
  * provided with the Tamaya core modules.</p>

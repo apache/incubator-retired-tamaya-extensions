@@ -59,7 +59,7 @@ public interface ConfiguredMethod {
     String getSignature();
 
     /**
-     * This method actually configures the given method on a instance of its getParent type.
+     * This method actually configures the given method on a instance of its parent type.
      * This evaluates the initial key closure and applies changes on the field.
      *
      * @param instance the target instance, not null.

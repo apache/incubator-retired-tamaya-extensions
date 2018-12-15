@@ -279,8 +279,8 @@ public class ClasspathCollector {
 
     /**
      * Method that collects resources from a JBoss classloading system using Vfs.
-     * @param rootResource the root resource for evaluating its getList.
-     * @param locationPattern the sub pattern that all getList must mach, so they are selected.
+     * @param rootResource the root resource for evaluating its getValues.
+     * @param locationPattern the sub pattern that all getValues must mach, so they are selected.
      * @return the resources found, never null.
      * @throws IOException
      */

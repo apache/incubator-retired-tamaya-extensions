@@ -88,7 +88,7 @@ public class JNDIPropertySource extends BasePropertySource {
      * the current JNDI context is mapped to configuration map:
      * <ul>
      *   <li>For each leave entry one entry is created.</li>
-     *   <li>The key is the fully path of getParent contexts, separated by a '.'.</li>
+     *   <li>The key is the fully path of parent contexts, separated by a '.'.</li>
      *   <li>The createValue is the createValue returned from {@code String.createValue(leaveObject)}.</li>
      * </ul>
      * @return a map representation of the JNDI tree.
@@ -143,7 +143,7 @@ public class JNDIPropertySource extends BasePropertySource {
      *  mapped to configuration map:
      * <ul>
      *   <li>For each leave entry one entry is created.</li>
-     *   <li>The key is the fully path of getParent contexts, separated by a '.'.</li>
+     *   <li>The key is the fully path of parent contexts, separated by a '.'.</li>
      *   <li>The createValue is the createValue returned from {@code String.createValue(leaveObject)}.</li>
      * </ul>
      * @param ctx the JNDI context, not null.
