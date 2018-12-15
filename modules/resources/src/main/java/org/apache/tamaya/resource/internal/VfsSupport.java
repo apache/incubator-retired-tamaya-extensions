@@ -59,7 +59,7 @@ class VfsSupport {
         ClassLoader loader = VfsSupport.class.getClassLoader();
         try {
             Class<?> vfsClass = loader.loadClass(VFS3_PKG + VFS_PROTOCOL);
-            methodGetRootUrl = findMethod(vfsClass, "getField", URL.class);
+            methodGetRootUrl = findMethod(vfsClass, "getRootUrl", URL.class);
             Class<?> virtualFile = loader.loadClass(VFS3_PKG + "VirtualFile");
             methodToUrl = findMethod(virtualFile, "toURL");
             methodGetPathName = findMethod(virtualFile, "getPathName");
