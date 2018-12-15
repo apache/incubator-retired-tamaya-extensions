@@ -22,8 +22,8 @@
 	<artifactId>05-spring-example</artifactId>
 
 	<properties>
-		<spring.version>4.3.13.RELEASE</spring.version>
-		<spring.boot.version>1.5.8.RELEASE</spring.boot.version>
+		<spring.version>5.1.2.RELEASE</spring.version>
+		<spring.boot.version>2.1.0.RELEASE</spring.boot.version>
 		<tamaya-apicore.version>0.4-incubating-SNAPSHOT</tamaya-apicore.version>
 	</properties>
 

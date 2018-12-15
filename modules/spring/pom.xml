@@ -32,8 +32,8 @@ under the License.
     <packaging>jar</packaging>
 
     <properties>
-        <spring.version>4.2.1.RELEASE</spring.version>
-        <spring.boot.version>1.2.6.RELEASE</spring.boot.version>
+        <spring.version>5.1.2.RELEASE</spring.version>
+        <spring.boot.version>2.1.0.RELEASE</spring.boot.version>
     </properties>
 
     <build>
@@ -52,7 +52,9 @@ under the License.
                 <executions>
                     <execution>
                         <id>check</id>
-                        <goals><goal>check</goal></goals>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -70,7 +72,11 @@ under the License.
             <artifactId>java-hamcrest</artifactId>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.tamaya</groupId>
             <artifactId>tamaya-core</artifactId>
@@ -112,7 +118,7 @@ under the License.
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
-            <version>2.0.4.RELEASE</version>
+            <version>${spring.boot.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

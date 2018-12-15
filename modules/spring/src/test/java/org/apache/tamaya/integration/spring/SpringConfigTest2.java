@@ -19,15 +19,10 @@
 package org.apache.tamaya.integration.spring;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Test using standard Spring setup.
@@ -38,10 +33,10 @@ public class SpringConfigTest2 {
     public void assertDefaultSetup(){
         ApplicationContext context = new ClassPathXmlApplicationContext("classpath:spring-config-scanOnly.xml");
         ConfiguredSpringBean configuredBean = context.getBean(ConfiguredSpringBean.class);
-        assertNotNull(configuredBean.getJavaVersion());
-        assertEquals(System.getProperty("java.version"), configuredBean.getJavaVersion());
-        assertNotNull(configuredBean.getMessage());
-        assertEquals("value2", configuredBean.getMessage());
+        assertThat(configuredBean.getJavaVersion()).isNotNull();
+        assertThat(configuredBean.getJavaVersion()).isEqualTo(System.getProperty("java.version"));
+        assertThat(configuredBean.getMessage()).isNotNull();
+        assertThat(configuredBean.getMessage()).isEqualTo("value2");
     }
 
 }

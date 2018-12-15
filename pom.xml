@@ -82,7 +82,7 @@ under the License.
         <jruby.version>1.7.26</jruby.version>
         <findbugs.version>3.0.4</findbugs.version>
         <mockito.version>1.10.19</mockito.version>
-        <pitest-plugin.version>1.3.1</pitest-plugin.version>
+        <pitest-plugin.version>1.4.3</pitest-plugin.version>
         <rat.version>0.12</rat.version>
         <surefire.version>2.21.0</surefire.version>
         <toolchains.plugin>1.1</toolchains.plugin>
@@ -207,6 +207,16 @@ under the License.
             </roles>
             <email>pottlinger at apache.org</email>
             <timezone>+1</timezone>
+        </developer>
+
+        <developer>
+          <id>acoburn</id>
+          <name>Aaron Coburn</name>
+          <email>acoburn AT apache.org</email>
+          <roles>
+            <role>Committer</role>
+          </roles>
+          <timezone>-5</timezone>
         </developer>
     </developers>
 
@@ -563,7 +573,7 @@ under the License.
                     <artifactId>pitest-maven</artifactId>
                     <version>${pitest-plugin.version}</version>
                     <configuration>
-                        <mutationThreshold>31</mutationThreshold>
+                        <mutationThreshold>8</mutationThreshold>
                         <timestampedReports>false</timestampedReports>
                         <targetClasses>
                             <param>org.apache.tamaya.*</param>
