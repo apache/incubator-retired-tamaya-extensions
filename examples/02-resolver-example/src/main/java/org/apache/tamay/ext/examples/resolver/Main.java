@@ -29,7 +29,7 @@ import java.util.logging.Logger;
 import static java.lang.String.format;
 
 /**
- * Example illustrating the usage of createValue resolver expressions (placeholders).
+ * Example illustrating the usage of value resolver expressions (placeholders).
  */
 public class Main {
     /*

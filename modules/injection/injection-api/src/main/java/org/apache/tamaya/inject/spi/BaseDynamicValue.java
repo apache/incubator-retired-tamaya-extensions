@@ -38,10 +38,10 @@ import java.util.logging.Logger;
 /**
  * Basic abstract implementation skeleton for a {@link DynamicValue}. This can be used to support values that may
  * change during runtime. Hereby external code (could be Tamaya configuration listners or client
- * code), can apply a new createValue. Depending on the {@link org.apache.tamaya.inject.api.UpdatePolicy} the new createValue is applied immedeately, when the
+ * code), can apply a new value. Depending on the {@link org.apache.tamaya.inject.api.UpdatePolicy} the new value is applied immedeately, when the
  * change has been identified, or it requires an programmatic commit by client code to
  * activate the change in the {@link DynamicValue}. Similarly an instance also can ignore all
- * later changes to the createValue.
+ * later changes to the value.
  *
  * <h3>Implementation Specification</h3>
  * This class is
@@ -50,7 +50,7 @@ import java.util.logging.Logger;
  * <li>Thread safe</li>
  * </ul>
  *
- * @param <T> The type of the createValue.
+ * @param <T> The type of the value.
  */
 public abstract class BaseDynamicValue<T> implements DynamicValue<T> {
 
@@ -58,7 +58,7 @@ public abstract class BaseDynamicValue<T> implements DynamicValue<T> {
 
     private static final Logger LOG = Logger.getLogger(DynamicValue.class.getName());
 
-    /** The createValue owner used for PropertyChangeEvents. */
+    /** The value owner used for PropertyChangeEvents. */
     private Object owner;
     /**
      * The property name of the entry.
@@ -75,14 +75,14 @@ public abstract class BaseDynamicValue<T> implements DynamicValue<T> {
     /** The targe type. */
     private TypeLiteral<T> targetType;
     /**
-     * The current createValue, never null.
+     * The current value, never null.
      */
     protected transient T value;
-    /** The last discarded createValue. */
+    /** The last discarded value. */
     protected transient T discarded;
-    /** Any new createValue, not yet applied. */
+    /** Any new value, not yet applied. */
     protected transient T newValue;
-    /** The configured default createValue, before type conversion. */
+    /** The configured default value, before type conversion. */
     private String defaultValue;
     /** The createList of candidate keys to be used. */
     private List<String> keys = new ArrayList<>();
@@ -109,16 +109,16 @@ public abstract class BaseDynamicValue<T> implements DynamicValue<T> {
     }
 
     /**
-     * Get the default createValue, used if no createValue could be evaluated.
-     * @return the default createValue, or null.
+     * Get the default value, used if no value could be evaluated.
+     * @return the default value, or null.
      */
     public String getDefaultValue() {
         return defaultValue;
     }
 
     /**
-     * Set the default createValue to be used.
-     * @param defaultValue the default createValue.
+     * Set the default value to be used.
+     * @param defaultValue the default value.
      */
     public void setDefaultValue(String defaultValue) {
         this.defaultValue = defaultValue;
@@ -141,7 +141,7 @@ public abstract class BaseDynamicValue<T> implements DynamicValue<T> {
     }
 
     /**
-     * Get the owner of this dynamic createValue instance.
+     * Get the owner of this dynamic value instance.
      * @return the owner, never null.
      */
     protected Object getOwner(){
@@ -218,10 +218,10 @@ public abstract class BaseDynamicValue<T> implements DynamicValue<T> {
             value = val;
             return true;
         }else if(discarded!=null && discarded.equals(val)){
-            // the evaluated createValue has been discarded and will be flagged out.
+            // the evaluated value has been discarded and will be flagged out.
             return false;
         }else{
-            // Reset discarded state for a new createValue.
+            // Reset discarded state for a new value.
             discarded = null;
         }
         if(!Objects.equals(val, value)){
@@ -234,10 +234,10 @@ public abstract class BaseDynamicValue<T> implements DynamicValue<T> {
                     publishChangeEvent(this.value, val);
                     break;
                 case LOG_ONLY:
-                    LOG.info("New config createValue for keys " + keys + " detected, but not yet applied.");
+                    LOG.info("New config value for keys " + keys + " detected, but not yet applied.");
                     break;
                 case NEVER:
-                    LOG.finest("New config createValue for keys " + keys + " detected, but ignored.");
+                    LOG.finest("New config value for keys " + keys + " detected, but ignored.");
                     break;
             }
             return true;
@@ -247,8 +247,8 @@ public abstract class BaseDynamicValue<T> implements DynamicValue<T> {
 
     /**
      * Publishes a change event to all listeners.
-     * @param newValue the new createValue
-     * @param oldValue the new old createValue
+     * @param newValue the new value
+     * @param oldValue the new old value
      */
     protected void publishChangeEvent(T oldValue, T newValue) {
         PropertyChangeEvent evt = new PropertyChangeEvent(getOwner(), getPropertyName(),oldValue, newValue);
@@ -326,10 +326,10 @@ public abstract class BaseDynamicValue<T> implements DynamicValue<T> {
     }
 
     /**
-     * Performs a commit, if necessary, and returns the current createValue.
+     * Performs a commit, if necessary, and returns the current value.
      *
-     * @return the non-null createValue held by this {@code DynamicValue}
-     * @throws org.apache.tamaya.ConfigException if there is no createValue present
+     * @return the non-null value held by this {@code DynamicValue}
+     * @throws org.apache.tamaya.ConfigException if there is no value present
      * @see DynamicValue#isPresent()
      */
     @Override
@@ -339,9 +339,9 @@ public abstract class BaseDynamicValue<T> implements DynamicValue<T> {
     }
 
     /**
-     * Return {@code true} if there is a createValue present, otherwise {@code false}.
+     * Return {@code true} if there is a value present, otherwise {@code false}.
      *
-     * @return {@code true} if there is a createValue present, otherwise {@code false}
+     * @return {@code true} if there is a value present, otherwise {@code false}
      */
     @Override
     public boolean isPresent() {
@@ -350,11 +350,11 @@ public abstract class BaseDynamicValue<T> implements DynamicValue<T> {
 
 
     /**
-     * Return the createValue if present, otherwise return {@code other}.
+     * Return the value if present, otherwise return {@code other}.
      *
-     * @param other the createValue to be returned if there is no createValue present, may
+     * @param other the value to be returned if there is no value present, may
      *              be null
-     * @return the createValue, if present, otherwise {@code other}
+     * @return the value, if present, otherwise {@code other}
      */
     @Override
     public T orElse(T other) {
@@ -366,13 +366,13 @@ public abstract class BaseDynamicValue<T> implements DynamicValue<T> {
     }
 
     /**
-     * Return the createValue if present, otherwise invoke {@code other} and return
+     * Return the value if present, otherwise invoke {@code other} and return
      * the result of that invocation.
      *
-     * @param other a {@code ConfiguredItemSupplier} whose result is returned if no createValue
+     * @param other a {@code ConfiguredItemSupplier} whose result is returned if no value
      *              is present
-     * @return the createValue if present otherwise the result of {@code other.current()}
-     * @throws NullPointerException if createValue is not present and {@code other} is
+     * @return the value if present otherwise the result of {@code other.current()}
+     * @throws NullPointerException if value is not present and {@code other} is
      *                              null
      */
     @Override
@@ -385,7 +385,7 @@ public abstract class BaseDynamicValue<T> implements DynamicValue<T> {
     }
 
     /**
-     * Return the contained createValue, if present, otherwise throw an exception
+     * Return the contained value, if present, otherwise throw an exception
      * to be created by the provided supplier.
      * <p>
      * NOTE A method reference to the exception constructor with an empty
@@ -395,9 +395,9 @@ public abstract class BaseDynamicValue<T> implements DynamicValue<T> {
      * @param <X>               Type of the exception to be thrown
      * @param exceptionSupplier The supplier which will return the exception to
      *                          be thrown
-     * @return the present createValue
-     * @throws X                    if there is no createValue present
-     * @throws NullPointerException if no createValue is present and
+     * @return the present value
+     * @throws X                    if there is no value present
+     * @throws NullPointerException if no value is present and
      *                              {@code exceptionSupplier} is null
      */
     @Override

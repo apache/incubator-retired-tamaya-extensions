@@ -128,7 +128,7 @@ public class ConfigurationProducerTest {
         private Provider<String> providerString;
 
         @Inject
-        @Config(value = "defaultString.createValue", defaultValue = "defaultString")
+        @Config(value = "defaultString.value", defaultValue = "defaultString")
         private String defaultString;
 
         @Inject
@@ -136,7 +136,7 @@ public class ConfigurationProducerTest {
         private File file;
 
         @Inject
-        @Config(value = "defaultFile.createValue", defaultValue = "./")
+        @Config(value = "defaultFile.value", defaultValue = "./")
         private File defaultFile;
 
         @Inject
@@ -144,7 +144,7 @@ public class ConfigurationProducerTest {
         private Boolean aBoolean;
 
         @Inject
-        @Config(value = "defaultBoolean.createValue", defaultValue = "true")
+        @Config(value = "defaultBoolean.value", defaultValue = "true")
         private Boolean defaultBoolean;
 
         @Inject
@@ -152,7 +152,7 @@ public class ConfigurationProducerTest {
         private Integer integer;
 
         @Inject
-        @Config(value = "defaultInteger.createValue", defaultValue = "45")
+        @Config(value = "defaultInteger.value", defaultValue = "45")
         private Integer defaultInteger;
 
         @Inject

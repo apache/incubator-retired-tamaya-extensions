@@ -93,7 +93,7 @@ public class ConfigurationProducer {
             }
         }
         if(textValue==null) {
-            LOGGER.info("Using default createValue: '" + defaultTextValue + "' for IP: " + injectionPoint );
+            LOGGER.info("Using default value: '" + defaultTextValue + "' for IP: " + injectionPoint );
             textValue = defaultTextValue;
         }
         ConversionContext conversionContext = createConversionContext(keyFound, keys, injectionPoint);
@@ -167,12 +167,12 @@ public class ConfigurationProducer {
             try {
                 value = converter.convert(textValue, conversionContext);
                 if (value != null) {
-                    LOGGER.log(Level.INFO, "Parsed createValue from '" + textValue + "' into " +
+                    LOGGER.log(Level.INFO, "Parsed value from '" + textValue + "' into " +
                             injectionPoint);
                     break;
                 }
             } catch (Exception e) {
-                LOGGER.log(Level.INFO, "Failed to convert createValue '" + textValue + "' for " +
+                LOGGER.log(Level.INFO, "Failed to convert value '" + textValue + "' for " +
                         injectionPoint, e);
             }
         }

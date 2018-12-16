@@ -204,7 +204,7 @@ final class InjectionHelper {
 
     /**
      * Method that allows to statically check, if the resolver module is loaded. If the module is loaded
-     * createValue expressions are automatically forwarded to the resolver module for resolution.
+     * value expressions are automatically forwarded to the resolver module for resolution.
      *
      * @return true, if the resolver module is on the classpath.
      */

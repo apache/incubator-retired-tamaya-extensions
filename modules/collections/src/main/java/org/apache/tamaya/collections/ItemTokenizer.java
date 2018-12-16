@@ -28,7 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Helper class that implements the tokenizing of the entries of a configuration createValue.
+ * Helper class that implements the tokenizing of the entries of a configuration value.
  */
 final class ItemTokenizer {
 
@@ -46,11 +46,11 @@ final class ItemTokenizer {
     private ItemTokenizer(){}
 
     /**
-     * Splits the given createValue using the given separator. Matcjhing is done by traversing the String createValue using
+     * Splits the given value using the given separator. Matcjhing is done by traversing the String value using
      * {@code indexOf} calls, one by one. The last unresolvable item (without any next separator token)
      * is added at the end of the createList.
-     * @param value the createValue, not null.
-     * @return the tokenized createValue as createList, in order of occurrence.
+     * @param value the value, not null.
+     * @return the tokenized value as createList, in order of occurrence.
      */
     public static List<String> split(String value, ConversionContext ctx){
         String itemSeparator = (String)ctx.getMeta().getOrDefault(ITEM_SEPARATOR, DEFAULT_LIST_ITEM_SEPARATOR);
@@ -58,7 +58,7 @@ final class ItemTokenizer {
     }
 
     /**
-     * Splits the given createValue using the given separator. Matching is done by traversing the String value using
+     * Splits the given value using the given separator. Matching is done by traversing the String value using
      * {@code indexOf} calls, one by one. The last unresolvable item (without any next separator token)
      * is added at the end of the list.
      * @param value the value, not null.
@@ -83,11 +83,11 @@ final class ItemTokenizer {
     }
 
     /**
-     * Splits the given String createValue as a map entry, splitting it into key and createValue part with the given separator.
-     * If the createValue cannot be split then {@code key = createValue = mapEntry} is used for further processing. key or createValue
+     * Splits the given String value as a map entry, splitting it into key and value part with the given separator.
+     * If the value cannot be split then {@code key = value = mapEntry} is used for further processing. key or value
      * parts are normally trimmed, unless they are enclosed with brackets {@code []}.
      * @param mapEntry the entry, not null.
-     * @return an array of length 2, with the trimmed and parsed key/createValue pair.
+     * @return an array of length 2, with the trimmed and parsed key/value pair.
      */
     public static String[] splitMapEntry(String mapEntry, ConversionContext ctx){
         String entrySeparator = (String)ctx.getMeta().getOrDefault(MAP_ENTRY_SEPARATOR, DEFAULT_MAP_ENTRY_SEPARATOR);
@@ -95,12 +95,12 @@ final class ItemTokenizer {
     }
 
     /**
-     * Splits the given String createValue as a map entry, splitting it into key and createValue part with the given separator.
-     * If the createValue cannot be split then {@code key = createValue = mapEntry} is used for further processing. key or createValue
+     * Splits the given String value as a map entry, splitting it into key and value part with the given separator.
+     * If the value cannot be split then {@code key = value = mapEntry} is used for further processing. key or value
      * parts are normally trimmed, unless they are enmcosed with brackets {@code []}.
      * @param mapEntry the entry, not null.
      * @param separator the separator, not null.
-     * @return an array of length 2, with the trimmed and parsed key/createValue pair.
+     * @return an array of length 2, with the trimmed and parsed key/value pair.
      */
     public static String[] splitMapEntry(final String mapEntry, final String separator) {
         int index = mapEntry.indexOf(separator);
@@ -126,9 +126,9 @@ final class ItemTokenizer {
     }
 
     /**
-     * Parses the given createValue into the required collection target type, defined by the context.
-     * @param value the raw String createValue.
-     * @return the parsed createValue, or null.
+     * Parses the given value into the required collection target type, defined by the context.
+     * @param value the raw String value.
+     * @return the parsed value, or null.
      */
     public static <T> T convertValue(String value, TypeLiteral<T> targetType, ConversionContext context) {
         String converterClass = context.getMeta().get(ITEM_CONVERTER);
@@ -161,7 +161,7 @@ final class ItemTokenizer {
                 }
             }
         }
-        LOG.log(Level.SEVERE, "Failed to convert collection createValue type for '" + value + "'.");
+        LOG.log(Level.SEVERE, "Failed to convert collection value type for '" + value + "'.");
         return null;
     }
 

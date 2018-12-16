@@ -36,10 +36,10 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 /**
- * A accessor for a single configured createValue. This can be used to support values that may change during runtime,
+ * A accessor for a single configured value. This can be used to support values that may change during runtime,
  * reconfigured or final. Hereby external code (could be Tamaya configuration listeners or client code), can setCurrent a
- * new createValue. Depending on the {@link UpdatePolicy} the new createValue is immediately active or it requires an active commit
- * by client code. Similarly an instance also can ignore all later changes to the createValue.
+ * new value. Depending on the {@link UpdatePolicy} the new value is immediately active or it requires an active commit
+ * by client code. Similarly an instance also can ignore all later changes to the value.
  * <h3>Implementation Details</h3>
  * This class is
  * <ul>
@@ -47,7 +47,7 @@ import java.util.*;
  * <li>Thread safe</li>
  * </ul>
  *
- * @param <T> The type of the createValue.
+ * @param <T> The type of the value.
  */
 final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
 
@@ -180,8 +180,8 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
                 "configuration=" + getConfiguration() +
                 ", customConverter=" + customConverter +
                 ", loadPolicy=" + loadPolicy +
-                ", createValue=" + value +
-                ", createValue=" + newValue +
+                ", value=" + value +
+                ", value=" + newValue +
                 ", defaultValue=" + getDefaultValue() +
                 ", discarded=" + discarded +
                 ", keys=" + getKeys() +

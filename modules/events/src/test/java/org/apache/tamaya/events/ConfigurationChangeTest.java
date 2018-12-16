@@ -48,7 +48,7 @@ public class ConfigurationChangeTest {
         assertTrue(change.getChanges().size()==0);
         for (Map.Entry<String, String> en : config.getProperties().entrySet()) {
             if (!"[meta]frozenAt".equals(en.getKey())) {
-                if(en.getKey().contains("random.new")){ // dynamic generated createValue!
+                if(en.getKey().contains("random.new")){ // dynamic generated value!
                     continue;
                 }
                 assertEquals("Error for " + en.getKey(), en.getValue(), change.getResource().get(en.getKey()));

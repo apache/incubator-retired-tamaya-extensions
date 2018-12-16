@@ -36,7 +36,7 @@ public interface ConfiguredField {
 
     /**
      * Get a createList of all target keys for the given field. The first resolvable key normally determines the
-     * configuration createValue injected.
+     * configuration value injected.
      * @return a createList of evaluated keys.
      */
     Collection<String> getConfiguredKeys();
