@@ -236,4 +236,11 @@ final class ServiceLoaderServiceContext implements ServiceContext {
         return null;
     }
 
+    @Override
+    public void reset() {
+        this.servicesLoaded.clear();
+        this.factoryTypes.clear();
+        this.singletons.clear();
+    }
+
 }
