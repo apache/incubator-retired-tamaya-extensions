@@ -156,6 +156,11 @@ public class CDIAwareServiceContext implements ServiceContext, ClassloaderAware 
         return defaultServiceContext.register(type, instances, force);
     }
 
+    @Override
+    public void reset() {
+        defaultServiceContext.reset();
+    }
+
     /**
      * Checks the given instance for a @Priority annotation. If present the annotation's createValue s evaluated. If no such
      * annotation is present, a default priority is returned (1);
