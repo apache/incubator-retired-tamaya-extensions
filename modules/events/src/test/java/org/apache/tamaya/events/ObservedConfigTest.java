@@ -28,7 +28,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class ObservedConfigTest {
 
-    @Test
+    @Test(timeout=60000)
     public void testChangingConfig() throws IOException {
         ConfigEventManager.getInstance().setChangeMonitoringPeriod(100L);
         ConfigEventManager.getInstance().enableChangeMonitoring(true);
