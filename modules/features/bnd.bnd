@@ -13,12 +13,12 @@ Automatic-Module-Name: org.apache.tamaya.features
 Bundle-Version: ${version}.${tstamp}
 Bundle-Name: Apache Tamaya - Features
 Bundle-SymbolicName: org.apache.tamaya.features
-Bundle-Description: Apacha Tamaya Confi - Features
+Bundle-Description: Apacha Tamaya Config - Features
 Bundle-Category: Implementation
 Bundle-Copyright: (C) Apache Foundation
 Bundle-License: Apache Licence version 2
 Bundle-Vendor: Apache Software Foundation
-Bundle-ContactAddress: dev-tamaya@incubator.apache.org
-Bundle-DocURL: http://tamaya.apache.org
+Bundle-ContactAddress: dev@tamaya.incubator.apache.org
+Bundle-DocURL: https://tamaya.apache.org
 Export-Package: \
 	org.apache.tamaya.features
