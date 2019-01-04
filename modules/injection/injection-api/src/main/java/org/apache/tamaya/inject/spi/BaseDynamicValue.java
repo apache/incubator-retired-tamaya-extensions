@@ -95,6 +95,7 @@ public abstract class BaseDynamicValue<T> implements DynamicValue<T> {
      * @param propertyName the property name, not null.
      * @param targetType the target type.
      * @param keys the candidate keys.
+     * @param configuration the configuration, not null.
      */
     public BaseDynamicValue(Object owner, String propertyName, TypeLiteral targetType, List<String> keys,
                             Configuration configuration){

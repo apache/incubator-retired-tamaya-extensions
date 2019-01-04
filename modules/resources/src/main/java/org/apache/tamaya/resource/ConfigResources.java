@@ -51,6 +51,7 @@ public final class ConfigResources {
      *
      * @throws ConfigException if no ResourceResolver is available (should not happen).
      *
+     * @param classLoader the target classloader, not null.
      * @return the current ResourceResolver instance, never null.
      */
     public static ResourceResolver getResourceResolver(ClassLoader classLoader) throws ConfigException {

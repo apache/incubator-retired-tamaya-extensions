@@ -368,7 +368,6 @@ public final class PropertySourceFunctions {
      *
      * @param classLoader the target classloader, not null.
      * @param expression the regular expression to match the source's name.
-     * @param classLoader the target classloader, not null.
      * @return the createList of all {@link PropertySource} instances matching, never null.
      */
     public static Collection<? extends PropertySource> findPropertySourcesByName(ClassLoader classLoader, String expression) {

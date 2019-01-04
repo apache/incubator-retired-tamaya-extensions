@@ -49,6 +49,7 @@ public class DefaultConfigChangeObserver {
 
     /**
      * Constructor. Also loads all registered listeners.
+     * @param classLoader the target classloader, not null.
      */
     public DefaultConfigChangeObserver(ClassLoader classLoader) {
         this.classLoader = Objects.requireNonNull(classLoader);
