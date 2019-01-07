@@ -57,6 +57,7 @@ public final class FrozenConfiguration implements Configuration, Serializable {
     /**
      * Creates a new FrozenConfiguration instance based on the current Configuration.
      *
+     * @param keys the keys, not null.
      * @return the frozen Configuration.
      * @see Configuration#current()
      */
@@ -68,6 +69,7 @@ public final class FrozenConfiguration implements Configuration, Serializable {
      * Creates a new FrozenConfiguration instance based on a Configuration given.
      *
      * @param config the configuration to be frozen, not null.
+     * @param keys the keys, not null.
      * @return the frozen Configuration.
      */
     public static FrozenConfiguration of(Configuration config, String... keys) {
@@ -78,6 +80,7 @@ public final class FrozenConfiguration implements Configuration, Serializable {
      * Creates a new FrozenConfiguration instance based on a Configuration given.
      *
      * @param config the configuration to be frozen, not null.
+     * @param keys the keys, not null.
      * @return the frozen Configuration.
      */
     public static FrozenConfiguration of(Configuration config, Set<String> keys) {

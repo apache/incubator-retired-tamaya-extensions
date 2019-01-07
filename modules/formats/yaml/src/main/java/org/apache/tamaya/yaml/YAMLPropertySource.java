@@ -49,6 +49,7 @@ public class YAMLPropertySource implements PropertySource {
     /**
      * Constructor, hereby using 0 as the default ordinal.
      * @param resource the resource modelled as URL, not null.
+     * @throws IOException if the resource cannot be accessed.
      */
     public YAMLPropertySource(URL resource) throws IOException {
         this(resource, 0);
@@ -58,6 +59,7 @@ public class YAMLPropertySource implements PropertySource {
      * Constructor.
      * @param resource the resource modelled as URL, not null.
      * @param defaultOrdinal the defaultOrdinal to be used.
+     * @throws IOException if the resource cannot be accessed.
      */
     public YAMLPropertySource(URL resource, int defaultOrdinal) throws IOException {
         urlResource = Objects.requireNonNull(resource);

@@ -94,6 +94,8 @@ public final class Resolver {
      * Evaluates the current expression.
      * @param value the createValue to be filtered/evaluated.
      * @param classLoader the classloader to be used, not null.
+     * @param maskUnresolved if true, unresolved expression components will be surrounded with [].
+     *                       Setting to false will replace the createValue with an empty String.
      * @return the filtered/evaluated createValue, including null.
      */
     public String evaluateExpression(String value, ClassLoader classLoader, boolean maskUnresolved){

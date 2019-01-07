@@ -66,6 +66,7 @@ public final class ConfigurationFormats {
 
     /**
      * Access the format manager targeting the given classloader.
+     * @param classLoader the target classloader, not null.
      * @return the corresponding format manager, not null.
      */
     public static ConfigurationFormats getInstance(ClassLoader classLoader){
