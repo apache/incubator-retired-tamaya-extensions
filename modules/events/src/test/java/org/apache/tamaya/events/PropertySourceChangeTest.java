@@ -19,7 +19,6 @@
 package org.apache.tamaya.events;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -72,7 +71,7 @@ public class PropertySourceChangeTest {
                 .addChanges(
                         new EnvironmentPropertySource()
                 ).build();
-        assertTrue(change.getRemovedSize() > 0);
+        assertThat(change.getRemovedSize() > 0).isTrue();
     }
 
     @Test
@@ -81,7 +80,7 @@ public class PropertySourceChangeTest {
                 .addChanges(
                         new EnvironmentPropertySource()
                 ).build();
-        assertTrue(change.getAddedSize() > 0);
+        assertThat(change.getAddedSize() > 0).isTrue();
     }
 
     @Test
@@ -116,7 +115,7 @@ public class PropertySourceChangeTest {
                         new MapPropertySource("addableMap", addableMap)
                 )
                 .build();
-        assertTrue(change.getUpdatedSize() > 0);
+        assertThat(change.getUpdatedSize() > 0).isTrue();
     }
 
     @Test
@@ -189,7 +188,7 @@ public class PropertySourceChangeTest {
     public void testIsEmpty() throws Exception {
         PropertySourceChange change = PropertySourceChangeBuilder.of(new EnvironmentPropertySource())
                 .build();
-        assertTrue(change.isEmpty());
+        assertThat(change.isEmpty()).isTrue();
         change = PropertySourceChangeBuilder.of(new EnvironmentPropertySource())
                 .addChanges(
                         myPS

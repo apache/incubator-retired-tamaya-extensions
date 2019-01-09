@@ -18,11 +18,6 @@
  */
 package org.apache.tamaya.consul;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.Map;
@@ -32,6 +27,8 @@ import org.apache.tamaya.mutableconfig.ConfigChangeRequest;
 import org.apache.tamaya.spi.PropertyValue;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for the consul backend integration for writing to the consul backend.
@@ -69,18 +66,18 @@ public class ConsulWriteTest {
         ConfigChangeRequest request = new ConfigChangeRequest("testDelete");
         request.put(taID, "testDelete");
         propertySource.applyChange(request);
-        assertEquals(taID.toString(), propertySource.get("testDelete").getValue());
-        assertNotNull(propertySource.get("_testDelete.createdIndex"));
+        assertThat(taID.toString()).isEqualTo(propertySource.get("testDelete").getValue());
+        assertThat(propertySource.get("_testDelete.createdIndex")).isNotNull();
         request = new ConfigChangeRequest("testDelete2");
         request.remove("testDelete");
         propertySource.applyChange(request);
-        assertNull(propertySource.get("testDelete"));
+        assertThat(propertySource.get("testDelete")).isNull();
     }
 
     @Test
     public void testGetProperties() throws Exception {
         if(!execute)return;
         Map<String,PropertyValue> result = propertySource.getProperties();
-        assertTrue(result.isEmpty());
+        assertThat(result.isEmpty()).isTrue();
     }
 }

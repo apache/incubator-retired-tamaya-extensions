@@ -30,7 +30,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for {@link ThreadFilterContext}. Created by atsticks on 11.02.16.
@@ -49,23 +49,23 @@ public class ProgrammableFilterTest {
         FilterContext context1 = new FilterContext(test1Property, map, context);
         FilterContext context2 = new FilterContext(test2Property, map, context);
         FilterContext context3 = new FilterContext(test3Property, map, context);
-        assertEquals(filter.filterProperty(test1Property, context1), test1Property);
-        assertEquals(filter.filterProperty(test2Property, context2), test2Property);
-        assertEquals(filter.filterProperty(test3Property, context3), test3Property);
+        assertThat(filter.filterProperty(test1Property, context1)).isEqualTo(test1Property);
+        assertThat(filter.filterProperty(test2Property, context2)).isEqualTo(test2Property);
+        assertThat(filter.filterProperty(test3Property, context3)).isEqualTo(test3Property);
         RegexPropertyFilter regexFilter = new RegexPropertyFilter();
         regexFilter.setIncludes("test\\..*");
         filter.addFilter(regexFilter);
-        assertNull(filter.filterProperty(test1Property, context1));
-        assertNull(filter.filterProperty(test2Property, context2));
-        assertEquals(filter.filterProperty(test3Property, context3), test3Property);
+        assertThat(filter.filterProperty(test1Property, context1)).isNull();
+        assertThat(filter.filterProperty(test2Property, context2)).isNull();
+        assertThat(filter.filterProperty(test3Property, context3)).isEqualTo(test3Property);
         filter.removeFilter(0);
-        assertEquals(filter.filterProperty(test1Property, context1), test1Property);
-        assertEquals(filter.filterProperty(test2Property, context2), test2Property);
-        assertEquals(filter.filterProperty(test3Property, context3), test3Property);
+        assertThat(filter.filterProperty(test1Property, context1)).isEqualTo(test1Property);
+        assertThat(filter.filterProperty(test2Property, context2)).isEqualTo(test2Property);
+        assertThat(filter.filterProperty(test3Property, context3)).isEqualTo(test3Property);
         filter.addFilter(0, regexFilter);
-        assertNull(filter.filterProperty(test1Property, context1));
-        assertNull(filter.filterProperty(test2Property, context2));
-        assertEquals(filter.filterProperty(test3Property, context3), test3Property);
+        assertThat(filter.filterProperty(test1Property, context1)).isNull();
+        assertThat(filter.filterProperty(test2Property, context2)).isNull();
+        assertThat(filter.filterProperty(test3Property, context3)).isEqualTo(test3Property);
     }
 
     @Test
@@ -81,17 +81,17 @@ public class ProgrammableFilterTest {
         FilterContext context1 = new FilterContext(test1Property, context);
         FilterContext context2 = new FilterContext(test2Property, context);
         FilterContext context3 = new FilterContext(test3Property, context);
-        assertEquals(filter.filterProperty(test1Property, context1), test1Property);
-        assertEquals(filter.filterProperty(test2Property, context2), test2Property);
-        assertEquals(filter.filterProperty(test3Property, context3), test3Property);
+        assertThat(filter.filterProperty(test1Property, context1)).isEqualTo(test1Property);
+        assertThat(filter.filterProperty(test2Property, context2)).isEqualTo(test2Property);
+        assertThat(filter.filterProperty(test3Property, context3)).isEqualTo(test3Property);
         filter.addFilter(regexFilter);
-        assertEquals(filter.filterProperty(test1Property, context1), test1Property);
-        assertNull(filter.filterProperty(test2Property, context2));
-        assertNull(filter.filterProperty(test3Property, context3));
+        assertThat(filter.filterProperty(test1Property, context1)).isEqualTo(test1Property);
+        assertThat(filter.filterProperty(test2Property, context2)).isNull();
+        assertThat(filter.filterProperty(test3Property, context3)).isNull();
         filter.clearFilters();
-        assertEquals(filter.filterProperty(test1Property, context1), test1Property);
-        assertEquals(filter.filterProperty(test2Property, context2), test2Property);
-        assertEquals(filter.filterProperty(test3Property, context3), test3Property);
+        assertThat(filter.filterProperty(test1Property, context1)).isEqualTo(test1Property);
+        assertThat(filter.filterProperty(test2Property, context2)).isEqualTo(test2Property);
+        assertThat(filter.filterProperty(test3Property, context3)).isEqualTo(test3Property);
     }
 
     @Test
@@ -107,10 +107,10 @@ public class ProgrammableFilterTest {
         FilterContext context1 = new FilterContext(test1Property, map, context);
         FilterContext context2 = new FilterContext(test2Property, map, context);
         FilterContext context3 = new FilterContext(test3Property, map, context);
-        assertEquals(filter.filterProperty(test1Property, context1), test1Property);
-        assertEquals(filter.filterProperty(test2Property, context2), test2Property);
-        assertEquals(filter.filterProperty(test3Property, context3), test3Property);
-        assertEquals(filter.filterProperty(test3Property, context1), test3Property);
+        assertThat(filter.filterProperty(test1Property, context1)).isEqualTo(test1Property);
+        assertThat(filter.filterProperty(test2Property, context2)).isEqualTo(test2Property);
+        assertThat(filter.filterProperty(test3Property, context3)).isEqualTo(test3Property);
+        assertThat(filter.filterProperty(test3Property, context1)).isEqualTo(test3Property);
     }
 
     @Test
@@ -122,40 +122,40 @@ public class ProgrammableFilterTest {
         FilterContext context1 = new FilterContext(test1Property, context);
         FilterContext context2 = new FilterContext(test2Property, context);
         FilterContext context3 = new FilterContext(test3Property, context);
-        assertEquals(filter.filterProperty(test1Property, context1), test1Property);
-        assertEquals(filter.filterProperty(test2Property, context2), test2Property);
-        assertEquals(filter.filterProperty(test3Property, context3), test3Property);
+        assertThat(filter.filterProperty(test1Property, context1)).isEqualTo(test1Property);
+        assertThat(filter.filterProperty(test2Property, context2)).isEqualTo(test2Property);
+        assertThat(filter.filterProperty(test3Property, context3)).isEqualTo(test3Property);
         filter.setFilters(Arrays.asList(new PropertyFilter[]{regexFilter}));
-        assertEquals(filter.filterProperty(test1Property, context1), test1Property);
-        assertNull(filter.filterProperty(test2Property, context2));
-        assertNull(filter.filterProperty(test3Property, context3));
+        assertThat(filter.filterProperty(test1Property, context1)).isEqualTo(test1Property);
+        assertThat(filter.filterProperty(test2Property, context2)).isNull();
+        assertThat(filter.filterProperty(test3Property, context3)).isNull();
     }
 
     @Test
     public void testGetFilters() throws Exception {
         ThreadFilterContext filter = new ThreadFilterContext();
-        assertNotNull(filter.getFilters());
-        assertTrue(filter.getFilters().isEmpty());
+        assertThat(filter.getFilters()).isNotNull();
+        assertThat(filter.getFilters().isEmpty()).isTrue();
         RegexPropertyFilter regexFilter = new RegexPropertyFilter();
         regexFilter.setIncludes("test\\..*");
         filter.addFilter(regexFilter);
-        assertNotNull(filter.getFilters());
-        assertFalse(filter.getFilters().isEmpty());
-        assertEquals(1, filter.getFilters().size());
-        assertEquals(regexFilter, filter.getFilters().get(0));
+        assertThat(filter.getFilters()).isNotNull();
+        assertThat(filter.getFilters().isEmpty()).isFalse();
+        assertThat(filter.getFilters()).hasSize(1);
+        assertThat(regexFilter).isEqualTo(filter.getFilters().get(0));
     }
 
     @Test
     public void testToString() throws Exception {
         ThreadFilterContext filter = new ThreadFilterContext();
-        assertFalse(filter.toString().contains("test\\..*"));
-        assertTrue(filter.toString().contains("ProgrammableFilter"));
-        assertFalse(filter.toString().contains("RegexPropertyFilter"));
+        assertThat(filter.toString().contains("test\\..*")).isFalse();
+        assertThat(filter.toString().contains("ProgrammableFilter")).isTrue();
+        assertThat(filter.toString().contains("RegexPropertyFilter")).isFalse();
         RegexPropertyFilter regexFilter = new RegexPropertyFilter();
         regexFilter.setIncludes("test\\..*");
         filter.addFilter(regexFilter);
-        assertTrue(filter.toString().contains("test\\..*"));
-        assertTrue(filter.toString().contains("ProgrammableFilter"));
-        assertTrue(filter.toString().contains("RegexPropertyFilter"));
+        assertThat(filter.toString().contains("test\\..*")).isTrue();
+        assertThat(filter.toString().contains("ProgrammableFilter")).isTrue();
+        assertThat(filter.toString().contains("RegexPropertyFilter")).isTrue();
     }
 }

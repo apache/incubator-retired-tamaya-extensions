@@ -20,8 +20,7 @@ package org.apache.tamaya.json;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for {@link PathBasedJsonPropertySourceProvider}.
@@ -33,8 +32,8 @@ public class PathBasedJsonPropertySourceProviderTest {
         PathBasedJsonPropertySourceProvider provider = new PathBasedJsonPropertySourceProvider(
                 "configs/valid/*.json"
         );
-        assertNotNull(provider.getPropertySources());
-        assertEquals(7, provider.getPropertySources().size());
+        assertThat(provider.getPropertySources()).isNotNull();
+        assertThat(provider.getPropertySources()).hasSize(7);
     }
 
     @Test
@@ -42,8 +41,8 @@ public class PathBasedJsonPropertySourceProviderTest {
         PathBasedJsonPropertySourceProvider provider = new PathBasedJsonPropertySourceProvider(
                 "configs/valid/cyril*.json"
         );
-        assertNotNull(provider.getPropertySources());
-        assertEquals(1, provider.getPropertySources().size());
+        assertThat(provider.getPropertySources()).isNotNull();
+        assertThat(provider.getPropertySources()).hasSize(1);
     }
 
     @Test
@@ -51,8 +50,8 @@ public class PathBasedJsonPropertySourceProviderTest {
         PathBasedJsonPropertySourceProvider provider = new PathBasedJsonPropertySourceProvider(
                 "configs/valid/simple-*.json"
         );
-        assertNotNull(provider.getPropertySources());
-        assertEquals(3, provider.getPropertySources().size());
+        assertThat(provider.getPropertySources()).isNotNull();
+        assertThat(provider.getPropertySources()).hasSize(3);
     }
 
     @Test
@@ -60,7 +59,7 @@ public class PathBasedJsonPropertySourceProviderTest {
         PathBasedJsonPropertySourceProvider provider = new PathBasedJsonPropertySourceProvider(
                 "configs/valid/foo*.json", "configs/valid/*.JSON"
         );
-        assertNotNull(provider.getPropertySources());
-        assertEquals(0, provider.getPropertySources().size());
+        assertThat(provider.getPropertySources()).isNotNull();
+        assertThat(provider.getPropertySources()).hasSize(0);
     }
 }

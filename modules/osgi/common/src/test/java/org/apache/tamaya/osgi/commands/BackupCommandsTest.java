@@ -25,7 +25,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Hashtable;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by atsti on 30.09.2017.
@@ -35,49 +35,49 @@ public class BackupCommandsTest extends AbstractOSGITest {
     @Test
     public void createBackup() throws Exception {
         String result = BackupCommands.createBackup(tamayaConfigPlugin, cm, "createBackup", false);
-        assertNotNull(result);
-        assertTrue(result.contains("createBackup"));
-        assertTrue(result.contains("Backup created"));
-        assertTrue(tamayaConfigPlugin.containsBackup("createBackup"));
+        assertThat(result).isNotNull();
+        assertThat(result.contains("createBackup")).isTrue();
+        assertThat(result.contains("Backup created")).isTrue();
+        assertThat(tamayaConfigPlugin.containsBackup("createBackup")).isTrue();
         // A backup with the given name already exists, so it fails
         result = BackupCommands.createBackup(tamayaConfigPlugin, cm, "createBackup", false);
-        assertNotNull(result);
-        assertTrue(result.contains("createBackup"));
-        assertTrue(result.contains("Creating of backup failed"));
-        assertTrue(result.contains("already existing"));
-        assertTrue(tamayaConfigPlugin.containsBackup("createBackup"));
+        assertThat(result).isNotNull();
+        assertThat(result.contains("createBackup")).isTrue();
+        assertThat(result.contains("Creating of backup failed")).isTrue();
+        assertThat(result.contains("already existing")).isTrue();
+        assertThat(tamayaConfigPlugin.containsBackup("createBackup")).isTrue();
         // any existing backups gets overridden
         result = BackupCommands.createBackup(tamayaConfigPlugin, cm, "createBackup", true);
-        assertNotNull(result);
-        assertTrue(result.contains("createBackup"));
-        assertTrue(result.contains("Backup created"));
-        assertTrue(tamayaConfigPlugin.containsBackup("createBackup"));
+        assertThat(result).isNotNull();
+        assertThat(result.contains("createBackup")).isTrue();
+        assertThat(result.contains("Backup created")).isTrue();
+        assertThat(tamayaConfigPlugin.containsBackup("createBackup")).isTrue();
     }
 
     @Test
     public void deleteBackup() throws Exception {
         BackupCommands.createBackup(tamayaConfigPlugin, cm, "deleteBackup", false);
-        assertTrue(tamayaConfigPlugin.containsBackup("deleteBackup"));
+        assertThat(tamayaConfigPlugin.containsBackup("deleteBackup")).isTrue();
         String result = BackupCommands.deleteBackup(tamayaConfigPlugin, "deleteBackup");
-        assertNotNull(result);
-        assertTrue(result.contains("deleteBackup"));
-        assertTrue(result.contains("Backup deleted"));
-        assertFalse(tamayaConfigPlugin.containsBackup("deleteBackup"));
+        assertThat(result).isNotNull();
+        assertThat(result.contains("deleteBackup")).isTrue();
+        assertThat(result.contains("Backup deleted")).isTrue();
+        assertThat(tamayaConfigPlugin.containsBackup("deleteBackup")).isFalse();
     }
 
     @Test
     public void restoreBackup() throws Exception {
         BackupCommands.createBackup(tamayaConfigPlugin, cm, "restoreBackup", false);
-        assertTrue(tamayaConfigPlugin.containsBackup("restoreBackup"));
+        assertThat(tamayaConfigPlugin.containsBackup("restoreBackup")).isTrue();
         String result = BackupCommands.restoreBackup(tamayaConfigPlugin, "restoreBackup");
-        assertNotNull(result);
-        assertTrue(result.contains("restoreBackup"));
-        assertTrue(result.contains("Backup restored"));
+        assertThat(result).isNotNull();
+        assertThat(result.contains("restoreBackup")).isTrue();
+        assertThat(result.contains("Backup restored")).isTrue();
         BackupCommands.deleteBackup(tamayaConfigPlugin, "restoreBackup");
-        assertFalse(tamayaConfigPlugin.containsBackup("restoreBackup"));
+        assertThat(tamayaConfigPlugin.containsBackup("restoreBackup")).isFalse();
         result = BackupCommands.restoreBackup(tamayaConfigPlugin, "restoreBackup");
-        assertTrue(result.contains("Backup restore failed"));
-        assertTrue(result.contains("no backup found"));
+        assertThat(result.contains("Backup restore failed")).isTrue();
+        assertThat(result.contains("no backup found")).isTrue();
     }
 
     @Test
@@ -94,10 +94,10 @@ public class BackupCommandsTest extends AbstractOSGITest {
         props.put("k1", "v1");
         props.put("k2", "v2");
         String result = BackupCommands.printProps(props);
-        assertTrue(result.contains("k1"));
-        assertTrue(result.contains("k2"));
-        assertTrue(result.contains("v1"));
-        assertTrue(result.contains("v2"));
+        assertThat(result.contains("k1")).isTrue();
+        assertThat(result.contains("k2")).isTrue();
+        assertThat(result.contains("v1")).isTrue();
+        assertThat(result.contains("v2")).isTrue();
     }
 
 }

@@ -28,7 +28,7 @@ import java.io.PrintStream;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by Anatole on 01.10.2015.
@@ -146,9 +146,9 @@ public class ConfigurationFunctionsTest {
     @Test
     public void testEmptyConfiguration() throws Exception {
         Configuration ps = ConfigurationFunctions.emptyConfiguration();
-        assertNotNull(ps);
-        assertNotNull(ps.getProperties());
-        assertTrue(ps.getProperties().isEmpty());
+        assertThat(ps).isNotNull();
+        assertThat(ps.getProperties()).isNotNull();
+        assertThat(ps.getProperties().isEmpty()).isTrue();
     }
 
 

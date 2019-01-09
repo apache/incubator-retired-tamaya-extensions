@@ -28,9 +28,7 @@ import org.osgi.framework.ServiceReference;
 import java.util.Hashtable;
 import java.util.function.Supplier;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -69,19 +67,19 @@ public class ActivatorTest extends AbstractOSGITest{
         doReturn(bundle).when(reference).getBundle();
         doReturn(new Hashtable<>()).when(bundle).getHeaders();
         doReturn("true").when(reference).getProperty(ConfigInjectionService.TAMAYA_INJECTION_ENABLED_PROP);
-        assertTrue(injectionService.isInjectionEnabled(reference));
+        assertThat(injectionService.isInjectionEnabled(reference)).isTrue();
         doReturn("yes").when(reference).getProperty(ConfigInjectionService.TAMAYA_INJECTION_ENABLED_PROP);
-        assertTrue(injectionService.isInjectionEnabled(reference));
+        assertThat(injectionService.isInjectionEnabled(reference)).isTrue();
         doReturn("no").when(reference).getProperty(ConfigInjectionService.TAMAYA_INJECTION_ENABLED_PROP);
-        assertFalse(injectionService.isInjectionEnabled(reference));
+        assertThat(injectionService.isInjectionEnabled(reference)).isFalse();
         doReturn(null).when(reference).getProperty(ConfigInjectionService.TAMAYA_INJECTION_ENABLED_PROP);
-        assertFalse(injectionService.isInjectionEnabled(reference));
+        assertThat(injectionService.isInjectionEnabled(reference)).isFalse();
         doReturn("foo").when(reference).getProperty(ConfigInjectionService.TAMAYA_INJECTION_ENABLED_PROP);
-        assertFalse(injectionService.isInjectionEnabled(reference));
+        assertThat(injectionService.isInjectionEnabled(reference)).isFalse();
         // service undefined, but bundle enabled
         doReturn(null).when(reference).getProperty(ConfigInjectionService.TAMAYA_INJECTION_ENABLED_PROP);
         doReturn(singleHashtable(ConfigInjectionService.TAMAYA_INJECTION_ENABLED_MANIFEST, "true")).when(bundle).getHeaders();
-        assertTrue(injectionService.isInjectionEnabled(reference));
+        assertThat(injectionService.isInjectionEnabled(reference)).isTrue();
     }
 
     private Hashtable singleHashtable(String key, String value) {
@@ -94,34 +92,34 @@ public class ActivatorTest extends AbstractOSGITest{
     public void isInjectionEnabled_Bundle() {
         Bundle bundle = mock(Bundle.class);
         doReturn(singleHashtable(ConfigInjectionService.TAMAYA_INJECTION_ENABLED_MANIFEST, "true")).when(bundle).getHeaders();
-        assertTrue(injectionService.isInjectionEnabled(bundle));
+        assertThat(injectionService.isInjectionEnabled(bundle)).isTrue();
         doReturn(singleHashtable(ConfigInjectionService.TAMAYA_INJECTION_ENABLED_MANIFEST, "YeS")).when(bundle).getHeaders();
-        assertTrue(injectionService.isInjectionEnabled(bundle));
+        assertThat(injectionService.isInjectionEnabled(bundle)).isTrue();
         doReturn(singleHashtable(ConfigInjectionService.TAMAYA_INJECTION_ENABLED_MANIFEST, "on")).when(bundle).getHeaders();
-        assertTrue(injectionService.isInjectionEnabled(bundle));
+        assertThat(injectionService.isInjectionEnabled(bundle)).isTrue();
         doReturn(singleHashtable(ConfigInjectionService.TAMAYA_INJECTION_ENABLED_MANIFEST, "TRUE")).when(bundle).getHeaders();
-        assertTrue(injectionService.isInjectionEnabled(bundle));
+        assertThat(injectionService.isInjectionEnabled(bundle)).isTrue();
         doReturn(singleHashtable(ConfigInjectionService.TAMAYA_INJECTION_ENABLED_MANIFEST, "no")).when(bundle).getHeaders();
-        assertFalse(injectionService.isInjectionEnabled(bundle));
+        assertThat(injectionService.isInjectionEnabled(bundle)).isFalse();
         doReturn(singleHashtable(ConfigInjectionService.TAMAYA_INJECTION_ENABLED_MANIFEST, "foo")).when(bundle).getHeaders();
-        assertFalse(injectionService.isInjectionEnabled(bundle));
+        assertThat(injectionService.isInjectionEnabled(bundle)).isFalse();
         doReturn(new Hashtable<>()).when(bundle).getHeaders();
-        assertFalse(injectionService.isInjectionEnabled(bundle));
+        assertThat(injectionService.isInjectionEnabled(bundle)).isFalse();
     }
 
     @Test
     public void configure() throws Exception {
         Example example = new Example();
         Example result = injectionService.configure("tamaya", null, example);
-        assertNotNull(result);
-        assertTrue(result==example);
+        assertThat(result).isNotNull();
+        assertThat(result).isEqualTo(example);
         Example.checkExampleConfig(example);
     }
 
     @Test
     public void getConfiguredSupplier() throws Exception {
         Supplier<Example> supplier = injectionService.getConfiguredSupplier("tamaya", null, Example::new);
-        assertNotNull(supplier);
+        assertThat(supplier).isNotNull();
         Example example = supplier.get();
         Example.checkExampleConfig(example);
     }

@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for {@link MutableConfiguration}.
@@ -38,15 +38,15 @@ public class MutableConfigurationTest {
 
     @Test
     public void createMutableConfiguration() throws Exception {
-        assertNotNull(MutableConfiguration.create());
+        assertThat(MutableConfiguration.create()).isNotNull();
     }
 
     @Test
     public void createMutableConfiguration1() throws Exception {
         MutableConfiguration cfg = MutableConfiguration.create(Configuration.current());
-        assertNotNull(cfg);
-        assertEquals(cfg.getChangePropagationPolicy(),
-                ChangePropagationPolicy.MOST_SIGNIFICANT_ONLY_POLICY);
+        assertThat(cfg).isNotNull();
+        assertThat(cfg.getChangePropagationPolicy())
+                .isEqualTo(ChangePropagationPolicy.MOST_SIGNIFICANT_ONLY_POLICY);
     }
 
     @Test
@@ -55,8 +55,8 @@ public class MutableConfigurationTest {
         MutableConfiguration cfg = MutableConfiguration
                 .create(Configuration.current(),
                         policy);
-        assertNotNull(cfg);
-        assertEquals(cfg.getChangePropagationPolicy(), policy);
+        assertThat(cfg).isNotNull();
+        assertThat(cfg.getChangePropagationPolicy()).isEqualTo(policy);
     }
 
     @Test
@@ -64,8 +64,8 @@ public class MutableConfigurationTest {
         ChangePropagationPolicy policy = ChangePropagationPolicy.getApplySelectiveChangePolicy("gugus");
         MutableConfiguration cfg = MutableConfiguration
                 .create(policy);
-        assertNotNull(cfg);
-        assertEquals(cfg.getChangePropagationPolicy(), policy);
+        assertThat(cfg).isNotNull();
+        assertThat(cfg.getChangePropagationPolicy()).isEqualTo(policy);
     }
 
     /**
@@ -79,14 +79,14 @@ public class MutableConfigurationTest {
         MutableConfiguration cfg1 = MutableConfiguration.create(
                 Configuration.current(),
                 ChangePropagationPolicy.ALL_POLICY);
-        assertNotNull(cfg1);
-        assertNotNull(cfg1.getConfigChangeRequest());
+        assertThat(cfg1).isNotNull();
+        assertThat(cfg1.getConfigChangeRequest()).isNotNull();
         MutableConfiguration cfg2 = MutableConfiguration.create(
                 Configuration.current());
-        assertNotNull(cfg2);
-        assertNotNull(cfg2.getConfigChangeRequest());
-        assertTrue(cfg1!=cfg2);
-        assertTrue(cfg1.getConfigChangeRequest()!=cfg2.getConfigChangeRequest());
+        assertThat(cfg2).isNotNull();
+        assertThat(cfg2.getConfigChangeRequest()).isNotNull();
+        assertThat(cfg1).isNotEqualTo(cfg2);
+        assertThat(cfg1.getConfigChangeRequest()).isNotEqualTo(cfg2.getConfigChangeRequest());
     }
 
     /**
@@ -145,7 +145,7 @@ public class MutableConfigurationTest {
         cm.put("key3", "value3");
         mutConfig.putAll(cm);
         mutConfig.store();
-        assertTrue(WritablePropertiesSource.target.exists());
+        assertThat(WritablePropertiesSource.target.exists()).isTrue();
         MutableConfiguration mmutConfig2 = MutableConfiguration.create(
                 Configuration.current()
         );
@@ -156,10 +156,10 @@ public class MutableConfigurationTest {
         mmutConfig2.store();
         Properties props = new Properties();
         props.load(WritablePropertiesSource.target.toURL().openStream());
-        assertEquals(3, props.size());
-        assertEquals("value1.2", props.getProperty("key1"));
-        assertEquals("value2", props.getProperty("key2"));
-        assertEquals("value4", props.getProperty("key4"));
+        assertThat(props).hasSize(3);
+        assertThat("value1.2").isEqualTo(props.getProperty("key1"));
+        assertThat("value2").isEqualTo(props.getProperty("key2"));
+        assertThat("value4").isEqualTo(props.getProperty("key4"));
     }
 
     /**
@@ -178,10 +178,10 @@ public class MutableConfigurationTest {
         cm.put("key3", "value3");
         cfg.putAll(cm);
         cfg.store();
-        assertTrue(WritableXmlPropertiesSource.target.exists());
+        assertThat(WritableXmlPropertiesSource.target.exists()).isTrue();
         MutableConfiguration cfg2 = MutableConfiguration.create(
                 Configuration.current());
-        assertTrue(cfg != cfg2);
+        assertThat(cfg).isNotEqualTo(cfg2);
         cfg2.remove("foo");
         cfg2.remove("key3");
         cfg2.put("key1", "value1.2");
@@ -189,9 +189,9 @@ public class MutableConfigurationTest {
         cfg2.store();
         Properties props = new Properties();
         props.loadFromXML( WritableXmlPropertiesSource.target.toURL().openStream());
-        assertEquals(3, props.size());
-        assertEquals("value1", props.getProperty("key1"));
-        assertEquals("value2", props.getProperty("key2"));
+        assertThat(props).hasSize(3);
+        assertThat("value1").isEqualTo(props.getProperty("key1"));
+        assertThat("value2").isEqualTo(props.getProperty("key2"));
     }
 
     /**
@@ -211,7 +211,7 @@ public class MutableConfigurationTest {
         cm.put("key3", "value3");
         cfg.putAll(cm);
         cfg.store();
-        assertFalse(WritableXmlPropertiesSource.target.exists());
+        assertThat(WritableXmlPropertiesSource.target.exists()).isFalse();
     }
 
 }

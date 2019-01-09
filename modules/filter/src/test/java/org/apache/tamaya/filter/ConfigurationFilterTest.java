@@ -24,7 +24,7 @@ import org.apache.tamaya.spi.PropertyFilter;
 import org.apache.tamaya.spi.PropertyValue;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for {@link ThreadBasedConfigurationFilter}. Created by atsticks on 11.02.16.
@@ -34,15 +34,15 @@ public class ConfigurationFilterTest {
     @Test
     public void testMetadataFiltered() throws Exception {
         ThreadBasedConfigurationFilter.setMetadataFiltered(true);
-        assertTrue(ThreadBasedConfigurationFilter.isMetadataFiltered());
+        assertThat(ThreadBasedConfigurationFilter.isMetadataFiltered()).isTrue();
         ThreadBasedConfigurationFilter.setMetadataFiltered(false);
-        assertFalse(ThreadBasedConfigurationFilter.isMetadataFiltered());
+        assertThat(ThreadBasedConfigurationFilter.isMetadataFiltered()).isFalse();
     }
 
     @Test
     public void testGetSingleFilters() throws Exception {
         Configuration config = Configuration.current();
-        assertNotNull(ThreadBasedConfigurationFilter.getSingleValueFilterContext());
+        assertThat(ThreadBasedConfigurationFilter.getSingleValueFilterContext()).isNotNull();
         PropertyFilter testFilter = new PropertyFilter() {
             @Override
             public PropertyValue filterProperty(PropertyValue value, FilterContext ctx) {
@@ -50,15 +50,15 @@ public class ConfigurationFilterTest {
             }
         };
         ThreadBasedConfigurationFilter.getSingleValueFilterContext().addFilter(testFilter);
-        assertEquals("user.home:testGetSingleFilters", config.get("user.home"));
+        assertThat("user.home:testGetSingleFilters").isEqualTo(config.get("user.home"));
         ThreadBasedConfigurationFilter.getSingleValueFilterContext().removeFilter(testFilter);
-        assertNotSame("user.home:testGetSingleFilters", config.get("user.home"));
+        assertThat("user.home:testGetSingleFilters").isNotSameAs(config.get("user.home"));
     }
 
     @Test
     public void testRemoveSingleFiltersAt0() throws Exception {
         Configuration config = Configuration.current();
-        assertNotNull(ThreadBasedConfigurationFilter.getSingleValueFilterContext());
+        assertThat(ThreadBasedConfigurationFilter.getSingleValueFilterContext()).isNotNull();
         PropertyFilter testFilter = new PropertyFilter() {
             @Override
             public PropertyValue filterProperty(PropertyValue value, FilterContext ctx) {
@@ -66,15 +66,15 @@ public class ConfigurationFilterTest {
             }
         };
         ThreadBasedConfigurationFilter.getSingleValueFilterContext().addFilter(testFilter);
-        assertEquals("user.home:testGetSingleFilters", config.get("user.home"));
+        assertThat("user.home:testGetSingleFilters").isEqualTo(config.get("user.home"));
         ThreadBasedConfigurationFilter.getSingleValueFilterContext().removeFilter(0);
-        assertNotSame("user.home:testGetSingleFilters", config.get("user.home"));
+        assertThat("user.home:testGetSingleFilters").isNotSameAs(config.get("user.home"));
     }
 
     @Test
     public void testGetMapFilters() throws Exception {
         Configuration config = Configuration.current();
-        assertNotNull(ThreadBasedConfigurationFilter.getMapFilterContext());
+        assertThat(ThreadBasedConfigurationFilter.getMapFilterContext()).isNotNull();
         PropertyFilter testFilter = new PropertyFilter() {
             @Override
             public PropertyValue filterProperty(PropertyValue value, FilterContext ctx) {
@@ -82,15 +82,15 @@ public class ConfigurationFilterTest {
             }
         };
         ThreadBasedConfigurationFilter.getMapFilterContext().addFilter(testFilter);
-        assertEquals("user.home:testGetMapFilters", config.getProperties().get("user.home"));
+        assertThat("user.home:testGetMapFilters").isEqualTo(config.getProperties().get("user.home"));
         ThreadBasedConfigurationFilter.getSingleValueFilterContext().removeFilter(testFilter);
-        assertNotSame("user.home:testGetSingleFilters", config.getProperties().get("user.home"));
+        assertThat("user.home:testGetSingleFilters").isNotSameAs(config.getProperties().get("user.home"));
     }
 
     @Test
     public void testRemoveMapFilterAt0() throws Exception {
         Configuration config = Configuration.current();
-        assertNotNull(ThreadBasedConfigurationFilter.getMapFilterContext());
+        assertThat(ThreadBasedConfigurationFilter.getMapFilterContext()).isNotNull();
         PropertyFilter testFilter = new PropertyFilter() {
             @Override
             public PropertyValue filterProperty(PropertyValue value, FilterContext ctx) {
@@ -98,15 +98,15 @@ public class ConfigurationFilterTest {
             }
         };
         ThreadBasedConfigurationFilter.getMapFilterContext().addFilter(testFilter);
-        assertEquals("user.home:testGetMapFilters", config.getProperties().get("user.home"));
+        assertThat("user.home:testGetMapFilters").isEqualTo(config.getProperties().get("user.home"));
         ThreadBasedConfigurationFilter.getMapFilterContext().removeFilter(0);
-        assertNotSame("user.home:testGetSingleFilters", config.getProperties().get("user.home"));
+        assertThat("user.home:testGetSingleFilters").isNotSameAs(config.getProperties().get("user.home"));
     }
 
     @Test
     public void testClearFilters() throws Exception {
         Configuration config = Configuration.current();
-        assertNotNull(ThreadBasedConfigurationFilter.getSingleValueFilterContext());
+        assertThat(ThreadBasedConfigurationFilter.getSingleValueFilterContext()).isNotNull();
         PropertyFilter testFilter = new PropertyFilter() {
             @Override
             public PropertyValue filterProperty(PropertyValue value, FilterContext ctx) {
@@ -114,9 +114,9 @@ public class ConfigurationFilterTest {
             }
         };
         ThreadBasedConfigurationFilter.getSingleValueFilterContext().addFilter(testFilter);
-        assertEquals("user.home:testGetSingleFilters", config.get("user.home"));
+        assertThat("user.home:testGetSingleFilters").isEqualTo(config.get("user.home"));
         ThreadBasedConfigurationFilter.cleanupFilterContext();
-        assertNotSame("user.home:testGetSingleFilters", config.get("user.home"));
+        assertThat("user.home:testGetSingleFilters").isNotSameAs(config.get("user.home"));
     }
 
 }

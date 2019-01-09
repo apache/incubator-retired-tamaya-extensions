@@ -25,8 +25,7 @@ import org.junit.Test;
 
 import java.util.Map;
 
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by atsticks on 07.01.16.
@@ -42,31 +41,31 @@ public class ConsulPropertySourceTest {
 
     @Test
     public void testGetOrdinal() throws Exception {
-        assertEquals(1000, propertySource.getOrdinal());
+        assertThat(1000).isEqualTo(propertySource.getOrdinal());
     }
 
     @Test
     public void testGetDefaultOrdinal() throws Exception {
-        assertEquals(1000, propertySource.getDefaultOrdinal());
+        assertThat(1000).isEqualTo(propertySource.getDefaultOrdinal());
     }
 
     @Test
     public void testGetName() throws Exception {
-        assertEquals("consul", propertySource.getName());
+        assertThat("consul").isEqualTo(propertySource.getName());
     }
 
     @Test
     public void testGet() throws Exception {
         Map<String,PropertyValue> props = propertySource.getProperties();
         for(Map.Entry<String,PropertyValue> en:props.entrySet()){
-            assertNotNull("Key not found: " + en.getKey(), propertySource.get(en.getKey()));
+            assertThat(propertySource.get(en.getKey())).isNotNull();
         }
     }
 
     @Test
     public void testGetProperties() throws Exception {
         Map<String,PropertyValue> props = propertySource.getProperties();
-        assertNotNull(props);
+        assertThat(props).isNotNull();
     }
 
 }

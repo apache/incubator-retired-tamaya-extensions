@@ -26,7 +26,7 @@ import org.junit.Test;
 
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Tests for {@link org.apache.tamaya.events.FrozenPropertySource}.
@@ -38,47 +38,46 @@ public class FrozenPropertySourceTest {
     @Test
     public void testOf() throws Exception {
         PropertySource ps = FrozenPropertySource.of(myPS);
-        assertNotNull(ps);
+        assertThat(ps).isNotNull();
     }
 
     @Test
     public void testGetName() throws Exception {
         PropertySource ps = FrozenPropertySource.of(myPS);
         String name = ps.getName();
-        assertNotNull(name);
-        assertEquals(name, ps.getName());
+        assertThat(name).isNotNull();
+        assertThat(name).isEqualTo(ps.getName());
     }
 
     @Test
     public void testGetOrdinal() throws Exception {
         PropertySource ps = FrozenPropertySource.of(myPS);
-        assertEquals(PropertySourceComparator.getOrdinal(myPS),
-                PropertySourceComparator.getOrdinal(ps));
+        assertThat(PropertySourceComparator.getOrdinal(myPS)).isEqualTo(PropertySourceComparator.getOrdinal(ps));
     }
 
     @Test
     public void testGet() throws Exception {
         PropertySource ps = FrozenPropertySource.of(myPS);
-        assertNotNull(ps);
+        assertThat(ps).isNotNull();
         for (Map.Entry<String, PropertyValue> e : myPS.getProperties().entrySet()) {
-            assertEquals(ps.get(e.getKey()).getValue(), e.getValue().getValue());
+            assertThat(ps.get(e.getKey()).getValue()).isEqualTo(e.getValue().getValue());
         }
     }
 
     @Test
     public void testGetProperties() throws Exception {
         PropertySource ps = FrozenPropertySource.of(myPS);
-        assertNotNull(ps);
-        assertNotNull(ps.getProperties());
-        assertFalse(ps.getProperties().isEmpty());
+        assertThat(ps).isNotNull();
+        assertThat(ps.getProperties()).isNotNull();
+        assertThat(ps.getProperties().isEmpty()).isFalse();
     }
 
     @Test
     public void testEquals() throws Exception {
         PropertySource ps1 = FrozenPropertySource.of(myPS);
         PropertySource ps2 = FrozenPropertySource.of(myPS);
-        assertEquals(ps1.getName(), ps2.getName());
-        assertEquals(ps1.getProperties().size(), ps2.getProperties().size());
+        assertThat(ps1.getName()).isEqualTo(ps2.getName());
+        assertThat(ps1.getProperties().size()).isEqualTo(ps2.getProperties().size());
     }
 
     @Test
@@ -102,8 +101,8 @@ public class FrozenPropertySourceTest {
     public void testToString() throws Exception {
         PropertySource ps = FrozenPropertySource.of(myPS);
         String toString = ps.toString();
-        assertNotNull(toString);
-        assertTrue(toString.contains("FrozenPropertySource"));
-        assertTrue(toString.contains(myPS.getName()));
+        assertThat(toString).isNotNull();
+        assertThat(toString.contains("FrozenPropertySource")).isTrue();
+        assertThat(toString.contains(myPS.getName())).isTrue();
     }
 }

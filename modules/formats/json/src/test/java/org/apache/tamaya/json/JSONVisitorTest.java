@@ -21,8 +21,7 @@ package org.apache.tamaya.json;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -52,7 +51,7 @@ public class JSONVisitorTest {
 
 		ObjectValue ov = data.toObjectValue();
 		assertThat(ov.getValues().size() == 6);
-		assertEquals(data.getSize(), 6);
+		assertThat(data.getSize()).isEqualTo(6);
 		assertThat(data.toMap()).containsKeys("key.sub", "anotherKey", "notAnotherKey", "number", "null");
 		assertThat(data.toMap()).containsEntry("key.sub", "createValue");
 		assertThat(data.toMap()).containsEntry("null", null);

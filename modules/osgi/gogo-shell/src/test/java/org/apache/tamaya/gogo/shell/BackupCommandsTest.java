@@ -28,7 +28,6 @@ import java.util.Hashtable;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -86,7 +85,7 @@ public class BackupCommandsTest extends AbstractOSGITest{
             commands.tm_backup_delete("testBackup_Delete");
             return null;
         });
-        assertEquals("Backup deleted: testBackup_Delete".trim(), out.trim());
+        assertThat("Backup deleted: testBackup_Delete".trim()).isEqualTo(out.trim());
         verify(tamayaConfigPlugin).deleteBackup("testBackup_Delete");
     }
 

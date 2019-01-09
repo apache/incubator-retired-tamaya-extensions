@@ -18,14 +18,12 @@
  */
 package org.apache.tamaya.json;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-
 import java.net.URL;
 
 import org.apache.tamaya.spi.PropertySource;
-import org.hamcrest.CoreMatchers;
 import org.junit.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class JSONPropertySourceTest extends CommonJSONTestCaseCollection {
 
@@ -33,17 +31,17 @@ public class JSONPropertySourceTest extends CommonJSONTestCaseCollection {
     public void tamayaOrdinalKeywordIsNotPropagatedAsNormalProperty() throws Exception {
         URL configURL = JSONPropertySourceTest.class.getResource("/configs/valid/with-explicit-priority.json");
 
-        assertThat(configURL, CoreMatchers.notNullValue());
+        assertThat(configURL).isNotNull();
 
         JSONPropertySource source = new JSONPropertySource(configURL, 4);
-        assertEquals(source.getOrdinal(), 16784);
+        assertThat(source.getOrdinal()).isEqualTo(16784);
     }
-    
+
     @Test
     public void testAcceptJsonArrays() throws Exception {
         URL configURL = JSONPropertySourceTest.class.getResource("/configs/invalid/array.json");
 
-        assertThat(configURL, CoreMatchers.notNullValue());
+        assertThat(configURL).isNotNull();
 
         new JSONPropertySource(configURL);
     }

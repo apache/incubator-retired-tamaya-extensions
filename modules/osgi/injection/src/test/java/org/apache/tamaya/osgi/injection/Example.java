@@ -20,8 +20,7 @@ package org.apache.tamaya.osgi.injection;
 
 import org.apache.tamaya.inject.api.Config;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Example class to be configured with injection.
@@ -35,17 +34,17 @@ final class Example {
     boolean javaUsed;
 
     static void checkExampleConfig(Example example) {
-        assertNotNull(example);
-        assertEquals(example.javaHome, System.getProperty("java.home"));
-        assertEquals(example.javaVersion, System.getProperty("java.version"));
-        assertEquals(example.javaUsed, true);
+        assertThat(example).isNotNull();
+        assertThat(example.javaHome).isEqualTo(System.getProperty("java.home"));
+        assertThat(example.javaVersion).isEqualTo(System.getProperty("java.version"));
+        assertThat(example.javaUsed).isTrue();
     }
 
     static void checkExampleConfig(TemplateExample template) {
-        assertNotNull(template);
-        assertEquals(template.getJavaHome(), System.getProperty("java.home"));
-        assertEquals(template.javaVersion(), System.getProperty("java.version"));
-        assertEquals(template.isJavaUsed(), true);
+        assertThat(template).isNotNull();
+        assertThat(template.getJavaHome()).isEqualTo(System.getProperty("java.home"));
+        assertThat(template.javaVersion()).isEqualTo(System.getProperty("java.version"));
+        assertThat(template.isJavaUsed()).isTrue();
     }
 
 }

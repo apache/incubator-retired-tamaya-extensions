@@ -20,7 +20,7 @@ package org.apache.tamaya.yaml;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for {@link PathBasedYamlPropertySourceProvider}.
@@ -32,8 +32,8 @@ public class PathBasedYamlPropertySourceProviderTest {
         PathBasedYamlPropertySourceProvider provider = new PathBasedYamlPropertySourceProvider(
                 "configs/valid/*.yaml"
         );
-        assertNotNull(provider.getPropertySources());
-        assertEquals(3, provider.getPropertySources().size());
+        assertThat(provider.getPropertySources()).isNotNull();
+        assertThat(provider.getPropertySources()).hasSize(3);
     }
 
     @Test
@@ -41,8 +41,8 @@ public class PathBasedYamlPropertySourceProviderTest {
         PathBasedYamlPropertySourceProvider provider = new PathBasedYamlPropertySourceProvider(
                 "configs/valid/conta*.yaml"
         );
-        assertNotNull(provider.getPropertySources());
-        assertEquals(1, provider.getPropertySources().size());
+        assertThat(provider.getPropertySources()).isNotNull();
+        assertThat(provider.getPropertySources()).hasSize(1);
     }
 
     @Test
@@ -50,8 +50,8 @@ public class PathBasedYamlPropertySourceProviderTest {
         PathBasedYamlPropertySourceProvider provider = new PathBasedYamlPropertySourceProvider(
                 "configs/valid/test*.yaml"
         );
-        assertNotNull(provider.getPropertySources());
-        assertEquals(2, provider.getPropertySources().size());
+        assertThat(provider.getPropertySources()).isNotNull();
+        assertThat(provider.getPropertySources()).hasSize(2);
     }
 
     @Test
@@ -59,7 +59,7 @@ public class PathBasedYamlPropertySourceProviderTest {
         PathBasedYamlPropertySourceProvider provider = new PathBasedYamlPropertySourceProvider(
                 "configs/valid/foo*.yaml", "configs/valid/*.yml"
         );
-        assertNotNull(provider.getPropertySources());
-        assertEquals(0, provider.getPropertySources().size());
+        assertThat(provider.getPropertySources()).isNotNull();
+        assertThat(provider.getPropertySources()).hasSize(0);
     }
 }

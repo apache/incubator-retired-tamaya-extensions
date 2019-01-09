@@ -28,37 +28,37 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 public class YAMLFormatTest {
     private final YAMLFormat format = new YAMLFormat();
 
     @Test
     public void testAcceptURL() throws MalformedURLException {
-        assertTrue(format.accepts(new URL("http://127.0.0.1/anyfile.yaml")));
+        assertThat(format.accepts(new URL("http://127.0.0.1/anyfile.yaml"))).isTrue();
     }
 
     @Test
     public void testAcceptURL_BC1() throws MalformedURLException {
-        assertFalse(format.accepts(new URL("http://127.0.0.1/anyfile.YAML")));
+        assertThat(format.accepts(new URL("http://127.0.0.1/anyfile.YAML"))).isFalse();
     }
 
     @Test(expected = NullPointerException.class)
     public void testAcceptURL_BC2() throws MalformedURLException {
-        assertFalse(format.accepts(null));
+        assertThat(format.accepts(null)).isFalse();
     }
 
     @Test
     public void testAcceptURL_BC3() throws MalformedURLException {
-        assertFalse(format.accepts(new URL("http://127.0.0.1/anyfile.docx")));
+        assertThat(format.accepts(new URL("http://127.0.0.1/anyfile.docx"))).isFalse();
     }
 
     @Test
     public void testRead() throws IOException {
         URL configURL = YAMLPropertySourceTest.class.getResource("/configs/valid/contact.yaml");
-        assertTrue(format.accepts(configURL));
+        assertThat(format.accepts(configURL)).isTrue();
         ConfigurationData data = format.readConfiguration(configURL.toString(), configURL.openStream());
-        assertNotNull(data);
+        assertThat(data).isNotNull();
         for(Map.Entry<String,String> en:data.getData().get(0).toMap().entrySet()) {
             System.out.println(en.getKey() + " -> " + en.getValue());
         }
