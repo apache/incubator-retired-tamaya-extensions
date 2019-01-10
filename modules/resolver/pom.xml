@@ -72,10 +72,6 @@ under the License.
             <version>${project.version}</version>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>java-hamcrest</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>junit</groupId>
