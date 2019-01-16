@@ -24,7 +24,7 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 /**
@@ -41,25 +41,25 @@ public class BackupsTest {
     public void setGet() throws Exception {
         Dictionary<String,Object> cfg = createConfig("setCurrent");
         Backups.set("setCurrent", cfg);
-        assertEquals(Backups.get("setCurrent"), cfg);
+        assertThat(Backups.get("setCurrent")).isEqualTo(cfg);
     }
 
     @Test
     public void remove() throws Exception {
         Dictionary<String,Object> cfg = createConfig("remove");
         Backups.set("remove", cfg);
-        assertEquals(Backups.get("remove"), cfg);
+        assertThat(Backups.get("remove")).isEqualTo(cfg);
         Backups.remove("remove");
-        assertEquals(Backups.get("remove"), null);
+        assertThat(Backups.get("remove")).isNull();
     }
 
     @Test
     public void removeAll() throws Exception {
         Dictionary<String,Object> cfg = createConfig("remove");
         Backups.set("remove", cfg);
-        assertEquals(Backups.get("remove"), cfg);
+        assertThat(Backups.get("remove")).isEqualTo(cfg);
         Backups.removeAll();
-        assertEquals(Backups.get("remove"), null);
+        assertThat(Backups.get("remove")).isNull();
     }
 
     @Test
@@ -71,23 +71,23 @@ public class BackupsTest {
         Dictionary<String,Object> cfg = createConfig("getPids");
         Backups.set("getPids", cfg);
         Set<String> pids = Backups.getPids();
-        assertNotNull(pids);
-        assertTrue(pids.contains("getPids"));
+        assertThat(pids).isNotNull();
+        assertThat(pids.contains("getPids")).isTrue();
         Backups.removeAll();
         pids = Backups.getPids();
-        assertNotNull(pids);
-        assertTrue(pids.isEmpty());
+        assertThat(pids).isNotNull();
+        assertThat(pids.isEmpty()).isTrue();
     }
 
     @Test
     public void contains() throws Exception {
         Dictionary<String,Object> cfg = createConfig("contains");
         Backups.set("contains", cfg);
-        assertTrue(Backups.contains("contains"));
-        assertFalse(Backups.contains("foo"));
+        assertThat(Backups.contains("contains")).isTrue();
+        assertThat(Backups.contains("foo")).isFalse();
         Backups.removeAll();
-        assertFalse(Backups.contains("contains"));
-        assertFalse(Backups.contains("foo"));
+        assertThat(Backups.contains("contains")).isFalse();
+        assertThat(Backups.contains("foo")).isFalse();
     }
 
     @Test
@@ -97,10 +97,10 @@ public class BackupsTest {
         Backups.set("saveRestore", cfg);
         Backups.save(store);
         Backups.removeAll();
-        assertFalse(Backups.contains("saveRestore"));
+        assertThat(Backups.contains("saveRestore")).isFalse();
         Backups.restore(store);
-        assertTrue(Backups.contains("saveRestore"));
-        assertEquals(Backups.get("saveRestore"), cfg);
+        assertThat(Backups.contains("saveRestore")).isTrue();
+        assertThat(Backups.get("saveRestore")).isEqualTo(cfg);
     }
 
 }

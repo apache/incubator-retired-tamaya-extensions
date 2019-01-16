@@ -18,13 +18,11 @@
  */
 package org.apache.tamaya.yaml;
 
-import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
 import java.net.URL;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class YAMLPropertySourceTest {
 
@@ -32,21 +30,19 @@ public class YAMLPropertySourceTest {
     public void testYamlWithOrdinal() throws Exception {
         URL configURL = YAMLPropertySourceTest.class.getResource("/configs/valid/test-with-prio.yaml");
 
-        assertThat(configURL, CoreMatchers.notNullValue());
+        assertThat(configURL).isNotNull();
 
         YAMLPropertySource source = new YAMLPropertySource(configURL, 4);
-        assertEquals(source.getOrdinal(), 16784);
+        assertThat(source.getOrdinal()).isEqualTo(16784);
     }
-    
+
     @Test
     public void testYamlDefaultOrdinal() throws Exception {
         URL configURL = YAMLPropertySourceTest.class.getResource("/configs/valid/test.yaml");
 
-        assertThat(configURL, CoreMatchers.notNullValue());
+        assertThat(configURL).isNotNull();
 
         YAMLPropertySource source = new YAMLPropertySource(configURL, 4);
-        assertEquals(source.getOrdinal(), 4);
+        assertThat(source.getOrdinal()).isEqualTo(4);
     }
-
-
 }

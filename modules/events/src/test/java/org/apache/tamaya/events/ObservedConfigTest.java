@@ -21,7 +21,8 @@ package org.apache.tamaya.events;
 import org.junit.Test;
 
 import java.io.IOException;
-import static org.junit.Assert.assertTrue;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Test (currently manual) to test configuration changes.
@@ -40,12 +41,12 @@ public class ObservedConfigTest {
             }
             ConfigEvent<?> event = MyConfigObserver.event;
             if(event!=null) {
-                assertTrue(event instanceof ConfigurationChange);
+                assertThat(event).isInstanceOf(ConfigurationChange.class);
                 ConfigurationChange cChange = (ConfigurationChange) event;
                 if(cChange.isAdded("random.new")){
                     MyConfigObserver.event=null;
                 }else {
-                    assertTrue(cChange.isUpdated("random.new"));
+                    assertThat(cChange.isUpdated("random.new")).isTrue();
                     break;
                 }
             }

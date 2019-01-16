@@ -30,9 +30,7 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by Anatole on 12.01.2015.
@@ -41,76 +39,76 @@ public class TamayaInjectionTest {
 
     @Test
     public void testInjectionNonAnnotatedClass(){
-        assertNotNull(ConfigurationInjection.getConfigurationInjector());
+        assertThat(ConfigurationInjection.getConfigurationInjector()).isNotNull();
         NonAnnotatedConfigBean testInstance = new NonAnnotatedConfigBean();
-        assertEquals(testInstance.simple_value, "Should be overridden!");
-        assertEquals(testInstance.classFieldKey, "Foo");
-        assertEquals(testInstance.fieldKey, null);
-        assertEquals(testInstance.fullKey, null);
-        assertEquals(testInstance.test2, "This is not setCurrent.");
+        assertThat(testInstance.simple_value).isEqualTo("Should be overridden!");
+        assertThat(testInstance.classFieldKey).isEqualTo("Foo");
+        assertThat(testInstance.fieldKey).isNull();
+        assertThat(testInstance.fullKey).isNull();
+        assertThat(testInstance.test2).isEqualTo("This is not setCurrent.");
         ConfigurationInjection.getConfigurationInjector().configure(testInstance);
-        assertEquals(testInstance.simple_value, "aSimpleValue");
-        assertEquals(testInstance.classFieldKey, "Class-Field-Value");
-        assertEquals(testInstance.fieldKey, "Field-Value");
-        assertEquals(testInstance.fullKey, "Fullkey-Value");
-        assertEquals(testInstance.test2, "This is not setCurrent.");
+        assertThat(testInstance.simple_value).isEqualTo("aSimpleValue");
+        assertThat(testInstance.classFieldKey).isEqualTo("Class-Field-Value");
+        assertThat(testInstance.fieldKey).isEqualTo("Field-Value");
+        assertThat(testInstance.fullKey).isEqualTo("Fullkey-Value");
+        assertThat(testInstance.test2).isEqualTo("This is not setCurrent.");
     }
 
     @Test
     public void testInjectionClass(){
-        assertNotNull(ConfigurationInjection.getConfigurationInjector());
+        assertThat(ConfigurationInjection.getConfigurationInjector()).isNotNull();
         AnnotatedConfigBean testInstance = new AnnotatedConfigBean();
-        assertEquals(testInstance.getHostName(), null);
-        assertEquals(testInstance.getAnotherValue(), null);
-        assertEquals(testInstance.myParameter, null);
-        assertEquals(testInstance.simpleValue, null);
+        assertThat(testInstance.getHostName()).isNull();
+        assertThat(testInstance.getAnotherValue()).isNull();
+        assertThat(testInstance.myParameter).isNull();
+        assertThat(testInstance.simpleValue).isNull();
         ConfigurationInjection.getConfigurationInjector().configure(testInstance);
-        assertEquals(testInstance.getHostName(), "tamaya01.incubator.apache.org");
-        assertEquals(testInstance.getAnotherValue(), "HALLO!");
-        assertEquals(testInstance.myParameter, "ET");
-        assertEquals(testInstance.simpleValue, "aSimpleValue");
-        assertNotNull(testInstance.getDynamicValue());
-        assertTrue(testInstance.getDynamicValue().isPresent());
-        assertEquals(testInstance.getDynamicValue().get(), "tamaya01.incubator.apache.org");
-        assertEquals(testInstance.getHostName(), testInstance.getDynamicValue().get());
-        assertEquals(testInstance.javaVersion, System.getProperty("java.version"));
+        assertThat(testInstance.getHostName()).isEqualTo("tamaya01.incubator.apache.org");
+        assertThat(testInstance.getAnotherValue()).isEqualTo("HALLO!");
+        assertThat(testInstance.myParameter).isEqualTo("ET");
+        assertThat(testInstance.simpleValue).isEqualTo("aSimpleValue");
+        assertThat(testInstance.getDynamicValue()).isNotNull();
+        assertThat(testInstance.getDynamicValue().isPresent()).isTrue();
+        assertThat(testInstance.getDynamicValue().get()).isEqualTo("tamaya01.incubator.apache.org");
+        assertThat(testInstance.getHostName()).isEqualTo(testInstance.getDynamicValue().get());
+        assertThat(testInstance.javaVersion).isEqualTo(System.getProperty("java.version"));
     }
-    
+
     @Test
     public void testInjectionInheritedClass(){
-        assertNotNull(ConfigurationInjection.getConfigurationInjector());
+        assertThat(ConfigurationInjection.getConfigurationInjector()).isNotNull();
         InheritedAnnotatedConfigBean testInstance = new InheritedAnnotatedConfigBean();
-        assertEquals(testInstance.getHostName(), null);
-        assertEquals(testInstance.getAnotherValue(), null);
-        assertEquals(testInstance.myParameter, null);
-        assertEquals(testInstance.simpleValue, null);
-        assertEquals(testInstance.someMoreValue, null);
-        assertEquals(testInstance.notConfigured, null);
+        assertThat(testInstance.getHostName()).isNull();
+        assertThat(testInstance.getAnotherValue()).isNull();
+        assertThat(testInstance.myParameter).isNull();
+        assertThat(testInstance.simpleValue).isNull();
+        assertThat(testInstance.someMoreValue).isNull();
+        assertThat(testInstance.notConfigured).isNull();
         ConfigurationInjection.getConfigurationInjector().configure(testInstance);
-        assertEquals(testInstance.getHostName(), "tamaya01.incubator.apache.org");
-        assertEquals(testInstance.getAnotherValue(), "HALLO!");
-        assertEquals(testInstance.myParameter, "ET");
-        assertEquals(testInstance.simpleValue, "aSimpleValue");
-        assertNotNull(testInstance.getDynamicValue());
-        assertTrue(testInstance.getDynamicValue().isPresent());
-        assertEquals(testInstance.getDynamicValue().get(), "tamaya01.incubator.apache.org");
-        assertEquals(testInstance.getHostName(), testInstance.getDynamicValue().get());
-        assertEquals(testInstance.javaVersion, System.getProperty("java.version"));
-        assertEquals(testInstance.someMoreValue, "s'more");
-    }    
+        assertThat(testInstance.getHostName()).isEqualTo("tamaya01.incubator.apache.org");
+        assertThat(testInstance.getAnotherValue()).isEqualTo("HALLO!");
+        assertThat(testInstance.myParameter).isEqualTo("ET");
+        assertThat(testInstance.simpleValue).isEqualTo("aSimpleValue");
+        assertThat(testInstance.getDynamicValue()).isNotNull();
+        assertThat(testInstance.getDynamicValue().isPresent()).isTrue();
+        assertThat(testInstance.getDynamicValue().get()).isEqualTo("tamaya01.incubator.apache.org");
+        assertThat(testInstance.getHostName()).isEqualTo(testInstance.getDynamicValue().get());
+        assertThat(testInstance.javaVersion).isEqualTo(System.getProperty("java.version"));
+        assertThat(testInstance.someMoreValue).isEqualTo("s'more");
+    }
 
     @Test
     public void testConfigTemplate(){
-        assertNotNull(ConfigurationInjection.getConfigurationInjector());
+        assertThat(ConfigurationInjection.getConfigurationInjector()).isNotNull();
         AnnotatedConfigTemplate testInstance = ConfigurationInjection.getConfigurationInjector()
                 .createTemplate(AnnotatedConfigTemplate.class);
-        assertEquals(testInstance.hostName(), "tamaya01.incubator.apache.org");
-        assertEquals(testInstance.myParameter(), "ET");
-        assertEquals(testInstance.simpleValue(), "aSimpleValue");
-        assertNotNull(testInstance.getDynamicValue());
-        assertTrue(testInstance.getDynamicValue().isPresent());
-        assertEquals(testInstance.getDynamicValue().get(), "tamaya01.incubator.apache.org");
-        assertEquals(testInstance.hostName(), testInstance.getDynamicValue().get());
+        assertThat(testInstance.hostName()).isEqualTo("tamaya01.incubator.apache.org");
+        assertThat(testInstance.myParameter()).isEqualTo("ET");
+        assertThat(testInstance.simpleValue()).isEqualTo("aSimpleValue");
+        assertThat(testInstance.getDynamicValue()).isNotNull();
+        assertThat(testInstance.getDynamicValue().isPresent()).isTrue();
+        assertThat(testInstance.getDynamicValue().get()).isEqualTo("tamaya01.incubator.apache.org");
+        assertThat(testInstance.hostName()).isEqualTo(testInstance.getDynamicValue().get());
     }
 
     @Test
@@ -124,16 +122,16 @@ public class TamayaInjectionTest {
         MapPropertySource ps = new MapPropertySource("test", properties);
         Configuration customConfig = ConfigurationProvider.getConfigurationBuilder()
                 .addPropertySources(ps).build();
-        assertNotNull(ConfigurationInjection.getConfigurationInjector());
+        assertThat(ConfigurationInjection.getConfigurationInjector()).isNotNull();
         AnnotatedConfigTemplate testInstance = ConfigurationInjection.getConfigurationInjector()
                 .createTemplate(AnnotatedConfigTemplate.class, customConfig);
-        assertEquals(testInstance.hostName(), "custom-hostname");
-        assertEquals(testInstance.myParameter(), "custom-parameter");
-        assertEquals(testInstance.simpleValue(), "custom-value");
-        assertNotNull(testInstance.getDynamicValue());
-        assertTrue(testInstance.getDynamicValue().isPresent());
-        assertEquals(testInstance.getDynamicValue().get(), "custom-hostname");
-        assertEquals(testInstance.hostName(), testInstance.getDynamicValue().get());
+        assertThat(testInstance.hostName()).isEqualTo("custom-hostname");
+        assertThat(testInstance.myParameter()).isEqualTo("custom-parameter");
+        assertThat(testInstance.simpleValue()).isEqualTo("custom-value");
+        assertThat(testInstance.getDynamicValue()).isNotNull();
+        assertThat(testInstance.getDynamicValue().isPresent()).isTrue();
+        assertThat(testInstance.getDynamicValue().get()).isEqualTo("custom-hostname");
+        assertThat(testInstance.hostName()).isEqualTo(testInstance.getDynamicValue().get());
     }
 
 }

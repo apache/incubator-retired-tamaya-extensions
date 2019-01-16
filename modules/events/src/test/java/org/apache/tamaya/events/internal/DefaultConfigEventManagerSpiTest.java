@@ -23,7 +23,7 @@ import org.apache.tamaya.events.ConfigEventListener;
 import org.apache.tamaya.events.SimpleEvent;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for {@link DefaultConfigEventManagerSpi}.
@@ -43,10 +43,10 @@ public class DefaultConfigEventManagerSpiTest {
         };
         spi.addListener(testListener);
         spi.fireEvent(new SimpleEvent("Event1"));
-        assertEquals(testAddListenerValue, "Event1");
+        assertThat(testAddListenerValue).isEqualTo("Event1");
         spi.removeListener(testListener);
         spi.fireEvent(new SimpleEvent("Event2"));
-        assertEquals(testAddListenerValue, "Event1");
+        assertThat(testAddListenerValue).isEqualTo("Event1");
 
     }
 

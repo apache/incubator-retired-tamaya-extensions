@@ -27,8 +27,7 @@ import org.junit.Test;
 import java.io.InputStream;
 import java.net.URL;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class JSONFormatTest extends CommonJSONTestCaseCollection {
     private final JSONFormat format = new JSONFormat();
@@ -42,27 +41,27 @@ public class JSONFormatTest extends CommonJSONTestCaseCollection {
     public void aNonJSONFileBasedURLIsNotAccepted() throws Exception {
         URL url = new URL("file:///etc/service/conf.conf");
 
-        assertThat(format.accepts(url), is(false));
+        assertThat(format.accepts(url)).isFalse();
     }
 
     @Test
     public void aJSONFileBasedURLIsAccepted() throws Exception {
         URL url = new URL("file:///etc/service/conf.json");
 
-        assertThat(format.accepts(url), is(true));
+        assertThat(format.accepts(url)).isTrue();
     }
 
     @Test
     public void aHTTPBasedURLIsNotAccepted() throws Exception {
         URL url = new URL("http://nowhere.somewhere/conf.json");
-        assertThat(format.accepts(url), is(true));
+        assertThat(format.accepts(url)).isTrue();
     }
 
     @Test
     public void aFTPBasedURLIsNotAccepted() throws Exception {
         URL url = new URL("ftp://nowhere.somewhere/a/b/c/d/conf.json");
 
-        assertThat(format.accepts(url), is(true));
+        assertThat(format.accepts(url)).isTrue();
     }
 
     @Override

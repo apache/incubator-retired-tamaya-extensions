@@ -25,8 +25,7 @@ import org.junit.Test;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests if feature are not seen, using an empty class loader. Created by atsticks on 19.03.17.
@@ -48,88 +47,88 @@ public class FeaturesTestNoOnly {
 
     @Test
     public void eventsAvailable() throws Exception {
-        assertFalse(Features.eventsAvailable());
+        assertThat(Features.eventsAvailable()).isFalse();
     }
 
     @Test
     public void formatsAvailable() throws Exception {
-        assertFalse(Features.formatsAvailable());
+        assertThat(Features.formatsAvailable()).isFalse();
     }
 
     @Test
     public void tamayaCoreAvailable() throws Exception {
-        assertFalse(Features.tamayaCoreAvailable());
+        assertThat(Features.tamayaCoreAvailable()).isFalse();
     }
 
     @Test
     public void injectionCDIAvailable() throws Exception {
-        assertFalse(Features.injectionCDIAvailable());
+        assertThat(Features.injectionCDIAvailable()).isFalse();
     }
 
     @Test
     public void injectionStandaloneAvailable() throws Exception {
-        assertFalse(Features.injectionStandaloneAvailable());
+        assertThat(Features.injectionStandaloneAvailable()).isFalse();
     }
 
     @Test
     public void mutableConfigAvailable() throws Exception {
-        assertFalse(Features.mutableConfigAvailable());
+        assertThat(Features.mutableConfigAvailable()).isFalse();
     }
 
     @Test
     public void optionalAvailable() throws Exception {
-        assertFalse(Features.optionalAvailable());
+        assertThat(Features.optionalAvailable()).isFalse();
     }
 
     @Test
     public void resolverAvailable() throws Exception {
-        assertFalse(Features.resolverAvailable());
+        assertThat(Features.resolverAvailable()).isFalse();
     }
 
     @Test
     public void resourcesAvailable() throws Exception {
-        assertFalse(Features.resourcesAvailable());
+        assertThat(Features.resourcesAvailable()).isFalse();
     }
 
     @Test
     public void spiSupportAvailable() throws Exception {
-        assertFalse(Features.spiSupportAvailable());
+        assertThat(Features.spiSupportAvailable()).isFalse();
     }
 
     @Test
     public void filterSupportAvailable() throws Exception {
-        assertFalse(Features.filterSupportAvailable());
+        assertThat(Features.filterSupportAvailable()).isFalse();
     }
 
     @Test
     public void springAvailable() throws Exception {
-        assertFalse(Features.springAvailable());
+        assertThat(Features.springAvailable()).isFalse();
     }
 
     @Test
     public void jndiAvailable() throws Exception {
-        assertFalse(Features.jndiAvailable());
+        assertThat(Features.jndiAvailable()).isFalse();
     }
 
     @Test
     public void extSpringCoreAvailable() throws Exception {
-        assertFalse(Features.extSpringCoreAvailable());
+        assertThat(Features.extSpringCoreAvailable()).isFalse();
     }
 
     @Test
     public void extOSGIAvailable() throws Exception {
-        assertFalse(Features.extOSGIAvailable());
+        assertThat(Features.extOSGIAvailable()).isFalse();
     }
 
     @Test
     public void extJndiAvailable() throws Exception {
-        assertTrue(Features.extJndiAvailable());
+        assertThat(Features.extJndiAvailable()).isTrue();
     }
 
     @Test
     public void checkClassIsLoadable() throws Exception {
-        assertTrue(Features.checkClassIsLoadable("java.lang.String"));
-        assertFalse(Features.checkClassIsLoadable("foo.Bar"));
+        assertThat(Features.checkClassIsLoadable("java.lang.String")).isTrue();
+        assertThat(Features.checkClassIsLoadable("foo.Bar")).isFalse();
     }
 
 }

@@ -19,7 +19,6 @@
  */
 package org.apache.tamaya.cdi;
 
-import org.hamcrest.MatcherAssert;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,11 +26,7 @@ import org.mockito.internal.matchers.NotNull;
 
 import javax.enterprise.inject.spi.CDI;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.internal.matchers.NotNull.NOT_NULL;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for CDI integration.
@@ -45,11 +40,11 @@ public class ConfiguredBTest extends BaseTestConfiguration {
         System.out.println(item);
         System.out.println("********************************************");
         double actual = 1234.5678;
-        MatcherAssert.assertThat(item.getDoubleValue(), is(actual));
-        MatcherAssert.assertThat(item.getExistingDouble(), is(NOT_NULL));
-        MatcherAssert.assertThat(item.getNonExistingDouble(), is(NOT_NULL));
-        MatcherAssert.assertThat(item.getExistingDouble().isPresent(), is(true));
-        MatcherAssert.assertThat(item.getNonExistingDouble().isPresent(), is(false));
-        MatcherAssert.assertThat(item.getExistingDouble().get(), is(actual));
+        assertThat(item.getDoubleValue()).isEqualTo(actual);
+        assertThat(item.getExistingDouble()).isNotNull();
+        assertThat(item.getNonExistingDouble()).isNotNull();
+        assertThat(item.getExistingDouble().isPresent()).isTrue();
+        assertThat(item.getNonExistingDouble().isPresent()).isFalse();
+        assertThat(item.getExistingDouble().get()).isEqualTo(actual);
     }
 }

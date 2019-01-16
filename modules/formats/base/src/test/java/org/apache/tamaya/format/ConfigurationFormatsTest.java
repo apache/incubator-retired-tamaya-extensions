@@ -23,9 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for {@link org.apache.tamaya.format.ConfigurationFormats}.
@@ -35,18 +33,18 @@ public class ConfigurationFormatsTest {
     @org.junit.Test
     public void testGetFormats() throws Exception {
         List<ConfigurationFormat> formats = ConfigurationFormats.getInstance().getFormats();
-        assertNotNull(formats);
-        assertEquals(formats.size(), 3);
+        assertThat(formats).isNotNull();
+        assertThat(formats).hasSize(3);
     }
 
     @org.junit.Test
     public void testReadConfigurationData() throws Exception {
         List<ConfigurationFormat> formats = ConfigurationFormats.getInstance().getFormats(getClass().getResource("/Test.ini"));
-        assertNotNull(formats);
-        assertEquals(formats.size(), 1);
+        assertThat(formats).isNotNull();
+        assertThat(formats).hasSize(1);
         formats = ConfigurationFormats.getInstance().getFormats(getClass().getResource("/Test.properties"));
-        assertNotNull(formats);
-        assertEquals(formats.size(), 1);
+        assertThat(formats).isNotNull();
+        assertThat(formats).hasSize(1);
 
     }
 
@@ -54,9 +52,9 @@ public class ConfigurationFormatsTest {
     public void testReadConfigurationData_URL() throws Exception {
         ConfigurationData data = ConfigurationFormats.getInstance().readConfigurationData(
                 getClass().getResource("/Test.ini"));
-        assertNotNull(data);
+        assertThat(data).isNotNull();
         data = ConfigurationFormats.getInstance().readConfigurationData(getClass().getResource("/Test.properties"));
-        assertNotNull(data);
+        assertThat(data).isNotNull();
     }
 
     @org.junit.Test
@@ -64,7 +62,7 @@ public class ConfigurationFormatsTest {
         ConfigurationData data = ConfigurationFormats.getInstance().readConfigurationData(
                 getClass().getResource("/Test.ini"),
                 ConfigurationFormats.getInstance().getFormats("ini"));
-        assertNotNull(data);
+        assertThat(data).isNotNull();
     }
 
     @org.junit.Test
@@ -74,7 +72,7 @@ public class ConfigurationFormatsTest {
         ConfigurationData data = ConfigurationFormats.getInstance().readConfigurationData(
                 getClass().getResource("/Test.ini"),
                 formats);
-        assertNotNull(data);
+        assertThat(data).isNotNull();
     }
 
     @org.junit.Test
@@ -86,8 +84,8 @@ public class ConfigurationFormatsTest {
         Collection<ConfigurationData> data = ConfigurationFormats.getInstance().readConfigurationData(
                 urls,
                 formats);
-        assertNotNull(data);
-        assertTrue(data.size()==1);
+        assertThat(data).isNotNull();
+        assertThat(data).hasSize(1);
     }
 
     @org.junit.Test
@@ -97,8 +95,8 @@ public class ConfigurationFormatsTest {
         Collection<ConfigurationData> data = ConfigurationFormats.getInstance().readConfigurationData(
                 urls,
                 ConfigurationFormats.getInstance().getFormats("ini").get(0));
-        assertNotNull(data);
-        assertTrue(data.size()==1);
+        assertThat(data).isNotNull();
+        assertThat(data).hasSize(1);
     }
 
     @org.junit.Test
@@ -107,7 +105,7 @@ public class ConfigurationFormatsTest {
                 "Test.ini",
                 getClass().getResource("/Test.ini").openStream(),
                 ConfigurationFormats.getInstance().getFormats("ini"));
-        assertNotNull(data);
+        assertThat(data).isNotNull();
     }
 
     @org.junit.Test
@@ -118,7 +116,7 @@ public class ConfigurationFormatsTest {
                 "Test.ini",
                 getClass().getResource("/Test.ini").openStream(),
                 formats);
-        assertNotNull(data);
+        assertThat(data).isNotNull();
     }
 
     @org.junit.Test
@@ -127,7 +125,7 @@ public class ConfigurationFormatsTest {
         ConfigurationData data = ConfigurationFormats.getInstance().readConfigurationData(
                 getClass().getResource("/Test.ini"),
                 formats.toArray(new ConfigurationFormat[formats.size()]));
-        assertNotNull(data);
+        assertThat(data).isNotNull();
         System.out.println(data);
     }
 }

@@ -24,7 +24,8 @@ import java.util.Collection;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class FormatPropertySourceProviderTest
         extends BaseFormatPropertySourceProvider {
@@ -36,8 +37,7 @@ public class FormatPropertySourceProviderTest
     public void getPropertySourcesTest() {
         PropertySourceProvider provider = new FormatPropertySourceProviderTest();
         Collection<PropertySource> sources = provider.getPropertySources();
-        
-        assertEquals(2, sources.size());
+        assertThat(sources).hasSize(2);
     }
 
     @Override

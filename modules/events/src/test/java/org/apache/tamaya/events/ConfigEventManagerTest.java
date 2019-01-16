@@ -20,7 +20,7 @@ package org.apache.tamaya.events;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for {@link ConfigEventManager}.
@@ -39,10 +39,10 @@ public class ConfigEventManagerTest {
         };
         ConfigEventManager.getInstance().addListener(testListener);
         ConfigEventManager.getInstance().fireEvent(new SimpleEvent("Event1"));
-        assertEquals(testAddListenerValue, "Event1");
+        assertThat(testAddListenerValue).isEqualTo("Event1");
         ConfigEventManager.getInstance().removeListener(testListener);
         ConfigEventManager.getInstance().fireEvent(new SimpleEvent("Event2"));
-        assertEquals(testAddListenerValue, "Event1");
+        assertThat(testAddListenerValue).isEqualTo("Event1");
     }
 
     @Test
@@ -55,10 +55,10 @@ public class ConfigEventManagerTest {
         };
         ConfigEventManager.getInstance().addListener(testListener);
         ConfigEventManager.getInstance().fireEvent(new SimpleEvent("Event1"));
-        assertEquals(testAddListenerValue, "Event1");
+        assertThat(testAddListenerValue).isEqualTo("Event1");
         ConfigEventManager.getInstance().removeListener(testListener);
         ConfigEventManager.getInstance().fireEvent(new SimpleEvent("Event2"));
-        assertEquals(testAddListenerValue, "Event1");
+        assertThat(testAddListenerValue).isEqualTo("Event1");
     }
 
 }
