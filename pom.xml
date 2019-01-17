@@ -72,7 +72,7 @@ under the License.
         <asciidoctor-diagramm.version>1.2.1</asciidoctor-diagramm.version>
         <asciidoctorj.version>1.5.6</asciidoctorj.version>
         <assembly.version>3.1.0</assembly.version>
-        <checkstyle.version>2.15</checkstyle.version>
+        <checkstyle.version>3.0.0</checkstyle.version>
         <enforcer.version>3.0.0-M1</enforcer.version>
         <gem.plugin>1.0.7</gem.plugin>
         <sources.plugin>3.0.1</sources.plugin>
@@ -403,8 +403,8 @@ under the License.
                     <version>${checkstyle.version}</version>
                     <executions>
                         <execution>
-                            <id>verify-style</id>
-                            <phase>process-classes</phase>
+                            <id>checkstyle</id>
+                            <phase>validate</phase>
                             <goals>
                                 <goal>check</goal>
                             </goals>
@@ -412,6 +412,7 @@ under the License.
                     </executions>
                     <configuration>
                         <logViolationsToConsole>true</logViolationsToConsole>
+                        <failOnViolation>false</failOnViolation>
                         <configLocation>checkstyle/style.xml</configLocation>
                     </configuration>
 
@@ -424,7 +425,7 @@ under the License.
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
                             <artifactId>checkstyle</artifactId>
-                            <version>7.3</version>
+                            <version>7.8</version>
                             <exclusions><!-- MCHECKSTYLE-156 -->
                                 <exclusion>
                                     <groupId>com.sun</groupId>
@@ -877,6 +878,10 @@ under the License.
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-checkstyle-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
