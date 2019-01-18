@@ -413,15 +413,10 @@ under the License.
                     <configuration>
                         <logViolationsToConsole>true</logViolationsToConsole>
                         <failOnViolation>false</failOnViolation>
-                        <configLocation>checkstyle/style.xml</configLocation>
+                        <configLocation>buildtools/src/main/resources/checkstyle/style.xml</configLocation>
                     </configuration>
 
                     <dependencies>
-                        <dependency>
-                            <groupId>org.apache.tamaya</groupId>
-                            <artifactId>buildconfigurations</artifactId>
-                            <version>${tamaya-apicore.version}</version>
-                        </dependency>
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
                             <artifactId>checkstyle</artifactId>
@@ -466,15 +461,8 @@ under the License.
                         <effort>Max</effort>
                         <threshold>Low</threshold>
                         <failOnError>true</failOnError>
-                        <excludeFilterFile>findbugs/findbugs-exclude.xml</excludeFilterFile>
+                        <excludeFilterFile>buildtools/src/main/resources/findbugs/findbugs-exclude.xml</excludeFilterFile>
                     </configuration>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.apache.tamaya</groupId>
-                            <artifactId>buildconfigurations</artifactId>
-                            <version>${tamaya-apicore.version}</version>
-                        </dependency>
-                    </dependencies>
                 </plugin>
 
                 <plugin>
@@ -879,10 +867,6 @@ under the License.
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-checkstyle-plugin</artifactId>
-            </plugin>
         </plugins>
     </build>
 
@@ -1099,6 +1083,18 @@ under the License.
                 <configuration>
                     <skip>false</skip>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${checkstyle.version}</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>checkstyle</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
             </plugin>
         </plugins>
     </reporting>
