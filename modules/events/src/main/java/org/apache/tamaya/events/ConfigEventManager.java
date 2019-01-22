@@ -86,7 +86,7 @@ public final class ConfigEventManager {
      * @param l the listener not null.
      * @param eventType the event type to which this listener listens to.
      */
-	public <T extends ConfigEvent> void addListener(ConfigEventListener l, Class<T> eventType) {
+    public <T extends ConfigEvent> void addListener(ConfigEventListener l, Class<T> eventType) {
         spi(classLoader).addListener(l);
     }
 
@@ -106,7 +106,7 @@ public final class ConfigEventManager {
      * @param l the listener, not null.
      * @param eventType the event type to which this listener listens to.
      */
-	public <T extends ConfigEvent> void removeListener(ConfigEventListener l, Class<T> eventType) {
+    public <T extends ConfigEvent> void removeListener(ConfigEventListener l, Class<T> eventType) {
         spi(classLoader).removeListener(l);
     }
 
@@ -116,7 +116,7 @@ public final class ConfigEventManager {
      * @param <T> type param
      * @return a createList with the listeners found, never null.
      */
-	public <T extends ConfigEvent>
+    public <T extends ConfigEvent>
         Collection<? extends ConfigEventListener> getListeners(Class<T> type) {
         return spi(classLoader).getListeners(type);
     }

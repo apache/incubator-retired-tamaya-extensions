@@ -44,7 +44,7 @@ import org.apache.tamaya.spi.ServiceContextManager;
 @Priority(400)
 public final class FileResolver implements ExpressionResolver {
 
-	/**
+    /**
      * The looger used.
      */
     private final Logger LOG = Logger.getLogger(FileResolver.class.getName());
@@ -81,7 +81,7 @@ public final class FileResolver implements ExpressionResolver {
         }
         
         try {
-        	byte[] encoded = Files.readAllBytes(Paths.get(url.toURI()));
+            byte[] encoded = Files.readAllBytes(Paths.get(url.toURI()));
             return new String(encoded, UTF_8);
         } catch (Exception e) {
             LOG.log(Level.FINEST, "Could not resolve URL: " + expression, e);

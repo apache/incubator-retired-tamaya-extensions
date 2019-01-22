@@ -73,7 +73,6 @@ public class ProviderConverter implements PropertyConverter<Provider> {
      * @param <T> the type.
      */
     private static final class ConvertQuery<T> implements Function<Configuration, T> {
-
         private String rawValue;
         private TypeLiteral<T> type;
 

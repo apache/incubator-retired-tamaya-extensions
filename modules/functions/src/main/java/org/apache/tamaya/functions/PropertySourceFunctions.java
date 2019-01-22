@@ -198,7 +198,7 @@ public final class PropertySourceFunctions {
             int index = section.lastIndexOf('.');
             if (index < 0 && section.isEmpty()) {
                 transitiveAreas.add("<root>");
-            } if (index < 0) {
+            } else if (index < 0) {
                 transitiveAreas.add(section);
             } else {
                 while (index > 0) {

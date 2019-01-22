@@ -49,6 +49,9 @@ public class DefaultEnabledCommand implements Action{
         return(ConfigCommands.getDefaultEnabled(configPlugin));
     }
 
+    /**
+     * A class for completing operations in the Karaf shell.
+     */
     @Service
     public static final class OperationModeCompleter implements Completer {
 

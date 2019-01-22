@@ -139,6 +139,8 @@ public class TamayaConfigPlugin implements TamayaConfigService, BundleListener, 
                 case Bundle.ACTIVE:
                     configureBundle(bundle);
                     break;
+                default:
+                    break;
             }
         }
     }

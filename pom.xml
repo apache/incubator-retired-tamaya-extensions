@@ -412,7 +412,6 @@ under the License.
                     </executions>
                     <configuration>
                         <logViolationsToConsole>true</logViolationsToConsole>
-                        <failOnViolation>false</failOnViolation>
                         <configLocation>buildtools/src/main/resources/checkstyle/style.xml</configLocation>
                     </configuration>
 

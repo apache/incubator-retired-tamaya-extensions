@@ -70,7 +70,7 @@ under the License.
         <module name="LocalVariableName"/>
         <module name="MethodName">
             <property name="format"
-                      value="^_?[a-z][a-zA-Z0-9]*$"/>
+                      value="^_?([a-z][a-zA-Z0-9]*|tm(_[a-z]+)+)$"/>
         </module>
         <module name="PackageName"/>
         <module name="LocalFinalVariableName"/>

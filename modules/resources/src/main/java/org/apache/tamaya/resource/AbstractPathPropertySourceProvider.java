@@ -120,11 +120,10 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
      */
     public static PropertySource createPropertiesPropertySource(URL url) {
         Properties props = new Properties();
-        try (InputStream is = url.openStream()){
+        try (InputStream is = url.openStream()) {
             props.load(is);
             return new PropertiesBasedPropertySource(url.toString(), props);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             LOG.log(Level.WARNING, "Failed to read properties from " + url, e);
             return null;
         }
