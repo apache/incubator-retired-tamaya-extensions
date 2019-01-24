@@ -53,20 +53,11 @@ public class JNDIPropertySourceTest{
     public void testScanContext() throws NamingException, MalformedURLException {
         JNDIPropertySource ps = new JNDIPropertySource("jndi-test", getTestDirContext(createFSContext()));
         assertThat(ps.isScannable()).isFalse();
-        Map<String,PropertyValue> props = ps.getProperties();
-        assertThat(props).isNotNull();
-        assertThat(props.isEmpty()).isTrue();
+        assertThat(ps.getProperties()).isNotNull().isEmpty();
         ps.setScannable(true);
         assertThat(ps.isScannable()).isTrue();
-        props = ps.getProperties();
-        assertThat(props).isNotNull();
-        assertThat(props.isEmpty()).isFalse();
-        assertThat(props).hasSize(5);
-        assertThat(props.get("c.c1.test5")).isNotNull();
-        assertThat(props.get("c.test3")).isNotNull();
-        assertThat(props.get("c.test4")).isNotNull();
-        assertThat(props.get("b.test2")).isNotNull();
-        assertThat(props.get("a.test1")).isNotNull();
+        assertThat(ps.getProperties()).isNotNull().isNotEmpty().hasSize(5)
+            .containsKeys("a.test1", "b.test2", "c.test3", "c.test4", "c.c1.test5");
     }
 
 }

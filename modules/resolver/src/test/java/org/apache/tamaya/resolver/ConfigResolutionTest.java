@@ -95,22 +95,19 @@ public class ConfigResolutionTest {
     @Test
     public void testClasspath_Refs() {
         String value = Configuration.current().get("cp-ref");
-        assertThat(value).isNotNull();
-        assertThat(value.contains("This content comes from Testresource.txt!")).isTrue();
+        assertThat(value).isNotNull().contains("This content comes from Testresource.txt!");
     }
 
     @Test
     public void testResource_Refs() {
         String value = Configuration.current().get("res-ref");
-        assertThat(value).isNotNull();
-        assertThat(value.contains("This content comes from Testresource.txt!")).isTrue();
+        assertThat(value).isNotNull().contains("This content comes from Testresource.txt!");
     }
 
     @Test
     public void testFile_Refs() {
         String value = Configuration.current().get("file-ref");
-        assertThat(value).isNotNull();
-        assertThat(value.contains("This content comes from Testresource2.txt!")).isTrue();
+        assertThat(value).isNotNull().contains("This content comes from Testresource2.txt!");
     }
 
     @Test

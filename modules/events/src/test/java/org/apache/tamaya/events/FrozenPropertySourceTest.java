@@ -77,7 +77,7 @@ public class FrozenPropertySourceTest {
         PropertySource ps1 = FrozenPropertySource.of(myPS);
         PropertySource ps2 = FrozenPropertySource.of(myPS);
         assertThat(ps1.getName()).isEqualTo(ps2.getName());
-        assertThat(ps1.getProperties().size()).isEqualTo(ps2.getProperties().size());
+        assertThat(ps1.getProperties()).hasSize(ps2.getProperties().size());
     }
 
     @Test
@@ -101,8 +101,6 @@ public class FrozenPropertySourceTest {
     public void testToString() throws Exception {
         PropertySource ps = FrozenPropertySource.of(myPS);
         String toString = ps.toString();
-        assertThat(toString).isNotNull();
-        assertThat(toString.contains("FrozenPropertySource")).isTrue();
-        assertThat(toString.contains(myPS.getName())).isTrue();
+        assertThat(toString).isNotNull().contains("FrozenPropertySource").contains(myPS.getName());
     }
 }

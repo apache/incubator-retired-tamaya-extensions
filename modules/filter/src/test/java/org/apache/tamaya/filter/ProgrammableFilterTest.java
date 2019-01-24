@@ -134,28 +134,22 @@ public class ProgrammableFilterTest {
     @Test
     public void testGetFilters() throws Exception {
         ThreadFilterContext filter = new ThreadFilterContext();
-        assertThat(filter.getFilters()).isNotNull();
-        assertThat(filter.getFilters().isEmpty()).isTrue();
+        assertThat(filter.getFilters()).isNotNull().isEmpty();
         RegexPropertyFilter regexFilter = new RegexPropertyFilter();
         regexFilter.setIncludes("test\\..*");
         filter.addFilter(regexFilter);
-        assertThat(filter.getFilters()).isNotNull();
-        assertThat(filter.getFilters().isEmpty()).isFalse();
-        assertThat(filter.getFilters()).hasSize(1);
-        assertThat(regexFilter).isEqualTo(filter.getFilters().get(0));
+        assertThat(filter.getFilters()).isNotNull().isNotEmpty().hasSize(1).contains(regexFilter);
     }
 
     @Test
     public void testToString() throws Exception {
         ThreadFilterContext filter = new ThreadFilterContext();
-        assertThat(filter.toString().contains("test\\..*")).isFalse();
-        assertThat(filter.toString().contains("ProgrammableFilter")).isTrue();
-        assertThat(filter.toString().contains("RegexPropertyFilter")).isFalse();
+        assertThat(filter.toString()).contains("ProgrammableFilter")
+            .doesNotContain("RegexPropertyFilter").doesNotContain("test\\..*");
         RegexPropertyFilter regexFilter = new RegexPropertyFilter();
         regexFilter.setIncludes("test\\..*");
         filter.addFilter(regexFilter);
-        assertThat(filter.toString().contains("test\\..*")).isTrue();
-        assertThat(filter.toString().contains("ProgrammableFilter")).isTrue();
-        assertThat(filter.toString().contains("RegexPropertyFilter")).isTrue();
+        assertThat(filter.toString()).contains("ProgrammableFilter")
+            .contains("RegexPropertyFilter").contains("test\\..*");
     }
 }

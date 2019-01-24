@@ -61,8 +61,7 @@ public class HazelcastPropertySourceTest {
     public void t01_testGetProperties(){
         hps.setMapReference("config3");
         Map<String, PropertyValue> values = hps.getProperties();
-        assertThat(values).isNotNull();
-        assertThat(3).isEqualTo(values.size());
+        assertThat(values).isNotNull().hasSize(3);
         assertThat(values.get("k1")).isNotNull();
         assertThat(values.get("k2")).isNotNull();
         assertThat("v1").isEqualTo(values.get("k1").getValue());
@@ -71,8 +70,7 @@ public class HazelcastPropertySourceTest {
 
         hps.setMapReference("config4");
         Map<String, PropertyValue> values2 = hps.getProperties();
-        assertThat(values2).isNotNull();
-        assertThat(2).isEqualTo(values2.size());
+        assertThat(values2).isNotNull().hasSize(2);
         assertThat(values2.get("key1")).isNotNull();
         assertThat(values2.get("key2")).isNotNull();
         assertThat("val1").isEqualTo(values2.get("key1").getValue());
@@ -82,8 +80,7 @@ public class HazelcastPropertySourceTest {
         hps.setMapReference("bar");
         hps.setDefaultOrdinal(1500);
         Map<String, PropertyValue> values3 = hps.getProperties();
-        assertThat(values3).isNotNull();
-        assertThat(0).isEqualTo(values3.size());
+        assertThat(values3).isNotNull().hasSize(0);
         assertThat(hps.getOrdinal()).isEqualTo(1500);
     }
 
@@ -159,8 +156,7 @@ public class HazelcastPropertySourceTest {
         hps.setMapReference("config3");
         hps.setDefaultOrdinal(200);
         Map<String, PropertyValue> values = hps.getProperties();
-        assertThat(values).isNotNull();
-        assertThat(3).isEqualTo(values.size());
+        assertThat(values).isNotNull().hasSize(3);
         assertThat(values.get("k1")).isNotNull();
         assertThat(values.get("k2")).isNotNull();
         assertThat("v1").isEqualTo(values.get("k1").getValue());
@@ -176,8 +172,7 @@ public class HazelcastPropertySourceTest {
         assertThat(50L).isEqualTo(hps.getCachePeriod());
         assertThat(hps.getValidUntil() >= System.currentTimeMillis()).isTrue();
         values = hps.getProperties();
-        assertThat(values).isNotNull();
-        assertThat(3).isEqualTo(values.size());
+        assertThat(values).isNotNull().hasSize(3);
         assertThat(values.get("k1")).isNotNull();
         assertThat(values.get("k2")).isNotNull();
         assertThat("v1").isEqualTo(values.get("k1").getValue());
@@ -189,8 +184,7 @@ public class HazelcastPropertySourceTest {
 
         // Read updated values
         values = hps.getProperties();
-        assertThat(values).isNotNull();
-        assertThat(3).isEqualTo(values.size());
+        assertThat(values).isNotNull().hasSize(3);
         assertThat(values.get("k1")).isNotNull();
         assertThat(values.get("k2")).isNotNull();
         assertThat(values.get("k3")).isNotNull();

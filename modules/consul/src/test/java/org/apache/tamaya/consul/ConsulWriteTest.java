@@ -77,7 +77,6 @@ public class ConsulWriteTest {
     @Test
     public void testGetProperties() throws Exception {
         if(!execute)return;
-        Map<String,PropertyValue> result = propertySource.getProperties();
-        assertThat(result.isEmpty()).isTrue();
+        assertThat(propertySource.getProperties()).isEmpty();
     }
 }

@@ -147,8 +147,7 @@ public class ConfigurationFunctionsTest {
     public void testEmptyConfiguration() throws Exception {
         Configuration ps = ConfigurationFunctions.emptyConfiguration();
         assertThat(ps).isNotNull();
-        assertThat(ps.getProperties()).isNotNull();
-        assertThat(ps.getProperties().isEmpty()).isTrue();
+        assertThat(ps.getProperties()).isNotNull().isEmpty();
     }
 
 

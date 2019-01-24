@@ -55,7 +55,7 @@ public class AbstractPathPropertySourceProviderTest {
                 ClassLoader.getSystemClassLoader().getResource("test.properties")
         );
         assertThat(ps).isNotNull();
-        assertThat(ps.getProperties().isEmpty()).isTrue();
+        assertThat(ps.getProperties()).isEmpty();
     }
 
     private static final class EmptyPropertySource implements PropertySource {

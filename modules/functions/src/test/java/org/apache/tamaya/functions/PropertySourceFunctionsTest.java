@@ -355,8 +355,7 @@ public class PropertySourceFunctionsTest {
     public void testEmptyPropertySource() throws Exception {
         PropertySource ps = PropertySource.EMPTY;
         assertThat(ps).isNotNull();
-        assertThat(ps.getProperties()).isNotNull();
-        assertThat(ps.getProperties().isEmpty()).isTrue();
+        assertThat(ps.getProperties()).isNotNull().isEmpty();
         assertThat(ps.getName()).isEqualTo("<empty>");
     }
 }

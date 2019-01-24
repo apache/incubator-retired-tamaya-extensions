@@ -40,9 +40,7 @@ public class CollectionsTypedReadOnlyTests {
     public void testArrayListList_1(){
         Configuration config = Configuration.current();
         List<String> items = config.get("typed.arraylist", new TypeLiteral<List<String>>(){});
-        assertThat(items).isNotNull();
-        assertThat(items.isEmpty()).isFalse();
-        assertThat(items).hasSize(10);
+        assertThat(items).isNotNull().isNotEmpty().hasSize(10);
         items.add("test");
     }
 
@@ -50,9 +48,7 @@ public class CollectionsTypedReadOnlyTests {
     public void testArrayListList_2(){
         Configuration config = Configuration.current();
         List<String> items = (List<String>) config.get("typed.arraylist", List.class);
-        assertThat(items).isNotNull();
-        assertThat(items.isEmpty()).isFalse();
-        assertThat(items).hasSize(10);
+        assertThat(items).isNotNull().isNotEmpty().hasSize(10);
         items.add("test");
     }
 
@@ -60,9 +56,7 @@ public class CollectionsTypedReadOnlyTests {
     public void testLinkedListList_1(){
         Configuration config = Configuration.current();
         List<String> items = config.get("typed.linkedlist", new TypeLiteral<List<String>>(){});
-        assertThat(items).isNotNull();
-        assertThat(items.isEmpty()).isFalse();
-        assertThat(items).hasSize(10);
+        assertThat(items).isNotNull().isNotEmpty().hasSize(10);
         items.add("test");
     }
 
@@ -70,9 +64,7 @@ public class CollectionsTypedReadOnlyTests {
     public void testLinkedListList_2(){
         Configuration config = Configuration.current();
         List<String> items = (List<String>) config.get("typed.linkedlist", List.class);
-        assertThat(items).isNotNull();
-        assertThat(items.isEmpty()).isFalse();
-        assertThat(items).hasSize(10);
+        assertThat(items).isNotNull().isNotEmpty().hasSize(10);
         items.add("test");
     }
 
@@ -81,18 +73,14 @@ public class CollectionsTypedReadOnlyTests {
     public void testHashSet_1(){
         Configuration config = Configuration.current();
         Set<String> items = config.get("typed.hashset", new TypeLiteral<Set<String>>(){});
-        assertThat(items).isNotNull();
-        assertThat(items.isEmpty()).isFalse();
-        assertThat(items).hasSize(10);
+        assertThat(items).isNotNull().isNotEmpty().hasSize(10);
         items.add("test");
     }
     @Test
     public void testHashSet_2(){
         Configuration config = Configuration.current();
         Set<String> items = (Set<String>) config.get("typed.hashset", Set.class);
-        assertThat(items).isNotNull();
-        assertThat(items.isEmpty()).isFalse();
-        assertThat(items).hasSize(10);
+        assertThat(items).isNotNull().isNotEmpty().hasSize(10);
         items.add("test");
     }
 
@@ -100,18 +88,14 @@ public class CollectionsTypedReadOnlyTests {
     public void testTreeSet_1(){
         Configuration config = Configuration.current();
         Set<String> items = config.get("typed.treeset", new TypeLiteral<Set<String>>(){});
-        assertThat(items).isNotNull();
-        assertThat(items.isEmpty()).isFalse();
-        assertThat(items).hasSize(10);
+        assertThat(items).isNotNull().isNotEmpty().hasSize(10);
         items.add("test");
     }
     @Test
     public void testTreeSet_2(){
         Configuration config = Configuration.current();
         Set<String> items = items = (Set<String>) config.get("typed.treeset", Set.class);
-        assertThat(items).isNotNull();
-        assertThat(items.isEmpty()).isFalse();
-        assertThat(items).hasSize(10);
+        assertThat(items).isNotNull().isNotEmpty().hasSize(10);
         items.add("test");
     }
 
@@ -119,26 +103,22 @@ public class CollectionsTypedReadOnlyTests {
     public void testHashMap_1(){
         Configuration config = Configuration.current();
         Map<String,String> items = config.get("typed.hashmap", new TypeLiteral<Map<String,String>>(){});
-        assertThat(items).isNotNull();
-        assertThat(items.isEmpty()).isFalse();
-        assertThat(items).hasSize(4);
-        assertThat("a").isEqualTo(items.get("1"));
-        assertThat("b").isEqualTo(items.get("2"));
-        assertThat("c").isEqualTo(items.get("3"));
-        assertThat(" ").isEqualTo(items.get("4"));
+        assertThat(items).isNotNull().isNotEmpty().hasSize(4)
+            .containsEntry("1", "a")
+            .containsEntry("2", "b")
+            .containsEntry("3", "c")
+            .containsEntry("4", " ");
         items.put("g","hjhhj");
     }
     @Test(expected=UnsupportedOperationException.class)
     public void testHashMap_2(){
         Configuration config = Configuration.current();
         Map<String,String> items = (Map<String,String>) config.get("typed.hashmap", Map.class);
-        assertThat(items).isNotNull();
-        assertThat(items.isEmpty()).isFalse();
-        assertThat(items).hasSize(4);
-        assertThat("a").isEqualTo(items.get("1"));
-        assertThat("b").isEqualTo(items.get("2"));
-        assertThat("c").isEqualTo(items.get("3"));
-        assertThat(" ").isEqualTo(items.get("4"));
+        assertThat(items).isNotNull().isNotEmpty().hasSize(4)
+            .containsEntry("1", "a")
+            .containsEntry("2", "b")
+            .containsEntry("3", "c")
+            .containsEntry("4", " ");
         items.put("g","hjhhj");
     }
 
@@ -147,26 +127,22 @@ public class CollectionsTypedReadOnlyTests {
     public void testTreeMap_1(){
         Configuration config = Configuration.current();
         Map<String,String> items = config.get("typed.treemap", new TypeLiteral<Map<String,String>>(){});
-        assertThat(items).isNotNull();
-        assertThat(items.isEmpty()).isFalse();
-        assertThat(items).hasSize(4);
-        assertThat("a").isEqualTo(items.get("1"));
-        assertThat("b").isEqualTo(items.get("2"));
-        assertThat("c").isEqualTo(items.get("3"));
-        assertThat(" ").isEqualTo(items.get("4"));
+        assertThat(items).isNotNull().isNotEmpty().hasSize(4)
+            .containsEntry("1", "a")
+            .containsEntry("2", "b")
+            .containsEntry("3", "c")
+            .containsEntry("4", " ");
         items.put("g","hjhhj");
     }
     @Test
     public void testTreeMap_2(){
         Configuration config = Configuration.current();
         Map<String,String> items = (Map<String,String>) config.get("typed.treemap", Map.class);
-        assertThat(items).isNotNull();
-        assertThat(items.isEmpty()).isFalse();
-        assertThat(items).hasSize(4);
-        assertThat("a").isEqualTo(items.get("1"));
-        assertThat("b").isEqualTo(items.get("2"));
-        assertThat("c").isEqualTo(items.get("3"));
-        assertThat(" ").isEqualTo(items.get("4"));
+        assertThat(items).isNotNull().isNotEmpty().hasSize(4)
+            .containsEntry("1", "a")
+            .containsEntry("2", "b")
+            .containsEntry("3", "c")
+            .containsEntry("4", " ");
         items.put("g","hjhhj");
     }
 

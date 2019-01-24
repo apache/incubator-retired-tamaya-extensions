@@ -152,12 +152,7 @@ public class ConfigurationChangeTest {
     public void testToString() throws Exception {
         Configuration config = Configuration.current();
         ConfigurationChange change = ConfigurationChangeBuilder.of(config).removeKey("java.version").build();
-        String toString =
-                change.toString();
-        assertThat(toString.contains("timestamp")).isTrue();
-        assertThat(toString.contains("change-id")).isTrue();
-        assertThat(toString.contains("snapshot-id")).isTrue();
-        assertThat(toString.contains("key1")).isFalse();
-        assertThat(toString.contains("key2")).isFalse();
+        assertThat(change.toString()).contains("timestamp").contains("change-id").contains("snapshot-id")
+            .doesNotContain("key1").doesNotContain("key2");
     }
 }
