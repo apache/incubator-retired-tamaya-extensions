@@ -45,12 +45,7 @@ public class CollectionAdvancedTests {
     public void testCustomSeparator(){
         Configuration config = Configuration.current();
         List<String> items = config.get("sep-list", new TypeLiteral<List<String>>(){});
-        assertThat(items).isNotNull();
-        assertThat(items.isEmpty()).isFalse();
-        assertThat(items).hasSize(3);
-        assertThat("a,b,c").isEqualTo(items.get(0));
-        assertThat("d,e,f").isEqualTo(items.get(1));
-        assertThat("g,h,i").isEqualTo(items.get(2));
+        assertThat(items).isNotNull().isNotEmpty().hasSize(3).containsExactly("a,b,c", "d,e,f", "g,h,i");
     }
 
     /**
@@ -64,9 +59,7 @@ public class CollectionAdvancedTests {
     public void testTypedContent(){
         Configuration config = Configuration.current();
         List<Currency> items = config.get("currency-list", new TypeLiteral<List<Currency>>(){});
-        assertThat(items).isNotNull();
-        assertThat(items.isEmpty()).isFalse();
-        assertThat(items).hasSize(3);
+        assertThat(items).isNotNull().isNotEmpty().hasSize(3);
         assertThat("CHF").isEqualTo(items.get(0).getCurrencyCode());
         assertThat("USD").isEqualTo(items.get(1).getCurrencyCode());
         assertThat("USS").isEqualTo(items.get(2).getCurrencyCode());
@@ -84,12 +77,7 @@ public class CollectionAdvancedTests {
     public void testCustomParser(){
         Configuration config = Configuration.current();
         List<String> items = config.get("parser-list", new TypeLiteral<List<String>>(){});
-        assertThat(items).isNotNull();
-        assertThat(items.isEmpty()).isFalse();
-        assertThat(items).hasSize(3);
-        assertThat("(A)").isEqualTo(items.get(0));
-        assertThat("(B)").isEqualTo(items.get(1));
-        assertThat("(C)").isEqualTo(items.get(2));
+        assertThat(items).isNotNull().isNotEmpty().hasSize(3).containsExactly("(A)", "(B)", "(C)");
     }
 
     /**
@@ -104,9 +92,7 @@ public class CollectionAdvancedTests {
     public void testCustomMapParser(){
         Configuration config = Configuration.current();
         Map<String,String> items = config.get("redefined-map", Map.class);
-        assertThat(items).isNotNull();
-        assertThat(items.isEmpty()).isFalse();
-        assertThat(items).hasSize(3);
+        assertThat(items).isNotNull().isNotEmpty().hasSize(3);
         assertThat("none").isEqualTo(items.get("0"));
         assertThat("single").isEqualTo(items.get("1"));
         assertThat("any").isEqualTo(items.get("2"));
