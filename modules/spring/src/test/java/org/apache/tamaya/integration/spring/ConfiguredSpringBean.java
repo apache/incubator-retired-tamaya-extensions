@@ -19,14 +19,15 @@
 package org.apache.tamaya.integration.spring;
 
 import org.apache.tamaya.inject.api.Config;
-import org.apache.tamaya.inject.api.ConfigDefaultSections;
+import org.apache.tamaya.inject.api.ConfigSection;
+import org.apache.tamaya.inject.spi.AbsoluteKeyResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 
 /**
  * Created by Anatole on 25.09.2015.
  */
-@ConfigDefaultSections
+@ConfigSection(keyResolver = AbsoluteKeyResolver.class)
 public class ConfiguredSpringBean {
 
     private String message;
@@ -34,7 +35,7 @@ public class ConfiguredSpringBean {
     @Autowired
     private Environment env;
 
-    @Config("java.version")
+    @Config(key="java.version")
     private String javaVersion;
 
     @Config(defaultValue = "23")

@@ -27,7 +27,7 @@ import java.net.URL;
 @Component
 public class EndpointBean {
 
-    @Config(value = "server.endpoint", defaultValue = "http://localhost:8000/ass_s/v1")
+    @Config(key = "[server.endpoint]", defaultValue = "http://localhost:8000/ass_s/v1")
     private URL endpoint;
 
     @PostConstruct
