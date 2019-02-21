@@ -46,13 +46,13 @@ public class ConfiguredClass{
     //  because our provider runs in @ApplicationScope, and null @Producer has to be in
     //  @Dependent scope (CDI 2.0 spec section 3.2).  Optional<> below is probably your
     //  better idea.
-    @Config(value="stringMissingValue", required=false)
+    @Config(key="stringMissingValue", required=false)
     private String stringMissingValue;
 
-    @Config(value = {"a.b.c.key1","a.b.c.key2","a.b.c.key3"}, defaultValue = "The current \\${JAVA_HOME} env property is ${env:JAVA_HOME}.")
+    @Config(key = "a.b.c.key1", alternateKeys = {"a.b.c.key2","a.b.c.key3"}, defaultValue = "The current \\${JAVA_HOME} env property is ${env:JAVA_HOME}.")
     String value1;
 
-    @Config({"foo","a.b.c.key2"})
+    @Config(key = "foo", alternateKeys = {"a.b.c.key2"})
     private String value2;
 
     @Config(defaultValue = "N/A")
@@ -70,10 +70,10 @@ public class ConfiguredClass{
     @Config
     private boolean booleanT;
 
-    @Config("BD")
+    @Config(key = "BD")
     private BigDecimal bigNumber;
 
-    @Config("double1")
+    @Config(key = "[double1]")
     private double doubleValue;
 
     @Config
@@ -83,24 +83,24 @@ public class ConfiguredClass{
     @Config
     private Optional<String> injectedOptionalStringWithValue;
 
-    @Config(value="optionalStringMissingValue", required=false)
+    @Config(key="optionalStringMissingValue", required=false)
     private Optional<String> optionalStringMissingValue;
 
     @Inject
-    @Config(value="injectedOptionalStringMissingValue", required=false)
+    @Config(key="injectedOptionalStringMissingValue", required=false)
     private Optional<String> injectedOptionalStringMissingValue;
 
-    @Config(value="optionalStringMissingValueWithDefault", defaultValue="optionalStringDefaultValue", required=false)
+    @Config(key="optionalStringMissingValueWithDefault", defaultValue="optionalStringDefaultValue", required=false)
     private Optional<String> optionalStringMissingValueWithDefault;
 
     @Inject
-    @Config(value="injectedOptionalStringMissingValueWithDefault", defaultValue="injectedOptionalStringDefaultValue", required=false)
+    @Config(key="injectedOptionalStringMissingValueWithDefault", defaultValue="injectedOptionalStringDefaultValue", required=false)
     private Optional<String> injectedOptionalStringMissingValueWithDefault;
 
-    @Config("double1")
+    @Config(key="[double1]")
     private Optional<Double> existingDouble;
 
-    @Config("foo-bar")
+    @Config(key="foo-bar")
     private Optional<Double> nonExistingDouble;
 
     public String getTestProperty() {

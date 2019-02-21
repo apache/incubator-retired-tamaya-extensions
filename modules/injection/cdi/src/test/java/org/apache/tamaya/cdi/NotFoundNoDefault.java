@@ -28,23 +28,23 @@ import java.time.Duration;
 public class NotFoundNoDefault {
 
         @Inject
-        @Config("string.bla")
+        @Config(key = "string.bla")
         private String string;
 
         @Inject
-        @Config("file.bla")
+        @Config(key = "file.bla")
         private File file;
 
         @Inject
-        @Config("duration.bla")
+        @Config(key = "duration.bla")
         private Duration duration;
 
         @Inject
-        @Config("boolean.bla")
+        @Config(key = "boolean.bla")
         private Boolean aBoolean;
 
         @Inject
-        @Config("integer.bla")
+        @Config(key = "integer.bla")
         private Integer integer;
 
         public String getString() {

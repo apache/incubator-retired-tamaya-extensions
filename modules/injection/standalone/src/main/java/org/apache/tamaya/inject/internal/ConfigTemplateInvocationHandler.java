@@ -58,12 +58,10 @@ public final class ConfigTemplateInvocationHandler implements InvocationHandler 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if ("toString".equals(method.getName())) {
             return "Configured Proxy -> " + this.type.getType().getName();
-        } else if ("hashCode".equals(method.getName())) {
-            return Objects.hashCode(proxy);
-        } else if ("equals".equals(method.getName())) {
-            return Objects.equals(proxy, args[0]);
         } else if ("current".equals(method.getName())) {
             return config;
+        } else if (method.getDeclaringClass().equals(Object.class)) {
+            return method.invoke(proxy, args);
         }
         if (method.getReturnType() == DynamicValue.class) {
             return DefaultDynamicValue.of(proxy, method, config);

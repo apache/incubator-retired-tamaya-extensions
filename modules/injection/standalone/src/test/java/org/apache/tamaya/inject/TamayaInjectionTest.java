@@ -25,6 +25,7 @@ import annottext.NonAnnotatedConfigBean;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.spisupport.propertysource.MapPropertySource;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -49,7 +50,7 @@ public class TamayaInjectionTest {
         assertEquals(testInstance.fullKey, null);
         assertEquals(testInstance.test2, "This is not setCurrent.");
         ConfigurationInjection.getConfigurationInjector().configure(testInstance);
-        assertEquals(testInstance.simple_value, "aSimpleValue");
+        assertEquals(testInstance.simple_value, "aSimpleValue3");
         assertEquals(testInstance.classFieldKey, "Class-Field-Value");
         assertEquals(testInstance.fieldKey, "Field-Value");
         assertEquals(testInstance.fullKey, "Fullkey-Value");
@@ -104,12 +105,12 @@ public class TamayaInjectionTest {
         assertNotNull(ConfigurationInjection.getConfigurationInjector());
         AnnotatedConfigTemplate testInstance = ConfigurationInjection.getConfigurationInjector()
                 .createTemplate(AnnotatedConfigTemplate.class);
-        assertEquals(testInstance.hostName(), "tamaya01.incubator.apache.org");
+        assertEquals(testInstance.hostName(), "tamaya02.incubator.apache.org");
         assertEquals(testInstance.myParameter(), "ET");
         assertEquals(testInstance.simpleValue(), "aSimpleValue");
         assertNotNull(testInstance.getDynamicValue());
         assertTrue(testInstance.getDynamicValue().isPresent());
-        assertEquals(testInstance.getDynamicValue().get(), "tamaya01.incubator.apache.org");
+        assertEquals(testInstance.getDynamicValue().get(), "tamaya02.incubator.apache.org");
         assertEquals(testInstance.hostName(), testInstance.getDynamicValue().get());
     }
 

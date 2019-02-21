@@ -41,13 +41,13 @@ import static org.junit.Assert.*;
  */
 public class DefaultDynamicValueTest {
 
-    @Config("a")
+    @Config(key="[a]")
     String myValue;
 
-    @Config("a")
+    @Config(key="[a]")
     String myValue2;
 
-    @Config("a")
+    @Config(key="[a]")
     void setterMethod(String value){
 
     }
@@ -211,13 +211,13 @@ public class DefaultDynamicValueTest {
 
     @Test
     public void testGetNewValue() throws Exception {
-        properties.put("a",PropertyValue.of("a","aValue","test"));
+        properties.put("a",PropertyValue.createValue("a","aValue"));
         DynamicValue val = DefaultDynamicValue.of(this, getClass().getDeclaredField("myValue"),
                 config);
         val.setUpdatePolicy(UpdatePolicy.EXPLICIT);
         val.get();
         assertNull(val.getNewValue());
-        properties.put("a",PropertyValue.of("a","aValue2","test"));
+        properties.put("a",PropertyValue.createValue("a","aValue2"));
         val.get();
         assertNotNull(val.getNewValue());
         assertEquals("aValue2", val.getNewValue());

@@ -21,7 +21,7 @@ package org.apache.tamaya.cdi;
 
 import org.apache.tamaya.inject.ConfigurationInjection;
 import org.apache.tamaya.inject.api.Config;
-import org.apache.tamaya.inject.api.ConfigDefaultSections;
+import org.apache.tamaya.inject.api.ConfigSection;
 
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
@@ -87,7 +87,7 @@ public final class TamayaSEInjectionExtension implements Extension {
     }
 
     private boolean isConfigured(Class type) {
-        if (type.getAnnotation(ConfigDefaultSections.class) != null) {
+        if (type.getAnnotation(ConfigSection.class) != null) {
             return true;
         }
         // if no class level annotation is there we might have field level annotations only

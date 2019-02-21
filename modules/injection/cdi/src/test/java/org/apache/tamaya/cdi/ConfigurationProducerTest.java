@@ -116,51 +116,51 @@ public class ConfigurationProducerTest {
         private Provider<Integer> providerIntegerAsMethodParam;
 
         @Inject
-        @Config(value = "string.value", defaultValue = "defaultString")
+        @Config(key = "string.value", defaultValue = "defaultString")
         private String string;
 
         @Inject
-        @Config(value = "string.value", defaultValue = "defaultString")
+        @Config(key = "string.value", defaultValue = "defaultString")
         private Optional<String> optionalString;
 
         @Inject
-        @Config(value = "string.value", defaultValue = "defaultString")
+        @Config(key = "string.value", defaultValue = "defaultString")
         private Provider<String> providerString;
 
         @Inject
-        @Config(value = "defaultString.value", defaultValue = "defaultString")
+        @Config(key = "defaultString.value", defaultValue = "defaultString")
         private String defaultString;
 
         @Inject
-        @Config(value = "file.value", defaultValue = "./")
+        @Config(key = "file.value", defaultValue = "./")
         private File file;
 
         @Inject
-        @Config(value = "defaultFile.value", defaultValue = "./")
+        @Config(key = "defaultFile.value", defaultValue = "./")
         private File defaultFile;
 
         @Inject
-        @Config(value = "boolean.value", defaultValue = "true")
+        @Config(key = "boolean.value", defaultValue = "true")
         private Boolean aBoolean;
 
         @Inject
-        @Config(value = "defaultBoolean.value", defaultValue = "true")
+        @Config(key = "defaultBoolean.value", defaultValue = "true")
         private Boolean defaultBoolean;
 
         @Inject
-        @Config(value = "integer.value", defaultValue = "45")
+        @Config(key = "integer.value", defaultValue = "45")
         private Integer integer;
 
         @Inject
-        @Config(value = "defaultInteger.value", defaultValue = "45")
+        @Config(key = "defaultInteger.value", defaultValue = "45")
         private Integer defaultInteger;
 
         @Inject
-        @Config(value = "integer.value", defaultValue = "45")
+        @Config(key = "integer.value", defaultValue = "45")
         private Optional<Integer> optionalInteger;
 
         @Inject
-        @Config(value = "integer.value", defaultValue = "45")
+        @Config(key = "integer.value", defaultValue = "45")
         private Provider<Integer> providerInteger;
 
         public String getString() {
@@ -197,32 +197,32 @@ public class ConfigurationProducerTest {
 
 
         @Inject
-        public void setStringAsMethodParam(@Config(value = "string.value", defaultValue = "defaultString") String stringAsMethodParam) {
+        public void setStringAsMethodParam(@Config(key = "string.value", defaultValue = "defaultString") String stringAsMethodParam) {
             this.stringAsMethodParam = stringAsMethodParam;
         }
 
         @Inject
-        public void setIntegerAsMethodParam(@Config(value = "integer.value", defaultValue = "45")Integer integerAsMethodParam) {
+        public void setIntegerAsMethodParam(@Config(key = "integer.value", defaultValue = "45")Integer integerAsMethodParam) {
             this.integerAsMethodParam = integerAsMethodParam;
         }
 
         @Inject
-        public void setOptionalStringAsMethodParam(@Config(value = "string.value", defaultValue = "defaultString") Optional<String> optionalStringAsMethodParam) {
+        public void setOptionalStringAsMethodParam(@Config(key = "string.value", defaultValue = "defaultString") Optional<String> optionalStringAsMethodParam) {
             this.optionalStringAsMethodParam = optionalStringAsMethodParam;
         }
 
         @Inject
-        public void setOptionalIntegerAsMethodParam(@Config(value = "integer.value", defaultValue = "45") Optional<Integer> optionalIntegerAsMethodParam) {
+        public void setOptionalIntegerAsMethodParam(@Config(key = "integer.value", defaultValue = "45") Optional<Integer> optionalIntegerAsMethodParam) {
             this.optionalIntegerAsMethodParam = optionalIntegerAsMethodParam;
         }
 
         @Inject
-        public void setProviderStringAsMethodParam(@Config(value = "string.value", defaultValue = "defaultString") Provider<String> providerStringAsMethodParam) {
+        public void setProviderStringAsMethodParam(@Config(key = "string.value", defaultValue = "defaultString") Provider<String> providerStringAsMethodParam) {
             this.providerStringAsMethodParam = providerStringAsMethodParam;
         }
 
         @Inject
-        public void setProviderIntegerAsMethodParam(@Config(value = "integer.value", defaultValue = "45") Provider<Integer> providerIntegerAsMethodParam) {
+        public void setProviderIntegerAsMethodParam(@Config(key = "integer.value", defaultValue = "45") Provider<Integer> providerIntegerAsMethodParam) {
             this.providerIntegerAsMethodParam = providerIntegerAsMethodParam;
         }
 

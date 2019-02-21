@@ -26,11 +26,10 @@ import java.util.logging.Logger;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.inject.api.ConfigAutoInject;
 import org.apache.tamaya.inject.api.NoConfig;
 import org.apache.tamaya.inject.api.Config;
-import org.apache.tamaya.inject.api.ConfigDefaultSections;
+import org.apache.tamaya.inject.api.ConfigSection;
 import org.apache.tamaya.inject.spi.ConfiguredField;
 import org.apache.tamaya.inject.spi.ConfiguredMethod;
 import org.apache.tamaya.inject.spi.ConfiguredType;
@@ -64,8 +63,12 @@ public class ConfiguredTypeImpl implements ConfiguredType{
      */
     public ConfiguredTypeImpl(Class type) {
         this.type = Objects.requireNonNull(type);
+        if(type.isAnnotationPresent(NoConfig.class)){
+            LOG.info(() -> "Type is excluded from config: " + type.getName());
+            return;
+        }
         if(!isConfigured(type)){
-            LOG.info("Auto-Configuring type: " + type.getName());
+            LOG.info(() -> "Auto-Configuring type: " + type.getName());
             initFields(type, true);
             initMethods(type, true);
         }else {
@@ -86,17 +89,17 @@ public class ConfiguredTypeImpl implements ConfiguredType{
         }
         for (Field f : type.getDeclaredFields()) {
             if (f.isAnnotationPresent(NoConfig.class)) {
-                LOG.finest("Ignored @NoConfig annotated field " + f.getClass().getName() + "#" +
+                LOG.finest(() -> "Ignored @NoConfig annotated field " + f.getClass().getName() + "#" +
                         f.toGenericString());
                 continue;
             }
             if (Modifier.isFinal(f.getModifiers())) {
-                LOG.finest("Ignored final field " + f.getClass().getName() + "#" +
+                LOG.finest(() -> "Ignored final field " + f.getClass().getName() + "#" +
                         f.toGenericString());
                 continue;
             }
             if (f.isSynthetic()) {
-                LOG.finest("Ignored synthetic field " + f.getClass().getName() + "#" +
+                LOG.finest(() -> "Ignored synthetic field " + f.getClass().getName() + "#" +
                         f.toGenericString());
                 continue;
             }
@@ -104,7 +107,7 @@ public class ConfiguredTypeImpl implements ConfiguredType{
                 if(isConfiguredField(f) || autoConfigure) {
                     ConfiguredField configuredField = new ConfiguredFieldImpl(f);
                     configuredFields.add(configuredField);
-                    LOG.finer("Registered field " + f.getClass().getName() + "#" +
+                    LOG.finer(() -> "Registered field " + f.getClass().getName() + "#" +
                             f.toGenericString());
                 }
             } catch (Exception e) {
@@ -182,7 +185,7 @@ public class ConfiguredTypeImpl implements ConfiguredType{
 
 
     public static boolean isConfigured(Class type) {
-        if (type.getAnnotation(ConfigDefaultSections.class) != null) {
+        if (type.getAnnotation(ConfigSection.class) != null) {
             return true;
         }
         // if no class level annotation is there we might have field level annotations only

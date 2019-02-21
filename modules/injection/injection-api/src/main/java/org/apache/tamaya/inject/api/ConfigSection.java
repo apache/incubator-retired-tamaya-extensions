@@ -34,12 +34,30 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.TYPE })
-public @interface ConfigDefaultSections {
+public @interface ConfigSection {
 
     /**
-     * Allows to declare an section names that are prepended to resolve relative configuration keys.
-     * @return the section names to be used for key resolution.
+     * Allows to declare an section name that is prepended to resolve relative configuration keys.
+     * @return the section name to be used for key resolution.
      */
-    String[] value() default {};
+    String value() default "";
+
+    /**
+     *  Allows to customize the <i>default</i> key resolution strategy how the {@code key()} and {@code alternateKeys()}
+     *  values should be used to evaluate the final main target configuration keys. Hereby the default resolution
+     *  works as follows:
+     * <ol>
+     *    <li>The containing class <b>does not</b> have a {@link ConfigSection} annotation and the field/method does not have
+     *     a {@link Config} annotation: the main key equals to
+     *     {@code Owning.class.getSimpleName() + '.' + propertyKey}.</li>
+     *    <li>The containing class <b>does not</b> have a {@link ConfigSection} annotation: the main key equals to
+     *     {@code propertyKey}.</li>
+     *    <li>The containing class <b>does</b> have a {@link ConfigSection} annotation: the main key equals to
+     *     {@code areaAnnotation.getValue() + '.' + propertyKey}.</li>
+     * </ol>
+     *
+     * @return the key resolution strategy, never null.
+     */
+    Class<? extends KeyResolver> keyResolver() default KeyResolver.class;
 
 }

@@ -20,7 +20,7 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.ConfigOperator;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.inject.api.Config;
-import org.apache.tamaya.inject.api.ConfigDefaultSections;
+import org.apache.tamaya.inject.api.ConfigSection;
 import org.apache.tamaya.inject.api.WithConfigOperator;
 import org.apache.tamaya.inject.api.WithPropertyConverter;
 import org.apache.tamaya.spi.PropertyConverter;
@@ -42,7 +42,7 @@ import java.util.logging.Logger;
  * CDI Extension module that adds injection mechanism for configuration.
  *
  * @see Config
- * @see ConfigDefaultSections
+ * @see ConfigSection
  * @see ConfigException
  */
 public class TamayaCDIInjectionExtension implements Extension {
@@ -77,9 +77,10 @@ public class TamayaCDIInjectionExtension implements Extension {
             if (injectionPoint.getAnnotated().isAnnotationPresent(Config.class)) {
                 LOG.fine("Configuring: " + injectionPoint);
                 final Config annotation = injectionPoint.getAnnotated().getAnnotation(Config.class);
-                final ConfigDefaultSections typeAnnot = injectionPoint.getMember().getDeclaringClass().getAnnotation(ConfigDefaultSections.class);
+                final ConfigSection typeAnnot = injectionPoint.getMember().getDeclaringClass().getAnnotation(ConfigSection.class);
                 final List<String> keys = evaluateKeys(injectionPoint.getMember().getName(),
-                        annotation!=null?annotation.value():null,
+                        annotation!=null?annotation.key():null,
+                        annotation!=null?annotation.alternateKeys():null,
                         typeAnnot!=null?typeAnnot.value():null);
                 final WithConfigOperator withOperatorAnnot = injectionPoint.getAnnotated().getAnnotation(WithConfigOperator.class);
                 if(withOperatorAnnot!=null){
@@ -159,20 +160,22 @@ public class TamayaCDIInjectionExtension implements Extension {
      * The effective keys are then combined with the sections given (if any) and only, if the given keys are not
      * absolute keys (surrounded by brackets).
      * @param memberName the default member name, not null.
-     * @param keys the keys, may be empty, or null.
-     * @param sections the default sections, may be empty. May also be null.
+     * @param mainKey the main key, may be empty, or null.
+     * @param alternateKeys the alternate keys, may be empty, or null.
+     * @param section the default section, may be empty. May also be null.
      * @return the createList of keys to be finally used for configuration resolution in order of
      * precedence. The first keys in the createList that could be successfully resolved define the final
      * configuration value.
      */
-    public static List<String> evaluateKeys(String memberName, String[] keys, String[] sections) {
+    public static List<String> evaluateKeys(String memberName, String mainKey, String[] alternateKeys, String section) {
         List<String> effKeys = new ArrayList<>();
-        if(keys!=null){
-            effKeys.addAll(Arrays.asList(keys));
+        if(mainKey!=null && !mainKey.trim().isEmpty()){
+            effKeys.add(mainKey);
         }
         if (effKeys.isEmpty()) {
             effKeys.add(memberName);
         }
+        effKeys.addAll(Arrays.asList(alternateKeys));
         ListIterator<String> iterator = effKeys.listIterator();
         while (iterator.hasNext()) {
             String next = iterator.next();
@@ -180,13 +183,11 @@ public class TamayaCDIInjectionExtension implements Extension {
                 // absolute key, strip away brackets, take key as is
                 iterator.set(next.substring(1, next.length() - 1));
             } else {
-                if (sections != null && sections.length>0) {
+                if (section != null && !section.trim().isEmpty()) {
                     // Remove original entry, since it will be replaced with prefixed entries
                     iterator.remove();
                     // Add prefixed entries, including absolute (root) entry for "" area keys.
-                    for (String area : sections) {
-                        iterator.add(area.isEmpty() ? next : area + '.' + next);
-                    }
+                    iterator.add(section + '.' + next);
                 }
             }
         }

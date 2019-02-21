@@ -21,6 +21,7 @@ package annottext;
 import org.apache.tamaya.inject.api.DynamicValue;
 import org.apache.tamaya.inject.api.NoConfig;
 import org.apache.tamaya.inject.api.Config;
+import org.apache.tamaya.inject.spi.AbsoluteKeyResolver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,20 +33,20 @@ import java.util.List;
  */
 public class AnnotatedConfigBean {
 
-    @Config(value = {"foo.bar.myprop", "mp", "common.testdata.myProperty"}, defaultValue = "ET")
+    @Config(key = "foo.bar.myprop", alternateKeys = {"mp", "common.testdata.myProperty"}, defaultValue = "ET")
     // @ConfigLoadPolicy(listener = MyListener.class)
     public String myParameter;
 
-    @Config("simple_value")
+    @Config(key = "simple_value")
     public String simpleValue;
 
     @Config
     String anotherValue;
 
-    @Config("host.name")
+    @Config(key = "host.name")
     private String hostName;
 
-    @Config("host.name")
+    @Config(key = "host.name")
     private DynamicValue<String> dynamicHostname;
 
     @NoConfig
@@ -55,6 +56,7 @@ public class AnnotatedConfigBean {
         return anotherValue;
     }
 
+    @Config(keyResolver = AbsoluteKeyResolver.class)
     public String getHostName(){
         return hostName;
     }
@@ -70,7 +72,7 @@ public class AnnotatedConfigBean {
     public static final String CONSTANT = "a constant";
 
 
-    @Config("java.version")
+    @Config(key = "[java.version]")
     void setJavaVersion(String version){
         this.javaVersion = version;
     }

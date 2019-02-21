@@ -33,13 +33,23 @@ public class TestPropertySource implements PropertySource {
 
     public TestPropertySource(){
         properties.put("env.stage", "ET");
-        properties.put("simple_value", "aSimpleValue");
-        properties.put("host.name", "tamaya01.incubator.apache.org");
+        properties.put("AnnotatedConfigBean.host.name", "tamaya01.incubator.apache.org");
+        properties.put("AnnotatedConfigBean.someMoreValue", "s'more");
+        properties.put("AnnotatedConfigBean.anotherValue", "HALLO!");
+        properties.put("AnnotatedConfigBean.simple_value", "aSimpleValue");
+
+        properties.put("hostName", "tamaya01.incubator.apache.org");
+        properties.put("host.name", "tamaya02.incubator.apache.org");
         properties.put("anotherValue", "HALLO!");
+        properties.put("simple_value", "aSimpleValue");
+        properties.put("someMoreValue", "s'more");
+
+        properties.put("AnnotatedConfigTemplate.simple_value", "aSimpleValue2");
+
+        properties.put("NonAnnotatedConfigBean.simple_value", "aSimpleValue3");
         properties.put("NonAnnotatedConfigBean.classFieldKey", "Class-Field-Value");
         properties.put("NonAnnotatedConfigBean.fieldKey", "Field-Value");
-        properties.put("annottext.NonAnnotatedConfigBean.fullKey", "Fullkey-Value");
-        properties.put("someMoreValue", "s'more");
+        properties.put("NonAnnotatedConfigBean.fullKey", "Fullkey-Value");
     }
 
     @Override

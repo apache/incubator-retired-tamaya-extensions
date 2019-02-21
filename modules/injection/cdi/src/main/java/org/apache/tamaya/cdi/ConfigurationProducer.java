@@ -58,9 +58,10 @@ public class ConfigurationProducer {
             return createDynamicValue(injectionPoint);
         }
         final Config annotation = injectionPoint.getAnnotated().getAnnotation(Config.class);
-        final ConfigDefaultSections typeAnnot = injectionPoint.getMember().getDeclaringClass().getAnnotation(ConfigDefaultSections.class);
+        final ConfigSection typeAnnot = injectionPoint.getMember().getDeclaringClass().getAnnotation(ConfigSection.class);
         final List<String> keys = TamayaCDIInjectionExtension.evaluateKeys(injectionPoint.getMember().getName(),
-                annotation != null ? annotation.value() : null,
+                annotation != null ? annotation.key() : null,
+                annotation != null ? annotation.alternateKeys() : null,
                 typeAnnot != null ? typeAnnot.value() : null);
 
         final WithConfigOperator withOperatorAnnot = injectionPoint.getAnnotated().getAnnotation(WithConfigOperator.class);

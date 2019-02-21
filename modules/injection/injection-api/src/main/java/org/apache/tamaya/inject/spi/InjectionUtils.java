@@ -19,112 +19,201 @@
 package org.apache.tamaya.inject.spi;
 
 import org.apache.tamaya.inject.api.Config;
-import org.apache.tamaya.inject.api.ConfigDefaultSections;
+import org.apache.tamaya.inject.api.ConfigSection;
+import org.apache.tamaya.inject.api.KeyResolver;
+import org.apache.tamaya.inject.api.NoConfig;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Utility class with several commonly used functions.
  */
 public final class InjectionUtils {
 
+    private static final Logger LOG = Logger.getLogger(InjectionUtils.class.getName());
+
+    private static final KeyResolver AUTO_RESOLVER = new AutoKeyResolver();
+
     private InjectionUtils(){}
 
-
     /**
-     * Collects all keys to be be accessed as defined by any annotations of type
-     * {@link ConfigDefaultSections}, {@link Config}.
+     * Collects all keys to be be accessed, hereby the first key
+     * is the main key, subsequent keys are the fallback keys.
      * @param field the (optionally) annotated field instance
      * @return the regarding key createList to be accessed fomr the {@link org.apache.tamaya.Configuration}.
      */
     public static List<String> getKeys(Field field) {
-        ConfigDefaultSections areasAnnot = field.getDeclaringClass().getAnnotation(ConfigDefaultSections.class);
-        return InjectionUtils.evaluateKeys(field, areasAnnot, field.getAnnotation(Config.class));
+        if(field.isAnnotationPresent(NoConfig.class)){
+            return Collections.emptyList();
+        }
+        return InjectionUtils.evaluateKeys(field, field.getAnnotation(Config.class));
     }
 
     /**
-     * Collects all keys to be be accessed as defined by any annotations of type
-     * {@link ConfigDefaultSections}, {@link Config}.
+     * Collects all keys to be be accessed, hereby the first key
+     * is the main key, subsequent keys are the fallback keys.
      * @param method the (optionally) annotated method instance
      * @return the regarding key createList to be accessed fomr the {@link org.apache.tamaya.Configuration}.
      */
     public static List<String> getKeys(Method method) {
-        ConfigDefaultSections areasAnnot = method.getDeclaringClass().getAnnotation(ConfigDefaultSections.class);
-        return InjectionUtils.evaluateKeys(method, areasAnnot, method.getAnnotation(Config.class));
+        Config configAnnot = method.getAnnotation(Config.class);
+        if(method.isAnnotationPresent(NoConfig.class) || configAnnot==null){
+            return Collections.emptyList();
+        }
+        return InjectionUtils.evaluateKeys(method, configAnnot);
     }
 
     /**
-     * Evaluates all absolute configuration keys based on the member name found.
+     * Evaluates all absolute configuration keys based on the member name found, hereby the first key
+     * is the main key, subsequent keys are the fallback keys.
      *
-     * @param member member to analyze.
-     * @param sectionAnnot the (optional) annotation defining areas to be looked up.
+     * @param member the member, not null.
      * @return the createList of current keys in order how they should be processed/looked up.
      */
-    public static List<String> evaluateKeys(Member member, ConfigDefaultSections sectionAnnot) {
-        List<String> keys = new ArrayList<>();
-        List<String> areaKeys = evaluateSectionKeys(member, sectionAnnot);
-        String key = null;
-        String name = member.getName();
-        if (name.startsWith("get") || name.startsWith("setCurrent")) {
-            key = Character.toLowerCase(name.charAt(3)) + name.substring(4);
-        } else {
-            key = Character.toLowerCase(name.charAt(0)) + name.substring(1);
+    public static List<String> getMemberKeys(Member member) {
+        if(member instanceof Field){
+            return getKeys((Field)member);
+        } else if(member instanceof Method){
+            return getKeys((Method)member);
         }
-        for(String areaKey:areaKeys) {
-            keys.add(areaKey + '.' + key);
-        }
-        keys.add(key);
-        return keys;
+        return Collections.emptyList();
     }
 
     /**
-     * Evaluates all absolute configuration keys based on the annotations found in a class.
-     * 
-     * @param member member to analyze.
-     * @param areasAnnot         the (optional) annotation definining areas to be looked up.
-     * @param propertyAnnotation the annotation on field/method level that may defined one or
-     *                           several keys to be looked up (in absolute or relative form).
-     * @return the createList current keys in order how they should be processed/looked up.
+     * Evaluates all absolute configuration keys based on the member name found, hereby the first key
+     * is the main key, subsequent keys are the fallback keys.
+     *
+     * @param configAnnot the (optional) config annotation
+     * @return the createList of current keys in order how they should be processed/looked up.
      */
-    public static List<String> evaluateKeys(Member member, ConfigDefaultSections areasAnnot, Config propertyAnnotation) {
-        if(propertyAnnotation==null){
-            return evaluateKeys(member, areasAnnot);
-        }
-        List<String> result = new ArrayList<>();
-        List<String> memberKeys = new ArrayList<>(Arrays.asList(propertyAnnotation.value()));
-        if (memberKeys.isEmpty()) {
-            memberKeys.add(member.getName());
-        }
-        List<String> areaKeys = evaluateSectionKeys(member, areasAnnot);
-        for(String memberKey:memberKeys){
-            if (memberKey.startsWith("[") && memberKey.endsWith("]")) {
-                // absolute key, strip away brackets, take key as is
-                result.add(memberKey.substring(1, memberKey.length()-1));
-            }else{
-                for(String areaKey:areaKeys) {
-                    result.add(areaKey + '.' + memberKey);
-                }
-                result.add(memberKey);
+    private static List<String> evaluateKeys(Method method, Config configAnnot) {
+        List<String> propertyKeys = getPropertyKeys(method, configAnnot);
+        KeyResolver keyResolver = AUTO_RESOLVER;
+        ConfigSection sectionAnnot = method.getDeclaringClass().getAnnotation(ConfigSection.class);
+        if(sectionAnnot!=null && !sectionAnnot.keyResolver().equals(KeyResolver.class)){
+            try {
+                keyResolver = sectionAnnot.keyResolver().getDeclaredConstructor().newInstance();
+            } catch (Exception e) {
+                LOG.log(Level.SEVERE, "Cannot create KeyResolver: " + sectionAnnot.keyResolver().getName(), e);
             }
+        }
+        if(configAnnot!=null && !configAnnot.keyResolver().equals(KeyResolver.class)){
+            try {
+                keyResolver = configAnnot.keyResolver().getDeclaredConstructor().newInstance();
+            } catch (Exception e) {
+                LOG.log(Level.SEVERE, "Cannot create KeyResolver: " + sectionAnnot.keyResolver().getName(), e);
+            }
+        }
+        List<String> alternateKeys = new ArrayList<>();
+        if(configAnnot!=null){
+            alternateKeys.addAll(Arrays.asList(configAnnot.alternateKeys()));
+        }
+        return keyResolver.resolveKeys(propertyKeys, alternateKeys, method);
+    }
+
+    /**
+     * Evaluates all absolute configuration keys based on the member name found, hereby the first key
+     * is the main key, subsequent keys are the fallback keys.
+     *
+     * @param configAnnot the (optional) config annotation
+     * @return the createList of current keys in order how they should be processed/looked up.
+     */
+    private static List<String> evaluateKeys(Field field, Config configAnnot) {
+        List<String> propertyKeys = getPropertyKeys(field, configAnnot);
+        KeyResolver keyResolver = AUTO_RESOLVER;
+        ConfigSection sectionAnnot = field.getDeclaringClass().getAnnotation(ConfigSection.class);
+        if(sectionAnnot!=null && !sectionAnnot.keyResolver().equals(KeyResolver.class)){
+            try {
+                keyResolver = sectionAnnot.keyResolver().getDeclaredConstructor().newInstance();
+            } catch (Exception e) {
+                LOG.log(Level.SEVERE, "Cannot create KeyResolver: " + sectionAnnot.keyResolver().getName(), e);
+            }
+        }
+        if(configAnnot!=null && !configAnnot.keyResolver().equals(KeyResolver.class)){
+            try {
+                keyResolver = configAnnot.keyResolver().getDeclaredConstructor().newInstance();
+            } catch (Exception e) {
+                LOG.log(Level.SEVERE, "Cannot create KeyResolver: " + sectionAnnot.keyResolver().getName(), e);
+            }
+        }
+        List<String> alternateKeys = new ArrayList<>();
+        if(configAnnot!=null){
+            alternateKeys.addAll(Arrays.asList(configAnnot.alternateKeys()));
+        }
+        return keyResolver.resolveKeys(propertyKeys, alternateKeys, field);
+    }
+
+    private static List<String> getPropertyKeys(Method method, Config configAnnot) {
+        if(configAnnot!=null && !configAnnot.key().isEmpty()){
+            return Arrays.asList(configAnnot.key());
+        }
+        String name = method.getName();
+        if (name.startsWith("get") || name.startsWith("set")) {
+            return expandKey(Character.toLowerCase(name.charAt(3)) + name.substring(4));
+        }
+        return expandKey(Character.toLowerCase(name.charAt(0)) + name.substring(1));
+    }
+
+    private static List<String> expandKey(String key) {
+        List<String> result = new ArrayList<>();
+        result.add(key);
+        if(result.contains("_")){
+            result.add(key.replace("_", "."));
+        }
+        String splittedCamelCase = trySplitCamelCase(key);
+        if(splittedCamelCase!=null){
+            result.add(splittedCamelCase);
         }
         return result;
     }
 
-    private static List<String> evaluateSectionKeys(Member member, ConfigDefaultSections sectionAnnot) {
-        List<String> areaKeys = new ArrayList<>();
-        if (sectionAnnot != null && sectionAnnot.value().length>0) {
-            // Remove original entry, since it will be replaced with prefixed entries
-            areaKeys.addAll(Arrays.asList(sectionAnnot.value()));
-        }else{
-            areaKeys.add(member.getDeclaringClass().getName());
-            areaKeys.add(member.getDeclaringClass().getSimpleName());
+    private static String trySplitCamelCase(String key) {
+        String result = "";
+        int start = 0;
+        int index = 0;
+        while(index < key.length()){
+            char ch = key.charAt(index++);
+            if(Character.isAlphabetic(ch)) {
+                if (Character.isLowerCase(ch)) {
+                    result += ch;
+                } else if (Character.isUpperCase(ch)) {
+                    if(!result.isEmpty() && !result.endsWith(".")){
+                        result += ".";
+                    }
+                    result += Character.toLowerCase(ch);
+                }
+            }
+            else{
+                result += ch;
+            }
         }
-        return areaKeys;
+        if(result.equals(key)){
+            return null;
+        }
+        return result;
+    }
+
+    private static List<String> getPropertyKeys(Field field, Config configAnnot) {
+        if(configAnnot!=null && !configAnnot.key().isEmpty()){
+            return Arrays.asList(configAnnot.key());
+        }
+        return expandKey(field.getName());
+    }
+
+    private static List<String> getPropertyNames(String name) {
+        List<String> result = new ArrayList<>();
+        result.add(name);
+        // 1) Check for _, replace with dots
+        // 2) Check for camel case, add dots in lowercase
+        return result;
     }
 
 }

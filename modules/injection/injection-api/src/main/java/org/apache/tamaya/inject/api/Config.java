@@ -93,14 +93,42 @@ public @interface Config {
     String UNCONFIGURED_VALUE = "org.apache.tamaya.config.configproperty.unconfigureddvalue";
 
     /**
-     * Defines the configuration property keys to be used. Hereby the first non null createValue evaluated is injected as
-     * property createValue.
+     * Defines the main configuration property key to be used. The final target property is evaluated based on
+     * the {@link #keyResolver()} strategy, by default {@link KeyResolution#AUTO}.
      *
-     * @return the property keys, not null. If empty, the field or property name (of a setter method) being injected
+     * @return the main property key, not null. If empty, the field or property name (of a setter method) being injected
      * is used by default.
      */
     @Nonbinding
-    String[] value() default {};
+    String key() default "";
+
+    /**
+     *  Allows to customize the key resolution strategy how the {@link #key()} and {@link #alternateKeys()}values
+     *  should be used to evaluate the final main target configuration keys. Hereby the default resolution
+     *  works as follows:
+     * <ol>
+     *    <li>The containing class <b>does not</b> have a {@link ConfigSection} annotation and the field/method does not have
+     *     a {@link Config} annotation: the main key equals to
+     *     {@code Owning.class.getSimpleName() + '.' + propertyKey}.</li>
+     *    <li>The containing class <b>does not</b> have a {@link ConfigSection} annotation: the main key equals to
+     *     {@code propertyKey}.</li>
+     *    <li>The containing class <b>does</b> have a {@link ConfigSection} annotation: the main key equals to
+     *     {@code areaAnnotation.getValue() + '.' + propertyKey}.</li>
+     * </ol>
+     *
+     * @return the key resolution strategy, never null.
+     */
+    @Nonbinding
+    Class<? extends KeyResolver> keyResolver() default KeyResolver.class;
+
+    /**
+     * Defines the alternate configuration property keys to be used, if no value could be evaluated using the main
+     * {@link #key()}. All key values given are resolved using the {@link KeyResolution#ABSOLUTE} strategy.
+     *
+     * @return the property keys, not null.
+     */
+    @Nonbinding
+    String[] alternateKeys() default {};
 
     /**
      * The default createValue to be injected, if none of the configuration keys could be resolved. If no key has been

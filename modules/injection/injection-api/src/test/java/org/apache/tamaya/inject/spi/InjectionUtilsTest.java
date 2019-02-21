@@ -19,7 +19,7 @@
 package org.apache.tamaya.inject.spi;
 
 import org.apache.tamaya.inject.api.Config;
-import org.apache.tamaya.inject.api.ConfigDefaultSections;
+import org.apache.tamaya.inject.api.ConfigSection;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
@@ -33,7 +33,7 @@ public class InjectionUtilsTest {
     @Test
     public void getKeysMethod() {
         class Klazz {
-            @Config({"val", "val2", "[vvv]"})
+            @Config(key = "val", alternateKeys = {"[val2]", "vvv"})
             public void setValue(String field){}
         }
 
@@ -41,14 +41,70 @@ public class InjectionUtilsTest {
 
         List<String> foundKeys = InjectionUtils.getKeys(method);
 
-        assertThat(foundKeys).isNotNull()
-                .contains("org.apache.tamaya.inject.spi.InjectionUtilsTest$1Klazz.val",
-                        "org.apache.tamaya.inject.spi.InjectionUtilsTest$1Klazz.val2",
-                        "Klazz.val",
-                        "Klazz.val2",
-                        "val",
+        assertThat(foundKeys)
+                .isNotNull()
+                .hasSize(3)
+                .contains("Klazz.val",
+                        "val2",
+                        "Klazz.vvv");
+    }
+
+    @Test
+    public void getKeysMethod_Resolution_Absolute() {
+        class Klazz {
+            @Config(key = "val", keyResolver = AbsoluteKeyResolver.class, alternateKeys = {"val2", "vvv"})
+            public void setValue(String field){}
+        }
+
+        Method method = Klazz.class.getMethods()[0];
+
+        List<String> foundKeys = InjectionUtils.getKeys(method);
+
+        assertThat(foundKeys)
+                .isNotNull()
+                .hasSize(3)
+                .contains("val",
                         "val2",
                         "vvv");
+    }
+
+    @Test
+    public void getKeysMethod_Resolution_RELATIVE_FQN() {
+        class Klazz {
+            @Config(key = "val", keyResolver = FullKeyResolver.class, alternateKeys = {"val2", "vvv"})
+            public void setValue(String field){}
+        }
+
+        Method method = Klazz.class.getMethods()[0];
+
+        List<String> foundKeys = InjectionUtils.getKeys(method);
+
+        assertThat(foundKeys)
+                .isNotNull()
+                .hasSize(3)
+                .contains("org.apache.tamaya.inject.spi.InjectionUtilsTest$3Klazz.val",
+                        "org.apache.tamaya.inject.spi.InjectionUtilsTest$3Klazz.val2",
+                        "org.apache.tamaya.inject.spi.InjectionUtilsTest$3Klazz.vvv");
+    }
+
+    @Test
+    public void getKeysMethod_Resolution_RELATIVE_SIMPLE() {
+        @ConfigSection("nottobetaken")
+        class Klazz {
+            @Config(key = "val", keyResolver = SimpleKeyResolver.class, alternateKeys = {"val2", "vvv"})
+            public void setValue(String field){}
+        }
+
+        Method method = Klazz.class.getMethods()[0];
+
+        List<String> foundKeys = InjectionUtils.getKeys(method);
+
+        assertThat(foundKeys)
+                .isNotNull()
+                .hasSize(3)
+                .contains("Klazz.val",
+                        "Klazz.val2",
+                        "Klazz.vvv");
     }
 
     @Test
@@ -62,16 +118,13 @@ public class InjectionUtilsTest {
         Field field = Klazz.class.getFields()[0];
 
         List<String> foundKeys = InjectionUtils.getKeys(field);
-
-        assertThat(foundKeys).isNotNull()
-                             .contains("org.apache.tamaya.inject.spi.InjectionUtilsTest$2Klazz.field",
-                                       "Klazz.field",
-                                       "field");
+        assertThat(foundKeys).hasSize(1);
+        assertThat(foundKeys.get(0)).isEqualTo("Klazz.field");
     }
 
     @Test
-    public void evaluateKeysWithSection() {
-        @ConfigDefaultSections("basic")
+    public void getKeysWithSection() {
+        @ConfigSection("basic")
         class Klazz {
             public String field;
             protected String protectedField;
@@ -80,17 +133,16 @@ public class InjectionUtilsTest {
 
         Field field = Klazz.class.getFields()[0];
 
-        List<String> foundKeys = InjectionUtils.evaluateKeys(field, Klazz.class.getAnnotation(ConfigDefaultSections.class));
-        assertThat(foundKeys).isNotNull()
-                .contains("basic.field",
-                        "field");
+        List<String> foundKeys = InjectionUtils.getKeys(field);
+        assertThat(foundKeys).hasSize(1);
+        assertThat(foundKeys.get(0)).isEqualTo("basic.field");
     }
 
     @Test
-    public void evaluateKeysWithSectionAndMemberAnnotation() {
-        @ConfigDefaultSections("basic")
+    public void getKeysWithSectionAndMemberAnnotation() {
+        @ConfigSection("basic")
         class Klazz {
-            @Config({"val", "[absoluteVal]"})
+            @Config(key = "val", alternateKeys = {"relativeVal", "[absoluteVal]"})
             public String field;
             protected String protectedField;
             private String privateField;
@@ -98,17 +150,19 @@ public class InjectionUtilsTest {
 
         Field field = Klazz.class.getFields()[0];
 
-        List<String> foundKeys = InjectionUtils.evaluateKeys(field, Klazz.class.getAnnotation(ConfigDefaultSections.class),
-                field.getAnnotation(Config.class));
+        List<String> foundKeys = InjectionUtils.getKeys(field);
+        assertThat(foundKeys).hasSize(3);
+        assertThat(foundKeys.get(0)).isEqualTo("basic.val");
         assertThat(foundKeys).isNotNull()
-                .contains("basic.val", "val",
+                .contains("basic.val",
+                        "basic.relativeVal",
                         "absoluteVal");
     }
 
     @Test
-    public void evaluateKeysWithMemberAnnotation() {
+    public void getKeysWithMemberAnnotation() {
         class Klazz {
-            @Config({"val", "[absoluteVal]"})
+            @Config(key="val", alternateKeys = "[absoluteVal]")
             public String field;
             protected String protectedField;
             private String privateField;
@@ -116,10 +170,11 @@ public class InjectionUtilsTest {
 
         Field field = Klazz.class.getFields()[0];
 
-        List<String> foundKeys = InjectionUtils.evaluateKeys(field, null,
-                field.getAnnotation(Config.class));
+        List<String> foundKeys = InjectionUtils.getKeys(field);
+        assertThat(foundKeys).hasSize(2);
+        assertThat(foundKeys.get(0)).isEqualTo("Klazz.val");
         assertThat(foundKeys).isNotNull()
-                .contains("Klazz.val", "val",
+                .contains("Klazz.val",
                         "absoluteVal");
     }
 }

@@ -19,10 +19,13 @@
 package annottext;
 
 import org.apache.tamaya.inject.api.Config;
+import org.apache.tamaya.inject.api.ConfigSection;
+import org.apache.tamaya.inject.spi.AbsoluteKeyResolver;
 
+@ConfigSection(keyResolver = AbsoluteKeyResolver.class)
 public class InheritedAnnotatedConfigBean extends AnnotatedConfigBean {
 
-    @Config("someMoreValue")
+    @Config
     public String someMoreValue;
     
     public String notConfigured;

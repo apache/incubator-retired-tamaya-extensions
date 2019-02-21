@@ -28,12 +28,10 @@ import java.util.logging.Logger;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.events.ConfigEventManager;
 import org.apache.tamaya.events.spi.BaseConfigEvent;
 import org.apache.tamaya.inject.api.Config;
-import org.apache.tamaya.inject.api.ConfigDefaultSections;
 import org.apache.tamaya.inject.spi.InjectionUtils;
 import org.apache.tamaya.inject.api.WithPropertyConverter;
 import org.apache.tamaya.inject.spi.ConfiguredType;
@@ -97,8 +95,7 @@ final class InjectionHelper {
      * @return the keys to be returned, or null.
      */
     public static String getConfigValue(Method method, String[] retKey, Configuration config) {
-        ConfigDefaultSections areasAnnot = method.getDeclaringClass().getAnnotation(ConfigDefaultSections.class);
-        return getConfigValueInternal(method, areasAnnot, retKey, config);
+        return getConfigValueInternal(method, retKey, config);
     }
 
     /**
@@ -117,8 +114,7 @@ final class InjectionHelper {
      * @return the keys to be returned, or null.
      */
     public static String getConfigValue(Field field, String[] retKey, Configuration config) {
-        ConfigDefaultSections areasAnnot = field.getDeclaringClass().getAnnotation(ConfigDefaultSections.class);
-        return getConfigValueInternal(field, areasAnnot, retKey, config);
+        return getConfigValueInternal(field, retKey, config);
     }
 
     /**
@@ -126,19 +122,14 @@ final class InjectionHelper {
      *
      * @return the keys to be returned, or null.
      */
-    private static String getConfigValueInternal(AnnotatedElement element, ConfigDefaultSections areasAnnot,
+    private static String getConfigValueInternal(AnnotatedElement element,
                                                  String[] retKey, Configuration config) {
-        Config prop = element.getAnnotation(Config.class);
-        List<String> keys;
-        if (prop == null) {
-            keys = InjectionUtils.evaluateKeys((Member) element, areasAnnot);
-        } else {
-            keys = InjectionUtils.evaluateKeys((Member) element, areasAnnot, prop);
-        }
+        List<String> keys = InjectionUtils.getMemberKeys((Member) element);
         String configValue = evaluteConfigValue(keys, retKey, config);
         if (configValue == null) {
-            if(prop!=null && !prop.defaultValue().equals(Config.UNCONFIGURED_VALUE)){
-                return prop.defaultValue();
+            Config configAnnot = element.getAnnotation(Config.class);
+            if(configAnnot!=null && !configAnnot.defaultValue().equals(Config.UNCONFIGURED_VALUE)){
+                return configAnnot.defaultValue();
             }
         }
         return configValue;

@@ -18,30 +18,33 @@
  */
 package annottext;
 
+import org.apache.tamaya.inject.api.ConfigSection;
 import org.apache.tamaya.inject.api.DynamicValue;
 import org.apache.tamaya.inject.api.Config;
+import org.apache.tamaya.inject.spi.AbsoluteKeyResolver;
 
 /**
  * An example showing some basic annotations, using an interface to be proxied by the
  * configuration system.
  * Created by Anatole on 15.02.14.
  */
+@ConfigSection(keyResolver = AbsoluteKeyResolver.class)
 public interface AnnotatedConfigTemplate {
 
-    @Config(value = {"foo.bar.myprop", "mp","common.testdata.myProperty"}, defaultValue = "ET")
+    @Config(key = "foo.bar.myprop", alternateKeys = {"mp","common.testdata.myProperty"}, defaultValue = "ET")
     // @ConfigLoadPolicy(listener = MyListener.class)
     String myParameter();
 
-    @Config("simple_value")
+    @Config(key = "[simple_value]", keyResolver = AbsoluteKeyResolver.class)
     String simpleValue();
 
     @Config
     String simplestValue();
 
-    @Config("host.name")
+    @Config(key = "host.name", keyResolver = AbsoluteKeyResolver.class)
     String hostName();
 
-    @Config("host.name")
+    @Config(key = "host.name", keyResolver = AbsoluteKeyResolver.class)
     DynamicValue<String> getDynamicValue();
 
 }

@@ -19,7 +19,6 @@
 package org.apache.tamaya.inject.internal;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.inject.ConfigurationInjector;
 
 import javax.annotation.Priority;
@@ -34,7 +33,7 @@ import java.util.logging.Logger;
 
 import org.apache.tamaya.inject.api.NoConfig;
 import org.apache.tamaya.inject.api.Config;
-import org.apache.tamaya.inject.api.ConfigDefaultSections;
+import org.apache.tamaya.inject.api.ConfigSection;
 import org.apache.tamaya.inject.spi.ConfiguredType;
 import org.apache.tamaya.spi.ClassloaderAware;
 import org.osgi.service.component.annotations.Component;
@@ -96,7 +95,7 @@ public class DefaultConfigurationInjector implements ConfigurationInjector, Clas
      * @return true, if the type, a method or field has Tamaya config annotation on it.
      */
     private boolean isConfigAnnotated(Class<?> type) {
-        if(type.getClass().isAnnotationPresent(ConfigDefaultSections.class)){
+        if(type.getClass().isAnnotationPresent(ConfigSection.class)){
             return true;
         }
         for (Field f : type.getDeclaredFields()) {
