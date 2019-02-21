@@ -20,27 +20,27 @@ package org.apache.tamaya.mutableconfig;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ChangePropagationPolicyTest {
 
     @Test
     public void getApplyAllChangePolicy() throws Exception {
-        assertNotNull(ChangePropagationPolicy.ALL_POLICY);
+        assertThat(ChangePropagationPolicy.ALL_POLICY).isNotNull();
     }
 
     @Test
     public void getApplyMostSignificantOnlyChangePolicy() throws Exception {
-        assertNotNull(ChangePropagationPolicy.MOST_SIGNIFICANT_ONLY_POLICY);
+        assertThat(ChangePropagationPolicy.MOST_SIGNIFICANT_ONLY_POLICY).isNotNull();
     }
 
     @Test
     public void getApplySelectiveChangePolicy() throws Exception {
-        assertNotNull(ChangePropagationPolicy.getApplySelectiveChangePolicy("bla"));
+        assertThat(ChangePropagationPolicy.getApplySelectiveChangePolicy("bla")).isNotNull();
     }
 
     @Test
     public void getApplyNonePolicy() throws Exception {
-        assertNotNull(ChangePropagationPolicy.NONE_POLICY);
+        assertThat(ChangePropagationPolicy.NONE_POLICY).isNotNull();
     }
 }

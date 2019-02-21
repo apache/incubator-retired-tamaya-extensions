@@ -21,7 +21,6 @@ package org.apache.tamaya.microprofile;
 import org.apache.tamaya.*;
 import org.apache.tamaya.spi.*;
 import org.apache.tamaya.spisupport.propertysource.BuildablePropertySource;
-import org.assertj.core.api.Assertions;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.config.spi.ConfigBuilder;
@@ -31,15 +30,15 @@ import org.junit.Test;
 
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class MicroprofileAdapterTest {
     @Test
     public void toConfig() throws Exception {
         Configuration config = Configuration.current();
         Config mpConfig = MicroprofileAdapter.toConfig(config);
-        assertNotNull(mpConfig);
-        assertEquals(config.getProperties().keySet(), mpConfig.getPropertyNames());
+        assertThat(mpConfig).isNotNull();
+        assertThat(config.getProperties().keySet()).isEqualTo(mpConfig.getPropertyNames());
     }
 
     @Test
@@ -50,7 +49,7 @@ public class MicroprofileAdapterTest {
 
         Config result = MicroprofileAdapter.toConfig(tamayaConfiguration);
 
-        Assertions.assertThat(result).isNotNull()
+        assertThat(result).isNotNull()
                   .isInstanceOf(MicroprofileConfig.class)
                   .isSameAs(config);
     }
@@ -59,8 +58,8 @@ public class MicroprofileAdapterTest {
     public void toConfiguration() throws Exception {
         Config mpConfig = ConfigProvider.getConfig();
         Configuration config = MicroprofileAdapter.toConfiguration(mpConfig);
-        assertNotNull(config);
-        assertEquals(mpConfig.getPropertyNames(), config.getProperties().keySet());
+        assertThat(config).isNotNull();
+        assertThat(mpConfig.getPropertyNames()).isEqualTo(config.getProperties().keySet());
     }
 
     @Test
@@ -68,8 +67,7 @@ public class MicroprofileAdapterTest {
         Config config = new MyConfig();
         Configuration result = MicroprofileAdapter.toConfiguration(config);
 
-        Assertions.assertThat(result).isNotNull()
-                  .isInstanceOf(TamayaConfiguration.class);
+        assertThat(result).isNotNull().isInstanceOf(TamayaConfiguration.class);
     }
 
     @Test
@@ -82,17 +80,17 @@ public class MicroprofileAdapterTest {
         List<PropertySource> tamayaSources = new ArrayList<>();
         tamayaSources.add(testPropertySource);
         List<ConfigSource> configSources = MicroprofileAdapter.toConfigSources(tamayaSources);
-        assertNotNull(configSources);
-        assertEquals(tamayaSources.size(), configSources.size());
+        assertThat(configSources).isNotNull()
+            .hasSize(tamayaSources.size());
         compare(testPropertySource, configSources.get(0));
     }
 
     private void compare(PropertySource tamayaSource, ConfigSource mpSource) {
-        assertEquals(mpSource.getName(),tamayaSource.getName());
-        assertEquals(mpSource.getOrdinal(), tamayaSource.getOrdinal());
-        assertEquals(mpSource.getProperties().keySet(), tamayaSource.getProperties().keySet());
+        assertThat(mpSource.getName()).isEqualTo(tamayaSource.getName());
+        assertThat(mpSource.getOrdinal()).isEqualTo(tamayaSource.getOrdinal());
+        assertThat(mpSource.getProperties().keySet()).isEqualTo(tamayaSource.getProperties().keySet());
         for(String key:mpSource.getPropertyNames()){
-            assertEquals(mpSource.getValue(key), tamayaSource.get(key).getValue());
+            assertThat(mpSource.getValue(key)).isEqualTo(tamayaSource.get(key).getValue());
         }
     }
 
@@ -106,8 +104,8 @@ public class MicroprofileAdapterTest {
         List<ConfigSource> configSources = new ArrayList<>();
         configSources.add(configSource);
         List<PropertySource> propertySources = MicroprofileAdapter.toPropertySources(configSources);
-        assertNotNull(propertySources);
-        assertEquals(propertySources.size(), configSources.size());
+        assertThat(propertySources).isNotNull()
+            .hasSize(configSources.size());
         compare(propertySources.get(0), configSource);
     }
 
@@ -119,7 +117,7 @@ public class MicroprofileAdapterTest {
                 .withSimpleProperty("int0", "0")
                 .build();
         ConfigSource configSource = MicroprofileAdapter.toConfigSource(tamayaSource);
-        assertNotNull(configSource);
+        assertThat(configSource).isNotNull();
         compare(tamayaSource, configSource);
     }
 
@@ -131,28 +129,28 @@ public class MicroprofileAdapterTest {
                 .withProperty("int0", "0")
                 .build();
         PropertySource tamayaSource = MicroprofileAdapter.toPropertySource(configSource);
-        assertNotNull(configSource);
+        assertThat(configSource).isNotNull();
         compare(tamayaSource, configSource);
     }
 
     @Test
     public void toPropertyConverter() throws Exception {
         PropertyConverter<String> tamayaConverter = MicroprofileAdapter.toPropertyConverter(new UppercaseConverter());
-        assertNotNull(tamayaConverter);
-        assertEquals("ABC", tamayaConverter.convert("aBC", null));
+        assertThat(tamayaConverter).isNotNull();
+        assertThat("ABC").isEqualTo(tamayaConverter.convert("aBC", null));
     }
 
     @Test
     public void toConverter() throws Exception {
         Converter<String> mpConverter = MicroprofileAdapter.toConverter(new UppercasePropertyConverter());
-        assertNotNull(mpConverter);
-        assertEquals("ABC", mpConverter.convert("aBC"));
+        assertThat(mpConverter).isNotNull();
+        assertThat("ABC").isEqualTo(mpConverter.convert("aBC"));
     }
 
     @Test
     public void toConfigBuilder() throws Exception {
         ConfigBuilder builder = MicroprofileAdapter.toConfigBuilder(Configuration.createConfigurationBuilder());
-        assertNotNull(builder);
+        assertThat(builder).isNotNull();
     }
 
     @Test
@@ -160,9 +158,9 @@ public class MicroprofileAdapterTest {
         Map<String,PropertyValue> props = new HashMap<>();
         props.put("a", PropertyValue.createValue("a","b").setMeta("source", "toStringMap"));
         Map<String, String> mpProps = MicroprofileAdapter.toStringMap(props);
-        assertNotNull(mpProps);
-        assertEquals(props.keySet(), mpProps.keySet());
-        assertEquals(mpProps.get("a"), "b");
+        assertThat(mpProps).isNotNull();
+        assertThat(props.keySet()).isEqualTo(mpProps.keySet());
+        assertThat(mpProps.get("a")).isEqualTo("b");
     }
 
     @Test
@@ -170,10 +168,10 @@ public class MicroprofileAdapterTest {
         Map<String,String> props = new HashMap<>();
         props.put("a", "b");
         Map<String, PropertyValue> tamayaProps = MicroprofileAdapter.toPropertyValueMap(props, "toPropertyValueMap");
-        assertNotNull(tamayaProps);
-        assertEquals(tamayaProps.keySet(), props.keySet());
-        assertEquals(tamayaProps.get("a").getValue(), "b");
-        assertEquals("toPropertyValueMap", tamayaProps.get("a").getMeta("source"));
+        assertThat(tamayaProps).isNotNull();
+        assertThat(tamayaProps.keySet()).isEqualTo(props.keySet());
+        assertThat(tamayaProps.get("a").getValue()).isEqualTo("b");
+        assertThat("toPropertyValueMap").isEqualTo(tamayaProps.get("a").getMeta("source"));
     }
 
     static class MyConfig implements Config {

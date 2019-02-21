@@ -25,8 +25,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Integration tests for {@link JSONFormat}.
@@ -44,6 +43,6 @@ public class JSONFormatIT {
                 break;
             }
         }
-        assertThat(format, notNullValue());
+        assertThat(format).isNotNull();
     }
 }

@@ -34,7 +34,7 @@ import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for {@link org.apache.tamaya.inject.internal.DefaultDynamicValue}.
@@ -91,14 +91,14 @@ public class DefaultDynamicValueTest {
     public void testOf_Field() throws Exception {
         DynamicValue val = DefaultDynamicValue.of(this, getClass().getDeclaredField("myValue"),
                 Configuration.current());
-        assertNotNull(val);
+        assertThat(val).isNotNull();
     }
 
     @Test
     public void testOf_Method() throws Exception {
         DynamicValue val = DefaultDynamicValue.of(this, getClass().getDeclaredMethod("setterMethod", String.class),
                 config);
-        assertNotNull(val);
+        assertThat(val).isNotNull();
     }
 
     @Test
@@ -106,8 +106,8 @@ public class DefaultDynamicValueTest {
         properties.put("a",PropertyValue.of("a","aValue","test"));
         DynamicValue val = DefaultDynamicValue.of(this, getClass().getDeclaredField("myValue"),
                 config);
-        assertNotNull(val);
-        assertEquals("aValue",val.evaluateValue());
+        assertThat(val).isNotNull();
+        assertThat("aValue").isEqualTo(val.evaluateValue());
     }
 
     @Test
@@ -116,13 +116,13 @@ public class DefaultDynamicValueTest {
         DynamicValue val = DefaultDynamicValue.of(this, getClass().getDeclaredField("myValue"),
                 config);
         val.setUpdatePolicy(UpdatePolicy.EXPLICIT);
-        assertNotNull(val);
-        assertEquals("aValue",val.evaluateValue());
+        assertThat(val).isNotNull();
+        assertThat("aValue").isEqualTo(val.evaluateValue());
         // change config
         val.get();
         properties.put("a",PropertyValue.of("a","aValue2","test"));
-        assertTrue(val.updateValue());
-        assertEquals("aValue2", val.commitAndGet());
+        assertThat(val.updateValue()).isTrue();
+        assertThat("aValue2").isEqualTo(val.commitAndGet());
     }
 
     @Test
@@ -131,15 +131,15 @@ public class DefaultDynamicValueTest {
         DynamicValue val = DefaultDynamicValue.of(this, getClass().getDeclaredField("myValue"),
                 config);
         val.setUpdatePolicy(UpdatePolicy.EXPLICIT);
-        assertNotNull(val);
-        assertEquals("aValue", val.evaluateValue());
+        assertThat(val).isNotNull();
+        assertThat("aValue").isEqualTo(val.evaluateValue());
         // change config
         val.get();
         properties.put("a",PropertyValue.of("a","aValue2","test"));
-        assertEquals("aValue2", val.evaluateValue());
-        assertTrue(val.updateValue());
+        assertThat("aValue2").isEqualTo(val.evaluateValue());
+        assertThat(val.updateValue()).isTrue();
         val.commit();
-        assertEquals("aValue2", val.get());
+        assertThat("aValue2").isEqualTo(val.get());
     }
 
     @Test
@@ -148,7 +148,7 @@ public class DefaultDynamicValueTest {
                 config);
         for(UpdatePolicy pol: UpdatePolicy.values()) {
             val.setUpdatePolicy(pol);
-            assertEquals(pol, val.getUpdatePolicy());
+            assertThat(pol).isEqualTo(val.getUpdatePolicy());
         }
     }
 
@@ -163,12 +163,12 @@ public class DefaultDynamicValueTest {
         val.get();
         properties.put("a",PropertyValue.of("a","aValue2","test"));
         val.get();
-        assertNotNull(event);
+        assertThat(event).isNotNull();
         event = null;
         val.removeListener(consumer);
         properties.put("a",PropertyValue.of("a","aValue3","test"));
         val.updateValue();
-        assertNull(event);
+        assertThat(event).isNull();
     }
 
     @Test
@@ -179,7 +179,7 @@ public class DefaultDynamicValueTest {
         val.setUpdatePolicy(UpdatePolicy.IMMEDIATE);
         properties.put("a",PropertyValue.of("a","aValue2","test"));
         val.updateValue();
-        assertEquals("aValue2", val.get());
+        assertThat("aValue2").isEqualTo(val.get());
     }
 
     @Test
@@ -188,13 +188,13 @@ public class DefaultDynamicValueTest {
         DynamicValue val = DefaultDynamicValue.of(this, getClass().getDeclaredField("myValue"),
                 config);
         val.setUpdatePolicy(UpdatePolicy.EXPLICIT);
-        assertNotNull(val.get());
-        assertEquals("aValue", val.get());
+        assertThat(val.get()).isNotNull();
+        assertThat("aValue").isEqualTo(val.get());
         val.updateValue();
-        assertEquals("aValue", val.get());
+        assertThat("aValue").isEqualTo(val.get());
         val.setUpdatePolicy(UpdatePolicy.IMMEDIATE);
         val.updateValue();
-        assertEquals("aValue",val.get());
+        assertThat("aValue").isEqualTo(val.get());
     }
 
     @Test
@@ -203,10 +203,10 @@ public class DefaultDynamicValueTest {
         DynamicValue val = DefaultDynamicValue.of(this, getClass().getDeclaredField("myValue"),
                 config);
         val.setUpdatePolicy(UpdatePolicy.EXPLICIT);
-        assertNotNull(val.get());
-        assertEquals("aValue",val.evaluateValue());
+        assertThat(val.get()).isNotNull();
+        assertThat("aValue").isEqualTo(val.evaluateValue());
         properties.put("a",PropertyValue.of("a","aValue2","test"));
-        assertEquals("aValue2", val.evaluateValue());
+        assertThat("aValue2").isEqualTo(val.evaluateValue());
     }
 
     @Test
@@ -216,19 +216,14 @@ public class DefaultDynamicValueTest {
                 config);
         val.setUpdatePolicy(UpdatePolicy.EXPLICIT);
         val.get();
-        assertNull(val.getNewValue());
+        assertThat(val.getNewValue()).isNull();
         properties.put("a",PropertyValue.createValue("a","aValue2"));
         val.get();
-        assertNotNull(val.getNewValue());
-        assertEquals("aValue2", val.getNewValue());
+        assertThat(val.getNewValue()).isNotNull();
+        assertThat("aValue2").isEqualTo(val.getNewValue());
         val.commit();
-        assertEquals("aValue2", val.get());
-        assertNull(val.getNewValue());
-    }
-
-    @Test
-    public void testIsPresent() throws Exception {
-
+        assertThat("aValue2").isEqualTo(val.get());
+        assertThat(val.getNewValue()).isNull();
     }
 
     @Test
@@ -237,10 +232,10 @@ public class DefaultDynamicValueTest {
         DynamicValue val = DefaultDynamicValue.of(this, getClass().getDeclaredField("myValue"),
                 config);
         val.setUpdatePolicy(UpdatePolicy.IMMEDIATE);
-        assertTrue(val.isPresent());
+        assertThat(val.isPresent()).isTrue();
         properties.remove("a");
         val.updateValue();
-        assertFalse(val.isPresent());
+        assertThat(val.isPresent()).isFalse();
     }
 
     @Test
@@ -248,10 +243,10 @@ public class DefaultDynamicValueTest {
         DynamicValue val = DefaultDynamicValue.of(this, getClass().getDeclaredField("myValue"),
                 config);
         val.setUpdatePolicy(UpdatePolicy.IMMEDIATE);
-        assertEquals("bla", val.orElse("bla"));
+        assertThat("bla").isEqualTo(val.orElse("bla"));
         properties.put("a",PropertyValue.of("a","aValue","test"));
         val.updateValue();
-        assertEquals("aValue", val.orElse("bla"));
+        assertThat("aValue").isEqualTo(val.orElse("bla"));
     }
 
 // TODO reenable with Java 8 support.

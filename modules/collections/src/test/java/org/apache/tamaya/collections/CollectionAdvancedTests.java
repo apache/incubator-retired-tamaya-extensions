@@ -26,9 +26,7 @@ import java.util.Currency;
 import java.util.List;
 import java.util.Map;
 
-import static junit.framework.TestCase.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by atsticks on 16.02.16.
@@ -47,12 +45,7 @@ public class CollectionAdvancedTests {
     public void testCustomSeparator(){
         Configuration config = Configuration.current();
         List<String> items = config.get("sep-list", new TypeLiteral<List<String>>(){});
-        assertNotNull(items);
-        assertFalse(items.isEmpty());
-        assertEquals(3, items.size());
-        assertEquals("a,b,c", items.get(0));
-        assertEquals("d,e,f", items.get(1));
-        assertEquals("g,h,i", items.get(2));
+        assertThat(items).isNotNull().isNotEmpty().hasSize(3).containsExactly("a,b,c", "d,e,f", "g,h,i");
     }
 
     /**
@@ -66,12 +59,10 @@ public class CollectionAdvancedTests {
     public void testTypedContent(){
         Configuration config = Configuration.current();
         List<Currency> items = config.get("currency-list", new TypeLiteral<List<Currency>>(){});
-        assertNotNull(items);
-        assertFalse(items.isEmpty());
-        assertEquals(3, items.size());
-        assertEquals("CHF", items.get(0).getCurrencyCode());
-        assertEquals("USD", items.get(1).getCurrencyCode());
-        assertEquals("USS", items.get(2).getCurrencyCode());
+        assertThat(items).isNotNull().isNotEmpty().hasSize(3);
+        assertThat("CHF").isEqualTo(items.get(0).getCurrencyCode());
+        assertThat("USD").isEqualTo(items.get(1).getCurrencyCode());
+        assertThat("USS").isEqualTo(items.get(2).getCurrencyCode());
     }
 
     /**
@@ -86,12 +77,7 @@ public class CollectionAdvancedTests {
     public void testCustomParser(){
         Configuration config = Configuration.current();
         List<String> items = config.get("parser-list", new TypeLiteral<List<String>>(){});
-        assertNotNull(items);
-        assertFalse(items.isEmpty());
-        assertEquals(3, items.size());
-        assertEquals("(A)", items.get(0));
-        assertEquals("(B)", items.get(1));
-        assertEquals("(C)", items.get(2));
+        assertThat(items).isNotNull().isNotEmpty().hasSize(3).containsExactly("(A)", "(B)", "(C)");
     }
 
     /**
@@ -106,11 +92,9 @@ public class CollectionAdvancedTests {
     public void testCustomMapParser(){
         Configuration config = Configuration.current();
         Map<String,String> items = config.get("redefined-map", Map.class);
-        assertNotNull(items);
-        assertFalse(items.isEmpty());
-        assertEquals(3, items.size());
-        assertEquals("none", items.get("0"));
-        assertEquals("single", items.get("1"));
-        assertEquals("any", items.get("2"));
+        assertThat(items).isNotNull().isNotEmpty().hasSize(3);
+        assertThat("none").isEqualTo(items.get("0"));
+        assertThat("single").isEqualTo(items.get("1"));
+        assertThat("any").isEqualTo(items.get("2"));
     }
 }

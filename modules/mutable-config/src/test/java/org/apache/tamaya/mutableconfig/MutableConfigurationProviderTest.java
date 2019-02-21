@@ -21,7 +21,7 @@ package org.apache.tamaya.mutableconfig;
 import org.apache.tamaya.Configuration;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by atsticks on 26.08.16.
@@ -29,16 +29,16 @@ import static org.junit.Assert.*;
 public class MutableConfigurationProviderTest {
     @Test
     public void createMutableConfiguration() throws Exception {
-        assertNotNull(MutableConfigurationProvider.getInstance().createMutableConfiguration());
+        assertThat(MutableConfigurationProvider.getInstance().createMutableConfiguration()).isNotNull();
     }
 
     @Test
     public void createMutableConfiguration1() throws Exception {
         MutableConfiguration cfg = MutableConfigurationProvider.getInstance()
                 .createMutableConfiguration(Configuration.current());
-        assertNotNull(cfg);
-        assertEquals(cfg.getChangePropagationPolicy(),
-                ChangePropagationPolicy.MOST_SIGNIFICANT_ONLY_POLICY);
+        assertThat(cfg).isNotNull();
+        assertThat(cfg.getChangePropagationPolicy())
+            .isEqualTo(ChangePropagationPolicy.MOST_SIGNIFICANT_ONLY_POLICY);
     }
 
     @Test
@@ -47,8 +47,8 @@ public class MutableConfigurationProviderTest {
         MutableConfiguration cfg = MutableConfigurationProvider.getInstance()
                 .createMutableConfiguration(Configuration.current(),
                         policy);
-        assertNotNull(cfg);
-        assertEquals(cfg.getChangePropagationPolicy(), policy);
+        assertThat(cfg).isNotNull();
+        assertThat(cfg.getChangePropagationPolicy()).isEqualTo(policy);
     }
 
     @Test
@@ -56,28 +56,28 @@ public class MutableConfigurationProviderTest {
         ChangePropagationPolicy policy = ChangePropagationPolicy.getApplySelectiveChangePolicy("gugus");
         MutableConfiguration cfg = MutableConfigurationProvider.getInstance()
                 .createMutableConfiguration(policy);
-        assertNotNull(cfg);
-        assertEquals(cfg.getChangePropagationPolicy(), policy);
+        assertThat(cfg).isNotNull();
+        assertThat(cfg.getChangePropagationPolicy()).isEqualTo(policy);
     }
 
     @Test
     public void getApplyAllChangePolicy() throws Exception {
-        assertNotNull(MutableConfigurationProvider.getApplyAllChangePolicy());
+        assertThat(MutableConfigurationProvider.getApplyAllChangePolicy()).isNotNull();
     }
 
     @Test
     public void getApplyMostSignificantOnlyChangePolicy() throws Exception {
-        assertNotNull(MutableConfigurationProvider.getApplyMostSignificantOnlyChangePolicy());
+        assertThat(MutableConfigurationProvider.getApplyMostSignificantOnlyChangePolicy()).isNotNull();
     }
 
     @Test
     public void getApplySelectiveChangePolicy() throws Exception {
-        assertNotNull(MutableConfigurationProvider.getApplySelectiveChangePolicy());
+        assertThat(MutableConfigurationProvider.getApplySelectiveChangePolicy()).isNotNull();
     }
 
     @Test
     public void getApplyNonePolicy() throws Exception {
-        assertNotNull(MutableConfigurationProvider.getApplyNonePolicy());
+        assertThat(MutableConfigurationProvider.getApplyNonePolicy()).isNotNull();
     }
 
 }

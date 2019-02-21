@@ -18,14 +18,14 @@
  */
 package org.apache.tamaya.resource.internal;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
 
 import org.junit.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests the {@link org.apache.tamaya.resource.internal.DefaultResourceResolver} using CP and FS path expressions.
@@ -38,18 +38,18 @@ public class DefaultResourceResolverTest {
     @Test
     public void testGetResources_CP() throws Exception {
         Collection<URL> found = resolver.getResources("classpath:resources_testroot/**/*.file");
-        assertEquals(7, found.size());
+        assertThat(found).hasSize(7);
         Collection<URL> found2 = resolver.getResources("resources_testroot/**/*.file");
-        assertEquals(found, found2);
+        assertThat(found).isEqualTo(found2);
     }
 
     @Test
     public void testGetResources_FS() throws Exception {
         String resDir = getResourceDir();
         Collection<URL> found = resolver.getResources("file:" + resDir + "/resources_testroot/aa?a/*.file");
-        assertEquals(5, found.size());
+        assertThat(found).hasSize(5);
         Collection<URL> found2 = resolver.getResources(resDir + "/resources_testroot/aa?a/*.file");
-        assertEquals(found, found2);
+        assertThat(found).isEqualTo(found2);
     }
 
     private String getResourceDir() throws URISyntaxException {

@@ -26,7 +26,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class BaseDynamicValueTest {
 
@@ -46,28 +46,28 @@ public class BaseDynamicValueTest {
         MyDynamicValue dv = new MyDynamicValue(Configuration.current(),"commitAndGet");
         System.setProperty("commitAndGet", "no");
         dv.setUpdatePolicy(UpdatePolicy.EXPLICIT);
-        assertTrue(dv.updateValue());
-        assertEquals(dv.commitAndGet(), "no");
+        assertThat(dv.updateValue()).isTrue();
+        assertThat(dv.commitAndGet()).isEqualTo("no");
         dv.setUpdatePolicy(UpdatePolicy.IMMEDIATE);
         System.setProperty("commitAndGet", "yes2");
-        assertTrue(dv.updateValue());
-        assertEquals(dv.get(), "yes2");
+        assertThat(dv.updateValue()).isTrue();
+        assertThat(dv.get()).isEqualTo("yes2");
     }
 
     @Test
     public void isPresent() throws Exception {
-        assertFalse(new MyDynamicValue(Configuration.current(),"a", "b").isPresent());
-        assertTrue(new MyDynamicValue(Configuration.current(),"java.version").isPresent());
+        assertThat(new MyDynamicValue(Configuration.current(),"a", "b").isPresent()).isFalse();
+        assertThat(new MyDynamicValue(Configuration.current(),"java.version").isPresent()).isTrue();
     }
 
     @Test
     public void orElse() throws Exception {
-        assertEquals(new MyDynamicValue(Configuration.current(),"a", "b").orElse("foo"), "foo");
+        assertThat(new MyDynamicValue(Configuration.current(),"a", "b").orElse("foo")).isEqualTo("foo");
     }
 
     @Test
     public void orElseGet() throws Exception {
-        assertEquals(new MyDynamicValue(Configuration.current(),"a", "b").orElseGet(() -> "foo"), "foo");
+        assertThat(new MyDynamicValue(Configuration.current(),"a", "b").orElseGet(() -> "foo")).isEqualTo("foo");
     }
 
     @Test(expected = NoSuchFieldException.class)

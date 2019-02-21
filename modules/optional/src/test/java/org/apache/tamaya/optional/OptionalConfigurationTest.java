@@ -18,7 +18,7 @@
  */
 package org.apache.tamaya.optional;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by Anatole on 07.09.2015.
@@ -34,10 +34,10 @@ public class OptionalConfigurationTest {
                 return (T)"result";
             }
         });
-        assertNotNull(cfg);
-        assertEquals(cfg.get("sdkjsdkjsdkjhskjdh"), "result");
-        assertEquals(cfg.get("sdkjsdkjsdsdsdkjhskjdh", String.class), "result");
-        assertEquals(cfg.get("java.version", String.class), "result");
+        assertThat(cfg).isNotNull();
+        assertThat(cfg.get("sdkjsdkjsdkjhskjdh")).isEqualTo("result");
+        assertThat(cfg.get("sdkjsdkjsdsdsdkjhskjdh", String.class)).isEqualTo("result");
+        assertThat(cfg.get("java.version", String.class)).isEqualTo("result");
     }
 
     @org.junit.Test
@@ -48,10 +48,10 @@ public class OptionalConfigurationTest {
                 return (T)"result";
             }
         });
-        assertNotNull(cfg);
-        assertEquals(cfg.get("sdkjsdkjsdkjhskjdh"), "result");
-        assertEquals(cfg.get("sdkjsdkjsdsdsdkjhskjdh", String.class), "result");
-        assertEquals(cfg.get("java.version", String.class), System.getProperty("java.version"));
+        assertThat(cfg).isNotNull();
+        assertThat(cfg.get("sdkjsdkjsdkjhskjdh")).isEqualTo("result");
+        assertThat(cfg.get("sdkjsdkjsdsdsdkjhskjdh", String.class)).isEqualTo("result");
+        assertThat(cfg.get("java.version", String.class)).isEqualTo(System.getProperty("java.version"));
     }
 
     @org.junit.Test(expected = IllegalStateException.class)
@@ -65,38 +65,38 @@ public class OptionalConfigurationTest {
                 return (T)"result";
             }
         });
-        assertNotNull(cfg);
-        assertEquals(cfg.get("sdkjsdkjsdkjhskjdh"), "result");
-        assertEquals(cfg.get("sdkjsdkjsdsdsdkjhskjdh", String.class), "result");
-        assertEquals(cfg.get("java.version", String.class), System.getProperty("java.version"));
-        assertEquals(cfg.get("java.version", String.class), "dfdf");
+        assertThat(cfg).isNotNull();
+        assertThat(cfg.get("sdkjsdkjsdkjhskjdh")).isEqualTo("result");
+        assertThat(cfg.get("sdkjsdkjsdsdsdkjhskjdh", String.class)).isEqualTo("result");
+        assertThat(cfg.get("java.version", String.class)).isEqualTo(System.getProperty("java.version"));
+        assertThat(cfg.get("java.version", String.class)).isEqualTo("dfdf");
     }
 
     @org.junit.Test
     public void testOf_NOPROV_THROWS_EXCEPTION() throws Exception {
         OptionalConfiguration cfg = OptionalConfiguration.of(EvaluationPolicy.THROWS_EXCEPTION);
-        assertNotNull(cfg);
-        assertNull(cfg.get("sdkjsdkjsdkjhskjdh"));
-        assertEquals(cfg.get("java.version"), System.getProperty("java.version"));
-        assertEquals(cfg.get("java.version", String.class), System.getProperty("java.version"));
+        assertThat(cfg).isNotNull();
+        assertThat(cfg.get("sdkjsdkjsdkjhskjdh")).isNull();
+        assertThat(cfg.get("java.version")).isEqualTo(System.getProperty("java.version"));
+        assertThat(cfg.get("java.version", String.class)).isEqualTo(System.getProperty("java.version"));
     }
 
     @org.junit.Test
     public void testOf_NOPROV_TAMAYA_OVERRIDES_OTHER() throws Exception {
         OptionalConfiguration cfg = OptionalConfiguration.of(EvaluationPolicy.TAMAYA_OVERRIDES_OTHER);
-        assertNotNull(cfg);
-        assertNull(cfg.get("sdkjsdkjsdkjhskjdh"));
-        assertEquals(cfg.get("java.version"), System.getProperty("java.version"));
-        assertEquals(cfg.get("java.version", String.class), System.getProperty("java.version"));
+        assertThat(cfg).isNotNull();
+        assertThat(cfg.get("sdkjsdkjsdkjhskjdh")).isNull();
+        assertThat(cfg.get("java.version")).isEqualTo(System.getProperty("java.version"));
+        assertThat(cfg.get("java.version", String.class)).isEqualTo(System.getProperty("java.version"));
     }
 
     @org.junit.Test
     public void testOf_NOPROV_OTHER_OVERRIDES_TAMAYA() throws Exception {
         OptionalConfiguration cfg = OptionalConfiguration.of(EvaluationPolicy.OTHER_OVERRIDES_TAMAYA);
-        assertNotNull(cfg);
-        assertNull(cfg.get("sdkjsdkjsdkjhskjdh"));
-        assertEquals(cfg.get("java.version"), System.getProperty("java.version"));
-        assertEquals(cfg.get("java.version", String.class), System.getProperty("java.version"));
+        assertThat(cfg).isNotNull();
+        assertThat(cfg.get("sdkjsdkjsdkjhskjdh")).isNull();
+        assertThat(cfg.get("java.version")).isEqualTo(System.getProperty("java.version"));
+        assertThat(cfg.get("java.version", String.class)).isEqualTo(System.getProperty("java.version"));
     }
 
 }

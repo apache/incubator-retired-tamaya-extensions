@@ -25,7 +25,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Test for checking correct lookup using the filesystem.
@@ -44,18 +44,18 @@ public class FileCollectorTest {
     public void testCollectResourcesFromLocalFSPath() throws Exception {
         String resDir = getResourceDir();
         Collection<URL> found = FileCollector.collectFiles("file:" + resDir + "/**/*.file");
-        assertEquals(7, found.size());
+        assertThat(found).hasSize(7);
         Collection<URL> found2 = FileCollector.collectFiles(resDir + "/**/*.file");
-        assertEquals(found, found2);
+        assertThat(found).isEqualTo(found2);
     }
 
     @Test
     public void testCollectResourcesFromLocalFSPath_WithFolderPlaceholder() throws Exception {
         String resDir = getResourceDir();
         Collection<URL> found = FileCollector.collectFiles("file:" + resDir + "/aa?a/*.file");
-        assertEquals(5, found.size());
+        assertThat(found).hasSize(5);
         Collection<URL> found2 = FileCollector.collectFiles(resDir + "/aa?a/*.file");
-        assertEquals(found, found2);
+        assertThat(found).isEqualTo(found2);
     }
 
 
@@ -63,9 +63,9 @@ public class FileCollectorTest {
     public void testCollectResourcesFromLocalFSPath_WithFolderAny() throws Exception {
         String resDir = getResourceDir();
         Collection<URL> found = FileCollector.collectFiles("file:" + resDir + "/b*/b?/*.file");
-        assertEquals(1, found.size());
+        assertThat(found).hasSize(1);
         Collection<URL> found2 = FileCollector.collectFiles(resDir + "/b*/b?/*.file");
-        assertEquals(found, found2);
+        assertThat(found).isEqualTo(found2);
     }
 
 

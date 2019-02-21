@@ -31,8 +31,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class AbstractPathPropertySourceProviderTest {
 
@@ -47,7 +46,7 @@ public class AbstractPathPropertySourceProviderTest {
 
     @Test
     public void testGetPropertySources() throws Exception {
-        assertNotNull(myProvider.getPropertySources());
+        assertThat(myProvider.getPropertySources()).isNotNull();
     }
 
     @Test
@@ -55,8 +54,8 @@ public class AbstractPathPropertySourceProviderTest {
         PropertySource ps = AbstractPathPropertySourceProvider.createPropertiesPropertySource(
                 ClassLoader.getSystemClassLoader().getResource("test.properties")
         );
-        assertNotNull(ps);
-        assertTrue(ps.getProperties().isEmpty());
+        assertThat(ps).isNotNull();
+        assertThat(ps.getProperties()).isEmpty();
     }
 
     private static final class EmptyPropertySource implements PropertySource {

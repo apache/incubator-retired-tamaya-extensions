@@ -28,12 +28,8 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Set;
 
-import static junit.framework.TestCase.assertNotNull;
 import static org.apache.tamaya.functions.PropertySourceFunctions.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.*;
 
 public class PropertySourceFunctionsTest {
 
@@ -358,9 +354,8 @@ public class PropertySourceFunctionsTest {
     @Test
     public void testEmptyPropertySource() throws Exception {
         PropertySource ps = PropertySource.EMPTY;
-        assertNotNull(ps);
-        assertNotNull(ps.getProperties());
-        assertTrue(ps.getProperties().isEmpty());
-        assertEquals(ps.getName(), "<empty>" );
+        assertThat(ps).isNotNull();
+        assertThat(ps.getProperties()).isNotNull().isEmpty();
+        assertThat(ps.getName()).isEqualTo("<empty>");
     }
 }

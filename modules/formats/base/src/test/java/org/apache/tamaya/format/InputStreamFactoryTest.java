@@ -24,9 +24,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -61,7 +59,7 @@ public class InputStreamFactoryTest {
         byte[] byteArray = new byte[4];
         for (int i = 0; i < 100; i++) {
             InputStream is = closer.createInputStream();
-            assertThat(is.read(byteArray), equalTo(4));
+            assertThat(is.read(byteArray)).isEqualTo(4);
         }
     }
 
@@ -72,7 +70,7 @@ public class InputStreamFactoryTest {
         InputStreamFactory closer = new InputStreamFactory(stream);
         for (int i = 0; i < 100; i++) {
             InputStream is = closer.createInputStream();
-            assertThat(is.skip(2L), equalTo(2L));
+            assertThat(is.skip(2L)).isEqualTo(2L);
         }
     }
 
@@ -83,7 +81,7 @@ public class InputStreamFactoryTest {
         InputStreamFactory closer = new InputStreamFactory(stream);
         for (int i = 0; i < 100; i++) {
             InputStream is = closer.createInputStream();
-            assertThat(is.available(), equalTo(4));
+            assertThat(is.available()).isEqualTo(4);
         }
     }
 
@@ -124,7 +122,7 @@ public class InputStreamFactoryTest {
         InputStreamFactory closer = new InputStreamFactory(stream);
         for (int i = 0; i < 100; i++) {
             InputStream is = closer.createInputStream();
-            assertThat(is.markSupported(), is(true));
+            assertThat(is.markSupported()).isTrue();
         }
     }
 
@@ -134,10 +132,10 @@ public class InputStreamFactoryTest {
         InputStreamFactory closer = new InputStreamFactory(stream);
         for (int i = 0; i < 100; i++) {
             InputStream is = closer.createInputStream();
-            assertThat(is.read(), equalTo(1));
-            assertThat(is.read(), equalTo(2));
-            assertThat(is.read(), equalTo(3));
-            assertThat(is.read(), equalTo(4));
+            assertThat(is.read()).isEqualTo(1);
+            assertThat(is.read()).isEqualTo(2);
+            assertThat(is.read()).isEqualTo(3);
+            assertThat(is.read()).isEqualTo(4);
         }
     }
 

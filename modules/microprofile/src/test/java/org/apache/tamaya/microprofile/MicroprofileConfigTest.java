@@ -30,7 +30,7 @@ import java.time.Instant;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by atsticks on 24.03.17.
@@ -45,7 +45,7 @@ public class MicroprofileConfigTest {
         for (ConfigSource cs : sources) {
             count++;
         }
-        assertEquals(4, count);
+        assertThat(4).isEqualTo(count);
     }
 
     @Test
@@ -54,10 +54,9 @@ public class MicroprofileConfigTest {
         int count = 0;
         for(String key:config.getPropertyNames()){
             Optional<String> val = config.getOptionalValue(key, String.class);
-            assertNotNull(val);
+            assertThat(val).isNotNull();
             val = config.getOptionalValue(key + System.currentTimeMillis(), String.class);
-            assertNotNull(val);
-            assertFalse(val.isPresent());
+            assertThat(val).isNotNull().isNotPresent();
         }
     }
 
@@ -67,7 +66,7 @@ public class MicroprofileConfigTest {
         int count = 0;
         for(String key:config.getPropertyNames()){
             String val = config.getValue(key, String.class);
-            assertNotNull(val);
+            assertThat(val).isNotNull();
         }
     }
 
@@ -87,13 +86,13 @@ public class MicroprofileConfigTest {
     public void testEmptySystemProperty(){
         System.setProperty("my.empty.property", "");
         Config config = ConfigProvider.getConfig();
-        assertEquals("", config.getValue("my.empty.property", String.class));
+        assertThat("").isEqualTo(config.getValue("my.empty.property", String.class));
     }
 
     @Test
     public void testEmptyConfigProperty(){
         Config config = ConfigProvider.getConfig();
-        assertEquals("", config.getValue("my.empty.property.in.config.file", String.class));
+        assertThat("").isEqualTo(config.getValue("my.empty.property.in.config.file", String.class));
     }
 
 }

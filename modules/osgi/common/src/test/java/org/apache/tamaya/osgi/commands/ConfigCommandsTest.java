@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by atsti on 30.09.2017.
@@ -34,133 +34,133 @@ public class ConfigCommandsTest extends AbstractOSGITest{
     @Test
     public void getInfo() throws Exception {
         String result = ConfigCommands.getInfo(tamayaConfigPlugin);
-        assertNotNull(result);
+        assertThat(result).isNotNull();
         System.out.println(result);
-        assertTrue(result.contains("Property Sources"));
-        assertTrue(result.contains("Property Converter"));
-        assertTrue(result.contains("Property Filter"));
-        assertTrue(result.contains("ConfigurationContext"));
-        assertTrue(result.contains("Configuration"));
+        assertThat(result.contains("Property Sources")).isTrue();
+        assertThat(result.contains("Property Converter")).isTrue();
+        assertThat(result.contains("Property Filter")).isTrue();
+        assertThat(result.contains("ConfigurationContext")).isTrue();
+        assertThat(result.contains("Configuration")).isTrue();
     }
 
     @Test
     public void readTamayaConfig() throws Exception {
         String result = ConfigCommands.readTamayaConfig("java", null);
-        assertNotNull(result);
+        assertThat(result).isNotNull();
         System.out.println(result);
-        assertTrue(result.contains(".version"));
-        assertTrue(result.contains("Section"));
-        assertTrue(result.contains("java"));
+        assertThat(result.contains(".version")).isTrue();
+        assertThat(result.contains("Section")).isTrue();
+        assertThat(result.contains("java")).isTrue();
         result = ConfigCommands.readTamayaConfig("java", "version");
-        assertNotNull(result);
-        assertFalse(result.contains(".version"));
-        assertTrue(result.contains("Section"));
-        assertTrue(result.contains("java"));
-        assertTrue(result.contains("Filter"));
-        assertTrue(result.contains("version"));
-        assertFalse(result.contains("java.vendor"));
+        assertThat(result).isNotNull();
+        assertThat(result.contains(".version")).isFalse();
+        assertThat(result.contains("Section")).isTrue();
+        assertThat(result.contains("java")).isTrue();
+        assertThat(result.contains("Filter")).isTrue();
+        assertThat(result.contains("version")).isTrue();
+        assertThat(result.contains("java.vendor")).isFalse();
         System.out.println("readTamayaConfig: " + result);
     }
 
     @Test
     public void readTamayaConfig4PID() throws Exception {
         String result = ConfigCommands.readTamayaConfig4PID("test", null);
-        assertNotNull(result);
+        assertThat(result).isNotNull();
         System.out.println(result);
-        assertTrue(result.contains("Configuration"));
-        assertTrue(result.contains("test"));
+        assertThat(result.contains("Configuration")).isTrue();
+        assertThat(result.contains("test")).isTrue();
     }
 
     @Test
     public void applyTamayaConfiguration() throws Exception {
         String result = ConfigCommands.applyTamayaConfiguration(tamayaConfigPlugin, "applyTamayaConfiguration", Policy.OVERRIDE.toString(), true);
-        assertNotNull(result);
+        assertThat(result).isNotNull();
         System.out.println(result);
-        assertTrue(result.contains("OSGI Configuration for PID"));
-        assertTrue(result.contains("applyTamayaConfiguration"));
-        assertTrue(result.contains("OVERRIDE"));
-        assertTrue(result.contains("Dryrun"));
-        assertTrue(result.contains("true"));
+        assertThat(result.contains("OSGI Configuration for PID")).isTrue();
+        assertThat(result.contains("applyTamayaConfiguration")).isTrue();
+        assertThat(result.contains("OVERRIDE")).isTrue();
+        assertThat(result.contains("Dryrun")).isTrue();
+        assertThat(result.contains("true")).isTrue();
     }
 
     @Test
     public void readOSGIConfiguration() throws Exception {
         String result = ConfigCommands.readOSGIConfiguration(tamayaConfigPlugin, "readOSGIConfiguration", "java");
-        assertNotNull(result);
+        assertThat(result).isNotNull();
         System.out.println(result);
-        assertTrue(result.contains("OSGI Configuration for PID"));
-        assertTrue(result.contains("readOSGIConfiguration"));
-        assertTrue(result.contains("java.home"));
+        assertThat(result.contains("OSGI Configuration for PID")).isTrue();
+        assertThat(result.contains("readOSGIConfiguration")).isTrue();
+        assertThat(result.contains("java.home")).isTrue();
     }
 
     @Test
     public void getDefaultOpPolicy() throws Exception {
         Policy mode = tamayaConfigPlugin.getDefaultPolicy();
         String result = ConfigCommands.getDefaultOpPolicy(tamayaConfigPlugin);
-        assertNotNull(result);
-        assertTrue(result.contains(mode.toString()));
+        assertThat(result).isNotNull();
+        assertThat(result.contains(mode.toString())).isTrue();
     }
 
     @Test
     public void setDefaultOpPolicy() throws Exception {
         String result = ConfigCommands.setDefaultOpPolicy(tamayaConfigPlugin, Policy.EXTEND.toString());
-        assertNotNull(result);
-        assertTrue(result.contains("EXTEND"));
-        assertEquals(tamayaConfigPlugin.getDefaultPolicy(), Policy.EXTEND);
+        assertThat(result).isNotNull();
+        assertThat(result.contains("EXTEND")).isTrue();
+        assertThat(tamayaConfigPlugin.getDefaultPolicy()).isEqualTo(Policy.EXTEND);
         result = ConfigCommands.setDefaultOpPolicy(tamayaConfigPlugin, Policy.UPDATE_ONLY.toString());
-        assertNotNull(result);
-        assertTrue(result.contains("UPDATE_ONLY"));
-        assertEquals(tamayaConfigPlugin.getDefaultPolicy(), Policy.UPDATE_ONLY);
+        assertThat(result).isNotNull();
+        assertThat(result.contains("UPDATE_ONLY")).isTrue();
+        assertThat(tamayaConfigPlugin.getDefaultPolicy()).isEqualTo(Policy.UPDATE_ONLY);
     }
 
     @Test
     public void getProperty() throws Exception {
         String result = ConfigCommands.getProperty("system-properties", "java.version", false);
-        assertNotNull(result);
+        assertThat(result).isNotNull();
         System.out.println(result);
-        assertEquals(result, System.getProperty("java.version"));
+        assertThat(result).isEqualTo(System.getProperty("java.version"));
         result = ConfigCommands.getProperty("system-properties", "java.version", true);
-        assertNotNull(result);
+        assertThat(result).isNotNull();
     }
 
     @Test
     public void getPropertySource() throws Exception {
         String result = ConfigCommands.getPropertySource("system-properties");
-        assertNotNull(result);
+        assertThat(result).isNotNull();
         System.out.println(result);
-        assertTrue(result.contains("Property Source"));
-        assertTrue(result.contains("ID"));
-        assertTrue(result.contains("system-properties"));
-        assertTrue(result.contains("Ordinal"));
-        assertTrue(result.contains("java.version"));
+        assertThat(result.contains("Property Source")).isTrue();
+        assertThat(result.contains("ID")).isTrue();
+        assertThat(result.contains("system-properties")).isTrue();
+        assertThat(result.contains("Ordinal")).isTrue();
+        assertThat(result.contains("java.version")).isTrue();
     }
 
     @Test
     public void getPropertySourceOverview() throws Exception {
         String result = ConfigCommands.getPropertySourceOverview();
-        assertNotNull(result);
+        assertThat(result).isNotNull();
         System.out.println(result);
-        assertTrue(result.contains("Ordinal"));
-        assertTrue(result.contains("Class"));
-        assertTrue(result.contains("Ordinal"));
-        assertTrue(result.contains("ID"));
-        assertTrue(result.contains("Ordinal"));
-        assertTrue(result.contains("system-properties"));
-        assertTrue(result.contains("environment-properties"));
-        assertTrue(result.contains("CLI"));
+        assertThat(result.contains("Ordinal")).isTrue();
+        assertThat(result.contains("Class")).isTrue();
+        assertThat(result.contains("Ordinal")).isTrue();
+        assertThat(result.contains("ID")).isTrue();
+        assertThat(result.contains("Ordinal")).isTrue();
+        assertThat(result.contains("system-properties")).isTrue();
+        assertThat(result.contains("environment-properties")).isTrue();
+        assertThat(result.contains("CLI")).isTrue();
     }
 
     @Test
     public void setDefaultEnabled() throws Exception {
         String result = ConfigCommands.setDefaultEnabled(tamayaConfigPlugin, true);
-        assertNotNull(result);
+        assertThat(result).isNotNull();
         System.out.println(result);
-        assertTrue(result.contains(TamayaConfigService.TAMAYA_ENABLED_PROP+"=true"));
-        assertTrue(tamayaConfigPlugin.isTamayaEnabledByDefault());
+        assertThat(result.contains(TamayaConfigService.TAMAYA_ENABLED_PROP+"=true")).isTrue();
+        assertThat(tamayaConfigPlugin.isTamayaEnabledByDefault()).isTrue();
         result = ConfigCommands.setDefaultEnabled(tamayaConfigPlugin, false);
-        assertNotNull(result);
-        assertTrue(result.contains(TamayaConfigService.TAMAYA_ENABLED_PROP+"=false"));
-        assertFalse(tamayaConfigPlugin.isTamayaEnabledByDefault());
+        assertThat(result).isNotNull();
+        assertThat(result.contains(TamayaConfigService.TAMAYA_ENABLED_PROP+"=false")).isTrue();
+        assertThat(tamayaConfigPlugin.isTamayaEnabledByDefault()).isFalse();
     }
 
     @Test
@@ -170,23 +170,23 @@ public class ConfigCommandsTest extends AbstractOSGITest{
         System.out.println(result);
         tamayaConfigPlugin.setTamayaEnabledByDefault(false);
         result = ConfigCommands.getDefaultEnabled(tamayaConfigPlugin);
-        assertNotNull(result);
-        assertTrue(result.equals("false"));
+        assertThat(result).isNotNull();
+        assertThat(result).isEqualTo("false");
     }
 
     @Test
     public void setAutoUpdateEnabled() throws Exception {
         String result = ConfigCommands.setAutoUpdateEnabled(tamayaConfigPlugin, true);
-        assertNotNull(result);
+        assertThat(result).isNotNull();
         System.out.println(result);
-        assertTrue(result.contains("true"));
-        assertTrue(result.contains(TamayaConfigService.TAMAYA_AUTO_UPDATE_ENABLED_PROP));
-        assertTrue(tamayaConfigPlugin.isAutoUpdateEnabled());
+        assertThat(result.contains("true")).isTrue();
+        assertThat(result.contains(TamayaConfigService.TAMAYA_AUTO_UPDATE_ENABLED_PROP)).isTrue();
+        assertThat(tamayaConfigPlugin.isAutoUpdateEnabled()).isTrue();
         result = ConfigCommands.setAutoUpdateEnabled(tamayaConfigPlugin, false);
-        assertNotNull(result);
-        assertTrue(result.contains("false"));
-        assertTrue(result.contains(TamayaConfigService.TAMAYA_AUTO_UPDATE_ENABLED_PROP));
-        assertFalse(tamayaConfigPlugin.isAutoUpdateEnabled());
+        assertThat(result).isNotNull();
+        assertThat(result.contains("false")).isTrue();
+        assertThat(result.contains(TamayaConfigService.TAMAYA_AUTO_UPDATE_ENABLED_PROP)).isTrue();
+        assertThat(tamayaConfigPlugin.isAutoUpdateEnabled()).isFalse();
     }
 
     @Test
@@ -194,11 +194,11 @@ public class ConfigCommandsTest extends AbstractOSGITest{
         tamayaConfigPlugin.setAutoUpdateEnabled(true);
         String result = ConfigCommands.getAutoUpdateEnabled(tamayaConfigPlugin);
         System.out.println(result);
-        assertTrue(result.contains("true"));
+        assertThat(result.contains("true")).isTrue();
         tamayaConfigPlugin.setAutoUpdateEnabled(false);
         result = ConfigCommands.getAutoUpdateEnabled(tamayaConfigPlugin);
-        assertNotNull(result);
-        assertTrue(result.contains("false"));
+        assertThat(result).isNotNull();
+        assertThat(result.contains("false")).isTrue();
     }
 
 }

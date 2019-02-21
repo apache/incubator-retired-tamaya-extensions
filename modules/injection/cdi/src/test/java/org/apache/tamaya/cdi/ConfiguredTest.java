@@ -25,9 +25,7 @@ import org.junit.runner.RunWith;
 
 import javax.enterprise.inject.spi.CDI;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for CDI integration.
@@ -41,28 +39,28 @@ public class ConfiguredTest extends BaseTestConfiguration {
         System.out.println("********************************************");
         System.out.println(injectedClass);
         System.out.println("********************************************");
-        assertNotNull(injectedClass.builder1);
-        assertNotNull(injectedClass.builder2);
-        assertNotNull(injectedClass.config);
-        assertNotNull(injectedClass.configContext);
+        assertThat(injectedClass.builder1).isNotNull();
+        assertThat(injectedClass.builder2).isNotNull();
+        assertThat(injectedClass.config).isNotNull();
+        assertThat(injectedClass.configContext).isNotNull();
     }
 
     @Test
     public void test_Injected_builders_are_notSame(){
         InjectedClass injectedClass =  CDI.current().select(InjectedClass.class).get();
-        assertTrue(injectedClass.builder1 != injectedClass.builder2);
+        assertThat(injectedClass.builder1 != injectedClass.builder2).isTrue();
     }
 
     @Test
     public void test_Injected_configs_are_same(){
         InjectedClass injectedClass =  CDI.current().select(InjectedClass.class).get();
-        assertTrue(injectedClass.config == injectedClass.config2);
+        assertThat(injectedClass.config == injectedClass.config2).isTrue();
     }
 
     @Test
     public void test_Injected_configContexts_are_same(){
         InjectedClass injectedClass =  CDI.current().select(InjectedClass.class).get();
-        assertTrue(injectedClass.configContext == injectedClass.configContext2);
+        assertThat(injectedClass.configContext == injectedClass.configContext2).isTrue();
     }
 
     @Test(expected=Exception.class)

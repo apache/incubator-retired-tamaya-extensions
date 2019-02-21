@@ -26,7 +26,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by atsti on 03.10.2017.
@@ -43,43 +43,43 @@ public class OSGIConfigAdminPropertySourceTest extends AbstractOSGITest{
 
     @Test
     public void getPID() throws Exception {
-        assertEquals("tamaya", propertySource.getPid());
+        assertThat("tamaya").isEqualTo(propertySource.getPid());
     }
 
     @Test
     public void getLocation() throws Exception {
-        assertNull(propertySource.getLocation());
+        assertThat(propertySource.getLocation()).isNull();
     }
 
     @Test
     public void getDefaultOrdinal() throws Exception {
-        assertEquals(0, propertySource.getDefaultOrdinal());
+        assertThat(0).isEqualTo(propertySource.getDefaultOrdinal());
     }
 
     @Test
     public void getOrdinal() throws Exception {
-        assertEquals(0, propertySource.getOrdinal());
+        assertThat(0).isEqualTo(propertySource.getOrdinal());
     }
 
     @Test
     public void get() throws Exception {
         PropertyValue val = propertySource.get("java.home");
-        assertNotNull(val);
-        assertEquals(val.getKey(), "java.home");
-        assertEquals(val.getValue(), System.getProperty("java.home"));
+        assertThat(val).isNotNull();
+        assertThat(val.getKey()).isEqualTo("java.home");
+        assertThat(val.getValue()).isEqualTo(System.getProperty("java.home"));
         val = propertySource.get("foo.bar");
-        assertNull(val);
+        assertThat(val).isNull();
     }
 
     @Test
     public void getProperties() throws Exception {
         Map<String,PropertyValue> props = propertySource.getProperties();
-        assertNotNull(props);
+        assertThat(props).isNotNull();
         PropertyValue val = props.get("java.home");
-        assertEquals(val.getKey(), "java.home");
-        assertEquals(val.getValue(), System.getProperty("java.home"));
+        assertThat(val.getKey()).isEqualTo("java.home");
+        assertThat(val.getValue()).isEqualTo(System.getProperty("java.home"));
         val = props.get("foo.bar");
-        assertNull(val);
+        assertThat(val).isNull();
     }
 
 }

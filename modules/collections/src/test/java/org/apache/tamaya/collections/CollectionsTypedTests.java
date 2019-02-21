@@ -24,10 +24,7 @@ import org.junit.Test;
 
 import java.util.*;
 
-import static junit.framework.TestCase.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Basic tests for Tamaya collection support. Relevant configs for this tests:
@@ -41,30 +38,18 @@ public class CollectionsTypedTests {
     public void testArrayListList_String(){
         Configuration config = Configuration.current();
         List<String> items = config.get("typed2.arraylist", new TypeLiteral<List<String>>(){});
-        assertNotNull(items);
-        assertFalse(items.isEmpty());
-        assertEquals(10, items.size());
-        assertTrue(items instanceof ArrayList);
+        assertThat(items).isNotNull().isNotEmpty().hasSize(10).isInstanceOf(ArrayList.class);
         items = (List<String>) config.get("typed2.arraylist", List.class);
-        assertNotNull(items);
-        assertFalse(items.isEmpty());
-        assertEquals(10, items.size());
-        assertTrue(items instanceof ArrayList);
+        assertThat(items).isNotNull().isNotEmpty().hasSize(10).isInstanceOf(ArrayList.class);
     }
 
     @Test
     public void testLinkedListList_String(){
         Configuration config = Configuration.current();
         List<String> items = config.get("typed2.linkedlist", new TypeLiteral<List<String>>(){});
-        assertNotNull(items);
-        assertFalse(items.isEmpty());
-        assertEquals(10, items.size());
-        assertTrue(items instanceof LinkedList);
+        assertThat(items).isNotNull().isNotEmpty().hasSize(10).isInstanceOf(LinkedList.class);
         items = (List<String>) config.get("typed2.linkedlist", List.class);
-        assertNotNull(items);
-        assertFalse(items.isEmpty());
-        assertEquals(10, items.size());
-        assertTrue(items instanceof LinkedList);
+        assertThat(items).isNotNull().isNotEmpty().hasSize(10).isInstanceOf(LinkedList.class);
     }
 
 
@@ -72,136 +57,88 @@ public class CollectionsTypedTests {
     public void testHashSet_String(){
         Configuration config = Configuration.current();
         Set<String> items = config.get("typed2.hashset", new TypeLiteral<Set<String>>(){});
-        assertNotNull(items);
-        assertFalse(items.isEmpty());
-        assertEquals(10, items.size());
-        assertTrue(items instanceof HashSet);
+        assertThat(items).isNotNull().isNotEmpty().hasSize(10).isInstanceOf(HashSet.class);
         items = (Set<String>) config.get("typed2.hashset", Set.class);
-        assertNotNull(items);
-        assertFalse(items.isEmpty());
-        assertEquals(10, items.size());
-        assertTrue(items instanceof HashSet);
+        assertThat(items).isNotNull().isNotEmpty().hasSize(10).isInstanceOf(HashSet.class);
     }
 
     @Test
     public void testTreeSet_String(){
         Configuration config = Configuration.current();
         Set<String> items = config.get("typed2.treeset", new TypeLiteral<Set<String>>(){});
-        assertNotNull(items);
-        assertFalse(items.isEmpty());
-        assertEquals(10, items.size());
-        assertTrue(items instanceof TreeSet);
+        assertThat(items).isNotNull().isNotEmpty().hasSize(10).isInstanceOf(TreeSet.class);
         items = (Set<String>) config.get("typed2.treeset", Set.class);
-        assertNotNull(items);
-        assertFalse(items.isEmpty());
-        assertEquals(10, items.size());
-        assertTrue(items instanceof TreeSet);
+        assertThat(items).isNotNull().isNotEmpty().hasSize(10).isInstanceOf(TreeSet.class);
     }
 
     @Test
     public void testHashMap_String(){
         Configuration config = Configuration.current();
         Map<String,String> items = config.get("typed2.hashmap", new TypeLiteral<Map<String,String>>(){});
-        assertNotNull(items);
-        assertFalse(items.isEmpty());
-        assertEquals(4, items.size());
-        assertEquals("a", items.get("1"));
-        assertEquals("b", items.get("2"));
-        assertEquals("c", items.get("3"));
-        assertEquals(" ", items.get("4"));
-        assertTrue(items instanceof HashMap);
+        assertThat(items).isNotNull().isNotEmpty().hasSize(4).isInstanceOf(HashMap.class)
+            .containsEntry("1", "a")
+            .containsEntry("2", "b")
+            .containsEntry("3", "c")
+            .containsEntry("4", " ");
         items = (Map<String,String>) config.get("typed2.hashmap", Map.class);
-        assertNotNull(items);
-        assertFalse(items.isEmpty());
-        assertEquals(4, items.size());
-        assertEquals("a", items.get("1"));
-        assertEquals("b", items.get("2"));
-        assertEquals("c", items.get("3"));
-        assertEquals(" ", items.get("4"));
-        assertTrue(items instanceof HashMap);
+        assertThat(items).isNotNull().isNotEmpty().hasSize(4).isInstanceOf(HashMap.class)
+            .containsEntry("1", "a")
+            .containsEntry("2", "b")
+            .containsEntry("3", "c")
+            .containsEntry("4", " ");
     }
 
     @Test
     public void testTreeMap_String(){
         Configuration config = Configuration.current();
         Map<String,String> items = config.get("typed2.treemap", new TypeLiteral<Map<String,String>>(){});
-        assertNotNull(items);
-        assertFalse(items.isEmpty());
-        assertEquals(4, items.size());
-        assertEquals("a", items.get("1"));
-        assertEquals("b", items.get("2"));
-        assertEquals("c", items.get("3"));
-        assertEquals(" ", items.get("4"));
-        assertTrue(items instanceof TreeMap);
+        assertThat(items).isNotNull().isNotEmpty().hasSize(4).isInstanceOf(TreeMap.class)
+            .containsEntry("1", "a")
+            .containsEntry("2", "b")
+            .containsEntry("3", "c")
+            .containsEntry("4", " ");
         items = (Map<String,String>) config.get("typed2.treemap", Map.class);
-        assertNotNull(items);
-        assertFalse(items.isEmpty());
-        assertEquals(4, items.size());
-        assertEquals("a", items.get("1"));
-        assertEquals("b", items.get("2"));
-        assertEquals("c", items.get("3"));
-        assertEquals(" ", items.get("4"));
-        assertTrue(items instanceof TreeMap);
+        assertThat(items).isNotNull().isNotEmpty().hasSize(4).isInstanceOf(TreeMap.class)
+            .containsEntry("1", "a")
+            .containsEntry("2", "b")
+            .containsEntry("3", "c")
+            .containsEntry("4", " ");
     }
 
     @Test
     public void testCollection_HashSet(){
         Configuration config = Configuration.current();
         Collection<String> items = config.get("typed2.hashset", new TypeLiteral<Collection<String>>(){});
-        assertNotNull(items);
-        assertFalse(items.isEmpty());
-        assertEquals(10, items.size());
-        assertTrue(items instanceof HashSet);
+        assertThat(items).isNotNull().isNotEmpty().hasSize(10).isInstanceOf(HashSet.class);
         items = (Collection<String>) config.get("typed2.hashset", Collection.class);
-        assertNotNull(items);
-        assertFalse(items.isEmpty());
-        assertEquals(10, items.size());
-        assertTrue(items instanceof HashSet);
+        assertThat(items).isNotNull().isNotEmpty().hasSize(10).isInstanceOf(HashSet.class);
     }
 
     @Test
     public void testCollection_TreeSet(){
         Configuration config = Configuration.current();
         Collection<String> items = config.get("typed2.treeset", new TypeLiteral<Collection<String>>(){});
-        assertNotNull(items);
-        assertFalse(items.isEmpty());
-        assertEquals(10, items.size());
-        assertTrue(items instanceof TreeSet);
+        assertThat(items).isNotNull().isNotEmpty().hasSize(10).isInstanceOf(TreeSet.class);
         items = (Collection<String>) config.get("typed2.treeset", Collection.class);
-        assertNotNull(items);
-        assertFalse(items.isEmpty());
-        assertEquals(10, items.size());
-        assertTrue(items instanceof TreeSet);
+        assertThat(items).isNotNull().isNotEmpty().hasSize(10).isInstanceOf(TreeSet.class);
     }
 
     @Test
     public void testCollection_ArrayList(){
         Configuration config = Configuration.current();
         Collection<String> items = config.get("typed2.arraylist", new TypeLiteral<Collection<String>>(){});
-        assertNotNull(items);
-        assertFalse(items.isEmpty());
-        assertEquals(10, items.size());
-        assertTrue(items instanceof ArrayList);
+        assertThat(items).isNotNull().isNotEmpty().hasSize(10).isInstanceOf(ArrayList.class);
         items = (Collection<String>) config.get("typed2.arraylist", Collection.class);
-        assertNotNull(items);
-        assertFalse(items.isEmpty());
-        assertEquals(10, items.size());
-        assertTrue(items instanceof ArrayList);
+        assertThat(items).isNotNull().isNotEmpty().hasSize(10).isInstanceOf(ArrayList.class);
     }
 
     @Test
     public void testCollection_LinkedList(){
         Configuration config = Configuration.current();
         Collection<String> items = config.get("typed2.linkedlist", new TypeLiteral<Collection<String>>(){});
-        assertNotNull(items);
-        assertFalse(items.isEmpty());
-        assertEquals(10, items.size());
-        assertTrue(items instanceof LinkedList);
+        assertThat(items).isNotNull().isNotEmpty().hasSize(10).isInstanceOf(LinkedList.class);
         items = (Collection<String>) config.get("typed2.linkedlist", Collection.class);
-        assertNotNull(items);
-        assertFalse(items.isEmpty());
-        assertEquals(10, items.size());
-        assertTrue(items instanceof LinkedList);
+        assertThat(items).isNotNull().isNotEmpty().hasSize(10).isInstanceOf(LinkedList.class);
     }
 
 }

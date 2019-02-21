@@ -23,7 +23,7 @@ import org.apache.tamaya.spisupport.propertysource.BuildablePropertySourceProvid
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class MicroprofileConfigSourceProviderTest {
     @Test
@@ -34,11 +34,11 @@ public class MicroprofileConfigSourceProviderTest {
                         .withSimpleProperty("a", "b").build())
                 .build();
         MicroprofileConfigSourceProvider provider = new MicroprofileConfigSourceProvider(prov);
-        assertNotNull(provider);
+        assertThat(provider).isNotNull();
         Iterable<ConfigSource> configSources = provider.getConfigSources(null);
-        assertNotNull(configSources);
-        assertTrue(configSources.iterator().hasNext());
-        assertEquals("b", configSources.iterator().next().getValue("a"));
+        assertThat(configSources).isNotNull();
+        assertThat(configSources.iterator().hasNext()).isTrue();
+        assertThat("b").isEqualTo(configSources.iterator().next().getValue("a"));
     }
 
 }

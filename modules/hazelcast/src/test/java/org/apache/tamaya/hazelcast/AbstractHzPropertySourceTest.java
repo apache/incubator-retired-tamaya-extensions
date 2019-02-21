@@ -24,11 +24,12 @@ import org.apache.tamaya.spi.PropertyValue;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
+import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by atsticks on 03.11.16.
@@ -57,115 +58,113 @@ public class AbstractHzPropertySourceTest {
         map2.flush();
     }
 
-    @org.junit.Test
+    @Test
     public void t01_testGetProperties(){
         hps.setMapReference("config");
         Map<String, PropertyValue> values = hps.getProperties();
-        assertNotNull(values);
-        assertEquals(3, values.size());
-        assertNotNull(values.get("k1"));
-        assertNotNull(values.get("k2"));
-        assertEquals("v1", values.get("k1").getValue());
-        assertEquals("v2", values.get("k2").getValue());
-        assertEquals(hps.getOrdinal(), 2000);
+        assertThat(values).isNotNull().hasSize(3);
+        assertThat(values.get("k1")).isNotNull();
+        assertThat(values.get("k2")).isNotNull();
+        assertThat("v1").isEqualTo(values.get("k1").getValue());
+        assertThat("v2").isEqualTo(values.get("k2").getValue());
+        assertThat(hps.getOrdinal()).isEqualTo(2000);
 
         hps.setMapReference("config2");
         Map<String, PropertyValue> values2 = hps.getProperties();
-        assertNotNull(values2);
-        assertEquals(2, values2.size());
-        assertNotNull(values2.get("key1"));
-        assertNotNull(values2.get("key2"));
-        assertEquals("val1", values2.get("key1").getValue());
-        assertEquals("val2", values2.get("key2").getValue());
-        assertEquals(hps.getOrdinal(), 0);
+        assertThat(values2).isNotNull().hasSize(2);
+        assertThat(values2.get("key1")).isNotNull();
+        assertThat(values2.get("key2")).isNotNull();
+        assertThat("val1").isEqualTo(values2.get("key1").getValue());
+        assertThat("val2").isEqualTo(values2.get("key2").getValue());
+        assertThat(hps.getOrdinal()).isEqualTo(0);
 
         hps.setMapReference("foo");
         hps.setDefaultOrdinal(1500);
         Map<String, PropertyValue> values3 = hps.getProperties();
-        assertNotNull(values3);
-        assertEquals(0, values3.size());
-        assertEquals(hps.getOrdinal(), 1500);
+        assertThat(values3).isNotNull();
+        assertThat(values3).hasSize(0);
+        assertThat(hps.getOrdinal()).isEqualTo(1500);
     }
 
-    @org.junit.Test
+    @Test
     public void t02_testGetOrdinal(){
         hps.setMapReference("config");
         hps.setDefaultOrdinal(1500);
-        assertEquals(1500, hps.getDefaultOrdinal());
-        assertEquals(hps.getOrdinal(), 2000);
+        assertThat(1500).isEqualTo(hps.getDefaultOrdinal());
+        assertThat(hps.getOrdinal()).isEqualTo(2000);
 
         hps.setMapReference("config2");
         hps.setDefaultOrdinal(0);
-        assertEquals(0, hps.getDefaultOrdinal());
-        assertEquals(hps.getOrdinal(), 0);
+        assertThat(0).isEqualTo(hps.getDefaultOrdinal());
+        assertThat(hps.getOrdinal()).isEqualTo(0);
 
         hps.setMapReference("foo");
         hps.setDefaultOrdinal(1500);
-        assertEquals(1500, hps.getDefaultOrdinal());
-        assertEquals(hps.getOrdinal(), 1500);
+        assertThat(1500).isEqualTo(hps.getDefaultOrdinal());
+        assertThat(hps.getOrdinal()).isEqualTo(1500);
     }
 
-    @org.junit.Test
+    @Test
     public void t03_tesGet(){
         hps.setMapReference("config");
         PropertyValue val1 = hps.get("k1");
-        assertNotNull(val1);
-        assertEquals("v1", val1.getValue());
+        assertThat(val1).isNotNull();
+        assertThat("v1").isEqualTo(val1.getValue());
         PropertyValue val2 = hps.get("k2");
-        assertNotNull(val2);
-        assertEquals("v2", val2.getValue());
+        assertThat(val2).isNotNull();
+        assertThat("v2").isEqualTo(val2.getValue());
 
         hps.setMapReference("config2");
         val1 = hps.get("key1");
-        assertNotNull(val1);
-        assertEquals("val1", val1.getValue());
+        assertThat(val1).isNotNull();
+        assertThat("val1").isEqualTo(val1.getValue());
         val2 = hps.get("key2");
-        assertNotNull(val2);
-        assertEquals("val2", val2.getValue());
+        assertThat(val2).isNotNull();
+        assertThat("val2").isEqualTo(val2.getValue());
 
         hps.setMapReference("foo");
         val1 = hps.get("key1");
-        assertNull(val1);
+        assertThat(val1).isNull();
         val1 = hps.get("k1");
-        assertNull(val1);
+        assertThat(val1).isNull();
     }
 
-    @org.junit.Test
+    @Test
     public void t03_tesGetMapReference(){
         hps.setMapReference("config");
-        assertEquals("config", hps.getMapReference());
+        assertThat("config").isEqualTo(hps.getMapReference());
 
         hps.setMapReference("config2");
-        assertEquals("config2", hps.getMapReference());
+        assertThat("config2").isEqualTo(hps.getMapReference());
     }
 
-    @org.junit.Test
+    @Test
     public void t03_tesGetSetName(){
         hps.setMapReference("config");
-        assertEquals("config", hps.getMapReference());
-        assertEquals("Hazelcast", hps.getName());
+        assertThat("config").isEqualTo(hps.getMapReference());
+        assertThat("Hazelcast").isEqualTo(hps.getName());
 
         hps.setMapReference("config2");
         hps.setName("foo");
-        assertEquals("config2", hps.getMapReference());
-        assertEquals("foo", hps.getName());
+        assertThat("config2").isEqualTo(hps.getMapReference());
+        assertThat("foo").isEqualTo(hps.getName());
     }
 
-    @org.junit.Test
+    @Test
     public void t04_testCache() throws InterruptedException {
         hps.setCacheTimeout(50L);
-        assertTrue(hps.getValidUntil()>= System.currentTimeMillis());
-        assertEquals(50L, hps.getCachePeriod());
+        assertThat(hps.getValidUntil() >= System.currentTimeMillis()).isTrue();
+        assertThat(50L).isEqualTo(hps.getCachePeriod());
         hps.setMapReference("config");
         hps.setDefaultOrdinal(200);
         Map<String, PropertyValue> values = hps.getProperties();
-        assertNotNull(values);
-        assertEquals(3, values.size());
-        assertNotNull(values.get("k1"));
-        assertNotNull(values.get("k2"));
-        assertEquals("v1", values.get("k1").getValue());
-        assertEquals("v2", values.get("k2").getValue());
-        assertEquals(hps.getOrdinal(), 2000);
+        assertThat(values).isNotNull();
+        assertThat(values).hasSize(3);
+        assertThat(values.get("k1")).isNotNull();
+        assertThat(values.get("k2")).isNotNull();
+        assertThat("v1").isEqualTo(values.get("k1").getValue());
+        assertThat("v2").isEqualTo(values.get("k2").getValue());
+        assertThat(hps.getOrdinal()).isEqualTo(2000);
 
         IMap<Object, Object> map = hz.getMap("config");
         map.put("k3", "v3");
@@ -173,31 +172,31 @@ public class AbstractHzPropertySourceTest {
         map.flush();
 
         // Read from cache
-        assertEquals(50L, hps.getCachePeriod());
-        assertTrue(hps.getValidUntil()>= System.currentTimeMillis());
+        assertThat(50L).isEqualTo(hps.getCachePeriod());
+        assertThat(hps.getValidUntil() >= System.currentTimeMillis()).isTrue();
         values = hps.getProperties();
-        assertNotNull(values);
-        assertEquals(3, values.size());
-        assertNotNull(values.get("k1"));
-        assertNotNull(values.get("k2"));
-        assertEquals("v1", values.get("k1").getValue());
-        assertEquals("v2", values.get("k2").getValue());
-        assertEquals(hps.getOrdinal(), 2000);
+        assertThat(values).isNotNull();
+        assertThat(values).hasSize(3);
+        assertThat(values.get("k1")).isNotNull();
+        assertThat(values.get("k2")).isNotNull();
+        assertThat("v1").isEqualTo(values.get("k1").getValue());
+        assertThat("v2").isEqualTo(values.get("k2").getValue());
+        assertThat(hps.getOrdinal()).isEqualTo(2000);
 
         // Let cache timeout
         Thread.sleep(300L);
 
         // Read updated values
         values = hps.getProperties();
-        assertNotNull(values);
-        assertEquals(3, values.size());
-        assertNotNull(values.get("k1"));
-        assertNotNull(values.get("k2"));
-        assertNotNull(values.get("k3"));
-        assertEquals("v1", values.get("k1").getValue());
-        assertEquals("v2", values.get("k2").getValue());
-        assertEquals("v3", values.get("k3").getValue());
-        assertEquals(hps.getOrdinal(), 200);
+        assertThat(values).isNotNull();
+        assertThat(values).hasSize(3);
+        assertThat(values.get("k1")).isNotNull();
+        assertThat(values.get("k2")).isNotNull();
+        assertThat(values.get("k3")).isNotNull();
+        assertThat("v1").isEqualTo(values.get("k1").getValue());
+        assertThat("v2").isEqualTo(values.get("k2").getValue());
+        assertThat("v3").isEqualTo(values.get("k3").getValue());
+        assertThat(hps.getOrdinal()).isEqualTo(200);
     }
 
     @AfterClass

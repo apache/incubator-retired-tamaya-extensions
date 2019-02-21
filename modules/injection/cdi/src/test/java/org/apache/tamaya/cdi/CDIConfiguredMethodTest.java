@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.cdi;
 
-import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -29,8 +28,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 public class CDIConfiguredMethodTest {
@@ -42,7 +40,7 @@ public class CDIConfiguredMethodTest {
 
         CDIConfiguredMethod ccm = new CDIConfiguredMethod(ip, keys);
 
-        assertThat(ccm.getConfiguredKeys(), Matchers.containsInAnyOrder("rate", "weight"));
+        assertThat(ccm.getConfiguredKeys()).contains("rate", "weight");
     }
 
     @Test
@@ -55,7 +53,7 @@ public class CDIConfiguredMethodTest {
 
         CDIConfiguredMethod ccm = new CDIConfiguredMethod(ip, keys);
 
-        assertThat(ccm.getName(), equalTo("getValue"));
+        assertThat(ccm.getName()).isEqualTo("getValue");
     }
 
     @Test
@@ -70,7 +68,7 @@ public class CDIConfiguredMethodTest {
 
         CDIConfiguredMethod ccm = new CDIConfiguredMethod(ip, keys);
 
-        assertThat(ccm.getSignature(), equalTo(expectedSignature));
+        assertThat(ccm.getSignature()).isEqualTo(expectedSignature);
     }
 
     @Test
@@ -85,7 +83,7 @@ public class CDIConfiguredMethodTest {
 
         CDIConfiguredMethod ccm = new CDIConfiguredMethod(ip, keys);
 
-        assertThat(ccm.getSignature(), equalTo(expectedSignature));
+        assertThat(ccm.getSignature()).isEqualTo(expectedSignature);
     }
 
     @Test
@@ -100,7 +98,7 @@ public class CDIConfiguredMethodTest {
 
         CDIConfiguredMethod ccm = new CDIConfiguredMethod(ip, keys);
 
-        assertThat(ccm.getSignature(), equalTo(expectedSignature));
+        assertThat(ccm.getSignature()).isEqualTo(expectedSignature);
     }
 
     @Test
@@ -117,7 +115,7 @@ public class CDIConfiguredMethodTest {
 
         CDIConfiguredMethod ccm = new CDIConfiguredMethod(ip, keys);
 
-        assertThat(ccm.getSignature(), equalTo(expectedSignature));
+        assertThat(ccm.getSignature()).isEqualTo(expectedSignature);
     }
 
     @Test
@@ -133,7 +131,7 @@ public class CDIConfiguredMethodTest {
 
         CDIConfiguredMethod ccm = new CDIConfiguredMethod(ip, keys);
 
-        assertThat(ccm.getSignature(), equalTo(expectedSignature));
+        assertThat(ccm.getSignature()).isEqualTo(expectedSignature);
     }
 
     @Test
@@ -148,7 +146,7 @@ public class CDIConfiguredMethodTest {
 
         CDIConfiguredMethod ccm = new CDIConfiguredMethod(ip, keys);
 
-        assertThat(ccm.getSignature(), equalTo(expectedSignature));
+        assertThat(ccm.getSignature()).isEqualTo(expectedSignature);
     }
 
     @Test
@@ -163,7 +161,7 @@ public class CDIConfiguredMethodTest {
 
         CDIConfiguredMethod ccm = new CDIConfiguredMethod(ip, keys);
 
-        assertThat(ccm.getSignature(), equalTo(expectedSignature));
+        assertThat(ccm.getSignature()).isEqualTo(expectedSignature);
     }
 
     @Test
@@ -180,7 +178,7 @@ public class CDIConfiguredMethodTest {
 
         CDIConfiguredMethod ccm = new CDIConfiguredMethod(ip, keys);
 
-        assertThat(ccm.getSignature(), equalTo(expectedSignature));
+        assertThat(ccm.getSignature()).isEqualTo(expectedSignature);
     }
 
 }

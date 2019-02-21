@@ -23,7 +23,7 @@ import org.junit.Ignore;
 import java.net.URL;
 import java.util.Collection;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * This tests is using testing the classpath collector functionality, either by accessing/searching entries
@@ -35,53 +35,53 @@ public class ClasspathCollectorTest {
     public void testCollectAllClasses() throws Exception {
         ClasspathCollector cpc = new ClasspathCollector(Thread.currentThread().getContextClassLoader());
         Collection<URL> found = cpc.collectFiles("classpath:javax/annotation/*.class");
-        assertEquals(8, found.size()); // 7 ordinary, 1 inner class.
+        assertThat(found).hasSize(8); // 7 ordinary, 1 inner class.
         Collection<URL> found2 = cpc.collectFiles("javax/annotation/*.class");
-        assertEquals(found, found2);
+        assertThat(found).isEqualTo(found2);
     }
 
     @org.junit.Test
     public void testCollectAllInPackage() throws Exception {
         ClasspathCollector cpc = new ClasspathCollector(Thread.currentThread().getContextClassLoader());
         Collection<URL> found = cpc.collectFiles("classpath:javax/**/sql/*.class");
-        assertEquals(2, found.size());
+        assertThat(found).hasSize(2);
         Collection<URL> found2 = cpc.collectFiles("javax/**/sql/*.class");
-        assertEquals(found, found2);
+        assertThat(found).isEqualTo(found2);
     }
 
     @org.junit.Test
     public void testCollectClassNames() throws Exception {
         ClasspathCollector cpc = new ClasspathCollector(Thread.currentThread().getContextClassLoader());
         Collection<URL> found = cpc.collectFiles("classpath:javax/annotation/**/R*.class");
-        assertEquals(2, found.size());
+        assertThat(found).hasSize(2);
         Collection<URL> found2 = cpc.collectFiles("javax/annotation/**/R*.class");
-        assertEquals(found, found2);
+        assertThat(found).isEqualTo(found2);
     }
 
     @org.junit.Test
     public void testCollectWithExpression() throws Exception {
         ClasspathCollector cpc = new ClasspathCollector(Thread.currentThread().getContextClassLoader());
         Collection<URL> found = cpc.collectFiles("classpath:javax/annotation/R?so*.class");
-        assertEquals(3, found.size());
+        assertThat(found).hasSize(3);
         Collection<URL> found2 = cpc.collectFiles("javax/annotation/R?so*.class");
-        assertEquals(found, found2);
+        assertThat(found).isEqualTo(found2);
     }
 
     @org.junit.Test
     public void testCollectResources() throws Exception {
         ClasspathCollector cpc = new ClasspathCollector(Thread.currentThread().getContextClassLoader());
         Collection<URL> found = cpc.collectFiles("classpath:META-INF/maven/org.apache.geronimo.specs/**/*");
-        assertEquals(3, found.size());
+        assertThat(found).hasSize(3);
         Collection<URL> found2 = cpc.collectFiles("META-INF/maven/org.apache.geronimo.specs/**/*");
-        assertEquals(found, found2);
+        assertThat(found).isEqualTo(found2);
     }
 
     @org.junit.Test
     public void testCollectResourcesFromLocalFSPath() throws Exception {
         ClasspathCollector cpc = new ClasspathCollector(Thread.currentThread().getContextClassLoader());
         Collection<URL> found = cpc.collectFiles("classpath:resources_testroot/**/*.file");
-        assertEquals(7, found.size());
+        assertThat(found).hasSize(7);
         Collection<URL> found2 = cpc.collectFiles("resources_testroot/**/*.file");
-        assertEquals(found, found2);
+        assertThat(found).isEqualTo(found2);
     }
 }

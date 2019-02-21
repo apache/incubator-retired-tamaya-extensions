@@ -16,10 +16,6 @@
  */
 package org.apache.tamaya.cdi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.util.Optional;
 
@@ -36,6 +32,8 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(Arquillian.class)
 public class ConfigurationProducerTest {
@@ -56,54 +54,52 @@ public class ConfigurationProducerTest {
 
     @Test
     public void defaultValues() {
-        assertNotNull(allTypes);
-        assertEquals("defaultString", allTypes.getDefaultString());
-        assertEquals(new File("./"), allTypes.getDefaultFile());
-//        assertEquals(new Duration("2 hours and 54 minutes"), allTypes.getDefaultDuration());
-        assertEquals(true, allTypes.getDefaultBoolean());
-        assertEquals(45, (int) allTypes.getDefaultInteger());
+        assertThat(allTypes).isNotNull();
+        assertThat("defaultString").isEqualTo(allTypes.getDefaultString());
+        assertThat(new File("./")).isEqualTo(allTypes.getDefaultFile());
+        assertThat(allTypes.getDefaultBoolean()).isTrue();
+        assertThat(45).isEqualTo((int) allTypes.getDefaultInteger());
     }
 
     @Test
     public void actualPropertyValues() {
-        assertNotNull(allTypes);
-        assertEquals("hello", allTypes.getString());
-        assertEquals(new File("./conf"), allTypes.getFile());
-//        assertEquals(new Duration("10 minutes and 57 seconds"), allTypes.getDuration());
-        assertEquals(true, allTypes.getaBoolean());
-        assertEquals(123, (int) allTypes.getInteger());
+        assertThat(allTypes).isNotNull();
+        assertThat("hello").isEqualTo(allTypes.getString());
+        assertThat(new File("./conf")).isEqualTo(allTypes.getFile());
+        assertThat(allTypes.getaBoolean()).isTrue();
+        assertThat(123).isEqualTo((int) allTypes.getInteger());
     }
 
     @Test
     public void optionalStringFieldIsSet() {
-        assertNotNull(allTypes);
-        assertNotNull(allTypes.optionalString);
-        assertTrue(allTypes.optionalString.isPresent());
-        assertEquals("hello", allTypes.optionalString.get());
+        assertThat(allTypes).isNotNull();
+        assertThat(allTypes.optionalString).isNotNull();
+        assertThat(allTypes.optionalString.isPresent()).isTrue();
+        assertThat("hello").isEqualTo(allTypes.optionalString.get());
     }
 
     @Test
     public void optionalIntegerFieldIsSet() {
-        assertNotNull(allTypes);
-        assertNotNull(allTypes.optionalInteger);
-        assertTrue(allTypes.optionalInteger.isPresent());
-        assertEquals(123, allTypes.optionalInteger.get().longValue());
+        assertThat(allTypes).isNotNull();
+        assertThat(allTypes.optionalInteger).isNotNull();
+        assertThat(allTypes.optionalInteger.isPresent()).isTrue();
+        assertThat(123).isEqualTo(allTypes.optionalInteger.get().longValue());
     }
 
     @Test
     public void providerStringFieldIsSet() {
-        assertNotNull(allTypes);
-        assertNotNull(allTypes.providerString);
-        assertEquals("hello", allTypes.providerString.get());
-        assertEquals("hello", allTypes.providerString.get());
+        assertThat(allTypes).isNotNull();
+        assertThat(allTypes.providerString).isNotNull();
+        assertThat("hello").isEqualTo(allTypes.providerString.get());
+        assertThat("hello").isEqualTo(allTypes.providerString.get());
     }
 
     @Test
     public void providerIntegerFieldIsSet() {
-        assertNotNull(allTypes);
-        assertNotNull(allTypes.providerInteger);
-        assertEquals(123, allTypes.providerInteger.get().longValue());
-        assertEquals(123, allTypes.providerInteger.get().longValue());
+        assertThat(allTypes).isNotNull();
+        assertThat(allTypes.providerInteger).isNotNull();
+        assertThat(123).isEqualTo(allTypes.providerInteger.get().longValue());
+        assertThat(123).isEqualTo(allTypes.providerInteger.get().longValue());
     }
 
     static class AllTypes {

@@ -23,8 +23,7 @@ import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.junit.Test;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by atsticks on 24.03.17.
@@ -34,28 +33,28 @@ public class MicroprofileConfigProviderTest {
     @Test
     public void testDefaultConfigAccess(){
         Config config = ConfigProvider.getConfig();
-        assertNotNull(config);
+        assertThat(config).isNotNull();
         Iterable<String> names = config.getPropertyNames();
-        assertNotNull(names);
+        assertThat(names).isNotNull();
         int count = 0;
         for(String name:names){
             count++;
             System.out.println(count + ": " +name);
         }
-        assertTrue(Configuration.current().getProperties().size() <= count);
+        assertThat(Configuration.current().getProperties().size() <= count).isTrue();
     }
 
     @Test
     public void testClassloaderAccess(){
         Config config = ConfigProvider.getConfig(Thread.currentThread().getContextClassLoader());
-        assertNotNull(config);
+        assertThat(config).isNotNull();
         Iterable<String> names = config.getPropertyNames();
-        assertNotNull(names);
+        assertThat(names).isNotNull();
         int count = 0;
         for(String name:names){
             count++;
         }
-        assertTrue(count>0);
+        assertThat(count > 0).isTrue();
     }
 
 }

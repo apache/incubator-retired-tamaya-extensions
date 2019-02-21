@@ -72,11 +72,10 @@ under the License.
         <asciidoctor-diagramm.version>1.2.1</asciidoctor-diagramm.version>
         <asciidoctorj.version>1.5.6</asciidoctorj.version>
         <assembly.version>3.1.0</assembly.version>
-        <checkstyle.version>2.15</checkstyle.version>
+        <checkstyle.version>3.0.0</checkstyle.version>
         <enforcer.version>3.0.0-M1</enforcer.version>
         <gem.plugin>1.0.7</gem.plugin>
         <sources.plugin>3.0.1</sources.plugin>
-        <hamcrest.version>2.0.0.0</hamcrest.version>
         <javadoc.version>3.0.1</javadoc.version>
         <!-- Must/should match the JRuby version used by AsciidoctorJ -->
         <jruby.version>1.7.26</jruby.version>
@@ -233,12 +232,6 @@ under the License.
                 <artifactId>mockito-core</artifactId>
                 <version>${mockito.version}</version>
                 <scope>test</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.hamcrest</groupId>
-                        <artifactId>hamcrest-core</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
@@ -259,25 +252,12 @@ under the License.
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
                 <scope>test</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.hamcrest</groupId>
-                        <artifactId>hamcrest-core</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
 
             <dependency>
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>jsr305</artifactId>
                 <version>${findbugs.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.hamcrest</groupId>
-                <artifactId>java-hamcrest</artifactId>
-                <version>${hamcrest.version}</version>
-                <scope>test</scope>
             </dependency>
 
             <dependency>
@@ -423,8 +403,8 @@ under the License.
                     <version>${checkstyle.version}</version>
                     <executions>
                         <execution>
-                            <id>verify-style</id>
-                            <phase>process-classes</phase>
+                            <id>checkstyle</id>
+                            <phase>validate</phase>
                             <goals>
                                 <goal>check</goal>
                             </goals>
@@ -432,19 +412,15 @@ under the License.
                     </executions>
                     <configuration>
                         <logViolationsToConsole>true</logViolationsToConsole>
-                        <configLocation>checkstyle/style.xml</configLocation>
+                        <failOnViolation>false</failOnViolation>
+                        <configLocation>buildtools/src/main/resources/checkstyle/style.xml</configLocation>
                     </configuration>
 
                     <dependencies>
                         <dependency>
-                            <groupId>org.apache.tamaya</groupId>
-                            <artifactId>buildconfigurations</artifactId>
-                            <version>${tamaya-apicore.version}</version>
-                        </dependency>
-                        <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
                             <artifactId>checkstyle</artifactId>
-                            <version>7.3</version>
+                            <version>7.8</version>
                             <exclusions><!-- MCHECKSTYLE-156 -->
                                 <exclusion>
                                     <groupId>com.sun</groupId>
@@ -485,15 +461,8 @@ under the License.
                         <effort>Max</effort>
                         <threshold>Low</threshold>
                         <failOnError>true</failOnError>
-                        <excludeFilterFile>findbugs/findbugs-exclude.xml</excludeFilterFile>
+                        <excludeFilterFile>buildtools/src/main/resources/findbugs/findbugs-exclude.xml</excludeFilterFile>
                     </configuration>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.apache.tamaya</groupId>
-                            <artifactId>buildconfigurations</artifactId>
-                            <version>${tamaya-apicore.version}</version>
-                        </dependency>
-                    </dependencies>
                 </plugin>
 
                 <plugin>
@@ -1114,6 +1083,18 @@ under the License.
                 <configuration>
                     <skip>false</skip>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${checkstyle.version}</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>checkstyle</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
             </plugin>
         </plugins>
     </reporting>

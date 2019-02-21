@@ -29,10 +29,7 @@ import java.net.MalformedURLException;
 import java.util.Hashtable;
 import java.util.Map;
 
-import static junit.framework.TestCase.assertNotNull;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class JNDIPropertySourceTest{
 
@@ -55,21 +52,12 @@ public class JNDIPropertySourceTest{
     @Test
     public void testScanContext() throws NamingException, MalformedURLException {
         JNDIPropertySource ps = new JNDIPropertySource("jndi-test", getTestDirContext(createFSContext()));
-        assertFalse(ps.isScannable());
-        Map<String,PropertyValue> props = ps.getProperties();
-        assertNotNull(props);
-        assertTrue(props.isEmpty());
+        assertThat(ps.isScannable()).isFalse();
+        assertThat(ps.getProperties()).isNotNull().isEmpty();
         ps.setScannable(true);
-        assertTrue(ps.isScannable());
-        props = ps.getProperties();
-        assertNotNull(props);
-        assertFalse(props.isEmpty());
-        assertEquals(props.size(), 5);
-        assertNotNull(props.get("c.c1.test5"));
-        assertNotNull(props.get("c.test3"));
-        assertNotNull(props.get("c.test4"));
-        assertNotNull(props.get("b.test2"));
-        assertNotNull(props.get("a.test1"));
+        assertThat(ps.isScannable()).isTrue();
+        assertThat(ps.getProperties()).isNotNull().isNotEmpty().hasSize(5)
+            .containsKeys("a.test1", "b.test2", "c.test3", "c.test4", "c.c1.test5");
     }
 
 }

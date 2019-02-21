@@ -25,7 +25,7 @@ import java.net.MalformedURLException;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for the etcd backend integration. You must have setCurrent a system property so, theses tests are executed, e.g.
@@ -51,14 +51,14 @@ public class EtcdAccessorTest {
     @Test
     public void testGetVersion() throws Exception {
         if(!execute)return;
-        assertEquals(accessor.getVersion(), "etcd 0.4.9");
+        assertThat(accessor.getVersion()).isEqualTo("etcd 0.4.9");
     }
 
     @Test
     public void testGet() throws Exception {
         if(!execute)return;
         Map<String,String> result = accessor.get("test1");
-        assertNotNull(result);
+        assertThat(result).isNotNull();
     }
 
     @Test
@@ -66,8 +66,8 @@ public class EtcdAccessorTest {
         if(!execute)return;
         String value = UUID.randomUUID().toString();
         Map<String,String> result = accessor.set("testSetNormal", value);
-        assertNull(result.get("_testSetNormal.ttl"));
-        assertEquals(value, accessor.get("testSetNormal").get("testSetNormal"));
+        assertThat(result.get("_testSetNormal.ttl")).isNull();
+        assertThat(value).isEqualTo(accessor.get("testSetNormal").get("testSetNormal"));
     }
 
     @Test
@@ -75,8 +75,8 @@ public class EtcdAccessorTest {
         if(!execute)return;
         String value = UUID.randomUUID().toString();
         Map<String,String> result = accessor.set("testSetNormal2", value, null);
-        assertNull(result.get("_testSetNormal2.ttl"));
-        assertEquals(value, accessor.get("testSetNormal2").get("testSetNormal2"));
+        assertThat(result.get("_testSetNormal2.ttl")).isNull();
+        assertThat(value).isEqualTo(accessor.get("testSetNormal2").get("testSetNormal2"));
     }
 
     @Test
@@ -84,11 +84,11 @@ public class EtcdAccessorTest {
         if(!execute)return;
         String value = UUID.randomUUID().toString();
         Map<String,String> result = accessor.set("testSetWithTTL", value, 1);
-        assertNotNull(result.get("_testSetWithTTL.ttl"));
-        assertEquals(value, accessor.get("testSetWithTTL").get("testSetWithTTL"));
+        assertThat(result.get("_testSetWithTTL.ttl")).isNotNull();
+        assertThat(value).isEqualTo(accessor.get("testSetWithTTL").get("testSetWithTTL"));
         Thread.sleep(2000L);
         result = accessor.get("testSetWithTTL");
-        assertNull(result.get("testSetWithTTL"));
+        assertThat(result.get("testSetWithTTL")).isNull();
     }
 
     @Test
@@ -96,11 +96,11 @@ public class EtcdAccessorTest {
         if(!execute)return;
         String value = UUID.randomUUID().toString();
         Map<String,String> result = accessor.set("testDelete", value, null);
-        assertEquals(value, accessor.get("testDelete").get("testDelete"));
-        assertNotNull(result.get("_testDelete.createdIndex"));
+        assertThat(value).isEqualTo(accessor.get("testDelete").get("testDelete"));
+        assertThat(result.get("_testDelete.createdIndex")).isNotNull();
         result = accessor.delete("testDelete");
-        assertEquals(value, result.get("_testDelete.prevNode.createValue"));
-        assertNull(accessor.get("testDelete").get("testDelete"));
+        assertThat(value).isEqualTo(result.get("_testDelete.prevNode.createValue"));
+        assertThat(accessor.get("testDelete").get("testDelete")).isNull();
     }
 
     @Test
@@ -109,8 +109,8 @@ public class EtcdAccessorTest {
         String value = UUID.randomUUID().toString();
         accessor.set("testGetProperties1", value);
         Map<String,String> result = accessor.getProperties("");
-        assertNotNull(result);
-        assertEquals(value, result.get("testGetProperties1"));
-        assertNotNull(result.get("_testGetProperties1.createdIndex"));
+        assertThat(result).isNotNull();
+        assertThat(value).isEqualTo(result.get("testGetProperties1"));
+        assertThat(result.get("_testGetProperties1.createdIndex")).isNotNull();
     }
 }
