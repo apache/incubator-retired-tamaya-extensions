@@ -31,9 +31,10 @@ import java.util.List;
 /**
  * Default key resolver which uses the following resolution strategy:
  * <ol>
- *    <li>The containing class <b>does not</b> have a {@link ConfigSection} annotation and the field/method does not have
- *     a {@link Config} annotation: the main key equals to
- *     {@code Owning.class.getSimpleName() + '.' + propertyKey}.</li>
+ *     <li>The containing class <b>does</b> have a {@link ConfigSection} annotation: the main key equals to
+ *  *     {@code Owning.class.getSimpleName() + '.' + propertyKey}.</li>
+ *    <li>The containing class <b>does not</b> have a {@link ConfigSection} annotation: the main key equals to
+ *     {@code propertyKey}.</li>
  *    <li>The containing class <b>does not</b> have a {@link ConfigSection} annotation: the main key equals to
  *     {@code propertyKey}.</li>
  *    <li>The containing class <b>does</b> have a {@link ConfigSection} annotation: the main key equals to
@@ -50,7 +51,11 @@ public final class AutoKeyResolver implements KeyResolver {
             if (sectionName != null) {
                 result.add(evaluateKey(sectionName, key));
             } else {
-                result.add(key);
+                if(key.startsWith("[") && key.endsWith("]")) {
+                    result.add(key.substring(1, key.length() - 1));
+                }else{
+                    result.add(key);
+                }
             }
         }
         for(String fk:alternateKeys){
@@ -84,9 +89,13 @@ public final class AutoKeyResolver implements KeyResolver {
 
     private String getSectionName(Class owner) {
         ConfigSection sectionAnnot = (ConfigSection)owner.getAnnotation(ConfigSection.class);
-        if(sectionAnnot!=null && !sectionAnnot.value().isEmpty()){
-            return sectionAnnot.value();
+        if(sectionAnnot!=null){
+            if(sectionAnnot.value().isEmpty()) {
+                return owner.getSimpleName();
+            }else {
+                return sectionAnnot.value();
+            }
         }
-        return owner.getSimpleName();
+        return null;
     }
 }

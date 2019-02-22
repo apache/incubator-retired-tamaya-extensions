@@ -165,7 +165,7 @@ public final class InjectionUtils {
     private static List<String> expandKey(String key) {
         List<String> result = new ArrayList<>();
         result.add(key);
-        if(result.contains("_")){
+        if(key.contains("_")){
             result.add(key.replace("_", "."));
         }
         String splittedCamelCase = trySplitCamelCase(key);

@@ -63,13 +63,13 @@ public class TamayaInjectionTest {
         assertThat(testInstance.myParameter).isNull();
         assertThat(testInstance.simpleValue).isNull();
         ConfigurationInjection.getConfigurationInjector().configure(testInstance);
-        assertThat(testInstance.getHostName()).isEqualTo("tamaya01.incubator.apache.org");
+        assertThat(testInstance.getHostName()).isEqualTo("tamaya02.incubator.apache.org");
         assertThat(testInstance.getAnotherValue()).isEqualTo("HALLO!");
         assertThat(testInstance.myParameter).isEqualTo("ET");
         assertThat(testInstance.simpleValue).isEqualTo("aSimpleValue");
         assertThat(testInstance.getDynamicValue()).isNotNull();
         assertThat(testInstance.getDynamicValue().isPresent()).isTrue();
-        assertThat(testInstance.getDynamicValue().get()).isEqualTo("tamaya01.incubator.apache.org");
+        assertThat(testInstance.getDynamicValue().get()).isEqualTo("tamaya02.incubator.apache.org");
         assertThat(testInstance.getHostName()).isEqualTo(testInstance.getDynamicValue().get());
         assertThat(testInstance.javaVersion).isEqualTo(System.getProperty("java.version"));
     }
@@ -85,13 +85,13 @@ public class TamayaInjectionTest {
         assertThat(testInstance.someMoreValue).isNull();
         assertThat(testInstance.notConfigured).isNull();
         ConfigurationInjection.getConfigurationInjector().configure(testInstance);
-        assertThat(testInstance.getHostName()).isEqualTo("tamaya01.incubator.apache.org");
+        assertThat(testInstance.getHostName()).isEqualTo("tamaya02.incubator.apache.org");
         assertThat(testInstance.getAnotherValue()).isEqualTo("HALLO!");
         assertThat(testInstance.myParameter).isEqualTo("ET");
         assertThat(testInstance.simpleValue).isEqualTo("aSimpleValue");
         assertThat(testInstance.getDynamicValue()).isNotNull();
         assertThat(testInstance.getDynamicValue().isPresent()).isTrue();
-        assertThat(testInstance.getDynamicValue().get()).isEqualTo("tamaya01.incubator.apache.org");
+        assertThat(testInstance.getDynamicValue().get()).isEqualTo("tamaya02.incubator.apache.org");
         assertThat(testInstance.getHostName()).isEqualTo(testInstance.getDynamicValue().get());
         assertThat(testInstance.javaVersion).isEqualTo(System.getProperty("java.version"));
         assertThat(testInstance.someMoreValue).isEqualTo("s'more");
@@ -107,7 +107,7 @@ public class TamayaInjectionTest {
         assertThat(testInstance.simpleValue()).isEqualTo("aSimpleValue");
         assertThat(testInstance.getDynamicValue()).isNotNull();
         assertThat(testInstance.getDynamicValue().isPresent()).isTrue();
-        assertThat(testInstance.getDynamicValue().get()).isEqualTo("tamaya01.incubator.apache.org");
+        assertThat(testInstance.getDynamicValue().get()).isEqualTo("tamaya02.incubator.apache.org");
         assertThat(testInstance.hostName()).isEqualTo(testInstance.getDynamicValue().get());
     }
 

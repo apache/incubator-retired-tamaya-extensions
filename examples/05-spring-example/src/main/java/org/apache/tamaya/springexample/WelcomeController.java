@@ -36,13 +36,13 @@ public class WelcomeController {
 	@Value("${application.message:Hello World}")
 	private String message = "Hello World";
 
-	@Config(value = "background.color", required = false)
+	@Config(key = "background.color", required = false)
 	private String backgroundColor = "#BBBBBB";
 
-	@Config(value = "foreground.color", required = false, defaultValue = FOREGROUND_DEFAULT)
+	@Config(key = "foreground.color", required = false, defaultValue = FOREGROUND_DEFAULT)
 	private DynamicValue<String> foregroundColor;
 
-	@Config(value = "background.color", required = false)
+	@Config(key = "background.color", required = false)
 	private Color bgColor;
 
 	@GetMapping("/")

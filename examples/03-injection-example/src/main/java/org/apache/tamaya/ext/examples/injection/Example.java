@@ -19,12 +19,12 @@
 package org.apache.tamaya.ext.examples.injection;
 
 import org.apache.tamaya.inject.api.Config;
-import org.apache.tamaya.inject.api.ConfigDefaultSections;
+import org.apache.tamaya.inject.api.ConfigSection;
 
 /**
  * Simple example bean, mapped by default names mostly.
  */
-@ConfigDefaultSections("example")
+@ConfigSection("example")
 @SuppressWarnings("all")
 public class Example {
 
@@ -33,7 +33,7 @@ public class Example {
     @Config(defaultValue = "No description available.")
     private String description;
     private int version;
-    @Config("author")
+    @Config(key="author")
     private String exampleAuthor;
 
     @Override

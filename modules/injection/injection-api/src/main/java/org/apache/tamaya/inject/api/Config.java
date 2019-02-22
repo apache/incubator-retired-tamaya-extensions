@@ -25,6 +25,8 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 /**
  * Annotation to define injection of a configured property or define the configuration data
@@ -44,27 +46,33 @@ import java.lang.annotation.Target;
  * Configuration resolution is implemented as follows:
  * <ul>
  *     <li>The current valid Configuration is evaluated by calling {@code Configuration cfg = Configuration.current();}</li>
- *     <li>The current possible property keys are evaluated by calling {@code cfg.current("a.b.ConfigureItem.aValue");},
- *     {@code cfg.current("ConfigureItem.aValue");}, {@code cfg.current("aValue");}</li>
- *     <li>if not successful, and since no @ConfigDefault annotation is present, the configured default createValue is used.
- *     <li>If no createValue could be evaluated a ({@link org.apache.tamaya.ConfigException} is thrown.</li>
- *     <li>On success, since no type conversion is involved, the createValue is injected.</li>
+ *     <li>The current possible property keys are evaluated by calling {@link org.apache.tamaya.inject.spi.InjectionUtils#getKeys(Field)}
+ *     or {@link org.apache.tamaya.inject.spi.InjectionUtils#getKeys(Method)} . Hereby the key resolution is delegated
+ *     to an instance of {@link KeyResolver}, which can be defined on the configured class with the {@link ConfigSection}
+ *     or (overriding) on the configured field/method with the {@link Config} annotation. The default key resolver
+ *     is {@link org.apache.tamaya.inject.spi.AutoKeyResolver}.</li>
+ *     <li>Each key evaluated is looked up in the configuration, until a configuration value has been found.</li>
+ *     <li>if not successful, {@link Config#defaultValue()} is used, if present.</li>
+ *     <li>If no value could be evaluated a ({@link org.apache.tamaya.ConfigException} is thrown, unless {@link Config#required()}
+ *     is set to {@code true} (default is {@code false}).</li>
+ *     <li>If necessary, the final <i>raw</i> value is converted into the required type to be injected, using a
+ *     {@link org.apache.tamaya.spi.PropertyConverter}, then the value is injected.</li>
  * </ul>
  *
  * <h3>Explicit annotations</h3>
  * In the next example we explicitly define the configuration keys to be used:
  * <pre>
- * &amp;ConfigDefaultSections("section1")
+ * &amp;ConfigSection("section1")
  * public class ConfiguredItem {
  *
- *   &amp;Config(createValue = {"b", "[a.b.deprecated.keys]", "a"}, defaultValue = "myDefaultValue")
+ *   &amp;Config(key = {"b"}, fallbackKeys="[a.b.deprecated.keys]", "a"}, defaultValue = "myDefaultValue")
  *   private String aValue;
  * }
  * </pre>
  *
  * Within this example we evaluate multiple possible keys: {@code section1.b, a.b.deprecated.keys, section1.a}.
  * Evaluation is aborted if a key is resolved successfully. Hereby the ordering of the annotation values
- * define the ordering of resolution. If no createValue can be found, the configured default {@code myDefaultValue} is
+ * define the ordering of resolution. If no value can be found, the configured default {@code myDefaultValue} is
  * injected.
  *
  * <h3>Using explicit field annotation only</h3>
@@ -75,14 +83,13 @@ import java.lang.annotation.Target;
  *
  * public class ConfiguredItem {
  *
- *   &amp;Config(createValue = {"b", "[a.b.deprecated.keys]", "a"}, defaultValue = "myDefaultValue")
+ *   &amp;Config(key = {"b"}, fallbackKeys={"[a.b.deprecated.keys]", "a"}, defaultValue = "myDefaultValue")
  *   private String aValue;
  * }
  * </pre>
  *
- * Key resolution is similar to above, but now the default package names are used, resulting in
- * {@code a.b.ConfiguredItem.b, ConfiguredItem.b, a.b.deprecated.keys, a.b.ConfiguredItem.a, ConfiguredItem.a}
- * being evaluated.
+ * Key resolution is similar to above, but now the default section resolution allies, resulting in the keys
+ * {@code ConfiguredItem.b, a.b.deprecated.keys, ConfiguredItem.a} being looked up.
  */
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)
@@ -94,7 +101,7 @@ public @interface Config {
 
     /**
      * Defines the main configuration property key to be used. The final target property is evaluated based on
-     * the {@link #keyResolver()} strategy, by default {@link KeyResolution#AUTO}.
+     * the {@link #keyResolver()} strategy, by default {@link org.apache.tamaya.inject.spi.AutoKeyResolver}.
      *
      * @return the main property key, not null. If empty, the field or property name (of a setter method) being injected
      * is used by default.
@@ -116,6 +123,12 @@ public @interface Config {
      *     {@code areaAnnotation.getValue() + '.' + propertyKey}.</li>
      * </ol>
      *
+     * Note that on field or method injection without any {@link Config} annotation multiple main keys are generated, e.g.:
+     * <ul>
+     *     <li>a field named {@code a_b_property} evaluates to {@code a_b_property, a.b.property}}</li>
+     *     <li>a field named {@code aProperty} evaluates to {@code aProperty, a.property}}</li>
+     * </ul>
+     *
      * @return the key resolution strategy, never null.
      */
     @Nonbinding
@@ -123,7 +136,7 @@ public @interface Config {
 
     /**
      * Defines the alternate configuration property keys to be used, if no value could be evaluated using the main
-     * {@link #key()}. All key values given are resolved using the {@link KeyResolution#ABSOLUTE} strategy.
+     * {@link #key()}.
      *
      * @return the property keys, not null.
      */

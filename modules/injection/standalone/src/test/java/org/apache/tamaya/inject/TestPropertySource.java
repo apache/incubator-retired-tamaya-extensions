@@ -46,10 +46,9 @@ public class TestPropertySource implements PropertySource {
 
         properties.put("AnnotatedConfigTemplate.simple_value", "aSimpleValue2");
 
-        properties.put("NonAnnotatedConfigBean.simple_value", "aSimpleValue3");
-        properties.put("NonAnnotatedConfigBean.classFieldKey", "Class-Field-Value");
-        properties.put("NonAnnotatedConfigBean.fieldKey", "Field-Value");
-        properties.put("NonAnnotatedConfigBean.fullKey", "Fullkey-Value");
+        properties.put("class.field.key", "Class-Field-Value");
+        properties.put("fieldKey", "Field-Value");
+        properties.put("fullKey", "Fullkey-Value");
     }
 
     @Override

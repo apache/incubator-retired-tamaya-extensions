@@ -41,13 +41,13 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class DefaultDynamicValueTest {
 
-    @Config(key="[a]")
+    @Config(key="a")
     String myValue;
 
-    @Config(key="[a]")
+    @Config(key="a")
     String myValue2;
 
-    @Config(key="[a]")
+    @Config(key="a")
     void setterMethod(String value){
 
     }

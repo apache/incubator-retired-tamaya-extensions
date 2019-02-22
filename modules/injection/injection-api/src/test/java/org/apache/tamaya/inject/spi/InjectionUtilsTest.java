@@ -44,9 +44,9 @@ public class InjectionUtilsTest {
         assertThat(foundKeys)
                 .isNotNull()
                 .hasSize(3)
-                .contains("Klazz.val",
+                .contains("val",
                         "val2",
-                        "Klazz.vvv");
+                        "vvv");
     }
 
     @Test
@@ -119,7 +119,35 @@ public class InjectionUtilsTest {
 
         List<String> foundKeys = InjectionUtils.getKeys(field);
         assertThat(foundKeys).hasSize(1);
-        assertThat(foundKeys.get(0)).isEqualTo("Klazz.field");
+        assertThat(foundKeys.get(0)).isEqualTo("field");
+    }
+
+    @Test
+    public void getKeysReturns2ForNonAnnotatedField_Underscore() {
+        class Klazz {
+            public String a_field;
+        }
+
+        Field field = Klazz.class.getFields()[0];
+
+        List<String> foundKeys = InjectionUtils.getKeys(field);
+        assertThat(foundKeys).hasSize(2);
+        assertThat(foundKeys.get(0)).isEqualTo("a_field");
+        assertThat(foundKeys.get(1)).isEqualTo("a.field");
+    }
+
+    @Test
+    public void getKeysReturns2ForNonAnnotatedField_CamelCase() {
+        class Klazz {
+            public String aField;
+        }
+
+        Field field = Klazz.class.getFields()[0];
+
+        List<String> foundKeys = InjectionUtils.getKeys(field);
+        assertThat(foundKeys).hasSize(2);
+        assertThat(foundKeys.get(0)).isEqualTo("aField");
+        assertThat(foundKeys.get(1)).isEqualTo("a.field");
     }
 
     @Test
@@ -161,6 +189,7 @@ public class InjectionUtilsTest {
 
     @Test
     public void getKeysWithMemberAnnotation() {
+        @ConfigSection
         class Klazz {
             @Config(key="val", alternateKeys = "[absoluteVal]")
             public String field;
