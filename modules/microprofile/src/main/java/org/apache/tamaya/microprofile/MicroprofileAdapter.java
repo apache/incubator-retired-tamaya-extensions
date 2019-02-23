@@ -131,7 +131,7 @@ public final class MicroprofileAdapter{
         if(converter instanceof MicroprofileConverter){
             return ((MicroprofileConverter)converter).getPropertyConverter();
         }
-        return new TamayaPropertyConverter<T>(converter);
+        return new TamayaPropertyConverter<>(converter);
     }
 
     /**

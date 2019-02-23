@@ -18,10 +18,8 @@
  */
 package org.apache.tamaya.functions;
 
-import org.apache.tamaya.functions.PropertySourceFunctions;
 import org.apache.tamaya.spi.PropertySource;
 import org.assertj.core.api.ThrowableAssert;
-import org.assertj.core.description.TextDescription;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -141,7 +139,7 @@ public class PropertySourceFunctionsTest {
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                isKeyInSections("key", (String)null, "a.b");
+                isKeyInSections("key", null, "a.b");
             }
         }).isInstanceOf(NullPointerException.class)
           .hasMessage("At least one section key must be given.");
@@ -175,7 +173,7 @@ public class PropertySourceFunctionsTest {
         String key = "a.b.key";
         String first = "a.b";
 
-        boolean result = isKeyInSections(key, first, new String[]{});
+        boolean result = isKeyInSections(key, first);
 
         assertThat(result).describedAs("Key '%s' is in section '%s'.", key, first)
                           .isTrue();

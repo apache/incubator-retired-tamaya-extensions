@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.etcd;
 
-import org.apache.tamaya.spi.PropertyValue;
-
 import java.util.*;
 import java.util.logging.Logger;
 

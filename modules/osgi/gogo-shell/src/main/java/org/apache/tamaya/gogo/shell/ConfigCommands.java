@@ -73,7 +73,7 @@ public class ConfigCommands {
                                 @Descriptor("The property key")String key,
                              @Parameter(absentValue = "false", names={"-e", "--extended"})
                                  @Descriptor("Show extended info, default=false")Boolean extended) throws IOException {
-        System.out.println(org.apache.tamaya.osgi.commands.ConfigCommands.getProperty(propertysource, key, extended.booleanValue()));
+        System.out.println(org.apache.tamaya.osgi.commands.ConfigCommands.getProperty(propertysource, key, extended));
     }
 
     @Descriptor("Get details of a property source.")

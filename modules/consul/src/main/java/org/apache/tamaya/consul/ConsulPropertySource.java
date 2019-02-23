@@ -18,19 +18,7 @@
  */
 package org.apache.tamaya.consul;
 
-import com.google.common.base.Optional;
-import com.google.common.net.HostAndPort;
-import com.orbitz.consul.Consul;
-import com.orbitz.consul.KeyValueClient;
-import com.orbitz.consul.model.kv.Value;
-import org.apache.tamaya.mutableconfig.ConfigChangeRequest;
-import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
-import org.apache.tamaya.spi.ChangeSupport;
-import org.apache.tamaya.spi.PropertyValue;
-import org.apache.tamaya.spisupport.propertysource.BasePropertySource;
-
 import java.util.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**

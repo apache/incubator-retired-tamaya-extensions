@@ -23,7 +23,6 @@ import org.apache.tamaya.spi.ConversionContext;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Supplier;
 
 /**
  *  PropertyConverter for gnerating a LIST representation of values.
@@ -35,13 +34,13 @@ public class ListConverter implements PropertyConverter<List> {
         String collectionType = "ArrayList";
         boolean readOnly = false;
         if(context!=null) {
-            collectionType = (String)context.getMeta().getOrDefault("collection-type", "ArrayList");
+            collectionType = context.getMeta().getOrDefault("collection-type", "ArrayList");
             if (collectionType.startsWith("java.util.")) {
                 collectionType = collectionType.substring("java.util.".length());
             }
-            readOnly = Boolean.parseBoolean((String)context.getMeta().getOrDefault("read-only", "false"));
+            readOnly = Boolean.parseBoolean(context.getMeta().getOrDefault("read-only", "false"));
         }
-        List result = null;
+        List result;
         switch(collectionType){
             case "LinkedList":
                 result = LinkedListConverter.getInstance().convert(value, context);

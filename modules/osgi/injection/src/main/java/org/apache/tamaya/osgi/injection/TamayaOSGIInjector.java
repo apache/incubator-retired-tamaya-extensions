@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.osgi.injection;
 
-import org.apache.tamaya.Configuration;
 import org.apache.tamaya.osgi.TamayaConfigPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -150,7 +149,7 @@ public class TamayaOSGIInjector{
      * @return true, if injection is enabled.
      */
     static boolean isInjectionEnabled(Bundle bundle){
-        String enabledVal = (String)bundle.getHeaders().get(ConfigInjectionService.TAMAYA_INJECTION_ENABLED_MANIFEST);
+        String enabledVal = bundle.getHeaders().get(ConfigInjectionService.TAMAYA_INJECTION_ENABLED_MANIFEST);
         if(enabledVal!=null){
             enabledVal = enabledVal.toLowerCase(Locale.ENGLISH);
             switch(enabledVal){

@@ -68,7 +68,7 @@ class MappedPropertySource implements PropertySource {
         for (PropertyValue en : this.propertySource.getProperties().values()) {
             String targetKey = keyMapper.mapKey(en.getKey());
             if (targetKey != null) {
-                result.put(targetKey, PropertyValue.of(targetKey, en.getValue(), getName()));
+                result.put(targetKey, PropertyValue.createValue(targetKey, en.getValue()).setMeta("source", getName()));
             }
         }
         return result;
@@ -99,7 +99,6 @@ class MappedPropertySource implements PropertySource {
         Objects.requireNonNull(key, "Key must be given.");
 
         String mappedKey = keyMapper.mapKey(key);
-        PropertyValue result = null;
 
         if (mappedKey != null) {
             for (PropertyValue property : propertySource.getProperties().values()) {
@@ -113,7 +112,7 @@ class MappedPropertySource implements PropertySource {
             }
         }
 
-        return result;
+        return null;
     }
 
 }

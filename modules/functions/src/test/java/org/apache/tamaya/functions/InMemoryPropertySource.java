@@ -54,7 +54,7 @@ public class InMemoryPropertySource implements PropertySource {
     public PropertyValue get(String key) {
         String value = properties.get(key);
 
-        return PropertyValue.of(key, value, getName());
+        return PropertyValue.createValue(key, value).setMeta("source", getName());
     }
 
     public InMemoryPropertySource add(String key, String value) {
@@ -68,7 +68,7 @@ public class InMemoryPropertySource implements PropertySource {
         Map<String, PropertyValue> result = new HashMap<>();
 
         for (Map.Entry<String, String> entry : properties.entrySet()) {
-            PropertyValue value = PropertyValue.of(entry.getKey(), entry.getValue(), getName());
+            PropertyValue value = PropertyValue.createValue(entry.getKey(), entry.getValue()).setMeta("source", getName());
             result.put(entry.getKey(), value);
         }
 

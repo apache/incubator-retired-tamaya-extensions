@@ -37,7 +37,7 @@ public class MappedConfigurationTest {
         doReturn("z").when(mc).get(eq("a)"));
         doCallRealMethod().when(mc).getOrDefault(anyString(), anyString());
 
-        mc.getOrDefault("a", (String)null);
+        mc.getOrDefault("a", null);
     }
 
     @Test(expected = NullPointerException.class)

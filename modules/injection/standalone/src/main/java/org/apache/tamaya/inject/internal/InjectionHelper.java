@@ -161,7 +161,8 @@ final class InjectionHelper {
                 // TODO cache here...
                     ConversionContext ctx = new ConversionContext.Builder(key,targetType)
                             .setAnnotatedElement(element).build();
-                    PropertyConverter<T> converter = PropertyConverter.class.cast(converterType.newInstance());
+                    PropertyConverter<T> converter = converterType.getConstructor()
+                            .newInstance();
                     adaptedValue = converter.convert(configValue, ctx);
                 } catch (Exception e) {
                     LOG.log(Level.SEVERE, "Failed to convert using explicit PropertyConverter on " + element +

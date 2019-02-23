@@ -60,14 +60,14 @@ final class ConfigWrappingPropertySource implements PropertySource {
 
     @Override
     public PropertyValue get(String key) {
-        return PropertyValue.of(key, config.get(key), getName());
+        return PropertyValue.createValue(key, config.get(key)).setMeta("source", getName());
     }
 
     @Override
     public Map<String, PropertyValue> getProperties() {
         Map<String,PropertyValue> result = new HashMap<>();
         for(Map.Entry<String,String> en:config.getProperties().entrySet()){
-            result.put(en.getKey(), PropertyValue.of(en.getKey(), en.getValue(), getName()));
+            result.put(en.getKey(), PropertyValue.createValue(en.getKey(), en.getValue()).setMeta("source", getName()));
         }
         return result;
     }

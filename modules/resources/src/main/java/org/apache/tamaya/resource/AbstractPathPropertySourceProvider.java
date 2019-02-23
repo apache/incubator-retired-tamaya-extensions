@@ -76,7 +76,7 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
         List<PropertySource> propertySources = new ArrayList<>();
         for (String resource : getResourcePaths()) {
             try {
-                Collection<URL> resources = ConfigResources.getResourceResolver(classLoader).getResources(resource);
+                Collection<URL> resources = ResourceResolver.getInstance(getClassLoader()).getResources(resource);
                 for (URL url : resources) {
                     try {
                         Collection<PropertySource>  propertySourcesToInclude = getPropertySources(url);
@@ -149,7 +149,8 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
             this.name = Objects.requireNonNull(name);
             for (Entry<Object, Object> en : props.entrySet()) {
                 this.properties.put(en.getKey().toString(),
-                        PropertyValue.of(en.getKey().toString(), String.valueOf(en.getValue()), name));
+                        PropertyValue.createValue(en.getKey().toString(), String.valueOf(en.getValue()))
+                .setMeta("source", name));
             }
         }
 
@@ -162,7 +163,9 @@ public abstract class AbstractPathPropertySourceProvider implements PropertySour
             this.name = Objects.requireNonNull(name);
             for (Entry<String, String> en : props.entrySet()) {
                 this.properties.put(en.getKey(),
-                        PropertyValue.of(en.getKey(), en.getValue(), name));
+                        PropertyValue.createValue(en.getKey(), en.getValue()))
+                .setMeta("source", name);
+
             }
         }
 

@@ -29,7 +29,6 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -74,7 +73,7 @@ class FileChangeListener extends TimerTask {
 
     @Override
     public void run() {
-        if (watchService!=null || directory!=null) {
+        if (watchService==null || directory==null) {
             return;
         }
         try {

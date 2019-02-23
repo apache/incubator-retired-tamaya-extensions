@@ -32,7 +32,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.tamaya.ConfigException;
-import org.apache.tamaya.functions.Predicate;
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.ServiceContextManager;
 

@@ -19,7 +19,6 @@
 package org.apache.tamaya.functions;
 
 import org.apache.tamaya.spi.PropertyValue;
-import org.assertj.core.api.Condition;
 import org.junit.Test;
 
 import java.util.Map;

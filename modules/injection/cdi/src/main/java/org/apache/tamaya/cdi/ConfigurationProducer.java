@@ -19,7 +19,6 @@ package org.apache.tamaya.cdi;
 import org.apache.tamaya.*;
 import org.apache.tamaya.inject.api.*;
 import org.apache.tamaya.spi.*;
-import org.apache.tamaya.spi.ConversionContext;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
@@ -78,7 +77,10 @@ public class ConfigurationProducer {
         // unless the extension is not installed, this should never happen because the extension
         // enforces the resolvability of the config
 
-        String defaultTextValue = annotation.defaultValue().equals(Config.UNCONFIGURED_VALUE) ? null : annotation.defaultValue();
+        String defaultTextValue = null;
+        if(annotation!=null && !annotation.defaultValue().equals(Config.UNCONFIGURED_VALUE)){
+            defaultTextValue = annotation.defaultValue();
+        }
         boolean required = annotation.required();
         String textValue = null;
         Configuration config = Configuration.current();
@@ -106,7 +108,7 @@ public class ConfigurationProducer {
                     keys, conversionContext.getTargetType(), conversionContext.getSupportedFormats().toString()));
             }
         }
-        LOGGER.finest(String.format("Injecting %s for key %s in class %s", keyFound, value.toString(), injectionPoint.toString()));
+        LOGGER.finest(String.format("Injecting %s for key %s in class %s", keyFound, value, injectionPoint.toString()));
         return value;
     }
 

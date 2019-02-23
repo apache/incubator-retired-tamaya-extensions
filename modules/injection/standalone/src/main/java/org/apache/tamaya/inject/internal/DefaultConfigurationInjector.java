@@ -95,7 +95,7 @@ public class DefaultConfigurationInjector implements ConfigurationInjector, Clas
      * @return true, if the type, a method or field has Tamaya config annotation on it.
      */
     private boolean isConfigAnnotated(Class<?> type) {
-        if(type.getClass().isAnnotationPresent(ConfigSection.class)){
+        if(type.isAnnotationPresent(ConfigSection.class)){
             return true;
         }
         for (Field f : type.getDeclaredFields()) {

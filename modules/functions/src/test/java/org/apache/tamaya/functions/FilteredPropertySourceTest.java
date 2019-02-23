@@ -163,7 +163,7 @@ public class FilteredPropertySourceTest {
 
         FilteredPropertySource fps = new FilteredPropertySource(imps, filter);
 
-        assertThat(fps.getProperties()).isEmpty();;
+        assertThat(fps.getProperties()).isEmpty();
     }
 
     @Test

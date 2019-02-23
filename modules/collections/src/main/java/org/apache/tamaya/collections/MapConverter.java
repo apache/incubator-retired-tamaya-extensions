@@ -34,13 +34,13 @@ public class MapConverter implements PropertyConverter<Map> {
         String collectionType = "HashMap";
         boolean readOnly = false;
         if(context!=null) {
-            collectionType = (String)context.getMeta().getOrDefault("collection-type", "HashMap");
+            collectionType = context.getMeta().getOrDefault("collection-type", "HashMap");
             if (collectionType.startsWith("java.util.")) {
                 collectionType = collectionType.substring("java.util.".length());
             }
-            readOnly = Boolean.parseBoolean((String)context.getMeta().getOrDefault("read-only", "false"));
+            readOnly = Boolean.parseBoolean(context.getMeta().getOrDefault("read-only", "false"));
         }
-        Map result = null;
+        Map result;
         switch(collectionType){
             case "TreeMap":
             case "SortedMap":

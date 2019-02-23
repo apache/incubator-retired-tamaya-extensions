@@ -133,8 +133,8 @@ public class TamayaCDIInjectionExtension implements Extension {
         }
         try{
             if(!CUSTOM_OPERATORS.containsKey(operatorClass)) {
-                final ConfigOperator op = operatorClass.newInstance();
-                CUSTOM_OPERATORS.put(operatorClass, cfg -> op.operate(cfg));
+                final ConfigOperator op = operatorClass.getConstructor().newInstance();
+                CUSTOM_OPERATORS.put(operatorClass, op::operate);
             }
         } catch(Exception e){
             throw new ConfigException("Custom ConfigOperator could not be loaded: " + operatorClass.getName(), e);
@@ -148,7 +148,7 @@ public class TamayaCDIInjectionExtension implements Extension {
         }
         try{
             if(!CUSTOM_CONVERTERS.containsKey(converterClass)) {
-                CUSTOM_CONVERTERS.put(converterClass, converterClass.newInstance());
+                CUSTOM_CONVERTERS.put(converterClass, converterClass.getConstructor().newInstance());
             }
         } catch(Exception e){
             throw new ConfigException("Custom PropertyConverter could not be loaded: " + converterClass.getName(), e);

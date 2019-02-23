@@ -18,10 +18,6 @@
  */
 package org.apache.tamaya.format;
 
-import org.apache.tamaya.format.formats.PropertiesFormat;
-import org.apache.tamaya.spi.PropertySource;
-import org.junit.Test;
-
 /**
  * Tests for {@link MappedConfigurationDataPropertySource}.
  */

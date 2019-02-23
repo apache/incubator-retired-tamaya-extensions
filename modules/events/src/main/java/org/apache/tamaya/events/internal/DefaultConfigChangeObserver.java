@@ -23,7 +23,6 @@ import org.apache.tamaya.ConfigurationSnapshot;
 import org.apache.tamaya.events.ConfigEventManager;
 import org.apache.tamaya.events.ConfigurationChange;
 import org.apache.tamaya.events.ConfigurationChangeBuilder;
-import org.apache.tamaya.events.FrozenConfiguration;
 
 import java.util.*;
 import java.util.logging.Logger;

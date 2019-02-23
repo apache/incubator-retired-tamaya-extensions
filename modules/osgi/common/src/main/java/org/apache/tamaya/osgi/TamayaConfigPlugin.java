@@ -269,15 +269,15 @@ public class TamayaConfigPlugin implements TamayaConfigService,BundleListener, S
     }
 
     Dictionary<String, Object> getPluginConfig(){
-        Configuration config = null;
+        Configuration config;
         try {
             config = configChanger.getConfigurationAdmin().getConfiguration(COMPONENTID);
-            Dictionary<String, Object> props = null;
+            Dictionary<String, Object> props;
             if (config != null
                     && config.getProperties() != null) {
                 props = config.getProperties();
             } else {
-                props = new Hashtable<String, Object>();
+                props = new Hashtable<>();
             }
             return props;
         } catch (IOException e) {
@@ -286,7 +286,7 @@ public class TamayaConfigPlugin implements TamayaConfigService,BundleListener, S
     }
 
     void setPluginConfig(Dictionary<String, Object> props){
-        Configuration config = null;
+        Configuration config;
         try {
             config = configChanger.getConfigurationAdmin().getConfiguration(COMPONENTID);
             if (config != null) {
@@ -410,7 +410,7 @@ public class TamayaConfigPlugin implements TamayaConfigService,BundleListener, S
     public Dictionary<String, Object> getOSGIConfiguration(String pid, String section) {
         try {
             Configuration config = configChanger.getConfigurationAdmin().getConfiguration(pid);
-            Dictionary<String, Object> props = null;
+            Dictionary<String, Object> props;
             if (config == null
                     || config.getProperties() == null) {
                 return null;

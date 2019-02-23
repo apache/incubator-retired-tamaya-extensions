@@ -60,15 +60,14 @@ public class ConfiguredSetterMethod implements ConfiguredMethod {
         String configValue = InjectionHelper.getConfigValue(this.setterMethod, retKey, config);
         Objects.requireNonNull(target);
         try {
-            String evaluatedString = configValue != null
-                    ? InjectionHelper.evaluateValue(configValue,
-                    config.getContext().getServiceContext().getClassLoader())
-                    : configValue;
-
+            if(configValue != null){
+                configValue = InjectionHelper.evaluateValue(configValue,
+                        config.getContext().getServiceContext().getClassLoader());
+            }
             // Check for adapter/filter
             Object value = InjectionHelper.adaptValue(
                     this.setterMethod, TypeLiteral.of(this.setterMethod.getParameterTypes()[0]),
-                    retKey[0], evaluatedString);
+                    retKey[0], configValue);
 
             AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
                 @Override

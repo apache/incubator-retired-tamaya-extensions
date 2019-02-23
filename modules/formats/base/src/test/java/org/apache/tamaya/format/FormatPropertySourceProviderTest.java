@@ -43,7 +43,7 @@ public class FormatPropertySourceProviderTest
     @Override
     protected Collection<PropertySource> getPropertySources(ConfigurationData data) {
         PropertySource ps = new MappedConfigurationDataPropertySource(data);
-        ArrayList<PropertySource> result = new ArrayList<PropertySource>();
+        ArrayList<PropertySource> result = new ArrayList<>();
         result.add(ps);
         return result;
     }

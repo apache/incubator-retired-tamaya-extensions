@@ -22,7 +22,6 @@ import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.mutableconfig.spi.MutableConfigurationProviderSpi;
 import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
-import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.ServiceContextManager;
 
 import java.util.*;

@@ -18,21 +18,21 @@
  */
 package org.apache.tamaya.integration.spring;
 
-import org.apache.tamaya.inject.ConfigurationInjection;
+import org.apache.tamaya.inject.ConfigurationInjector;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.stereotype.Component;
 
 
 /**
- * PostProcessor that performs injection of configured values using Tamaya {@link ConfigurationInjection}.
+ * PostProcessor that performs injection of configured values using Tamaya {@link ConfigurationInjector}.
  */
 @Component
 public class SpringConfigInjectionPostProcessor implements BeanPostProcessor{
 
     @Override
     public Object postProcessBeforeInitialization(Object o, String s) throws BeansException {
-        ConfigurationInjection.getConfigurationInjector().configure(o);
+        ConfigurationInjector.getInstance().configure(o);
         return o;
     }
 

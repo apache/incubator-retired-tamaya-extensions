@@ -21,7 +21,6 @@ package org.apache.tamaya.functions;
 import org.apache.tamaya.spi.PropertyValue;
 import org.junit.Test;
 
-import javax.management.ImmutableDescriptor;
 import java.util.Map;
 
 import static org.apache.tamaya.spi.PropertyValue.of;

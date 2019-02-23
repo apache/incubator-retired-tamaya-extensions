@@ -61,7 +61,7 @@ public final class CollectionConverter implements PropertyConverter<Collection> 
 
     public static <T extends Collection> T convertList(ConversionContext context,
                                                        Supplier<T> collectionSupplier) {
-        MappingType mappingType = MappingType.valueOf((String)context.getMeta()
+        MappingType mappingType = MappingType.valueOf(context.getMeta()
                 .getOrDefault(VALUE_MAPPING, MappingType.combine.toString()));
         TypeLiteral<?> targetType = context.getTargetType();
         Type[] types = TypeLiteral.getTypeParameters(targetType.getType());
@@ -69,7 +69,7 @@ public final class CollectionConverter implements PropertyConverter<Collection> 
         if(types.length>0) {
             collectionTargetType = TypeLiteral.of(types[0]);
         }else {
-            LOG.warning(String.format("No type information for Collection item type in '{0}', using String.",
+            LOG.warning(String.format("No type information for Collection item type in '%s', using String.",
                     context.getKey()));
             collectionTargetType = TypeLiteral.of(String.class);
         }
@@ -104,9 +104,9 @@ public final class CollectionConverter implements PropertyConverter<Collection> 
                                                                 boolean combine) {
         if(!combine){
             values = Collections.singletonList(values.get(0));
-            LOG.finest(String.format("Combine deactivated, only checking for collection values in {0}.", values.get(0)));
+            LOG.finest(String.format("Combine deactivated, only checking for collection values in %s.", values.get(0)));
         }else{
-            LOG.finest(String.format("Combine activated, checking for collection values in {0}.", values));
+            LOG.finest(String.format("Combine activated, checking for collection values in %s.", values));
         }
         // First: try value based approach
         for (PropertyValue val : values) {
@@ -120,7 +120,7 @@ public final class CollectionConverter implements PropertyConverter<Collection> 
                 }
             }
             if(valuesFound==0) {
-                LOG.finest(() -> String.format("No values found in {0} using value evaluation, checking for child nodes...", val));
+                LOG.finest(() -> String.format("No values found in %s using value evaluation, checking for child nodes...", val));
                 for(PropertyValue itemNode:val) {
                     String textValue = itemNode.getValue();
                     if(textValue!=null) {
@@ -138,10 +138,10 @@ public final class CollectionConverter implements PropertyConverter<Collection> 
                 }
             }
             if(valuesFound==0){
-                LOG.warning(String.format("Failed to convert key '{0}' to type: {1}: no values found.",
+                LOG.warning(String.format("Failed to convert key '%s' to type: %s: no values found.",
                             val.getKey(), targetType));
             }else{
-                LOG.finest(String.format("Found {2} collection values for key '{0}' with type: {1}: no values found.",
+                LOG.finest(String.format("Found %s collection values for key '%s' with type: %s: no values found.",
                         val.getKey(), targetType, valuesFound));
             }
         }
@@ -156,9 +156,9 @@ public final class CollectionConverter implements PropertyConverter<Collection> 
                                                                 boolean combine) {
         if(!combine){
             values = Collections.singletonList(values.get(0));
-            LOG.finest(String.format("Combine deactivated, only checking for collection values in {0}.", values.get(0)));
+            LOG.finest(String.format("Combine deactivated, only checking for collection values in %s.", values.get(0)));
         }else{
-            LOG.finest(String.format("Combine activated, checking for collection values in {0}.", values));
+            LOG.finest(String.format("Combine activated, checking for collection values in %s.", values));
         }
         for (PropertyValue val : values) {
             List<String> tokenList = ItemTokenizer.split(val.getValue(), context);
@@ -167,7 +167,7 @@ public final class CollectionConverter implements PropertyConverter<Collection> 
                 if (o != null) {
                     result.add(o);
                 }else{
-                    LOG.warning(String.format("Failed to convert '{0}' to type: {1}, key: {2}",
+                    LOG.warning(String.format("Failed to convert '%s' to type: %s, key: %s",
                             token, targetType, val.getQualifiedKey()));
                 }
             }
@@ -192,7 +192,7 @@ public final class CollectionConverter implements PropertyConverter<Collection> 
                     if (o != null) {
                         result.add(o);
                     }else{
-                        LOG.warning(String.format("Failed to convert '{0}' to type: {1}, key: {2}",
+                        LOG.warning(String.format("Failed to convert '%s' to type: %s, key: %s",
                                 itemNode.getValue(), targetType, itemNode.getQualifiedKey()));
                     }
                 }
@@ -209,11 +209,11 @@ public final class CollectionConverter implements PropertyConverter<Collection> 
         if (types.length > 1) {
             collectionTargetType = TypeLiteral.of(types[1]);
         } else {
-            LOG.warning(String.format("No type information for Map parameter types in '{0}', using String.",
+            LOG.warning(String.format("No type information for Map parameter types in '%s', using String.",
                     context.getKey()));
             collectionTargetType = TypeLiteral.of(String.class);
         }
-        MappingType mappingType = MappingType.valueOf((String) context.getMeta()
+        MappingType mappingType = MappingType.valueOf(context.getMeta()
                 .getOrDefault("mapping", "value_all"));
         T result = collectionSupplier.get();
         switch (mappingType) {
@@ -241,9 +241,9 @@ public final class CollectionConverter implements PropertyConverter<Collection> 
                                                         boolean combine) {
         if(!combine){
             values = Collections.singletonList(values.get(0));
-            LOG.finest(String.format("Combine deactivated, only checking for collection values in {0}.", values.get(0)));
+            LOG.finest(String.format("Combine deactivated, only checking for collection values in %s.", values.get(0)));
         }else{
-            LOG.finest(String.format("Combine activated, checking for collection values in {0}.", values));
+            LOG.finest(String.format("Combine activated, checking for collection values in %s.", values));
         }
         for (PropertyValue val : values) {
             List<String> tokenList = ItemTokenizer.split(val.getValue(), context);
@@ -253,7 +253,7 @@ public final class CollectionConverter implements PropertyConverter<Collection> 
                 if (o != null) {
                     result.put(keyValue[0], o);
                 }else{
-                    LOG.warning(String.format("Failed to convert '{0}' to type: {1}, key: {2}",
+                    LOG.warning(String.format("Failed to convert '%s' to type: %s, key: %s",
                             keyValue[1], targetType, val.getQualifiedKey()));
                 }
             }
@@ -268,9 +268,9 @@ public final class CollectionConverter implements PropertyConverter<Collection> 
                                                        boolean combine) {
         if(!combine){
             values = Collections.singletonList(values.get(0));
-            LOG.finest(String.format("Combine deactivated, only checking for collection values in {0}.", values.get(0)));
+            LOG.finest(String.format("Combine deactivated, only checking for collection values in %s.", values.get(0)));
         }else{
-            LOG.finest(String.format("Combine activated, checking for collection values in {0}.", values));
+            LOG.finest(String.format("Combine activated, checking for collection values in %s.", values));
         }
         for (PropertyValue val : values) {
             for(PropertyValue itemNode:val) {
@@ -278,7 +278,7 @@ public final class CollectionConverter implements PropertyConverter<Collection> 
                 if (o != null) {
                     result.put(itemNode.getKey(), o);
                 }else{
-                    LOG.warning(String.format("Failed to convert '{0}' to type: {1}, key: {2}",
+                    LOG.warning(String.format("Failed to convert '%s' to type: %s, key: %s",
                             itemNode.getValue(), targetType, itemNode.getQualifiedKey()));
                 }
             }
@@ -289,11 +289,11 @@ public final class CollectionConverter implements PropertyConverter<Collection> 
 
     @Override
     public Collection convert(String value, ConversionContext context) {
-        String collectionType = (String)context.getMeta().getOrDefault("collection-type", "List");
+        String collectionType = context.getMeta().getOrDefault("collection-type", "List");
         if (collectionType.startsWith("java.util.")) {
             collectionType = collectionType.substring("java.util.".length());
         }
-        Collection result = null;
+        Collection result;
         switch (collectionType) {
             case "LinkedList":
                 result = LinkedListConverter.getInstance().convert(value, context);

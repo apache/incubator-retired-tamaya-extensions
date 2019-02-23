@@ -126,7 +126,7 @@ implements MutablePropertySource{
      * @return the server list, not null.
      */
     public List<String> getServer() {
-        return this.consulBackends.stream().map(s -> s.toString()).collect(Collectors.toList());
+        return this.consulBackends.stream().map(HostAndPort::toString).collect(Collectors.toList());
     }
 
     /**
@@ -185,7 +185,7 @@ implements MutablePropertySource{
                     props.put("lockIndex", String.valueOf(value.getLockIndex()));
                     props.put("flags", String.valueOf(value.getFlags()));
                     props.put("source", getName());
-                    val = PropertyValue.createValue(reqKey, value.getValue().get())
+                    val = PropertyValue.createValue(reqKey, value.getValue().orElse(null))
                         .setMeta(props);
                     break;
                 }

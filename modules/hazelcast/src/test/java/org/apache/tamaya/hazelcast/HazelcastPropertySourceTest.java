@@ -19,7 +19,6 @@
 
 package org.apache.tamaya.hazelcast;
 
-import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import org.apache.tamaya.spi.PropertyValue;

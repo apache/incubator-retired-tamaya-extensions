@@ -113,7 +113,7 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
         WithPropertyConverter annot = annotatedField.getAnnotation(WithPropertyConverter.class);
         if (annot != null) {
             try {
-                propertyConverter = annot.value().newInstance();
+                propertyConverter = annot.value().getConstructor().newInstance();
             } catch (Exception e) {
                 throw new ConfigException("Failed to instantiate annotated PropertyConverter on " +
                         annotatedField.getDeclaringClass().getName()
@@ -157,7 +157,7 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
         WithPropertyConverter annot = method.getAnnotation(WithPropertyConverter.class);
         if (annot != null) {
             try {
-                propertyConverter = (PropertyConverter<Object>) annot.value().newInstance();
+                propertyConverter = (PropertyConverter<Object>) annot.value().getConstructor().newInstance();
             } catch (Exception e) {
                 throw new ConfigException("Failed to instantiate annotated PropertyConverter on " +
                         method.getDeclaringClass().getName()

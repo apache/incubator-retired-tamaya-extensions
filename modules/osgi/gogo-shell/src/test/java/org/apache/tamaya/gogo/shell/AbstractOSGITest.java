@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.gogo.shell;
 
-import org.apache.tamaya.osgi.TamayaConfigPlugin;
 import org.apache.tamaya.osgi.commands.TamayaConfigService;
 import org.junit.Before;
 import org.mockito.Mock;
@@ -30,15 +29,12 @@ import org.osgi.service.cm.ConfigurationAdmin;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 /**

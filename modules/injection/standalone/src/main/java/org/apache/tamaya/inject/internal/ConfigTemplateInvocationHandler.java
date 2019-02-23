@@ -19,7 +19,6 @@
 package org.apache.tamaya.inject.internal;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.inject.api.DynamicValue;
 import org.apache.tamaya.inject.spi.ConfiguredType;

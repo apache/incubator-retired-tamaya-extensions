@@ -125,7 +125,7 @@ public class JNDIPropertySource extends BasePropertySource {
         try {
             key = key.replace('.', '/');
             Object o = context.lookup(key);
-            return PropertyValue.of(key, o.toString(), getName());
+            return PropertyValue.createValue(key, o.toString()).setMeta("source", getName());
         } catch (NamingException e) {
             LOG.log(Level.FINER, "Failed to lookup key in JNDI: " + key, e);
             return null;

@@ -65,7 +65,7 @@ public final class ConfigCommands {
     }
 
     public static String applyTamayaConfiguration(TamayaConfigService configPlugin, String pid, String operationMode, boolean dryRun){
-        Dictionary<String,Object> config = null;
+        Dictionary<String,Object> config;
         if(operationMode!=null){
             config = configPlugin.updateConfig(pid, Policy.valueOf(operationMode), true, dryRun);
             return  "Applied Configuration\n" +
@@ -183,7 +183,7 @@ public final class ConfigCommands {
                 for(PropertyValue pv:ps.getProperties().values()) {
                     pw.print("  " + StringUtil.format(pv.getKey(), 20));
                     pw.print(StringUtil.format(pv.getValue(), 20));
-                    pw.print(StringUtil.format(pv.getSource(), 20));
+                    pw.print(StringUtil.format(pv.getMeta("source"), 20));
                     pw.println(StringUtil.format(pv.getMeta().toString(), 80));
                 }
                 pw.flush();

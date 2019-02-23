@@ -18,15 +18,6 @@
  */
 package annottext;
 
-import org.apache.tamaya.inject.api.Config;
-import org.apache.tamaya.inject.api.ConfigSection;
-import org.apache.tamaya.inject.api.DynamicValue;
-import org.apache.tamaya.inject.api.NoConfig;
-import org.apache.tamaya.inject.spi.AbsoluteKeyResolver;
-
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * An example showing some basic annotations, using an interface to be proxied by the
  * configuration system, nevertheless extending the overall Configuration interface.

@@ -48,13 +48,12 @@ public class Activator implements BundleActivator {
 
     @Override
     public void start(BundleContext context) throws Exception {
-        this.plugin = new TamayaConfigPlugin(context);
         Dictionary<String, Object> props = new Hashtable<>();
         props.put(Constants.SERVICE_RANKING, DEFAULT_RANKING);
         LOG.info("Registering Tamaya OSGI Config Service...");
         registration = context.registerService(
                 TamayaConfigService.class,
-                this.plugin, props);
+                new TamayaConfigPlugin(context), props);
     }
 
     @Override

@@ -20,7 +20,6 @@ package org.apache.tamaya.microprofile;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.events.FrozenConfiguration;
 import org.apache.tamaya.spi.PropertySource;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.spi.ConfigSource;

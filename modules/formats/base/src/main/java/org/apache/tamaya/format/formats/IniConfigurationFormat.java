@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,7 +56,7 @@ public class IniConfigurationFormat implements ConfigurationFormat {
     throws IOException{
         PropertyValue data = PropertyValue.createObject();
         data.setMeta("resource", resource);
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
             String line = reader.readLine();
             int lineNum = 0;
             Map<String,PropertyValue> sections = new HashMap<>();
@@ -81,15 +82,15 @@ public class IniConfigurationFormat implements ConfigurationFormat {
                     String key = line.substring(0, sep);
                     String value = line.substring(sep + 1);
                     if (section != null) {
-                        final String sectionName = section;
-                        ObjectValue sectionPV = (ObjectValue)sections.computeIfAbsent(section,
-                                s -> PropertyValue.createObject(sectionName)
+                        final String finalSection = section;
+                        ObjectValue sectionPV = (ObjectValue)sections.computeIfAbsent(finalSection,
+                                s -> PropertyValue.createObject(finalSection)
                         .setMeta(ConfigurationFormat.class.getName(), this));
                         sectionPV.setValue(key, value).setMeta("source", resource)
                                 .setMeta(ConfigurationFormat.class.getName(), this);
                     } else {
                         String finalSection = "default";
-                        ObjectValue sectionBuilder = (ObjectValue)sections.computeIfAbsent(section,
+                        ObjectValue sectionBuilder = (ObjectValue)sections.computeIfAbsent(finalSection,
                                 s -> PropertyValue.createObject(finalSection).setMeta("source", resource));
                         sectionBuilder.setValue(key, value).setMeta("source", resource)
                                 .setMeta(ConfigurationFormat.class.getName(), this);

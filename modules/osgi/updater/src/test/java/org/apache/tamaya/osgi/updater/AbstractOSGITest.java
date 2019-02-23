@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.osgi.updater;
 
-import org.apache.tamaya.osgi.TamayaConfigPlugin;
 import org.apache.tamaya.osgi.commands.TamayaConfigService;
 import org.junit.Before;
 import org.mockito.Mock;
@@ -33,7 +32,6 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 /**

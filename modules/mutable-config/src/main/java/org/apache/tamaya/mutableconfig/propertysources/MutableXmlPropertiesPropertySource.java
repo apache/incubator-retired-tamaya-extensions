@@ -91,7 +91,7 @@ implements MutablePropertySource{
     public PropertyValue get(String key) {
         String val = this.properties.get(key);
         if(val!=null) {
-            return PropertyValue.of(key, val, getName());
+            return PropertyValue.createValue(key, val).setMeta("source", getName());
         }
         return null;
     }

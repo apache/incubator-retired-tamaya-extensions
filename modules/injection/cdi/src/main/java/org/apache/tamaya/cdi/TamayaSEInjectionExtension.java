@@ -19,7 +19,7 @@
 package org.apache.tamaya.cdi;
 
 
-import org.apache.tamaya.inject.ConfigurationInjection;
+import org.apache.tamaya.inject.ConfigurationInjector;
 import org.apache.tamaya.inject.api.Config;
 import org.apache.tamaya.inject.api.ConfigSection;
 
@@ -55,7 +55,7 @@ public final class TamayaSEInjectionExtension implements Extension {
             @Override
             public void inject(T instance, CreationalContext<T> ctx) {
                 it.inject(instance, ctx);
-                ConfigurationInjection.getConfigurationInjector().configure(instance);
+                ConfigurationInjector.getInstance().configure(instance);
             }
 
             @Override

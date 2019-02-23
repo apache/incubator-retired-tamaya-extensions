@@ -80,8 +80,7 @@ public class YAMLFormatTest {
 	}
 
 	private URL getContactYaml() {
-		URL configURL = YAMLPropertySourceTest.class.getResource("/configs/valid/contact.yaml");
-		return configURL;
+        return YAMLPropertySourceTest.class.getResource("/configs/valid/contact.yaml");
 	}
 
 }

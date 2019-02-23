@@ -19,7 +19,6 @@
 package org.apache.tamaya.mutableconfig;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.mutableconfig.spi.MutableConfigurationProviderSpi;
 import org.apache.tamaya.mutableconfig.spi.MutablePropertySource;
 import org.apache.tamaya.spi.ServiceContextManager;
 

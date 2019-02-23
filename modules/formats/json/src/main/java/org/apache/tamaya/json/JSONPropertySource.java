@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -53,7 +54,7 @@ public class JSONPropertySource implements PropertySource {
     /** The evaluated ordinal. */
     private int ordinal;
     /** The JSON reader factory used. */
-    private JsonReaderFactory readerFactory = initReaderFactory();
+    private JsonReaderFactory readerFactory;
 
     /** Initializes the factory to be used for creating readers. */
     private JsonReaderFactory initReaderFactory() {
@@ -128,13 +129,13 @@ public class JSONPropertySource implements PropertySource {
      */
     protected Map<String, PropertyValue> readConfig(URL urlResource) throws IOException{
         try (InputStream is = urlResource.openStream()) {
-            JsonStructure root = this.readerFactory.createReader(is, Charset.forName("UTF-8")).read();
+            JsonStructure root = this.readerFactory.createReader(is, StandardCharsets.UTF_8).read();
 
             JSONDataBuilder visitor = new JSONDataBuilder(urlResource.toString(), root);
             Map<String, String> values = visitor.build().toMap();
             Map<String, PropertyValue> result = new HashMap<>();
             for(Map.Entry<String,String> en:values.entrySet()){
-                result.put(en.getKey(), PropertyValue.of(en.getKey(), en.getValue(), getName()));
+                result.put(en.getKey(), PropertyValue.createValue(en.getKey(), en.getValue()).setMeta("source", getName()));
             }
             return result;
         }catch(IOException ioe){

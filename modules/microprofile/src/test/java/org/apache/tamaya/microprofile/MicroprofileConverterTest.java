@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.microprofile;
 
-import org.apache.tamaya.microprofile.converter.ProviderConverter;
 import org.apache.tamaya.spi.PropertyConverter;
 import org.junit.Test;
 import org.junit.runner.RunWith;

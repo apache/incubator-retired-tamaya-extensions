@@ -82,7 +82,7 @@ final class ServiceLoaderServiceContext implements ServiceContext {
             }
         }
         try {
-            return implType.newInstance();
+            return implType.getConstructor().newInstance();
         } catch (Exception e) {
             LOG.log(Level.SEVERE, "Failed to createObject instance of " + implType.getName(), e);
             if(supplier!=null){
@@ -106,7 +106,7 @@ final class ServiceLoaderServiceContext implements ServiceContext {
             return found;
         }
         List<T> services = loadServices(serviceType, supplier);
-        final List<T> previousServices = List.class.cast(servicesLoaded.putIfAbsent(serviceType, (List<Object>) services));
+        final List<T> previousServices = (List) servicesLoaded.putIfAbsent(serviceType, (List<Object>) services);
         return previousServices != null ? previousServices : services;
     }
 
@@ -119,14 +119,11 @@ final class ServiceLoaderServiceContext implements ServiceContext {
                 }
                 services.add(t);
             }
-            Collections.sort(services, PriorityServiceComparator.getInstance());
+            services.sort(PriorityServiceComparator.getInstance());
             services = Collections.unmodifiableList(services);
         } catch (ServiceConfigurationError e) {
             LOG.log(Level.WARNING,
                     "Error loading services current type " + serviceType, e);
-            if(services==null){
-                services = Collections.emptyList();
-            }
         }
         if(services.isEmpty() && supplier!=null){
             List<T> ts = supplier.get();
@@ -193,7 +190,9 @@ final class ServiceLoaderServiceContext implements ServiceContext {
                     highestPriority,
                     services));
         }
-        this.factoryTypes.put(serviceType, highestService.getClass());
+        if(highestService!=null) {
+            this.factoryTypes.put(serviceType, highestService.getClass());
+        }
         return highestService;
     }
 

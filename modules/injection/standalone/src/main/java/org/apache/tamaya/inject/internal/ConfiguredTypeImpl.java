@@ -73,13 +73,8 @@ public class ConfiguredTypeImpl implements ConfiguredType{
             initMethods(type, true);
         }else {
             ConfigAutoInject autoInject = (ConfigAutoInject) type.getAnnotation(ConfigAutoInject.class);
-            if (autoInject != null) {
-                initFields(type, autoInject != null);
-                initMethods(type, autoInject != null);
-            } else {
-                initFields(type, false);
-                initMethods(type, false);
-            }
+            initFields(type, autoInject != null);
+            initMethods(type, autoInject != null);
         }
     }
 

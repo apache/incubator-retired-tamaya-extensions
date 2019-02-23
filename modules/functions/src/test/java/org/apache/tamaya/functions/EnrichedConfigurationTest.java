@@ -20,9 +20,7 @@ package org.apache.tamaya.functions;
 
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
-import org.assertj.core.api.Assertions;
 import org.assertj.core.api.ThrowableAssert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -485,7 +483,7 @@ public class EnrichedConfigurationTest {
 
         EnrichedConfiguration sut = new EnrichedConfiguration(base, additions, false);
 
-        String result = sut.getOrDefault("b", TypeLiteral.<String>of(String.class), "3");
+        String result = sut.getOrDefault("b", TypeLiteral.of(String.class), "3");
 
         assertThat(result).isEqualTo("1");
     }
@@ -501,7 +499,7 @@ public class EnrichedConfigurationTest {
 
         EnrichedConfiguration sut = new EnrichedConfiguration(base, additions, true);
 
-        String result = sut.getOrDefault("b", TypeLiteral.<String>of(String.class), "3");
+        String result = sut.getOrDefault("b", TypeLiteral.of(String.class), "3");
 
         assertThat(result).isEqualTo("2");
     }
@@ -516,7 +514,7 @@ public class EnrichedConfigurationTest {
 
         EnrichedConfiguration sut = new EnrichedConfiguration(base, additions, false);
 
-        String result = sut.getOrDefault("b", TypeLiteral.<String>of(String.class), "B");
+        String result = sut.getOrDefault("b", TypeLiteral.of(String.class), "B");
 
         assertThat(result).isEqualTo("20");
     }
@@ -533,7 +531,7 @@ public class EnrichedConfigurationTest {
 
         EnrichedConfiguration sut = new EnrichedConfiguration(base, additions, true);
 
-        String result = sut.getOrDefault("b", TypeLiteral.<String>of(String.class), "B");
+        String result = sut.getOrDefault("b", TypeLiteral.of(String.class), "B");
 
         assertThat(result).isEqualTo("20");
     }
@@ -548,7 +546,7 @@ public class EnrichedConfigurationTest {
 
         EnrichedConfiguration sut = new EnrichedConfiguration(base, additions, false);
 
-        String result = sut.getOrDefault("b", TypeLiteral.<String>of(String.class), "B");
+        String result = sut.getOrDefault("b", TypeLiteral.of(String.class), "B");
 
         assertThat(result).isEqualTo("B");
     }
@@ -562,7 +560,7 @@ public class EnrichedConfigurationTest {
 
         EnrichedConfiguration sut = new EnrichedConfiguration(base, additions, true);
 
-        String result = sut.getOrDefault("b", TypeLiteral.<String>of(String.class), "3");
+        String result = sut.getOrDefault("b", TypeLiteral.of(String.class), "3");
 
         assertThat(result).isEqualTo("3");
     }

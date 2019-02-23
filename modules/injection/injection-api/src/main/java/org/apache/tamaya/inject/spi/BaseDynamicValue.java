@@ -87,7 +87,7 @@ public abstract class BaseDynamicValue<T> implements DynamicValue<T> {
     /** The createList of candidate keys to be used. */
     private List<String> keys = new ArrayList<>();
     /** The registered listeners. */
-    private WeakList<PropertyChangeListener> listeners = new WeakList<>();
+    private final WeakList<PropertyChangeListener> listeners = new WeakList<>();
 
     /**
      * Creates a new instance.

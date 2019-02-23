@@ -76,11 +76,7 @@ public class DefaultConfigEventManagerSpi implements ConfigEventManagerSpi, Clas
 
 	@Override
     public <T extends ConfigEvent> void addListener(ConfigEventListener l, Class<T> eventType){
-        List<ConfigEventListener> ls = listeners.get(eventType);
-        if(ls==null){
-            ls = Collections.synchronizedList(new ArrayList<ConfigEventListener>());
-            listeners.put(eventType, ls);
-        }
+        final List<ConfigEventListener> ls = listeners.computeIfAbsent(eventType, k -> Collections.synchronizedList(new ArrayList<>()));
         synchronized (ls){
             if(!ls.contains(l)){
                 ls.add(l);
@@ -95,7 +91,7 @@ public class DefaultConfigEventManagerSpi implements ConfigEventManagerSpi, Clas
 
     @Override
     public <T extends ConfigEvent> void removeListener(ConfigEventListener l, Class<T> eventType) {
-        List<ConfigEventListener> targets = this.listeners.get(eventType);
+        final List<ConfigEventListener> targets = this.listeners.get(eventType);
         if(targets!=null) {
             // forward to explicit listeners
             synchronized (targets) {
@@ -106,7 +102,7 @@ public class DefaultConfigEventManagerSpi implements ConfigEventManagerSpi, Clas
 
     @Override
     public Collection<? extends ConfigEventListener> getListeners(Class<? extends ConfigEvent> eventType) {
-        List<ConfigEventListener> targets = this.listeners.get(eventType);
+        final List<ConfigEventListener> targets = this.listeners.get(eventType);
         if(targets!=null){
             synchronized(targets){
                 return new ArrayList<>(targets);
@@ -117,7 +113,7 @@ public class DefaultConfigEventManagerSpi implements ConfigEventManagerSpi, Clas
 
     @Override
     public Collection<? extends ConfigEventListener> getListeners() {
-        Set<ConfigEventListener> targets = new HashSet<>();
+        final Set<ConfigEventListener> targets = new HashSet<>();
         for(List<ConfigEventListener> l:this.listeners.values()){
             targets.addAll(l);
         }

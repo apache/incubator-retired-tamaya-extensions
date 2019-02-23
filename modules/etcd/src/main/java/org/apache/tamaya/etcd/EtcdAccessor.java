@@ -56,7 +56,7 @@ class EtcdAccessor {
     /**
      * Timeout in seconds.
      */
-    private int timeout = 2;
+    private int timeout;
     /**
      * Timeout in seconds.
      */

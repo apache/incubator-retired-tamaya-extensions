@@ -123,7 +123,7 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
         WithPropertyConverter annot = annotatedField.getAnnotation(WithPropertyConverter.class);
         if (annot != null) {
             try {
-                propertyConverter = annot.value().newInstance();
+                propertyConverter = annot.value().getConstructor().newInstance();
             } catch (Exception e) {
                 throw new ConfigException("Failed to instantiate annotated PropertyConverter on " +
                         annotatedField.getDeclaringClass().getName()
@@ -169,7 +169,7 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
         WithPropertyConverter annot = method.getAnnotation(WithPropertyConverter.class);
         if (annot != null) {
             try {
-                propertyConverter = (PropertyConverter<Object>) annot.value().newInstance();
+                propertyConverter = (PropertyConverter<Object>) annot.value().getConstructor().newInstance();
             } catch (Exception e) {
                 throw new ConfigException("Failed to instantiate annotated PropertyConverter on " +
                         method.getDeclaringClass().getName()
@@ -267,9 +267,7 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
      * @return the uncommitted new createValue, or null.
      */
     public T getNewValue() {
-        @SuppressWarnings("unchecked")
-		T nv = newValue==null?null:(T)newValue;
-        return nv;
+        return newValue;
     }
 
     /**
@@ -286,9 +284,10 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
     /**
      * Reads an instance from the input stream.
      *
-     * @param ois the createObject input stream
+     * @param ois the object input stream
      * @throws IOException            if deserialization fails.
      * @throws ClassNotFoundException
+     * @throws IOException
      */
     @SuppressWarnings("unchecked")
 	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {

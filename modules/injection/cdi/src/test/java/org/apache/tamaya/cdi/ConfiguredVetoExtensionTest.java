@@ -18,13 +18,10 @@
  */
 package org.apache.tamaya.cdi;
 
-import org.apache.tamaya.ConfigurationProvider;
-import org.apache.tamaya.Configuration;
 import org.apache.tamaya.cdi.BaseTestConfiguration;
 import org.apache.tamaya.cdi.extra.ConfiguredVetoExtension;
 import org.apache.tamaya.cdi.extra.TestKlazz;
 import org.apache.tamaya.cdi.extra.TestKlazz2;
-import org.apache.tamaya.spi.ConfigurationContext;
 import org.junit.Test;
 
 import javax.enterprise.inject.spi.AnnotatedType;

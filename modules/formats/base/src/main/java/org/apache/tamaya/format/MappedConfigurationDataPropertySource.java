@@ -22,7 +22,6 @@ import org.apache.tamaya.functions.Supplier;
 import org.apache.tamaya.spi.PropertyValue;
 import org.apache.tamaya.spisupport.propertysource.BasePropertySource;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;

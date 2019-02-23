@@ -39,13 +39,13 @@ class VfsSupport {
     private static final String VFS3_PKG = "org.jboss.vfs.";
     private static final String VFS_PROTOCOL = "VFS";
 
-    private static Method methodGetRootUrl = null;
+    private static Method methodGetRootUrl;
     private static Method methodToUrl;
     private static Method methodGetPathName;
     private static Class<?> fileVisitorInterface;
     private static Method methodVisit;
-    private static Field visitorAttributesField = null;
-    private static Method methodGetPhysicalFile = null;
+    private static Field visitorAttributesField;
+    private static Method methodGetPhysicalFile;
 
     /**
      * Private constructor.
@@ -78,7 +78,7 @@ class VfsSupport {
      *
      * @param resource the resource
      * @param visitor  the visitor.
-     * @throws IOException
+     * @throws IOException on Vfs error
      */
     static void visit(Object resource, InvocationHandler visitor) throws IOException {
         Object visitorProxy = Proxy.newProxyInstance(
@@ -110,7 +110,7 @@ class VfsSupport {
      *
      * @param vfsResource the cfw resource, not null
      * @return the corresponding URL
-     * @throws IOException
+     * @throws IOException  on Vfs error
      */
     static URL getURL(Object vfsResource) throws IOException {
         return (URL) invokeVfsMethod(methodToUrl, vfsResource);
@@ -121,7 +121,7 @@ class VfsSupport {
      *
      * @param url the url
      * @return the corresponding VFS resource.
-     * @throws IOException
+     * @throws IOException on Vfs error
      */
     static Object getRelative(URL url) throws IOException {
         return invokeVfsMethod(methodGetRootUrl, null, url);
@@ -132,7 +132,7 @@ class VfsSupport {
      *
      * @param vfsResource the VFS resource
      * @return the file.
-     * @throws IOException
+     * @throws IOException on Vfs error
      */
     static File getFile(Object vfsResource) throws IOException {
         return (File) invokeVfsMethod(methodGetPhysicalFile, vfsResource);
@@ -143,7 +143,7 @@ class VfsSupport {
      *
      * @param url the url
      * @return the root resource.
-     * @throws IOException
+     * @throws IOException on Vfs error
      */
     static Object getRoot(URL url) throws IOException {
         return invokeVfsMethod(methodGetRootUrl, null, url);

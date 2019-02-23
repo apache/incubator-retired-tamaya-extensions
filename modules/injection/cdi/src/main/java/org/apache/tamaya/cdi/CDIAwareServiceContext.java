@@ -87,7 +87,7 @@ public class CDIAwareServiceContext implements ServiceContext, ClassloaderAware 
         T serv = getService(serviceType);
         if(serv!=null){
             try {
-                return (T)serv.getClass().newInstance();
+                return (T)serv.getClass().getConstructor().newInstance();
             } catch (Exception e) {
                 Logger.getLogger(getClass().getName())
                         .log(Level.SEVERE, "Failed to createObject new instance of: " +serviceType.getName(), e);

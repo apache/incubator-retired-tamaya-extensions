@@ -113,10 +113,8 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
     @Override
     public Collection<ExpressionResolver> getResolvers() {
         List<ExpressionResolver> resolvers = new ArrayList<>();
-        for (ExpressionResolver resolver : ServiceContextManager.getServiceContext().getServices(ExpressionResolver.class)) {
-            resolvers.add(resolver);
-        }
-        Collections.sort(resolvers, RESOLVER_COMPARATOR);
+        resolvers.addAll(ServiceContextManager.getServiceContext().getServices(ExpressionResolver.class));
+        resolvers.sort(RESOLVER_COMPARATOR);
         return resolvers;
     }
 
@@ -178,7 +176,7 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
      * Evaluates the expression parsed, hereby checking for prefixes and trying otherwise all available resolvers,
      * based on priority.
      *
-     * @param propertyValue
+     * @param propertyValue the current value, not null.
      * @param unresolvedExpression the parsed, but unresolved expression
      * @param maskUnresolved if true, not found expression parts will be replaced by surrounding with [].
      *                     Setting to false will replace the createValue with an empty String.

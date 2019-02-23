@@ -41,7 +41,7 @@ public final class ConfigEventManager {
     /**
      * The backing SPI.
      */
-    private static final ConfigEventManagerSpi spi(ClassLoader classLoader){
+    private static ConfigEventManagerSpi spi(ClassLoader classLoader){
         ConfigEventManagerSpi spi = ServiceContextManager.getServiceContext(classLoader)
                 .getService(ConfigEventManagerSpi.class);
         if(spi==null){

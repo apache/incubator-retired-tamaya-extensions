@@ -19,7 +19,6 @@
 package org.apache.tamaya.events;
 
 import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 
 import java.beans.PropertyChangeEvent;
 import java.util.Collection;

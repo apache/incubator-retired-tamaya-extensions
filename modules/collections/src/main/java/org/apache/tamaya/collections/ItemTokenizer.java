@@ -53,7 +53,7 @@ final class ItemTokenizer {
      * @return the tokenized value as createList, in order of occurrence.
      */
     public static List<String> split(String value, ConversionContext ctx){
-        String itemSeparator = (String)ctx.getMeta().getOrDefault(ITEM_SEPARATOR, DEFAULT_LIST_ITEM_SEPARATOR);
+        String itemSeparator = ctx.getMeta().getOrDefault(ITEM_SEPARATOR, DEFAULT_LIST_ITEM_SEPARATOR);
         return split(value, itemSeparator);
     }
 
@@ -90,7 +90,7 @@ final class ItemTokenizer {
      * @return an array of length 2, with the trimmed and parsed key/value pair.
      */
     public static String[] splitMapEntry(String mapEntry, ConversionContext ctx){
-        String entrySeparator = (String)ctx.getMeta().getOrDefault(MAP_ENTRY_SEPARATOR, DEFAULT_MAP_ENTRY_SEPARATOR);
+        String entrySeparator = ctx.getMeta().getOrDefault(MAP_ENTRY_SEPARATOR, DEFAULT_MAP_ENTRY_SEPARATOR);
         return splitMapEntry(mapEntry, entrySeparator);
     }
 
@@ -149,7 +149,7 @@ final class ItemTokenizer {
         } else {
             ConversionContext newContext = new ConversionContext.Builder(context.getConfiguration(), context.getKey(),
                     targetType).build();
-            T result = null;
+            T result;
             for (PropertyConverter<T> conv : valueConverters) {
                 try {
                     result = conv.convert(value, newContext);

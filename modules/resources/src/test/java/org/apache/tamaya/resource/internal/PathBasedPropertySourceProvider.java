@@ -60,9 +60,8 @@ public class PathBasedPropertySourceProvider extends AbstractPathPropertySourceP
             this.name = Objects.requireNonNull(name);
             for (Map.Entry en : props.entrySet()) {
                 this.properties.put(en.getKey().toString(),
-                        PropertyValue.of(en.getKey().toString(),
-                                String.valueOf(en.getValue()),
-                                name));
+                        PropertyValue.createValue(en.getKey().toString(),
+                                String.valueOf(en.getValue())).setMeta("source", name));
             }
         }
 

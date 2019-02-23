@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.resource.internal;
 
-import org.junit.Ignore;
-
 import java.net.URL;
 import java.util.Collection;
 

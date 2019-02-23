@@ -181,15 +181,13 @@ implements MutablePropertySource{
     public void refresh() {
         IMap<String,String> config = getHazelcastInstance().getMap(mapReference);
         Map<String, PropertyValue> configMap = new HashMap<>();
-        config.entrySet().forEach(en -> {
-            configMap.put(en.getKey(),
-            PropertyValue.createValue(en.getKey(), en.getValue())
-                    .setMeta("source", getName())
-                    .setMeta("backend", "Hazelcast")
-                    .setMeta("instance", getHazelcastInstance().getName())
-                    .setMeta("mapReference", mapReference)
-                    .immutable());
-        });
+        config.forEach((key, value) -> configMap.put(key,
+                PropertyValue.createValue(key, value)
+                        .setMeta("source", getName())
+                        .setMeta("backend", "Hazelcast")
+                        .setMeta("instance", getHazelcastInstance().getName())
+                        .setMeta("mapReference", mapReference)
+                        .immutable()));
         this.timeout.set(System.currentTimeMillis() + timeoutDuration.get());
         this.configMap = Collections.unmodifiableMap(configMap);
     }

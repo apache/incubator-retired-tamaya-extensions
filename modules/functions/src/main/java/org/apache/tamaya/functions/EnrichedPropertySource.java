@@ -45,7 +45,8 @@ class EnrichedPropertySource implements PropertySource {
     EnrichedPropertySource(PropertySource propertySource, Map<String, String> properties, boolean overriding) {
         this.basePropertySource = Objects.requireNonNull(propertySource);
         for(Map.Entry<String,String> en:properties.entrySet()){
-            this.addedProperties.put(en.getKey(), PropertyValue.of(en.getKey(), en.getValue(), propertySource.getName()));
+            this.addedProperties.put(en.getKey(), PropertyValue.createValue(en.getKey(), en.getValue())
+                    .setMeta("source", propertySource.getName()));
         }
         this.overriding = overriding;
     }

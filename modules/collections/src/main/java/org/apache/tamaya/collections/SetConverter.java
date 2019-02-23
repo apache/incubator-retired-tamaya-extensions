@@ -34,11 +34,11 @@ public class SetConverter implements PropertyConverter<Set> {
         String collectionType = "Set";
         boolean readOnly = false;
         if(context!=null) {
-            collectionType = (String)context.getMeta().getOrDefault("collection-type", "HashSet");
+            collectionType = context.getMeta().getOrDefault("collection-type", "HashSet");
             if (collectionType.startsWith("java.util.")) {
                 collectionType = collectionType.substring("java.util.".length());
             }
-            readOnly = Boolean.parseBoolean((String)context.getMeta().getOrDefault("read-only", "false"));
+            readOnly = Boolean.parseBoolean(context.getMeta().getOrDefault("read-only", "false"));
         }
         Set result;
         switch(collectionType){

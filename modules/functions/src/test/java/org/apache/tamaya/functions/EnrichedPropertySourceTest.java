@@ -22,8 +22,6 @@ import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 import org.junit.Test;
 
-import javax.management.RuntimeMBeanException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 

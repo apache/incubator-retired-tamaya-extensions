@@ -153,7 +153,7 @@ public final class InjectionUtils {
 
     private static List<String> getPropertyKeys(Method method, Config configAnnot) {
         if(configAnnot!=null && !configAnnot.key().isEmpty()){
-            return Arrays.asList(configAnnot.key());
+            return Collections.singletonList(configAnnot.key());
         }
         String name = method.getName();
         if (name.startsWith("get") || name.startsWith("set")) {
@@ -203,7 +203,7 @@ public final class InjectionUtils {
 
     private static List<String> getPropertyKeys(Field field, Config configAnnot) {
         if(configAnnot!=null && !configAnnot.key().isEmpty()){
-            return Arrays.asList(configAnnot.key());
+            return Collections.singletonList(configAnnot.key());
         }
         return expandKey(field.getName());
     }

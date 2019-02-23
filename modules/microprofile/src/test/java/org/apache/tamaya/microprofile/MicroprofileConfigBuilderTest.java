@@ -22,7 +22,6 @@ import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.spi.ConfigBuilder;
 import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
 import org.eclipse.microprofile.config.spi.ConfigSource;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.HashMap;

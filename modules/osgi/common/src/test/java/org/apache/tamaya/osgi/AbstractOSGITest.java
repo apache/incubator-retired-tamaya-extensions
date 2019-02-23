@@ -32,7 +32,6 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 /**

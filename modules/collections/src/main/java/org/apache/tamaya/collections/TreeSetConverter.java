@@ -21,10 +21,7 @@ package org.apache.tamaya.collections;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.TreeSet;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**

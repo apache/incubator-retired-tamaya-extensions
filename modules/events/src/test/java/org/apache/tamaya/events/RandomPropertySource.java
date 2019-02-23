@@ -29,7 +29,7 @@ import java.util.Map;
  */
 public class RandomPropertySource implements PropertySource{
 
-    private Map<String, PropertyValue> data = new HashMap<>();
+    private final Map<String, PropertyValue> data = new HashMap<>();
 
     @Override
     public int getOrdinal() {

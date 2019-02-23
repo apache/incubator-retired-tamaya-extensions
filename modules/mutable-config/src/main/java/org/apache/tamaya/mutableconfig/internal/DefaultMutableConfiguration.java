@@ -18,8 +18,6 @@
  */
 package org.apache.tamaya.mutableconfig.internal;
 
-import org.apache.tamaya.ConfigOperator;
-import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationSnapshot;
 import org.apache.tamaya.TypeLiteral;
@@ -142,16 +140,6 @@ public class DefaultMutableConfiguration implements MutableConfiguration {
         @Override
     public Map<String, String> getProperties() {
         return this.config.getProperties();
-    }
-
-    @Override
-    public Configuration with(ConfigOperator operator) {
-        return operator.operate(this);
-    }
-
-    @Override
-    public <T> T query(ConfigQuery<T> query) {
-        return query.query(this);
     }
 
     @Override

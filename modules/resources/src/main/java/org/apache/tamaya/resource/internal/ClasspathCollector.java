@@ -227,7 +227,7 @@ public class ClasspathCollector {
      * @param url          the root, not null
      * @param relativePath the relative path to be added, not null
      * @return the new URL instance
-     * @throws MalformedURLException
+     * @throws MalformedURLException if the url passed cannot be externalized
      */
     private URL createRelativeFrom(URL url, String relativePath)
             throws MalformedURLException {
@@ -282,7 +282,7 @@ public class ClasspathCollector {
      * @param rootResource the root resource for evaluating its getValues.
      * @param locationPattern the sub pattern that all getValues must mach, so they are selected.
      * @return the resources found, never null.
-     * @throws IOException
+     * @throws IOException on Vfs error
      */
     private static Collection<URL> findMatchingVfsResources(
             URL rootResource, String locationPattern) throws IOException {

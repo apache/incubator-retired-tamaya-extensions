@@ -54,7 +54,8 @@ class ValueMappedPropertySource implements PropertySource{
     public PropertyValue get(String key) {
         PropertyValue value = this.source.get(key);
         if(value!=null && value.getValue()!=null) {
-            return PropertyValue.of(key, valueFilter.mapProperty(key, value.getValue()), getName());
+            return PropertyValue.createValue(key, valueFilter.mapProperty(key, value.getValue())).setMeta("source",
+                    getName());
         }
         return null;
     }

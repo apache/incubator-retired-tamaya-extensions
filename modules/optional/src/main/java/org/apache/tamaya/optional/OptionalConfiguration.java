@@ -176,12 +176,9 @@ public final class OptionalConfiguration {
             case TAMAYA_OVERRIDES_OTHER:
                 return tamayaValue != null ? tamayaValue : value;
             case THROWS_EXCEPTION:
-                if (tamayaValue != value) {
-                    if ((tamayaValue != null && !tamayaValue.equals(value)) ||
-                            (value != null && TAMAYA_LOADED && !value.equals(tamayaValue))) {
+                if (TAMAYA_LOADED && !Objects.equals(value, tamayaValue)) {
                         throw new IllegalStateException("Incompatible configuration values: key=" + key +
                                 "=" + value + "(provider)/" + tamayaValue + "(Tamaya");
-                    }
                 }
                 break;
             default:

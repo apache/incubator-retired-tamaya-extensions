@@ -20,11 +20,9 @@ package org.apache.tamaya.consul;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.util.Map;
 import java.util.UUID;
 
 import org.apache.tamaya.mutableconfig.ConfigChangeRequest;
-import org.apache.tamaya.spi.PropertyValue;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -66,7 +64,7 @@ public class ConsulWriteTest {
         ConfigChangeRequest request = new ConfigChangeRequest("testDelete");
         request.put(taID, "testDelete");
         propertySource.applyChange(request);
-        assertThat(taID.toString()).isEqualTo(propertySource.get("testDelete").getValue());
+        assertThat(taID).isEqualTo(propertySource.get("testDelete").getValue());
         assertThat(propertySource.get("_testDelete.createdIndex")).isNotNull();
         request = new ConfigChangeRequest("testDelete2");
         request.remove("testDelete");

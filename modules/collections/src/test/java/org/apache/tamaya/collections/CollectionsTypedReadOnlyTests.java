@@ -20,7 +20,6 @@ package org.apache.tamaya.collections;
 
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.*;
@@ -94,7 +93,7 @@ public class CollectionsTypedReadOnlyTests {
     @Test
     public void testTreeSet_2(){
         Configuration config = Configuration.current();
-        Set<String> items = items = (Set<String>) config.get("typed.treeset", Set.class);
+        Set<String> items = (Set<String>) config.get("typed.treeset", Set.class);
         assertThat(items).isNotNull().isNotEmpty().hasSize(10);
         items.add("test");
     }

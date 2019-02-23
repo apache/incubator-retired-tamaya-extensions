@@ -22,7 +22,6 @@ package org.apache.tamaya.cdi;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.internal.matchers.NotNull;
 
 import javax.enterprise.inject.spi.CDI;
 

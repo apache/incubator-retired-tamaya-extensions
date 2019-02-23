@@ -22,7 +22,6 @@ import org.apache.tamaya.ConfigOperator;
 import org.apache.tamaya.ConfigQuery;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spisupport.DefaultConfiguration;
 import org.apache.tamaya.core.internal.CoreConfigurationBuilder;
 import org.apache.tamaya.spisupport.propertysource.SimplePropertySource;
@@ -39,7 +38,6 @@ import static java.util.Collections.singletonMap;
 import static org.apache.tamaya.functions.MethodNotMockedAnswer.NOT_MOCKED_ANSWER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.within;
 import static org.mockito.Mockito.*;
 
 
@@ -55,7 +53,7 @@ public class CombinedConfigurationTest {
         SimplePropertySource sourceWithKeyA2 = new SimplePropertySource("A", singletonMap("a", "a2"));
         SimplePropertySource sourceWithKeyB = new SimplePropertySource("B", singletonMap("b", "b"));
         SimplePropertySource sourceWithKeyC = new SimplePropertySource("C", singletonMap("c", "c"));
-        SimplePropertySource sourceWithoutKeys = new SimplePropertySource("NONE", Collections.<String, String>emptyMap());
+        SimplePropertySource sourceWithoutKeys = new SimplePropertySource("NONE", Collections.emptyMap());
 
         Configuration ccWithA1 = new CoreConfigurationBuilder().addPropertySources(sourceWithKeyA1)
                                                                                 .build();
@@ -135,7 +133,7 @@ public class CombinedConfigurationTest {
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
             public void call() throws Throwable {
-                cc.getOrDefault("key", (String)null);
+                cc.getOrDefault("key", null);
             }
         }).isInstanceOf(NullPointerException.class)
           .hasMessage("Value must be given.");
@@ -234,7 +232,7 @@ public class CombinedConfigurationTest {
         doCallRealMethod().when(cc).getOrDefault(anyString(), eq(TypeLiteral.of(Integer.class)),
                                                  Mockito.anyInt());
 
-        Integer result = cc.<Integer>getOrDefault("a", TypeLiteral.<Integer>of(Integer.class), 789);
+        Integer result = cc.<Integer>getOrDefault("a", TypeLiteral.of(Integer.class), 789);
 
         assertThat(result).isEqualTo(999);
     }

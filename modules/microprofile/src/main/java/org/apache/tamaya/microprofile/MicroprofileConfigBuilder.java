@@ -39,8 +39,6 @@ import org.eclipse.microprofile.config.spi.Converter;
 final class MicroprofileConfigBuilder implements ConfigBuilder {
 	
 	private ConfigurationBuilder configurationBuilder;
-	@SuppressWarnings("unused")
-	private ClassLoader classloader;
 
     MicroprofileConfigBuilder(ConfigurationBuilder configurationBuilder){
         this.configurationBuilder = Objects.requireNonNull(configurationBuilder);
@@ -116,7 +114,7 @@ final class MicroprofileConfigBuilder implements ConfigBuilder {
 
     @Override
     public ConfigBuilder forClassLoader(ClassLoader loader) {
-        this.classloader = loader;
+        this.configurationBuilder.setClassLoader(loader);
         return this;
     }
 
@@ -145,7 +143,7 @@ final class MicroprofileConfigBuilder implements ConfigBuilder {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> ConfigBuilder withConverter(Class<T> type, int priority, Converter<T> converter) {
-		configurationBuilder.addPropertyConverters(TypeLiteral.of(type.getClass()), MicroprofileAdapter.toPropertyConverter(converter));
+		configurationBuilder.addPropertyConverters(TypeLiteral.of(type), MicroprofileAdapter.toPropertyConverter(converter));
 		return this;
 	}
     

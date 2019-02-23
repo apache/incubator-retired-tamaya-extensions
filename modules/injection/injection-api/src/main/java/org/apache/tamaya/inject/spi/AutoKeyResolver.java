@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.inject.spi;
 
-import org.apache.tamaya.inject.api.Config;
 import org.apache.tamaya.inject.api.ConfigSection;
 import org.apache.tamaya.inject.api.KeyResolver;
 

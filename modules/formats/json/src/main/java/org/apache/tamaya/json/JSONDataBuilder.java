@@ -36,7 +36,6 @@ import java.util.Objects;
 class JSONDataBuilder {
 
     private String resource;
-    private PropertyValue data;
     private JsonValue root;
 
     JSONDataBuilder(String resource, JsonValue root) {
@@ -108,13 +107,14 @@ class JSONDataBuilder {
     }
 
     public PropertyValue build() {
+        PropertyValue data;
         if (root instanceof JsonObject) {
             data = PropertyValue.createObject("");
             addJsonObject((JsonObject)root, (ObjectValue) data);
         } else if (root instanceof JsonArray) {
             JsonArray array = (JsonArray)root;
             data = PropertyValue.createList("");
-            addArray(array, (ListValue)data);
+            addArray(array, (ListValue) data);
         } else {
             throw new ConfigException("Unknown JsonType encountered: " + root.getClass().getName());
         }

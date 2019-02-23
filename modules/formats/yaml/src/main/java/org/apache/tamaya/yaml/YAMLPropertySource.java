@@ -67,7 +67,8 @@ public class YAMLPropertySource implements PropertySource {
         ConfigurationData data = format.readConfiguration(urlResource.toString(), resource.openStream());
         this.values = new HashMap<>();
         for(Map.Entry<String,String> en:data.getData().get(0).toMap().entrySet()){
-            this.values.put(en.getKey(), PropertyValue.of(en.getKey(), en.getValue(), getName()));
+            this.values.put(en.getKey(), PropertyValue.createValue(en.getKey(), en.getValue()).setMeta("source",
+                    getName()));
         }
         if (data.getData().get(0).toMap().containsKey(TAMAYA_ORDINAL)) {
             this.ordinal = Integer.parseInt(data.getData().get(0).toMap().get(TAMAYA_ORDINAL));

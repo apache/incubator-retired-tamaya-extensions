@@ -43,7 +43,6 @@ public class TestPropertySource implements PropertySource{
         config.put("a.key6", "keys current a.key6");
         config.put("int1", "123456");
         config.put("int2", "111222");
-        config.put("testProperty", "testPropertyValue!");
         config.put("injectedTestProperty", "injectedTestPropertyValue!");
         config.put("booleanT", "true");
         config.put("double1", "1234.5678");
@@ -68,7 +67,7 @@ public class TestPropertySource implements PropertySource{
     public PropertyValue get(String key) {
         String val = this.config.get(key);
         if(val!=null) {
-            return PropertyValue.of(key, val, getName());
+            return PropertyValue. createValue(key, val).setMeta("source", getName());
         }
         return null;
     }
@@ -78,8 +77,4 @@ public class TestPropertySource implements PropertySource{
         return PropertyValue.map(config ,getName());
     }
 
-    @Override
-    public boolean isScannable() {
-        return true;
-    }
 }

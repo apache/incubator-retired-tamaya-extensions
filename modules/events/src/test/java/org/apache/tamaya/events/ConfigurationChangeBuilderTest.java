@@ -53,7 +53,7 @@ public class ConfigurationChangeBuilderTest {
 		doReturn(emptyMap()).when(oc).getProperties();
 		doReturn(null).when(oc).get(eq("a"));
 
-		Map<String, String> valuesNC = new HashMap<String, String>();
+		Map<String, String> valuesNC = new HashMap<>();
 		valuesNC.put("a", "19");
 
 		doReturn(valuesNC).when(nc).getProperties();
@@ -76,7 +76,7 @@ public class ConfigurationChangeBuilderTest {
 		Configuration oc = Mockito.mock(Configuration.class, new MethodNotMockedAnswer());
 		Configuration nc = Mockito.mock(Configuration.class, new MethodNotMockedAnswer());
 
-		Map<String, String> valuesOC = new HashMap<String, String>();
+		Map<String, String> valuesOC = new HashMap<>();
 		valuesOC.put("a", "19");
 
 		doReturn(valuesOC).when(oc).getProperties();
@@ -102,14 +102,14 @@ public class ConfigurationChangeBuilderTest {
 		Configuration oc = Mockito.mock(Configuration.class, new MethodNotMockedAnswer());
 		Configuration nc = Mockito.mock(Configuration.class, new MethodNotMockedAnswer());
 
-		Map<String, String> valuesOC = new HashMap<String, String>();
+		Map<String, String> valuesOC = new HashMap<>();
 		valuesOC.put("a", "91");
 
 		doReturn(valuesOC).when(oc).getProperties();
 		doReturn("91").when(oc).get(eq("a"));
 		doReturn("old configuration").when(oc).toString();
 
-		Map<String, String> valuesNC = new HashMap<String, String>();
+		Map<String, String> valuesNC = new HashMap<>();
 		valuesNC.put("a", "19");
 
 		doReturn(valuesNC).when(nc).getProperties();

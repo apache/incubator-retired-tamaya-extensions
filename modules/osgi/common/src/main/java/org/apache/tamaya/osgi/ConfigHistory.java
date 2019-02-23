@@ -42,7 +42,7 @@ public final class ConfigHistory implements Serializable{
     /** The max number of changes tracked. */
     private static int maxHistory = 10000;
     /** The overall history. */
-    private static List<ConfigHistory> history = new LinkedList<ConfigHistory>();
+    private static List<ConfigHistory> history = new LinkedList<>();
 
     /** The entry timestamp. */
     private long timestamp = System.currentTimeMillis();
@@ -244,7 +244,7 @@ public final class ConfigHistory implements Serializable{
 
     /**
      * Restores the history from the plugin's OSGI configuration.
-     * @param osgiConfig
+     * @param osgiConfig THE OSGI dictionary, not null.
      */
     @SuppressWarnings("unchecked")
 	static void restore(Dictionary<String,Object> osgiConfig){

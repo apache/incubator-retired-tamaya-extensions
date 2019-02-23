@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.jndi;
 
-import org.apache.tamaya.spi.PropertyValue;
 import org.junit.Test;
 
 import javax.naming.Context;
@@ -27,14 +26,13 @@ import javax.naming.NamingException;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.Hashtable;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class JNDIPropertySourceTest{
 
     private InitialContext createFSContext() throws NamingException, MalformedURLException {
-        Hashtable<String, String> env = new Hashtable<String, String>();
+        Hashtable<String, String> env = new Hashtable<>();
         env.put (Context.INITIAL_CONTEXT_FACTORY,
                 "com.sun.jndi.fscontext.RefFSContextFactory");
         return new InitialContext(env);

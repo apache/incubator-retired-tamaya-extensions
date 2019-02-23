@@ -79,7 +79,7 @@ public class YAMLFormat implements ConfigurationFormat {
                 throw new ConfigException("Unknown YamlType encountered: " + config.getClass().getName());
             }
             if(LOG.isLoggable(Level.FINEST)){
-                LOG.finest(String.format("Read data from " + resource + " : " + data.asString()));
+                LOG.finest(String.format("Read data from %s : %s", resource, data.asString()));
             }
             return new ConfigurationData(resource, this, data);
         }
@@ -90,18 +90,18 @@ public class YAMLFormat implements ConfigurationFormat {
 
 
     private void addObject(Map<String,Object> values, ObjectValue dataNode){
-        values.entrySet().forEach(en -> {
-            if (en.getValue() instanceof List) {
-                ListValue list = dataNode.setList(en.getKey());
-                addList((List) en.getValue(), list);
-            } else if (en.getValue() instanceof Map) {
-                ObjectValue object = dataNode.setObject(en.getKey());
-                addObject((Map) en.getValue(), object);
-            } else{
-                if (en.getValue() == null) {
-                    dataNode.setValue(en.getKey(), null);
-                }else {
-                    dataNode.setValue(en.getKey(), String.valueOf(en.getValue()));
+        values.forEach((key, value) -> {
+            if (value instanceof List) {
+                ListValue list = dataNode.setList(key);
+                addList((List) value, list);
+            } else if (value instanceof Map) {
+                ObjectValue object = dataNode.setObject(key);
+                addObject((Map) value, object);
+            } else {
+                if (value == null) {
+                    dataNode.setValue(key, null);
+                } else {
+                    dataNode.setValue(key, String.valueOf(value));
                 }
             }
         });

@@ -20,7 +20,6 @@ package org.apache.tamaya.gogo.shell;
 
 import org.apache.tamaya.osgi.Policy;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;

@@ -64,7 +64,7 @@ public class HistoryCommands {
         if(eventTypes.isEmpty()){
             System.out.println(org.apache.tamaya.osgi.commands.HistoryCommands.getHistory(
                     getService(TamayaConfigService.class),
-                    pid, null));
+                    pid));
         }else {
             System.out.println(org.apache.tamaya.osgi.commands.HistoryCommands.getHistory(
                     getService(TamayaConfigService.class),

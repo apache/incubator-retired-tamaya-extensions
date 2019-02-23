@@ -26,8 +26,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -53,7 +51,7 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
     /**
      * The current active property sources of this provider.
      */
-    private final List<PropertySource> propertySources = Collections.synchronizedList(new LinkedList<PropertySource>());
+    private final List<PropertySource> propertySources = Collections.synchronizedList(new LinkedList<>());
     /**
      * The thread pool used.
      */
