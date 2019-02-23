@@ -54,7 +54,7 @@ public class JSONPropertySource implements PropertySource {
     /** The evaluated ordinal. */
     private int ordinal;
     /** The JSON reader factory used. */
-    private JsonReaderFactory readerFactory;
+    private JsonReaderFactory readerFactory = initReaderFactory();
 
     /** Initializes the factory to be used for creating readers. */
     private JsonReaderFactory initReaderFactory() {
@@ -85,9 +85,6 @@ public class JSONPropertySource implements PropertySource {
         if (this.values.containsKey(TAMAYA_ORDINAL)) {
             this.ordinal = Integer.parseInt(this.values.get(TAMAYA_ORDINAL).getValue());
         }
-        Map<String, Object> config = new HashMap<>();
-        config.put(JOHNZON_SUPPORTS_COMMENTS_PROP, true);
-        this.readerFactory = Json.createReaderFactory(config);
     }
 
 
