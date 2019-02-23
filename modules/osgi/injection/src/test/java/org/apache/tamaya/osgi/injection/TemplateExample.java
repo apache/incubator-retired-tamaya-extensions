@@ -25,10 +25,10 @@ import org.apache.tamaya.inject.api.Config;
  */
 interface TemplateExample {
 
-    @Config(key="java.home")
+    @Config(key="[java.home]")
     String getJavaHome();
 
-    @Config(key="java.version")
+    @Config(key="[java.version]")
     String javaVersion();
 
     @Config(key = "java.used", defaultValue = "true")
