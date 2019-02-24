@@ -18,7 +18,8 @@
  */
 package org.apache.tamaya.karaf.shell;
 
-import org.apache.karaf.shell.api.action.*;
+import org.apache.karaf.shell.api.action.Action;
+import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.lifecycle.Reference;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 import org.apache.tamaya.osgi.commands.HistoryCommands;
@@ -26,6 +27,9 @@ import org.apache.tamaya.osgi.commands.TamayaConfigService;
 
 import java.io.IOException;
 
+/**
+ * A Karaf shell command.
+ */
 @Command(scope = "tamaya", name = "tm_history_maxsize", description="Gets the maximal getNumChilds of stored getHistory entries.")
 @Service
 public class HistoryMaxsizeCommand implements Action{

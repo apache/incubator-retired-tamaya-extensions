@@ -18,7 +18,11 @@
  */
 package org.apache.tamaya.osgi.injection;
 
-import org.osgi.framework.*;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
+import org.osgi.framework.ServiceRegistration;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -58,6 +62,9 @@ public class Activator implements BundleActivator {
         injector.stop();
     }
 
+    /**
+     * Tamaya injector service.
+     */
     static final class TamayaConfigInjectionService implements ConfigInjectionService{
 
         private TamayaOSGIInjector injector;

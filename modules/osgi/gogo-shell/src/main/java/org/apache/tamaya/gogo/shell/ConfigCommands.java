@@ -28,6 +28,9 @@ import org.osgi.framework.ServiceReference;
 import java.io.IOException;
 import java.util.Objects;
 
+/**
+ * A Felix shell commands provider.
+ */
 public class ConfigCommands {
 
     private BundleContext context;

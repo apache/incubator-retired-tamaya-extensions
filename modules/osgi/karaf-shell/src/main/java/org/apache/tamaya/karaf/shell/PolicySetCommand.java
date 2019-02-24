@@ -35,6 +35,9 @@ import org.apache.tamaya.osgi.commands.TamayaConfigService;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * A Karaf shell command.
+ */
 @Command(scope = "tamaya", name = "tm_policy_set", description="Sets the current Tamaya operation policy.")
 @Service
 public class PolicySetCommand implements Action{
@@ -52,6 +55,9 @@ public class PolicySetCommand implements Action{
         return(ConfigCommands.setDefaultOpPolicy(configPlugin, policy));
     }
 
+    /**
+     * Completer command.
+     */
     @Service
     public static final class OperationModeCompleter implements Completer {
 

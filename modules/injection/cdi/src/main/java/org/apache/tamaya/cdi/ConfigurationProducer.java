@@ -16,9 +16,18 @@
  */
 package org.apache.tamaya.cdi;
 
-import org.apache.tamaya.*;
-import org.apache.tamaya.inject.api.*;
-import org.apache.tamaya.spi.*;
+import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.Configuration;
+import org.apache.tamaya.TypeLiteral;
+import org.apache.tamaya.inject.api.Config;
+import org.apache.tamaya.inject.api.ConfigSection;
+import org.apache.tamaya.inject.api.DynamicValue;
+import org.apache.tamaya.inject.api.WithConfigOperator;
+import org.apache.tamaya.inject.api.WithPropertyConverter;
+import org.apache.tamaya.spi.ConfigurationBuilder;
+import org.apache.tamaya.spi.ConfigurationContext;
+import org.apache.tamaya.spi.ConversionContext;
+import org.apache.tamaya.spi.PropertyConverter;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;

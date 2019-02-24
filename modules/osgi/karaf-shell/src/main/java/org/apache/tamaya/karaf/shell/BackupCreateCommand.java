@@ -30,6 +30,9 @@ import org.osgi.service.cm.ConfigurationAdmin;
 
 import java.io.IOException;
 
+/**
+ * A Karaf shell command.
+ */
 @Command(scope = "tamaya", name = "tm_backup_create", description="Creates a backup of a current OSGI configuration.")
 @Service
 public class BackupCreateCommand implements Action{

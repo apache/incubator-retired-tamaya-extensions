@@ -28,6 +28,9 @@ import org.apache.tamaya.osgi.commands.TamayaConfigService;
 
 import java.io.IOException;
 
+/**
+ * A Karaf shell command.
+ */
 @Command(scope = "tamaya", name = "tm_backup_delete", description="Deletes the OSGI configuration backup  of Tamya.")
 @Service
 public class BackupDeleteCommand implements Action{

@@ -18,7 +18,11 @@
  */
 package org.apache.tamaya.karaf.shell;
 
-import org.apache.karaf.shell.api.action.*;
+import org.apache.karaf.shell.api.action.Action;
+import org.apache.karaf.shell.api.action.Argument;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Completion;
+import org.apache.karaf.shell.api.action.Option;
 import org.apache.karaf.shell.api.action.lifecycle.Reference;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 import org.apache.karaf.shell.api.console.CommandLine;
@@ -32,6 +36,9 @@ import org.apache.tamaya.osgi.commands.TamayaConfigService;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * A Karaf shell command.
+ */
 @Command(scope = "tamaya", name = "tm_history", description="Gets the getHistory of changes Tamaya applied to the OSGI configuration.")
 @Service
 public class HistoryGetCommand implements Action{
@@ -53,6 +60,9 @@ public class HistoryGetCommand implements Action{
         return HistoryCommands.getHistory(configPlugin, pid, eventTypes);
     }
 
+    /**
+     * Karaf completer action.
+     */
     @Service
     public static final class FilterCompleter implements Completer {
 

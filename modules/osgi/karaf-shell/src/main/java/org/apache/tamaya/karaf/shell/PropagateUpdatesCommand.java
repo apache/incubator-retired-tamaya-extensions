@@ -26,6 +26,9 @@ import org.apache.tamaya.osgi.commands.TamayaConfigService;
 
 import java.io.IOException;
 
+/**
+ * A Karaf shell command.
+ */
 @Command(scope = "tamaya", name = "tm_propagate_updates",
         description="Flag if Tamaya is automatically triggering OSGI config updates, when according " +
                 "Tamaya configuration changes.")

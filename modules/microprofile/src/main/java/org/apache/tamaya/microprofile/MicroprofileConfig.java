@@ -35,14 +35,14 @@ import java.util.*;
  */
 public class MicroprofileConfig implements Config, Serializable {
 
-	private static final long serialVersionUID = -2811635734899431816L;
-	private Configuration delegate;
+    private static final long serialVersionUID = -2811635734899431816L;
+    private Configuration delegate;
 
-    public MicroprofileConfig(Configuration delegate){
+    public MicroprofileConfig(Configuration delegate) {
         this.delegate = Objects.requireNonNull(delegate);
     }
 
-    public Configuration getConfiguration(){
+    public Configuration getConfiguration() {
         return this.delegate;
     }
 
@@ -50,14 +50,14 @@ public class MicroprofileConfig implements Config, Serializable {
     @Override
     public <T> T getValue(String propertyName, Class<T> propertyType) {
         T value = null;
-        try{
+        try {
             value = delegate.get(propertyName, propertyType);
-        }catch(ConfigException e){
-            if(e.toString().contains("Unparseable")){
+        } catch (ConfigException e) {
+            if (e.toString().contains("Unparseable")) {
                 throw new IllegalArgumentException("Invalid type: " + propertyType.getName());
             }
         }
-        if(value == null){
+        if (value == null) {
             throw new NoSuchElementException("No such config property: " + propertyName);
         }
         return value;
@@ -85,16 +85,16 @@ public class MicroprofileConfig implements Config, Serializable {
                 '}';
     }
 
-    private void writeObject(ObjectOutputStream out) throws IOException{
-        if(!(this.delegate instanceof Serializable)){
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        if (!(this.delegate instanceof Serializable)) {
             out.writeObject(this.delegate.getSnapshot());
-        }else {
+        } else {
             out.writeObject(this.delegate);
         }
     }
 
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
-        this.delegate = (Configuration)in.readObject();
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        this.delegate = (Configuration) in.readObject();
     }
 
 }

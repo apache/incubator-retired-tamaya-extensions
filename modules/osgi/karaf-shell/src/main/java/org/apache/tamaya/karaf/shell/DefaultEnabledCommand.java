@@ -33,6 +33,9 @@ import org.apache.tamaya.osgi.commands.TamayaConfigService;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * A Karaf shell command.
+ */
 @Command(scope = "tamaya", name = "tm_enabled", description="Check if Tamaya is currently by default enabled for all bundles/services (default: enabled=false)." +
         " If disabled still Tamaya allows to explicitly enable bundles using 'tamaya-enable' manifest or OSGI config entries.")
 @Service

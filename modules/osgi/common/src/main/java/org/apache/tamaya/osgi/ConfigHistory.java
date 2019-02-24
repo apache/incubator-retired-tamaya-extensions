@@ -27,51 +27,74 @@ import java.util.logging.Logger;
  * Class storing the history of changes applied to the OSGI configuration by Tamaya.
  * This class can be used in the future to restore the previous state, if needed.
  */
-public final class ConfigHistory implements Serializable{
+public final class ConfigHistory implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = Logger.getLogger(ConfigHistory.class.getName());
-    /** The key of the plugin OSGI configuration, where the history is stored/retrieved. */
+    /**
+     * The key of the plugin OSGI configuration, where the history is stored/retrieved.
+     */
     private static final String HISTORY_KEY = "tamaya.history";
 
-    public enum TaskType{
+    /**
+     * History entry type.
+     */
+    public enum TaskType {
         PROPERTY,
         BEGIN,
         END,
     }
-    /** The max number of changes tracked. */
+
+    /**
+     * The max number of changes tracked.
+     */
     private static int maxHistory = 10000;
-    /** The overall history. */
+    /**
+     * The overall history.
+     */
     private static List<ConfigHistory> history = new LinkedList<>();
 
-    /** The entry timestamp. */
+    /**
+     * The entry timestamp.
+     */
     private long timestamp = System.currentTimeMillis();
-    /** The entry type. */
+    /**
+     * The entry type.
+     */
     private TaskType type;
-    /** The previous createValue. */
+    /**
+     * The previous createValue.
+     */
     private Object previousValue;
-    /** The current createValue. */
+    /**
+     * The current createValue.
+     */
     private Object value;
-    /** The key. */
+    /**
+     * The key.
+     */
     private String key;
-    /** The target PID. */
+    /**
+     * The target PID.
+     */
     private String pid;
 
-    private ConfigHistory(TaskType taskType, String pid){
+    private ConfigHistory(TaskType taskType, String pid) {
         this.type = Objects.requireNonNull(taskType);
         this.pid = Objects.requireNonNull(pid);
     }
 
     /**
      * Creates and registers an entry when starting to configure a bundle.
-     * @param pid the PID
+     *
+     * @param pid  the PID
      * @param info any info.
      * @return the entry, never null.
      */
-    public static ConfigHistory configuring(String pid, String info){
+    public static ConfigHistory configuring(String pid, String info) {
         ConfigHistory h = new ConfigHistory(TaskType.BEGIN, pid)
                 .setValue(info);
-        synchronized (history){
+        synchronized (history) {
             history.add(h);
             checkHistorySize();
         }
@@ -80,14 +103,15 @@ public final class ConfigHistory implements Serializable{
 
     /**
      * Creates and registers an entry when finished to configure a bundle.
-     * @param pid the PID
+     *
+     * @param pid  the PID
      * @param info any info.
      * @return the entry, never null.
      */
-    public static ConfigHistory configured(String pid, String info){
+    public static ConfigHistory configured(String pid, String info) {
         ConfigHistory h = new ConfigHistory(TaskType.END, pid)
                 .setValue(info);
-        synchronized (history){
+        synchronized (history) {
             history.add(h);
             checkHistorySize();
         }
@@ -96,18 +120,19 @@ public final class ConfigHistory implements Serializable{
 
     /**
      * Creates and registers an entry when a property has been changed.
-     * @param pid the PID
-     * @param key the key, not null.
+     *
+     * @param pid           the PID
+     * @param key           the key, not null.
      * @param previousValue the previous createValue.
-     * @param value the new createValue.
+     * @param value         the new createValue.
      * @return the entry, never null.
      */
-    public static ConfigHistory propertySet(String pid, String key, Object value, Object previousValue){
+    public static ConfigHistory propertySet(String pid, String key, Object value, Object previousValue) {
         ConfigHistory h = new ConfigHistory(TaskType.PROPERTY, pid)
                 .setKey(key)
                 .setPreviousValue(previousValue)
                 .setValue(value);
-        synchronized (history){
+        synchronized (history) {
             history.add(h);
             checkHistorySize();
         }
@@ -116,44 +141,48 @@ public final class ConfigHistory implements Serializable{
 
     /**
      * Sets the maximum history getNumChilds.
+     *
      * @param maxHistory the getNumChilds
      */
-    static void setMaxHistory(int maxHistory){
+    static void setMaxHistory(int maxHistory) {
         ConfigHistory.maxHistory = maxHistory;
     }
 
     /**
      * Get the max history getNumChilds.
+     *
      * @return the max getNumChilds
      */
-    static int getMaxHistory(){
+    static int getMaxHistory() {
         return maxHistory;
     }
 
     /**
      * Access the current history.
+     *
      * @return the current history, never null.
      */
-    static List<ConfigHistory> getHistory(){
+    static List<ConfigHistory> getHistory() {
         return getHistory(null);
     }
 
     /**
      * Clears the history.
      */
-    static void clearHistory(){
+    static void clearHistory() {
         clearHistory(null);
     }
 
     /**
      * Clears the history for a PID.
+     *
      * @param pid the pid, null clears the full history.
      */
-    static void clearHistory(String pid){
-        synchronized (history){
-            if("*".equals(pid)) {
+    static void clearHistory(String pid) {
+        synchronized (history) {
+            if ("*".equals(pid)) {
                 history.clear();
-            }else{
+            } else {
                 history.removeAll(getHistory(pid));
             }
         }
@@ -161,11 +190,12 @@ public final class ConfigHistory implements Serializable{
 
     /**
      * Get the history for a PID.
+     *
      * @param pid the pid, null returns the full history.
      * @return the history, never null.
      */
     public static List<ConfigHistory> getHistory(String pid) {
-        if(pid==null || pid.isEmpty()){
+        if (pid == null || pid.isEmpty()) {
             return new ArrayList<>(history);
         }
         synchronized (history) {
@@ -179,7 +209,7 @@ public final class ConfigHistory implements Serializable{
         }
     }
 
-    public TaskType getType(){
+    public TaskType getType() {
         return type;
     }
 
@@ -228,9 +258,10 @@ public final class ConfigHistory implements Serializable{
     /**
      * This method saves the (serialized) history in the plugin's OSGI configuration using
      * the key {@link #HISTORY_KEY}.
+     *
      * @param osgiConfig the plugin config, not null.
      */
-    static void save(Dictionary<String,Object> osgiConfig){
+    static void save(Dictionary<String, Object> osgiConfig) {
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(bos);
@@ -244,13 +275,14 @@ public final class ConfigHistory implements Serializable{
 
     /**
      * Restores the history from the plugin's OSGI configuration.
+     *
      * @param osgiConfig THE OSGI dictionary, not null.
      */
     @SuppressWarnings("unchecked")
-	static void restore(Dictionary<String,Object> osgiConfig){
-        try{
-            String serialized = (String)osgiConfig.get(HISTORY_KEY);
-            if(serialized!=null) {
+    static void restore(Dictionary<String, Object> osgiConfig) {
+        try {
+            String serialized = (String) osgiConfig.get(HISTORY_KEY);
+            if (serialized != null) {
                 ByteArrayInputStream bis = new ByteArrayInputStream(Base64.getDecoder().decode(serialized));
                 ObjectInputStream ois = new ObjectInputStream(bis);
                 ConfigHistory.history = (List<ConfigHistory>) ois.readObject();
@@ -261,8 +293,8 @@ public final class ConfigHistory implements Serializable{
         }
     }
 
-    private static void checkHistorySize(){
-        while(history.size() > maxHistory){
+    private static void checkHistorySize() {
+        while (history.size() > maxHistory) {
             history.remove(0);
         }
     }

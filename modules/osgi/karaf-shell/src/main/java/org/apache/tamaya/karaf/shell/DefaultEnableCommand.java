@@ -34,6 +34,9 @@ import org.apache.tamaya.osgi.commands.TamayaConfigService;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * A Karaf shell command.
+ */
 @Command(scope = "tamaya", name = "tm_enable", description="Enables or disable Tamaya by default for all bundles/services (default: enabled=false)." +
         " Disabling still allows to explicitly enable bundles using 'tamaya-enable' manifest or OSGI config entries.")
 @Service
@@ -51,6 +54,9 @@ public class DefaultEnableCommand implements Action{
         return(ConfigCommands.setDefaultEnabled(configPlugin, enabled));
     }
 
+    /**
+     * Karaf code completion.
+     */
     @Service
     public static final class OperationModeCompleter implements Completer {
 

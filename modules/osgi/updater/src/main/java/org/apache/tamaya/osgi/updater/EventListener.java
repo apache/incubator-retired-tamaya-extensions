@@ -23,7 +23,8 @@ import org.apache.tamaya.events.ConfigEventListener;
 import org.apache.tamaya.events.ConfigurationChange;
 import org.apache.tamaya.osgi.Policy;
 import org.apache.tamaya.osgi.commands.TamayaConfigService;
-import org.osgi.framework.*;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 import java.beans.PropertyChangeEvent;

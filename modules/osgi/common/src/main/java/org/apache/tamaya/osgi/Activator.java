@@ -19,7 +19,10 @@
 package org.apache.tamaya.osgi;
 
 import org.apache.tamaya.osgi.commands.TamayaConfigService;
-import org.osgi.framework.*;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 import java.util.Dictionary;

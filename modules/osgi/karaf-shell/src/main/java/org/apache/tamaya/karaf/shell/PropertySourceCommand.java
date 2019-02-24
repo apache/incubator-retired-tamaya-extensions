@@ -26,6 +26,9 @@ import org.apache.tamaya.osgi.commands.ConfigCommands;
 
 import java.io.IOException;
 
+/**
+ * A Karaf shell command.
+ */
 @Command(scope = "tamaya", name = "tm_propertysource", description="Show the current Tamaya entries of a propertysource.")
 @Service
 public class PropertySourceCommand implements Action{

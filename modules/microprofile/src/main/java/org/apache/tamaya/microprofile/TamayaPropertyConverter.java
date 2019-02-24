@@ -28,6 +28,7 @@ import java.util.Objects;
 
 /**
  * Property source implementation that wraps a Microprofile {@link ConfigSource} instance.
+ * @param <T> the target type.
  */
 public class TamayaPropertyConverter<T> implements PropertyConverter<T> {
 

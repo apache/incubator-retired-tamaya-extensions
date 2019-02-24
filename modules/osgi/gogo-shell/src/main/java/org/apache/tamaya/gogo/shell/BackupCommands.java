@@ -28,6 +28,9 @@ import org.osgi.service.cm.ConfigurationAdmin;
 import java.io.IOException;
 import java.util.Objects;
 
+/**
+ * A Felix shell commands provider.
+ */
 public class BackupCommands {
 
     private BundleContext context;

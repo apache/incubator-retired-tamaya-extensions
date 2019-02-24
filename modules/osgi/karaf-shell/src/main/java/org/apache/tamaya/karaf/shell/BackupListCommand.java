@@ -28,6 +28,9 @@ import org.apache.tamaya.osgi.commands.TamayaConfigService;
 
 import java.io.IOException;
 
+/**
+ * A Karaf shell command.
+ */
 @Command(scope = "tamaya", name = "tm_backup_list", description="List the backed-up OSGI configuration before Tamya applied changes.")
 @Service
 public class BackupListCommand implements Action{

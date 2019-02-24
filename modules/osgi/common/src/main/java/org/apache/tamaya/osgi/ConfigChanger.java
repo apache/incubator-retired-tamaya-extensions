@@ -153,8 +153,6 @@ final class ConfigChanger {
                     continue;
                 }
                 switch (opMode) {
-                    case EXTEND:
-                        break;
                     case OVERRIDE:
                         LOG.info(() -> "Setting key " + dictEntry.getKey() + " to " + configuredValue);
                         ConfigHistory.propertySet(pid,dictEntry.getKey(), configuredValue, dictEntry.getValue());
@@ -164,6 +162,9 @@ final class ConfigChanger {
                         LOG.info(() -> "Setting key " + dictEntry.getKey() + " to " + configuredValue);
                         ConfigHistory.propertySet(pid,dictEntry.getKey(), configuredValue, dictEntry.getValue());
                         dictionary.put(dictEntry.getKey(), configuredValue);
+                    case EXTEND:
+                    default:
+                        break;
                 }
             }
         }
@@ -173,13 +174,6 @@ final class ConfigChanger {
                 continue;
             }
             switch (opMode) {
-                case EXTEND:
-                    if(dictValue==null){
-                        LOG.info(() -> "Setting key " + configEntry.getKey() + " to " + configEntry.getValue());
-                        ConfigHistory.propertySet(pid,configEntry.getKey(), configEntry.getValue(), null);
-                        dictionary.put(configEntry.getKey(), configEntry.getValue());
-                    }
-                    break;
                 case OVERRIDE:
                     LOG.info(() -> "Setting key " + configEntry.getKey() + " to " + configEntry.getValue());
                     ConfigHistory.propertySet(pid,configEntry.getKey(), configEntry.getValue(), null);
@@ -189,6 +183,14 @@ final class ConfigChanger {
                     if(dictValue!=null){
                         LOG.info(() -> "Setting key " + configEntry.getKey() + " to " + configEntry.getValue());
                         ConfigHistory.propertySet(pid,configEntry.getKey(), configEntry.getValue(), dictValue);
+                        dictionary.put(configEntry.getKey(), configEntry.getValue());
+                    }
+                    break;
+                case EXTEND:
+                default:
+                    if(dictValue==null){
+                        LOG.info(() -> "Setting key " + configEntry.getKey() + " to " + configEntry.getValue());
+                        ConfigHistory.propertySet(pid,configEntry.getKey(), configEntry.getValue(), null);
                         dictionary.put(configEntry.getKey(), configEntry.getValue());
                     }
                     break;

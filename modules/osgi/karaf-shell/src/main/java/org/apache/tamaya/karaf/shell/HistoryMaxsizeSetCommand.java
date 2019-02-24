@@ -28,6 +28,9 @@ import org.apache.tamaya.osgi.commands.TamayaConfigService;
 
 import java.io.IOException;
 
+/**
+ * A Karaf shell command.
+ */
 @Command(scope = "tamaya", name = "tm_history_maxsize_set", description="Sets the maximal getNumChilds of Tamaya getHistory entries.")
 @Service
 public class HistoryMaxsizeSetCommand implements Action{

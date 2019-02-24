@@ -41,7 +41,7 @@ import java.util.logging.Logger;
  * Simple implementation of a mutable {@link org.apache.tamaya.spi.PropertySource} for .properties files.
  */
 public class MutablePropertiesPropertySource extends BasePropertySource
-implements MutablePropertySource{
+        implements MutablePropertySource {
 
     /**
      * The logger.
@@ -71,8 +71,8 @@ implements MutablePropertySource{
      * Creates a new Properties based PropertySource based on the given URL.
      *
      * @param propertiesLocation the URL encoded location, not null.
-     * @param defaultOrdinal the default ordinal to be used, when no ordinal is provided with the property
-     *                       source's properties.
+     * @param defaultOrdinal     the default ordinal to be used, when no ordinal is provided with the property
+     *                           source's properties.
      */
     public MutablePropertiesPropertySource(File propertiesLocation, int defaultOrdinal) {
         super(propertiesLocation.toString(), defaultOrdinal);
@@ -87,7 +87,7 @@ implements MutablePropertySource{
 
     @Override
     public PropertyValue get(String key) {
-        Map<String,PropertyValue> properties = getProperties();
+        Map<String, PropertyValue> properties = getProperties();
         return properties.get(key);
     }
 
@@ -118,46 +118,45 @@ implements MutablePropertySource{
 
     @Override
     public void applyChange(ConfigChangeRequest change) {
-        if(change.isEmpty()){
+        if (change.isEmpty()) {
             LOG.info("Nothing to commit for transaction: " + change.getTransactionID());
             return;
         }
-        if(!file.exists()){
+        if (!file.exists()) {
             try {
-                if(!file.createNewFile()){
+                if (!file.createNewFile()) {
                     throw new ConfigException("Failed to createObject config file " + file);
                 }
             } catch (IOException e) {
                 throw new ConfigException("Failed to createObject config file " + file, e);
             }
         }
-        for(Map.Entry<String,String> en:change.getAddedProperties().entrySet()){
+        for (Map.Entry<String, String> en : change.getAddedProperties().entrySet()) {
             int index = en.getKey().indexOf('?');
-            if(index>0){
+            if (index > 0) {
                 this.properties.put(en.getKey().substring(0, index), en.getValue());
-            }else{
+            } else {
                 this.properties.put(en.getKey(), en.getValue());
             }
         }
-        for(String rmKey:change.getRemovedProperties()){
+        for (String rmKey : change.getRemovedProperties()) {
             this.properties.remove(rmKey);
         }
-        try(BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file))){
+        try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file))) {
             Properties props = new Properties();
-            for (Map.Entry<String,String> en : this.properties.entrySet()) {
+            for (Map.Entry<String, String> en : this.properties.entrySet()) {
                 props.setProperty(en.getKey(), en.getValue());
             }
             props.store(bos, "Properties written from Tamaya on " + new Date());
             bos.flush();
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             throw new ConfigException("Failed to write config to " + file, e);
         }
     }
 
     @Override
     protected String toStringValues() {
-        return  super.toStringValues() +
+        return super.toStringValues() +
                 "  file=" + file + '\n';
     }
 

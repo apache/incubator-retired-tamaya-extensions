@@ -27,6 +27,9 @@ import org.apache.karaf.shell.api.action.lifecycle.Service;
 import org.apache.tamaya.osgi.commands.ConfigCommands;
 import org.apache.tamaya.osgi.commands.TamayaConfigService;
 
+/**
+ * A Karaf shell command.
+ */
 @Command(scope = "tamaya", name = "tm_info", description="Show he current Tamaya status.")
 @Service
 public class InfoCommand  implements Action {

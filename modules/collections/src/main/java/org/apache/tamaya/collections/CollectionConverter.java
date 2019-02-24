@@ -36,6 +36,9 @@ public final class CollectionConverter implements PropertyConverter<Collection> 
     private static final Logger LOG = Logger.getLogger(CollectionConverter.class.getName());
     public static final String VALUE_MAPPING = "collection-mapping";
 
+    /**
+     * Type of collection mappings supported.
+     */
     private enum MappingType{
         /** The list values are identiified by parsing the node value(s) into items.
          * Hereby only the items of the most significant config entry are considered. */

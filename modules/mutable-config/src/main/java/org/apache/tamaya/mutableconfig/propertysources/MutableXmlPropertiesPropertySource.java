@@ -41,7 +41,7 @@ import java.util.logging.Logger;
  * Simple implementation of a mutable {@link org.apache.tamaya.spi.PropertySource} for .xml properties files.
  */
 public class MutableXmlPropertiesPropertySource extends BasePropertySource
-implements MutablePropertySource{
+        implements MutablePropertySource {
 
     /**
      * The logger.
@@ -72,8 +72,8 @@ implements MutablePropertySource{
      * Creates a new Properties based PropertySource based on the given URL.
      *
      * @param propertiesLocation the URL encoded location, not null.
-     * @param defaultOrdinal the default ordinal to be used, when no ordinal is provided with the property
-     *                       source's properties.
+     * @param defaultOrdinal     the default ordinal to be used, when no ordinal is provided with the property
+     *                           source's properties.
      */
     public MutableXmlPropertiesPropertySource(File propertiesLocation, int defaultOrdinal) {
         super(propertiesLocation.toString(), defaultOrdinal);
@@ -86,11 +86,10 @@ implements MutablePropertySource{
     }
 
 
-
     @Override
     public PropertyValue get(String key) {
         String val = this.properties.get(key);
-        if(val!=null) {
+        if (val != null) {
             return PropertyValue.createValue(key, val).setMeta("source", getName());
         }
         return null;
@@ -98,7 +97,7 @@ implements MutablePropertySource{
 
     @Override
     public Map<String, PropertyValue> getProperties() {
-        return PropertyValue.map(this.properties,getName());
+        return PropertyValue.map(this.properties, getName());
     }
 
     /**
@@ -124,46 +123,45 @@ implements MutablePropertySource{
 
     @Override
     public void applyChange(ConfigChangeRequest configChange) {
-        if(configChange.isEmpty()){
+        if (configChange.isEmpty()) {
             LOG.info("Nothing to commit for transaction: " + configChange.getTransactionID());
             return;
         }
-        if(!file.exists()){
+        if (!file.exists()) {
             try {
-                if(!file.createNewFile()){
+                if (!file.createNewFile()) {
                     throw new ConfigException("Failed to createObject config file " + file);
                 }
             } catch (IOException e) {
                 throw new ConfigException("Failed to createObject config file " + file, e);
             }
         }
-        for(Map.Entry<String,String> en:configChange.getAddedProperties().entrySet()){
+        for (Map.Entry<String, String> en : configChange.getAddedProperties().entrySet()) {
             int index = en.getKey().indexOf('?');
-            if(index>0){
+            if (index > 0) {
                 this.properties.put(en.getKey().substring(0, index), en.getValue());
-            }else{
+            } else {
                 this.properties.put(en.getKey(), en.getValue());
             }
         }
-        for(String rmKey:configChange.getRemovedProperties()){
+        for (String rmKey : configChange.getRemovedProperties()) {
             this.properties.remove(rmKey);
         }
-        try(BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file))){
+        try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file))) {
             Properties props = new Properties();
-            for (Map.Entry<String,String> en : this.properties.entrySet()) {
+            for (Map.Entry<String, String> en : this.properties.entrySet()) {
                 props.setProperty(en.getKey(), en.getValue());
             }
             props.storeToXML(bos, "Properties written from Tamaya on " + new Date());
             bos.flush();
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             throw new ConfigException("Failed to write config to " + file, e);
         }
     }
 
     @Override
     protected String toStringValues() {
-        return  super.toStringValues() +
+        return super.toStringValues() +
                 "  file=" + file + '\n';
     }
 

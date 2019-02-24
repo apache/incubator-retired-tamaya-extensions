@@ -61,35 +61,34 @@ public class YAMLFormat implements ConfigurationFormat {
 
     @Override
     public ConfigurationData readConfiguration(String resource, InputStream inputStream) {
-        try{
+        try {
             Yaml yaml = new Yaml();
             PropertyValue data;
             Object config = yaml.load(inputStream);
-            if(config instanceof Map){
+            if (config instanceof Map) {
                 data = PropertyValue.createObject("");
                 data.setMeta("resource", resource);
                 data.setMeta("format", "yaml");
-                addObject((Map)config, (ObjectValue)data);
-            }else if(config instanceof List){
+                addObject((Map) config, (ObjectValue) data);
+            } else if (config instanceof List) {
                 data = PropertyValue.createList("");
                 data.setMeta("resource", resource);
                 data.setMeta("format", "yaml");
-                addList((List)config, (ListValue)data);
-            }else {
+                addList((List) config, (ListValue) data);
+            } else {
                 throw new ConfigException("Unknown YamlType encountered: " + config.getClass().getName());
             }
-            if(LOG.isLoggable(Level.FINEST)){
+            if (LOG.isLoggable(Level.FINEST)) {
                 LOG.finest(String.format("Read data from %s : %s", resource, data.asString()));
             }
             return new ConfigurationData(resource, this, data);
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             throw new ConfigException(format("Failed to read properties from %s", resource), t);
         }
     }
 
 
-    private void addObject(Map<String,Object> values, ObjectValue dataNode){
+    private void addObject(Map<String, Object> values, ObjectValue dataNode) {
         values.forEach((key, value) -> {
             if (value instanceof List) {
                 ListValue list = dataNode.setList(key);
@@ -115,7 +114,7 @@ public class YAMLFormat implements ConfigurationFormat {
             } else if (val instanceof Map) {
                 ObjectValue ov = dataNode.addObject();
                 addObject((Map) val, ov);
-            } else{
+            } else {
                 dataNode.setValue(String.valueOf(val));
             }
         });

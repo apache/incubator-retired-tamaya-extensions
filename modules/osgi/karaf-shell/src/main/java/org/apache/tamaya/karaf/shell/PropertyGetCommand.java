@@ -27,6 +27,9 @@ import org.apache.tamaya.osgi.commands.ConfigCommands;
 
 import java.io.IOException;
 
+/**
+ * A Karaf shell command.
+ */
 @Command(scope = "tamaya", name = "tm_property", description="Get a Tamaya property.")
 @Service
 public class PropertyGetCommand implements Action{

@@ -27,6 +27,9 @@ import org.apache.tamaya.osgi.commands.TamayaConfigService;
 
 import java.io.IOException;
 
+/**
+ * A Karaf shell command.
+ */
 @Command(scope = "tamaya", name = "tm_history_delete_all", description="Deletes the full getHistory of changes Tamaya applied to the OSGI configuration.")
 @Service
 public class HistoryDeleteAllCommand implements Action{

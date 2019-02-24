@@ -52,10 +52,10 @@ public class MicroprofileConfigurationProducer {
     @Produces
     @ConfigProperty
     public Object resolveAndConvert(final InjectionPoint injectionPoint) {
-        LOGGER.finest( () -> "Inject: " + injectionPoint);
+        LOGGER.finest(() -> "Inject: " + injectionPoint);
         final ConfigProperty annotation = injectionPoint.getAnnotated().getAnnotation(ConfigProperty.class);
         String key = annotation.name();
-        if(key.isEmpty()){
+        if (key.isEmpty()) {
             key = getDefaultKey(injectionPoint);
         }
 
@@ -75,7 +75,7 @@ public class MicroprofileConfigurationProducer {
     }
 
     @SuppressWarnings("rawtypes")
-	static String getDefaultKey(InjectionPoint injectionPoint) {
+    static String getDefaultKey(InjectionPoint injectionPoint) {
         Class declaringType = injectionPoint.getMember().getDeclaringClass();
         return declaringType.getCanonicalName() + "." + injectionPoint.getMember().getName();
     }
@@ -85,24 +85,24 @@ public class MicroprofileConfigurationProducer {
         Configuration config = Configuration.current();
         ConversionContext.Builder builder = new ConversionContext.Builder(config,
                 key, TypeLiteral.of(targetType));
-        if(targetType instanceof ParameterizedType){
-            ParameterizedType pt = (ParameterizedType)targetType;
-            if(pt.getRawType().equals(Provider.class)) {
+        if (targetType instanceof ParameterizedType) {
+            ParameterizedType pt = (ParameterizedType) targetType;
+            if (pt.getRawType().equals(Provider.class)) {
                 builder = new ConversionContext.Builder(config,
                         key, TypeLiteral.of(pt.getActualTypeArguments()[0]));
             }
         }
         if (injectionPoint.getMember() instanceof AnnotatedElement) {
-            AnnotatedElement annotated = (AnnotatedElement)injectionPoint.getMember();
-            if(annotated.isAnnotationPresent(ConfigProperty.class)) {
+            AnnotatedElement annotated = (AnnotatedElement) injectionPoint.getMember();
+            if (annotated.isAnnotationPresent(ConfigProperty.class)) {
                 builder.setAnnotatedElement(annotated);
             }
-        }else if(injectionPoint.getMember() instanceof Method){
-            Method method = (Method)injectionPoint.getMember();
-            for(Type type:method.getParameterTypes()){
-                if(type instanceof AnnotatedElement){
-                    AnnotatedElement annotated = (AnnotatedElement)type;
-                    if(annotated.isAnnotationPresent(ConfigProperty.class)) {
+        } else if (injectionPoint.getMember() instanceof Method) {
+            Method method = (Method) injectionPoint.getMember();
+            for (Type type : method.getParameterTypes()) {
+                if (type instanceof AnnotatedElement) {
+                    AnnotatedElement annotated = (AnnotatedElement) type;
+                    if (annotated.isAnnotationPresent(ConfigProperty.class)) {
                         builder.setAnnotatedElement(annotated);
                     }
                 }
@@ -111,18 +111,18 @@ public class MicroprofileConfigurationProducer {
         return builder.build();
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     static Object resolveValue(String defaultTextValue, ConversionContext context, InjectionPoint injectionPoint) {
         Config config = ConfigProviderResolver.instance().getConfig();
         String textValue = config.getOptionalValue(context.getKey(), String.class).orElse(defaultTextValue);
-        if(String.class.equals(context.getTargetType().getRawType())){
+        if (String.class.equals(context.getTargetType().getRawType())) {
             return textValue;
         }
         Object value = null;
         if (textValue != null || Optional.class.equals(context.getTargetType().getRawType())) {
-            LOGGER.log(Level.FINEST, () -> "Converting KEY: " + context.getKey() + "("+context.getTargetType()+"), textValue: " + textValue);
-			List<PropertyConverter> converters = Configuration.current().getContext()
-                    .getPropertyConverters((TypeLiteral)context.getTargetType());
+            LOGGER.log(Level.FINEST, () -> "Converting KEY: " + context.getKey() + "(" + context.getTargetType() + "), textValue: " + textValue);
+            List<PropertyConverter> converters = Configuration.current().getContext()
+                    .getPropertyConverters((TypeLiteral) context.getTargetType());
             for (PropertyConverter<Object> converter : converters) {
                 try {
                     value = converter.convert(textValue, context);
@@ -141,12 +141,12 @@ public class MicroprofileConfigurationProducer {
     }
 
     @Produces
-    public Config getConfiguration(){
+    public Config getConfiguration() {
         return ConfigProvider.getConfig();
     }
 
     @Produces
-    public ConfigBuilder getConfigBuilder(){
+    public ConfigBuilder getConfigBuilder() {
         return ConfigProviderResolver.instance().getBuilder();
     }
 

@@ -27,6 +27,9 @@ import org.apache.tamaya.osgi.commands.TamayaConfigService;
 
 import java.io.IOException;
 
+/**
+ * A Karaf shell command.
+ */
 @Command(scope = "tamaya", name = "tm_policy", description="Gets the current Tamaya operation policy.")
 @Service
 public class PolicyGetCommand implements Action{

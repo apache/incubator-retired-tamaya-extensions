@@ -37,15 +37,16 @@ import org.eclipse.microprofile.config.spi.Converter;
  * Created by atsticks on 23.03.17.
  */
 final class MicroprofileConfigBuilder implements ConfigBuilder {
-	
-	private ConfigurationBuilder configurationBuilder;
 
-    MicroprofileConfigBuilder(ConfigurationBuilder configurationBuilder){
+    private ConfigurationBuilder configurationBuilder;
+
+    MicroprofileConfigBuilder(ConfigurationBuilder configurationBuilder) {
         this.configurationBuilder = Objects.requireNonNull(configurationBuilder);
         configurationBuilder.addDefaultPropertyConverters();
     }
+
     public ConfigurationBuilder getConfigurationBuilder() {
-    	return configurationBuilder;
+        return configurationBuilder;
     }
 
     /**
@@ -61,31 +62,32 @@ final class MicroprofileConfigBuilder implements ConfigBuilder {
      */
     @Override
     public ConfigBuilder addDefaultSources() {
-    	
-    	configurationBuilder.addPropertySources(
+
+        configurationBuilder.addPropertySources(
                 new SystemPropertySource(400), //
                 new EnvironmentPropertySource(300), //
                 new MicroprofileDefaultProperties() //
-    						);
-    	configurationBuilder.sortPropertySources(PropertySourceComparator.getInstance());
+        );
+        configurationBuilder.sortPropertySources(PropertySourceComparator.getInstance());
         return this;
     }
 
     /**
      * Add ConfigSources registered using the ServiceLoader.
+     *
      * @return the ConfigBuilder with the added configuration sources
      */
     @Override
     public ConfigBuilder addDiscoveredSources() {
-        for(ConfigSource configSource: ServiceContextManager.getServiceContext(
-                configurationBuilder.getClassLoader()).getServices(ConfigSource.class)){
-        	configurationBuilder.addPropertySources(MicroprofileAdapter.toPropertySource(configSource));
+        for (ConfigSource configSource : ServiceContextManager.getServiceContext(
+                configurationBuilder.getClassLoader()).getServices(ConfigSource.class)) {
+            configurationBuilder.addPropertySources(MicroprofileAdapter.toPropertySource(configSource));
         }
 
-        for(ConfigSourceProvider configSourceProvider: ServiceContextManager.getServiceContext(
+        for (ConfigSourceProvider configSourceProvider : ServiceContextManager.getServiceContext(
                 configurationBuilder.getClassLoader()
-        ).getServices(ConfigSourceProvider.class)){
-        	configurationBuilder.addPropertySources(MicroprofileAdapter.toPropertySources(configSourceProvider.getConfigSources(
+        ).getServices(ConfigSourceProvider.class)) {
+            configurationBuilder.addPropertySources(MicroprofileAdapter.toPropertySources(configSourceProvider.getConfigSources(
                     Thread.currentThread().getContextClassLoader()
             )));
         }
@@ -95,17 +97,18 @@ final class MicroprofileConfigBuilder implements ConfigBuilder {
 
     /**
      * Add Converters registered using the ServiceLoader.
+     *
      * @return the ConfigBuilder with the added configuration converters
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-	@Override
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Override
     public ConfigBuilder addDiscoveredConverters() {
-        for(Converter<?> converter: ServiceContextManager.getServiceContext(
+        for (Converter<?> converter : ServiceContextManager.getServiceContext(
                 configurationBuilder.getClassLoader()
-        ).getServices(Converter.class)){
-			TypeLiteral targetType = TypeLiteral.of(
-                    TypeLiteral.getGenericInterfaceTypeParameters(converter.getClass(),Converter.class)[0]);
-            
+        ).getServices(Converter.class)) {
+            TypeLiteral targetType = TypeLiteral.of(
+                    TypeLiteral.getGenericInterfaceTypeParameters(converter.getClass(), Converter.class)[0]);
+
             configurationBuilder.addPropertyConverters(targetType,
                     MicroprofileAdapter.toPropertyConverter(converter));
         }
@@ -120,19 +123,19 @@ final class MicroprofileConfigBuilder implements ConfigBuilder {
 
     @Override
     public ConfigBuilder withSources(ConfigSource... sources) {
-        for(ConfigSource source:sources){
+        for (ConfigSource source : sources) {
             configurationBuilder.addPropertySources(MicroprofileAdapter.toPropertySource(source));
         }
         return this;
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-	@Override
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @Override
     public ConfigBuilder withConverters(Converter<?>... converters) {
-        for(Converter<?> converter:converters){
+        for (Converter<?> converter : converters) {
             TypeLiteral lit = TypeLiteral.of(converter.getClass());
             TypeLiteral target = TypeLiteral.of(lit.getType());
-            
+
             configurationBuilder.removePropertyConverters(target);
             configurationBuilder.addPropertyConverters(target,
                     MicroprofileAdapter.toPropertyConverter(converter));
@@ -140,18 +143,18 @@ final class MicroprofileConfigBuilder implements ConfigBuilder {
         return this;
     }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> ConfigBuilder withConverter(Class<T> type, int priority, Converter<T> converter) {
-		configurationBuilder.addPropertyConverters(TypeLiteral.of(type), MicroprofileAdapter.toPropertyConverter(converter));
-		return this;
-	}
-    
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> ConfigBuilder withConverter(Class<T> type, int priority, Converter<T> converter) {
+        configurationBuilder.addPropertyConverters(TypeLiteral.of(type), MicroprofileAdapter.toPropertyConverter(converter));
+        return this;
+    }
+
     @Override
     public Config build() {
         Configuration config = getConfigurationBuilder().build();
-    	Configuration.setCurrent(config);
-    	
+        Configuration.setCurrent(config);
+
         return MicroprofileAdapter.toConfig(config);
     }
 

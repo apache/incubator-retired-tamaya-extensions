@@ -27,6 +27,9 @@ import org.apache.tamaya.osgi.commands.TamayaConfigService;
 
 import java.io.IOException;
 
+/**
+ * A Karaf shell command.
+ */
 @Command(scope = "tamaya", name = "tm_config", description="Show the current Tamaya configuration.")
 @Service
 public class TamayaConfigCommand implements Action{

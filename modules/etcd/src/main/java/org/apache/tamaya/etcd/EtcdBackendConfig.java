@@ -29,24 +29,26 @@ import java.util.logging.Logger;
  */
 final class EtcdBackendConfig {
 
-	private static final Logger LOG = Logger.getLogger(EtcdBackendConfig.class.getName());
-	private static final String TAMAYA_ETCD_SERVER_URLS = "tamaya.etcd.server";
-	private static final String TAMAYA_ETCD_TIMEOUT = "tamaya.etcd.timeout";
+    private static final Logger LOG = Logger.getLogger(EtcdBackendConfig.class.getName());
+    private static final String TAMAYA_ETCD_SERVER_URLS = "tamaya.etcd.server";
+    private static final String TAMAYA_ETCD_TIMEOUT = "tamaya.etcd.timeout";
     private static final String TAMAYA_ETCD_DIRECTORY = "tamaya.etcd.directory";
 
 
-    private EtcdBackendConfig(){}
+    private EtcdBackendConfig() {
+    }
 
     /**
      * Get the default etcd directory selector, default {@code ""}.
+     *
      * @return the default etcd directory selector, never null.
      */
-    public static String getEtcdDirectory(){
+    public static String getEtcdDirectory() {
         String val = System.getProperty(TAMAYA_ETCD_DIRECTORY);
-        if(val == null){
+        if (val == null) {
             val = System.getenv(TAMAYA_ETCD_DIRECTORY);
         }
-        if(val!=null){
+        if (val != null) {
             return val;
         }
         return "";
@@ -55,14 +57,15 @@ final class EtcdBackendConfig {
     /**
      * Get the etcd connection timeout from system/enfironment property {@code tamaya.etcd.timeout (=seconds)}
      * (default 2 seconds).
+     *
      * @return the etcd connection timeout.
      */
-    public static long getEtcdTimeout(){
+    public static long getEtcdTimeout() {
         String val = System.getProperty(TAMAYA_ETCD_TIMEOUT);
-        if(val == null){
+        if (val == null) {
             val = System.getenv(TAMAYA_ETCD_TIMEOUT);
         }
-        if(val!=null){
+        if (val != null) {
             return TimeUnit.MILLISECONDS.convert(Integer.parseInt(val), TimeUnit.SECONDS);
         }
         return 2000L;
@@ -70,22 +73,23 @@ final class EtcdBackendConfig {
 
     /**
      * Evaluate the etcd target servers fomr system/environment property {@code tamaya.etcd.server}.
+     *
      * @return the servers configured, or {@code http://127.0.0.1:4001} (default).
      */
-    public static List<String> getServers(){
+    public static List<String> getServers() {
         String serverURLs = System.getProperty(TAMAYA_ETCD_SERVER_URLS);
-        if(serverURLs==null){
+        if (serverURLs == null) {
             serverURLs = System.getenv(TAMAYA_ETCD_SERVER_URLS);
         }
-        if(serverURLs==null){
+        if (serverURLs == null) {
             serverURLs = "http://127.0.0.1:4001";
         }
         List<String> servers = new ArrayList<>();
-        for(String url:serverURLs.split("\\,")) {
-            try{
+        for (String url : serverURLs.split("\\,")) {
+            try {
                 servers.add(url.trim());
                 LOG.info("Using etcd endoint: " + url);
-            } catch(Exception e){
+            } catch (Exception e) {
                 LOG.log(Level.SEVERE, "Error initializing etcd accessor for URL: " + url, e);
             }
         }

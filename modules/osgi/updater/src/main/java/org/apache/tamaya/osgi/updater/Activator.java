@@ -21,7 +21,9 @@ package org.apache.tamaya.osgi.updater;
 import org.apache.tamaya.events.ConfigEventManager;
 import org.apache.tamaya.events.ConfigurationChange;
 import org.apache.tamaya.osgi.commands.TamayaConfigService;
-import org.osgi.framework.*;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 import java.util.Timer;

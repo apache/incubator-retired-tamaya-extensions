@@ -84,7 +84,7 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
         this.propertyConverter = propertyConverter;
         this.loadPolicy = Objects.requireNonNull(loadPolicy);
         setUpdatePolicy(updatePolicy);
-        if(loadPolicy == LoadPolicy.INITIAL){
+        if (loadPolicy == LoadPolicy.INITIAL) {
             this.value = evaluateValue();
         }
     }
@@ -101,8 +101,8 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
         return of(owner, annotatedField, configuration, LoadPolicy.ALWAYS, updatePolicy);
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-	public static DynamicValue<?> of(Object owner, Field annotatedField, Configuration configuration,
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public static DynamicValue<?> of(Object owner, Field annotatedField, Configuration configuration,
                                      LoadPolicy loadPolicy, UpdatePolicy updatePolicy) {
         // Check for adapter/filter
         Type targetType = annotatedField.getGenericType();
@@ -148,7 +148,7 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
     }
 
     @SuppressWarnings("unchecked")
-	public static DynamicValue<?> of(Object owner, Method method, Configuration configuration,
+    public static DynamicValue<?> of(Object owner, Method method, Configuration configuration,
                                      LoadPolicy loadPolicy, UpdatePolicy updatePolicy) {
         // Check for adapter/filter
         Type targetType = method.getGenericReturnType();
@@ -181,7 +181,7 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
                 loadPolicy, updatePolicy);
     }
 
-    protected PropertyConverter getCustomConverter(){
+    protected PropertyConverter getCustomConverter() {
         return this.propertyConverter;
     }
 
@@ -195,13 +195,13 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
      */
     public T get() {
         T newLocalValue;
-        if(loadPolicy!=LoadPolicy.INITIAL) {
+        if (loadPolicy != LoadPolicy.INITIAL) {
             newLocalValue = evaluateValue();
             if (this.value == null) {
                 this.value = newLocalValue;
             }
-            if(!Objects.equals(this.value, newLocalValue)){
-                switch (getUpdatePolicy()){
+            if (!Objects.equals(this.value, newLocalValue)) {
+                switch (getUpdatePolicy()) {
                     case IMMEDEATE:
                     case IMMEDIATE:
                         commit();
@@ -234,7 +234,7 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
      * {@link UpdatePolicy} in place.
      */
     public boolean updateValue() {
-        if(this.value==null && this.newValue==null){
+        if (this.value == null && this.newValue == null) {
             this.value = evaluateValue();
             return false;
         }
@@ -290,8 +290,8 @@ final class DefaultDynamicValue<T> extends BaseDynamicValue<T> {
      * @throws IOException
      */
     @SuppressWarnings("unchecked")
-	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        setUpdatePolicy((UpdatePolicy)ois.readObject());
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        setUpdatePolicy((UpdatePolicy) ois.readObject());
         if (isPresent()) {
             this.value = (T) ois.readObject();
         }
