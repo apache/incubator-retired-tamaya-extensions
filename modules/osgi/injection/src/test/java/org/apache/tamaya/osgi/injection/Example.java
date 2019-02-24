@@ -26,9 +26,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Example class to be configured with injection.
  */
 final class Example {
-    @Config(key="java.home")
+    @Config(key="[java.home]")
     String javaHome;
-    @Config(key="java.version")
+    @Config(key="[java.version]")
     String javaVersion;
     @Config(key = "java.used", defaultValue = "true")
     boolean javaUsed;

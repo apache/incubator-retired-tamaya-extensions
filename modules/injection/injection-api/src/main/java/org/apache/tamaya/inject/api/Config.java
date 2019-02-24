@@ -94,7 +94,7 @@ public @interface Config {
 
     /**
      * Defines the main configuration property key to be used. The final target property is evaluated based on
-     * the {@link #keyResolver()} strategy, by default {@link KeyResolution#AUTO}.
+     * the {@link #keyResolver()} strategy.
      *
      * @return the main property key, not null. If empty, the field or property name (of a setter method) being injected
      * is used by default.
@@ -123,7 +123,7 @@ public @interface Config {
 
     /**
      * Defines the alternate configuration property keys to be used, if no value could be evaluated using the main
-     * {@link #key()}. All key values given are resolved using the {@link KeyResolution#ABSOLUTE} strategy.
+     * {@link #key()}.
      *
      * @return the property keys, not null.
      */

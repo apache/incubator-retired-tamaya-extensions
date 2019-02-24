@@ -47,7 +47,7 @@ public class TamayaInjectionTest {
         assertThat(testInstance.fullKey).isNull();
         assertThat(testInstance.test2).isEqualTo("This is not setCurrent.");
         ConfigurationInjection.getConfigurationInjector().configure(testInstance);
-        assertThat(testInstance.simple_value).isEqualTo("aSimpleValue");
+        assertThat(testInstance.simple_value).isEqualTo("aSimpleValue3");
         assertThat(testInstance.classFieldKey).isEqualTo("Class-Field-Value");
         assertThat(testInstance.fieldKey).isEqualTo("Field-Value");
         assertThat(testInstance.fullKey).isEqualTo("Fullkey-Value");
@@ -107,7 +107,7 @@ public class TamayaInjectionTest {
         assertThat(testInstance.simpleValue()).isEqualTo("aSimpleValue");
         assertThat(testInstance.getDynamicValue()).isNotNull();
         assertThat(testInstance.getDynamicValue().isPresent()).isTrue();
-        assertThat(testInstance.getDynamicValue().get()).isEqualTo("tamaya01.incubator.apache.org");
+        assertThat(testInstance.getDynamicValue().get()).isEqualTo("tamaya02.incubator.apache.org");
         assertThat(testInstance.hostName()).isEqualTo(testInstance.getDynamicValue().get());
     }
 
