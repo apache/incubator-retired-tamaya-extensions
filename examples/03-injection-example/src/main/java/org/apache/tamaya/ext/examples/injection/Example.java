@@ -33,7 +33,7 @@ public class Example {
     @Config(defaultValue = "No description available.")
     private String description;
     private int version;
-    @Config(key="author")
+    @Config(key = "author")
     private String exampleAuthor;
 
     @Override

@@ -36,7 +36,7 @@ public interface ExampleTemplate {
 
     int getVersion();
 
-    @Config(key="author")
+    @Config(key = "author")
     String getExampleAuthor();
 
 }
