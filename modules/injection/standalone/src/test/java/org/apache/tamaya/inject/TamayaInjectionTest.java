@@ -47,7 +47,7 @@ public class TamayaInjectionTest {
         assertThat(testInstance.fullKey).isNull();
         assertThat(testInstance.test2).isEqualTo("This is not setCurrent.");
         ConfigurationInjection.getConfigurationInjector().configure(testInstance);
-        assertThat(testInstance.simple_value).isEqualTo("aSimpleValue3");
+        assertThat(testInstance.simple_value).isEqualTo("aSimpleValue");
         assertThat(testInstance.classFieldKey).isEqualTo("Class-Field-Value");
         assertThat(testInstance.fieldKey).isEqualTo("Field-Value");
         assertThat(testInstance.fullKey).isEqualTo("Fullkey-Value");
