@@ -190,12 +190,11 @@ public final class InjectionUtils {
                     }
                     result += Character.toLowerCase(ch);
                 }
-            }
-            else{
+            } else {
                 result += ch;
             }
         }
-        if(result.equals(key)){
+        if(result.equals(key)) {
             return null;
         }
         return result;
