@@ -20,7 +20,11 @@ package org.apache.tamaya.resolver.internal;
 
 import org.apache.tamaya.ConfigException;
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
-import org.apache.tamaya.spi.*;
+import org.apache.tamaya.spi.ClassloaderAware;
+import org.apache.tamaya.spi.FilterContext;
+import org.apache.tamaya.spi.PropertyFilter;
+import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.spi.ServiceContextManager;
 
 import javax.annotation.Priority;
 import java.util.Objects;

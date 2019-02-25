@@ -42,7 +42,7 @@ public class DefaultConfigEventManagerSpi implements ConfigEventManagerSpi, Clas
 
     private static final Logger LOG = Logger.getLogger(DefaultConfigEventManagerSpi.class.getName());
 
-	private final Map<Class,List<ConfigEventListener>> listeners = new ConcurrentHashMap<>();
+    private final Map<Class,List<ConfigEventListener>> listeners = new ConcurrentHashMap<>();
 
     private final ExecutorService publisher = Executors.newCachedThreadPool();
 
@@ -74,7 +74,7 @@ public class DefaultConfigEventManagerSpi implements ConfigEventManagerSpi, Clas
         addListener(l, ConfigEvent.class);
     }
 
-	@Override
+    @Override
     public <T extends ConfigEvent> void addListener(ConfigEventListener l, Class<T> eventType){
         final List<ConfigEventListener> ls = listeners.computeIfAbsent(eventType, k -> Collections.synchronizedList(new ArrayList<>()));
         synchronized (ls){

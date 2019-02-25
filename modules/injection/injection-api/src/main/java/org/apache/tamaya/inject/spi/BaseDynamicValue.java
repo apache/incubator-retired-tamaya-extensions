@@ -238,6 +238,7 @@ public abstract class BaseDynamicValue<T> implements DynamicValue<T> {
                     LOG.info("New config value for keys " + keys + " detected, but not yet applied.");
                     break;
                 case NEVER:
+                default:
                     LOG.finest("New config value for keys " + keys + " detected, but ignored.");
                     break;
             }

@@ -21,8 +21,7 @@ package org.apache.tamaya.events;
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.ConfigurationSnapshot;
 import org.apache.tamaya.TypeLiteral;
-import org.apache.tamaya.spi.*;
-import org.apache.tamaya.spisupport.*;
+import org.apache.tamaya.spi.ConfigurationContext;
 
 import java.io.Serializable;
 import java.util.*;
@@ -31,7 +30,7 @@ import java.util.*;
  * /**
  * Configuration implementation that stores all current values of a given (possibly dynamic, contextual and non server
  * capable instance) and is fully serializable. Note that hereby only the scannable key/createValue pairs are considered.
- * @deprecated Use {@link DefaultConfigurationSnapshot}
+ * @deprecated Use {@link org.apache.tamaya.spisupport.DefaultConfigurationSnapshot}
  */
 @Deprecated
 public final class FrozenConfiguration implements Configuration, Serializable {
@@ -111,7 +110,7 @@ public final class FrozenConfiguration implements Configuration, Serializable {
     }
 
     @SuppressWarnings("unchecked")
-	@Override
+    @Override
     public <T> T get(String key, Class<T> type) {
         return snapshot.get(key, type);
     }

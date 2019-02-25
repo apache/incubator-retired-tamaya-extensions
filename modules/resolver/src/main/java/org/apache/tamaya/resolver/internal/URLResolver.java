@@ -48,8 +48,7 @@ public final class URLResolver implements ExpressionResolver {
         try {
             URL url = new URL(expression);
             try (InputStreamReader inputStreamReader = new InputStreamReader(url.openStream(), UTF_8);
-                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader))
-            {
+                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
                 StringBuilder builder = new StringBuilder();
                 String inputLine;
                 while ((inputLine = bufferedReader.readLine()) != null) {

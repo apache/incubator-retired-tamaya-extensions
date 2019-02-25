@@ -48,7 +48,7 @@ public interface ConfigEventManagerSpi {
      * @param eventType the type of concrete configuration event this listeners should be informed about. All other
      *                  event types will never be delivered to this listener instance.
      */
-	<T extends ConfigEvent> void addListener(ConfigEventListener l, Class<T> eventType);
+    <T extends ConfigEvent> void addListener(ConfigEventListener l, Class<T> eventType);
 
     /**
      * Removes a listener for observing events.

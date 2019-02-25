@@ -62,7 +62,6 @@ final class MicroprofileConfigBuilder implements ConfigBuilder {
      */
     @Override
     public ConfigBuilder addDefaultSources() {
-
         configurationBuilder.addPropertySources(
                 new SystemPropertySource(400), //
                 new EnvironmentPropertySource(300), //
@@ -129,7 +128,7 @@ final class MicroprofileConfigBuilder implements ConfigBuilder {
         return this;
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public ConfigBuilder withConverters(Converter<?>... converters) {
         for (Converter<?> converter : converters) {

@@ -162,6 +162,7 @@ final class ConfigChanger {
                         LOG.info(() -> "Setting key " + dictEntry.getKey() + " to " + configuredValue);
                         ConfigHistory.propertySet(pid,dictEntry.getKey(), configuredValue, dictEntry.getValue());
                         dictionary.put(dictEntry.getKey(), configuredValue);
+                        break;
                     case EXTEND:
                     default:
                         break;

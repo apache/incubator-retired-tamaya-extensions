@@ -127,7 +127,7 @@ public final class MicroprofileAdapter{
      * @return the corresponding Tamaya {@link PropertyConverter} instance, never null.
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-	public static <T> PropertyConverter<T> toPropertyConverter(Converter<T> converter) {
+    public static <T> PropertyConverter<T> toPropertyConverter(Converter<T> converter) {
         if(converter instanceof MicroprofileConverter){
             return ((MicroprofileConverter)converter).getPropertyConverter();
         }
@@ -141,7 +141,7 @@ public final class MicroprofileAdapter{
      * @return the corresponding Microprofile.io {@link Converter} instance, never null.
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-	public static <T> Converter<T> toConverter(PropertyConverter<T> converter) {
+    public static <T> Converter<T> toConverter(PropertyConverter<T> converter) {
         if(converter instanceof TamayaPropertyConverter){
             return ((TamayaPropertyConverter)converter).getConverter();
         }
