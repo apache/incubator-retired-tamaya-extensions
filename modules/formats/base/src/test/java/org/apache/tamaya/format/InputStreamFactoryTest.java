@@ -32,7 +32,7 @@ import static org.mockito.Mockito.verify;
 @SuppressWarnings("resource")
 public class InputStreamFactoryTest {
 
-	@Test(expected = NullPointerException.class)
+    @Test(expected = NullPointerException.class)
     public void ctorEnforcesNonNullOriginal() throws IOException {
         new InputStreamFactory(null);
     }

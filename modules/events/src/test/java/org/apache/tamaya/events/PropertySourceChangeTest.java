@@ -34,31 +34,31 @@ import org.junit.Test;
  */
 public class PropertySourceChangeTest {
 
-    private static final PropertySource myPS = new SystemPropertySource();
+    private static final PropertySource MY_PS = new SystemPropertySource();
 
     @Test
     public void testGetPropertySource() throws Exception {
-        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS).build();
-        assertThat(change.getResource().getName()).isEqualTo(myPS.getName());
+        PropertySourceChange change = PropertySourceChangeBuilder.of(MY_PS).build();
+        assertThat(change.getResource().getName()).isEqualTo(MY_PS.getName());
     }
 
     @Test
     public void testGetVersion() throws Exception {
-        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS)
+        PropertySourceChange change = PropertySourceChangeBuilder.of(MY_PS)
                 .setVersion("myVersion1").build();
         assertThat(change.getVersion()).isEqualTo("myVersion1");
     }
 
     @Test
     public void testGetTimestamp() throws Exception {
-        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS)
+        PropertySourceChange change = PropertySourceChangeBuilder.of(MY_PS)
                 .setTimestamp(111L).build();
         assertThat(change.getTimestamp()).isEqualTo(111L);
     }
 
     @Test
     public void testGetEvents() throws Exception {
-        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS)
+        PropertySourceChange change = PropertySourceChangeBuilder.of(MY_PS)
                 .addChanges(
                         new EnvironmentPropertySource()
                 ).build();
@@ -67,7 +67,7 @@ public class PropertySourceChangeTest {
 
     @Test
     public void testGetRemovedSize() throws Exception {
-        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS)
+        PropertySourceChange change = PropertySourceChangeBuilder.of(MY_PS)
                 .addChanges(
                         new EnvironmentPropertySource()
                 ).build();
@@ -76,7 +76,7 @@ public class PropertySourceChangeTest {
 
     @Test
     public void testGetAddedSize() throws Exception {
-        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS)
+        PropertySourceChange change = PropertySourceChangeBuilder.of(MY_PS)
                 .addChanges(
                         new EnvironmentPropertySource()
                 ).build();
@@ -86,10 +86,10 @@ public class PropertySourceChangeTest {
     @Test
     public void testGetUpdatedSizeNoUpdates() throws Exception {
         Map<String, String> addableMap = new HashMap<>();
-        
+
         addableMap.put("NonOverridingValue", "someValue");
 
-        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS)
+        PropertySourceChange change = PropertySourceChangeBuilder.of(MY_PS)
                 .addChanges(
                         // java.home and JAVA_HOME will often override each
                         //  other, so stay away from EnvironmentPropertySource
@@ -107,7 +107,7 @@ public class PropertySourceChangeTest {
         Map<String, String> addableMap = new HashMap<>();
         addableMap.put("java.home", "/new/java/home/createValue");
 
-        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS)
+        PropertySourceChange change = PropertySourceChangeBuilder.of(MY_PS)
                 .addChanges(
                         new EnvironmentPropertySource()
                 )
@@ -179,7 +179,7 @@ public class PropertySourceChangeTest {
     public void testContainsKey() throws Exception {
         PropertySourceChange change = PropertySourceChangeBuilder.of(new EnvironmentPropertySource())
                 .addChanges(
-                        myPS
+                        MY_PS
                 ).build();
         assertThat(change.isKeyAffected("java.version")).isTrue();
     }
@@ -191,15 +191,15 @@ public class PropertySourceChangeTest {
         assertThat(change.isEmpty()).isTrue();
         change = PropertySourceChangeBuilder.of(new EnvironmentPropertySource())
                 .addChanges(
-                        myPS
+                        MY_PS
                 ).build();
         assertThat(change.isEmpty()).isFalse();
     }
 
     @Test
     public void testToString() throws Exception {
-        PropertySourceChange change = PropertySourceChangeBuilder.of(myPS).build();
+        PropertySourceChange change = PropertySourceChangeBuilder.of(MY_PS).build();
         String toString = change.toString();
-        assertThat(toString).isNotNull().contains(myPS.getName());
+        assertThat(toString).isNotNull().contains(MY_PS.getName());
     }
 }

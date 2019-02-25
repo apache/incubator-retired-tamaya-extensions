@@ -184,7 +184,7 @@ public class ConfiguredClass{
     }
 
     @Override
-	public String toString(){
+    public String toString(){
         return super.toString() + ": testProperty="+testProperty+", value1="+value1+", value2="+value2
                 +", int1="+int1+", int2="+int2+", booleanT="+booleanT+", bigNumber="+bigNumber
                 +", runtimeVersion="+runtimeVersion+", javaVersion2="+javaVersion2;

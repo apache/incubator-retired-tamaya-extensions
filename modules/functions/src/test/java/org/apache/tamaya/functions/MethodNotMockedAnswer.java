@@ -23,13 +23,11 @@ import org.mockito.stubbing.Answer;
 
 import java.lang.reflect.Method;
 
-public class MethodNotMockedAnswer implements Answer
-{
+public class MethodNotMockedAnswer implements Answer {
     public final static Answer NOT_MOCKED_ANSWER = new MethodNotMockedAnswer();
 
     @Override
-    public Object answer(InvocationOnMock invocation) throws Throwable
-    {
+    public Object answer(InvocationOnMock invocation) throws Throwable {
         Method calledMethod = invocation.getMethod();
         String signature = calledMethod.toGenericString();
 

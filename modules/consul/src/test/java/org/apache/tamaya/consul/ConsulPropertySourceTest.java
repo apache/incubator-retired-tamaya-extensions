@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.consul;
 
-import org.apache.tamaya.consul.ConsulPropertySource;
 import org.apache.tamaya.spi.PropertyValue;
 import org.junit.BeforeClass;
 import org.junit.Test;

@@ -27,7 +27,6 @@ import org.apache.tamaya.core.internal.CoreConfigurationBuilder;
 import org.apache.tamaya.spisupport.propertysource.SimplePropertySource;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,8 +37,14 @@ import static java.util.Collections.singletonMap;
 import static org.apache.tamaya.functions.MethodNotMockedAnswer.NOT_MOCKED_ANSWER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.*;
-
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
 
 public class CombinedConfigurationTest {
     private Configuration configWithA1;
@@ -153,7 +158,7 @@ public class CombinedConfigurationTest {
     @Test
     public void getOrDefaultWithSignatureStringStringReturnsFoundValueIfKeyIsKnown() {
         CombinedConfiguration cc = mock(CombinedConfiguration.class);
-        doReturn("b").when(cc).get(Mockito.eq("a"));
+        doReturn("b").when(cc).get(eq("a"));
         doCallRealMethod().when(cc).getOrDefault(anyString(), anyString());
 
         String result = cc.getOrDefault("a", "z");
@@ -169,7 +174,7 @@ public class CombinedConfigurationTest {
     public void getOrDefaultStringTypeLiteralTThrowsNPEIfKeyIsNull() throws Exception {
         final CombinedConfiguration cc = mock(CombinedConfiguration.class);
         doCallRealMethod().when(cc).getOrDefault(anyString(), eq(TypeLiteral.of(Integer.class)),
-                                                 Mockito.any(Integer.class));
+                                                 any(Integer.class));
 
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
@@ -185,7 +190,7 @@ public class CombinedConfigurationTest {
     public void getOrDefaultStringTypeLiteralTThrowsNPEIfTypeIsNull() throws Exception {
         final CombinedConfiguration cc = mock(CombinedConfiguration.class, NOT_MOCKED_ANSWER);
         doCallRealMethod().when(cc).getOrDefault(anyString(), eq((TypeLiteral<Integer>)null),
-                                                 Mockito.any(Integer.class));
+                                                 any(Integer.class));
 
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
@@ -200,7 +205,7 @@ public class CombinedConfigurationTest {
     public void getOrDefaultStringTypeLiteralTThrowsNPEIfDefaultValueIsNull() throws Exception {
         final CombinedConfiguration cc = mock(CombinedConfiguration.class, NOT_MOCKED_ANSWER);
         doCallRealMethod().when(cc).getOrDefault(anyString(), eq(TypeLiteral.of(Integer.class)),
-                                                 Mockito.any(Integer.class));
+                                                 any(Integer.class));
 
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
@@ -216,7 +221,7 @@ public class CombinedConfigurationTest {
         final CombinedConfiguration cc = mock(CombinedConfiguration.class, NOT_MOCKED_ANSWER);
         doReturn(null).when(cc).get(eq("a"), eq(TypeLiteral.<Integer>of(Integer.class)));
         doCallRealMethod().when(cc).getOrDefault(anyString(), eq(TypeLiteral.of(Integer.class)),
-                                                 Mockito.any(Integer.class));
+                                                 any(Integer.class));
 
         TypeLiteral<Integer> typeLiteral = TypeLiteral.of(Integer.class);
         Integer result = cc.<Integer>getOrDefault("a", typeLiteral, 789);
@@ -230,7 +235,7 @@ public class CombinedConfigurationTest {
         final CombinedConfiguration cc = mock(CombinedConfiguration.class, NOT_MOCKED_ANSWER);
         doReturn(999).when(cc).get(eq("a"), eq(TypeLiteral.<Integer>of(Integer.class)));
         doCallRealMethod().when(cc).getOrDefault(anyString(), eq(TypeLiteral.of(Integer.class)),
-                                                 Mockito.anyInt());
+                                                 anyInt());
 
         Integer result = cc.<Integer>getOrDefault("a", TypeLiteral.of(Integer.class), 789);
 
@@ -244,8 +249,8 @@ public class CombinedConfigurationTest {
     @Test
     public void getOrDefaultStringClassTThrowsNPEIfKeyIsNull() throws Exception {
         final CombinedConfiguration cc = mock(CombinedConfiguration.class);
-        doCallRealMethod().when(cc).getOrDefault(anyString(), Mockito.any(Class.class),
-                                                 Mockito.any(Integer.class));
+        doCallRealMethod().when(cc).getOrDefault(anyString(), any(Class.class),
+                                                 any(Integer.class));
 
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
@@ -259,7 +264,7 @@ public class CombinedConfigurationTest {
     @Test
     public void getOrDefaultStringClassTThrowsNPEIfTypeIsNull() throws Exception {
         final CombinedConfiguration cc = mock(CombinedConfiguration.class);
-        doCallRealMethod().when(cc).getOrDefault(anyString(), Mockito.any(Class.class), Mockito.anyInt());
+        doCallRealMethod().when(cc).getOrDefault(anyString(), any(Class.class), anyInt());
 
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
@@ -274,7 +279,7 @@ public class CombinedConfigurationTest {
     public void getOrDefaultStringClassTThrowsNPEIfDefaultValueIsNull() throws Exception {
         final CombinedConfiguration cc = mock(CombinedConfiguration.class, NOT_MOCKED_ANSWER);
         doCallRealMethod().when(cc).getOrDefault(anyString(), any(Class.class),
-                                                 Mockito.any(Integer.class));
+                                                 any(Integer.class));
 
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
@@ -290,7 +295,7 @@ public class CombinedConfigurationTest {
         final CombinedConfiguration cc = mock(CombinedConfiguration.class, NOT_MOCKED_ANSWER);
         doReturn(null).when(cc).get(eq("a"), any(Class.class));
         doCallRealMethod().when(cc).getOrDefault(anyString(), any(Class.class),
-                                                 Mockito.any(Integer.class));
+                                                 any(Integer.class));
 
         TypeLiteral<Integer> typeLiteral = TypeLiteral.of(Integer.class);
         Integer result = cc.<Integer>getOrDefault("a", Integer.class, 789);
@@ -304,7 +309,7 @@ public class CombinedConfigurationTest {
         final CombinedConfiguration cc = mock(CombinedConfiguration.class, NOT_MOCKED_ANSWER);
         doReturn(999).when(cc).get(eq("a"), any(Class.class));
         doCallRealMethod().when(cc).getOrDefault(anyString(), any(Class.class),
-                                                 Mockito.anyInt());
+                                                 anyInt());
 
         Integer result = cc.<Integer>getOrDefault("a", Integer.class, 789);
 
@@ -321,9 +326,9 @@ public class CombinedConfigurationTest {
         Map<String, String> propsOfB = new HashMap<>();
         Map<String, String> propsOfC = new HashMap<>();
 
-        Configuration configA = Mockito.mock(Configuration.class, NOT_MOCKED_ANSWER);
-        Configuration configB = Mockito.mock(Configuration.class, NOT_MOCKED_ANSWER);
-        Configuration configC = Mockito.mock(Configuration.class, NOT_MOCKED_ANSWER);
+        Configuration configA = mock(Configuration.class, NOT_MOCKED_ANSWER);
+        Configuration configB = mock(Configuration.class, NOT_MOCKED_ANSWER);
+        Configuration configC = mock(Configuration.class, NOT_MOCKED_ANSWER);
 
         doReturn(propsOfA).when(configA).getProperties();
         doReturn(propsOfB).when(configB).getProperties();
@@ -345,9 +350,9 @@ public class CombinedConfigurationTest {
         Map<String, String> propsOfB = new HashMap<String, String>() {{ put("b", "B"); }};
         Map<String, String> propsOfC = new HashMap<String, String>() {{ put("a", "Z"); }};
 
-        Configuration configA = Mockito.mock(Configuration.class, NOT_MOCKED_ANSWER);
-        Configuration configB = Mockito.mock(Configuration.class, NOT_MOCKED_ANSWER);
-        Configuration configC = Mockito.mock(Configuration.class, NOT_MOCKED_ANSWER);
+        Configuration configA = mock(Configuration.class, NOT_MOCKED_ANSWER);
+        Configuration configB = mock(Configuration.class, NOT_MOCKED_ANSWER);
+        Configuration configC = mock(Configuration.class, NOT_MOCKED_ANSWER);
 
         doReturn(propsOfA).when(configA).getProperties();
         doReturn(propsOfB).when(configB).getProperties();
@@ -370,9 +375,9 @@ public class CombinedConfigurationTest {
         Map<String, String> propsOfB = new HashMap<String, String>() {{ put("b", "B"); }};
         Map<String, String> propsOfC = new HashMap<String, String>() {{ put("c", "C"); }};
 
-        Configuration configA = Mockito.mock(Configuration.class, NOT_MOCKED_ANSWER);
-        Configuration configB = Mockito.mock(Configuration.class, NOT_MOCKED_ANSWER);
-        Configuration configC = Mockito.mock(Configuration.class, NOT_MOCKED_ANSWER);
+        Configuration configA = mock(Configuration.class, NOT_MOCKED_ANSWER);
+        Configuration configB = mock(Configuration.class, NOT_MOCKED_ANSWER);
+        Configuration configC = mock(Configuration.class, NOT_MOCKED_ANSWER);
 
         doReturn(propsOfA).when(configA).getProperties();
         doReturn(propsOfB).when(configB).getProperties();
@@ -405,7 +410,7 @@ public class CombinedConfigurationTest {
         }
 
         final CombinedConfiguration cc = mock(CombinedConfiguration.class, NOT_MOCKED_ANSWER);
-        doCallRealMethod().when(cc).with(Mockito.any(ConfigOperator.class));
+        doCallRealMethod().when(cc).with(any(ConfigOperator.class));
 
         Configuration result = cc.with(new IdentityOpr());
 
@@ -416,7 +421,7 @@ public class CombinedConfigurationTest {
     @Test
     public void withWithNullAsOperatorParmeterThrowsNPE() throws Exception {
         final CombinedConfiguration cc = mock(CombinedConfiguration.class, NOT_MOCKED_ANSWER);
-        doCallRealMethod().when(cc).with(Mockito.any(ConfigOperator.class));
+        doCallRealMethod().when(cc).with(any(ConfigOperator.class));
 
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
@@ -434,7 +439,7 @@ public class CombinedConfigurationTest {
     @Test
     public void queryWithNullAsQueryParameterThrowsNPE() throws Exception {
         final CombinedConfiguration cc = mock(CombinedConfiguration.class, NOT_MOCKED_ANSWER);
-        doCallRealMethod().when(cc).query(Mockito.any(ConfigQuery.class));
+        doCallRealMethod().when(cc).query(any(ConfigQuery.class));
 
         assertThatThrownBy(new ThrowableAssert.ThrowingCallable() {
             @Override
@@ -455,7 +460,7 @@ public class CombinedConfigurationTest {
         }
 
         final CombinedConfiguration cc = mock(CombinedConfiguration.class, NOT_MOCKED_ANSWER);
-        doCallRealMethod().when(cc).query(Mockito.any(ConfigQuery.class));
+        doCallRealMethod().when(cc).query(any(ConfigQuery.class));
         doReturn(1).when(cc).<Integer>get(eq("zahl"), eq(Integer.class));
 
         Integer result = cc.query(new GetZahl());

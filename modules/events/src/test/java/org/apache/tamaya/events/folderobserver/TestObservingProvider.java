@@ -48,20 +48,18 @@ public class TestObservingProvider extends ObservingPropertySourceProvider{
             Runtime.getRuntime().addShutdownHook(new Thread(){
                 @Override
                 public void run(){
-                    try{
+                    try {
                         // cleanup directory
                         Files.deleteIfExists(getTargetFile("test1.properties"));
                         Files.deleteIfExists(getTargetFile("test2.properties"));
                         Files.deleteIfExists(getTargetFile("test3.properties"));
-                    }
-                    catch(Exception e){
+                    } catch (Exception e) {
                         Logger.getLogger("TestObservingProvider").log(Level.WARNING,
                                 "Failed to cleanup config test dir", e);
                     }
                 }
             });
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             Logger.getLogger("TestObservingProvider").log(Level.WARNING, "Failed to init config test dir", e);
         }
     }
@@ -79,7 +77,7 @@ public class TestObservingProvider extends ObservingPropertySourceProvider{
     public static File getTestDirectory(){
         String tempDir = System.getProperty("java.io.tmpdir");
         File dir = new File(tempDir, "tamaya-events-testdir");
-        if(!dir.exists()){
+        if (!dir.exists()) {
             dir.mkdirs();
         }
         return dir;

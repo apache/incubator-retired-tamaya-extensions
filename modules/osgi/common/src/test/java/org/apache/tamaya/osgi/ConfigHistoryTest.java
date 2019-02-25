@@ -120,17 +120,17 @@ public class ConfigHistoryTest {
 
     @Test
     public void setPreviousValue() throws Exception {
-    	// TODO
+        // TODO
     }
 
     @Test
     public void getValue() throws Exception {
-    	// TODO
+        // TODO
     }
 
     @Test
     public void getKey() throws Exception {
-    	// TODO
+        // TODO
     }
 
     @Test

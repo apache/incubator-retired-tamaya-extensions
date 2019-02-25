@@ -28,7 +28,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 public class YAMLFormatTest {
     private final YAMLFormat format = new YAMLFormat();
@@ -66,7 +67,7 @@ public class YAMLFormatTest {
 
     @Test
     public void testRead_nullValues() throws IOException {
-    	URL configURL = getContactYaml();
+        URL configURL = getContactYaml();
         ConfigurationData data = loadConfigurationData(configURL);
         for(PropertyValue val:data.getData()){
             if(val.getKey().equals("summary")){
@@ -75,12 +76,12 @@ public class YAMLFormatTest {
         }
     }
 
-	private ConfigurationData loadConfigurationData(URL configURL) throws IOException {
-		return format.readConfiguration(configURL.toString(), configURL.openStream());
-	}
+    private ConfigurationData loadConfigurationData(URL configURL) throws IOException {
+        return format.readConfiguration(configURL.toString(), configURL.openStream());
+    }
 
-	private URL getContactYaml() {
+    private URL getContactYaml() {
         return YAMLPropertySourceTest.class.getResource("/configs/valid/contact.yaml");
-	}
+    }
 
 }
