@@ -39,7 +39,7 @@ import java.util.logging.Logger;
  */
 public class TamayaOSGIInjector{
     /** The logger. */
-    private static final Logger log = Logger.getLogger(TamayaConfigPlugin.class.getName());
+    private static final Logger LOG = Logger.getLogger(TamayaConfigPlugin.class.getName());
     /** The bundle context. */
     private BundleContext context;
     /** OSGI Config manager. */
@@ -67,7 +67,7 @@ public class TamayaOSGIInjector{
         tracker = new ServiceTracker<Object, Object>(context, Object.class.getName(), null) {
             @Override
             public Object addingService(ServiceReference reference) {
-                log.info("Checking service for configuration: " + reference);
+                LOG.info("Checking service for configuration: " + reference);
                 Object service =  super.addingService(reference);
                 if(isInjectionEnabled(reference)) {
                     String pid = (String)reference.getProperty(Constants.SERVICE_PID);
