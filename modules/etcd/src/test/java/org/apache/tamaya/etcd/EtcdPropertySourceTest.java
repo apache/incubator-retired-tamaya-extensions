@@ -24,6 +24,7 @@ import org.junit.Test;
 
 import java.util.Map;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -70,5 +71,17 @@ public class EtcdPropertySourceTest {
     @Test
     public void testIsScannable() throws Exception {
         assertThat(propertySource.isScannable()).isTrue();
+    }
+
+    @Test
+    public void testPropertySourceConstructorParams() throws Exception {
+        EtcdPropertySource propertySource = new EtcdPropertySource("http://8.8.8.8:4001", "http://192.168.99.105:4001");
+        assertThat(propertySource.getProperties()).isNotNull();
+    }
+
+    @Test
+    public void testPropertySourceConstructorList() throws Exception {
+        EtcdPropertySource propertySource = new EtcdPropertySource(asList("http://8.8.8.8:4001", "http://192.168.99.105:4001"));
+        assertThat(propertySource.getProperties()).isNotNull();
     }
 }
