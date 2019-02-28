@@ -223,16 +223,16 @@ public class ConfigurationProducerTest {
         }
 
         @Override
-		public String toString() {
-			return "AllTypes [stringAsMethodParam=" + stringAsMethodParam + ", integerAsMethodParam="
-					+ integerAsMethodParam + ", optionalStringAsMethodParam=" + optionalStringAsMethodParam
-					+ ", optionalIntegerAsMethodParam=" + optionalIntegerAsMethodParam
-					+ ", providerStringAsMethodParam=" + providerStringAsMethodParam + ", providerIntegerAsMethodParam="
-					+ providerIntegerAsMethodParam + ", string=" + string + ", optionalString=" + optionalString
-					+ ", providerString=" + providerString + ", defaultString=" + defaultString + ", file=" + file
-					+ ", defaultFile=" + defaultFile + ", aBoolean=" + aBoolean + ", defaultBoolean=" + defaultBoolean
-					+ ", integer=" + integer + ", defaultInteger=" + defaultInteger + ", optionalInteger="
-					+ optionalInteger + ", providerInteger=" + providerInteger + "]";
-		}
+        public String toString() {
+            return "AllTypes [stringAsMethodParam=" + stringAsMethodParam + ", integerAsMethodParam="
+                    + integerAsMethodParam + ", optionalStringAsMethodParam=" + optionalStringAsMethodParam
+                    + ", optionalIntegerAsMethodParam=" + optionalIntegerAsMethodParam
+                    + ", providerStringAsMethodParam=" + providerStringAsMethodParam + ", providerIntegerAsMethodParam="
+                    + providerIntegerAsMethodParam + ", string=" + string + ", optionalString=" + optionalString
+                    + ", providerString=" + providerString + ", defaultString=" + defaultString + ", file=" + file
+                    + ", defaultFile=" + defaultFile + ", aBoolean=" + aBoolean + ", defaultBoolean=" + defaultBoolean
+                    + ", integer=" + integer + ", defaultInteger=" + defaultInteger + ", optionalInteger="
+                    + optionalInteger + ", providerInteger=" + providerInteger + "]";
+        }
     }
 }

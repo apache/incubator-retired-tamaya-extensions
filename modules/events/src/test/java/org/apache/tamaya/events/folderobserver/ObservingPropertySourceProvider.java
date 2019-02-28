@@ -55,7 +55,7 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
     /**
      * The thread pool used.
      */
-    private final static Timer timer = new Timer("ObservingPropertySources", true);
+    private final static Timer TIMER = new Timer("ObservingPropertySources", true);
 
     private FileChangeListener changeListener;
 
@@ -73,7 +73,7 @@ public class ObservingPropertySourceProvider implements PropertySourceProvider, 
                 this.propertySources.addAll(readConfiguration(directory));
             }
             changeListener = new FileChangeListener(directory, this);
-            timer.schedule(changeListener, 30000L, 30000L);
+            TIMER.schedule(changeListener, 30000L, 30000L);
         }
     }
 

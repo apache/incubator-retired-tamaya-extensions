@@ -39,11 +39,10 @@ public class PathBasedPropertySourceProvider extends AbstractPathPropertySourceP
     protected Collection<PropertySource> getPropertySources(URL url) {
         List<PropertySource> list = new ArrayList<>();
         Properties props = new Properties();
-        try(InputStream is = url.openStream()){
+        try (InputStream is = url.openStream()) {
             props.load(is);
             list.add(new PropertiesBasedPropertySource(url.toString(), props));
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }

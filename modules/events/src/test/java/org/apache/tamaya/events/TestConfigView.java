@@ -18,7 +18,10 @@
  */
 package org.apache.tamaya.events;
 
-import org.apache.tamaya.*;
+import org.apache.tamaya.ConfigException;
+import org.apache.tamaya.Configuration;
+import org.apache.tamaya.ConfigurationSnapshot;
+import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConfigurationContext;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
@@ -91,7 +94,7 @@ public class TestConfigView implements UnaryOperator<Configuration> {
             }
 
             @SuppressWarnings("unchecked")
-			@Override
+            @Override
             public <T> T get(String key, Class<T> type) {
                 return (T) get(key, TypeLiteral.of(type));
             }

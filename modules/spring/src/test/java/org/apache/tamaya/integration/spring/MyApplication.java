@@ -33,4 +33,7 @@ public class MyApplication {
 
     }
 
+    private MyApplication() {
+        // prevent instantiation
+    }
 }

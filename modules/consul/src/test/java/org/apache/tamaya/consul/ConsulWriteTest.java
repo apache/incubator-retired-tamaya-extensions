@@ -33,9 +33,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class ConsulWriteTest {
 
-	/**
-	 * Needs to be enabled manually in case you want to do integration tests.
-	 */
+    /**
+     * Needs to be enabled manually in case you want to do integration tests.
+     */
     static boolean execute = false;
     private static ConsulPropertySource propertySource;
 
@@ -43,13 +43,15 @@ public class ConsulWriteTest {
     public static void setup() throws MalformedURLException, URISyntaxException {
         System.setProperty("consul.urls", "http://127.0.0.1:8300");
         propertySource = new ConsulPropertySource();
-        
+
         System.out.println("At the moment no write-tests can be executed to verify the Consul integration. You can manually edit this test class.");
     }
 
     @Test
     public void testSetNormal() throws Exception {
-        if (!execute) return;
+        if (!execute) {
+            return;
+        }
         String taID = UUID.randomUUID().toString();
         ConfigChangeRequest request = new ConfigChangeRequest("testSetNormal");
         request.put(taID, "testSetNormal");
@@ -59,7 +61,9 @@ public class ConsulWriteTest {
 
     @Test
     public void testDelete() throws Exception {
-        if(!execute)return;
+        if (!execute) {
+            return;
+        }
         String taID = UUID.randomUUID().toString();
         ConfigChangeRequest request = new ConfigChangeRequest("testDelete");
         request.put(taID, "testDelete");
@@ -74,7 +78,9 @@ public class ConsulWriteTest {
 
     @Test
     public void testGetProperties() throws Exception {
-        if(!execute)return;
+        if (!execute) {
+            return;
+        }
         assertThat(propertySource.getProperties()).isEmpty();
     }
 }

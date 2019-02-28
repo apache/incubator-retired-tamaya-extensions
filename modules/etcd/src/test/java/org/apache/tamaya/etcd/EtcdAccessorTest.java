@@ -39,31 +39,36 @@ public class EtcdAccessorTest {
     @BeforeClass
     public static void setup() throws MalformedURLException {
         accessor = new EtcdAccessor("http://192.168.99.105:4001");
-        if(!accessor.getVersion().contains("etcd")){
+        if (!accessor.getVersion().contains("etcd")) {
             System.out.println("Disabling etcd tests, etcd not accessible at: " + System.getProperty("etcd.server.urls"));
             System.out.println("Configure etcd with -Detcd.server.urls=http://<IP>:<PORT>");
-        }
-        else{
+        } else {
             execute = true;
         }
     }
 
     @Test
     public void testGetVersion() throws Exception {
-        if(!execute)return;
+        if (!execute) {
+            return;
+        }
         assertThat(accessor.getVersion()).isEqualTo("etcd 0.4.9");
     }
 
     @Test
     public void testGet() throws Exception {
-        if(!execute)return;
+        if (!execute) {
+            return;
+        }
         Map<String,String> result = accessor.get("test1");
         assertThat(result).isNotNull();
     }
 
     @Test
     public void testSetNormal() throws Exception {
-        if(!execute)return;
+        if (!execute) {
+            return;
+        }
         String value = UUID.randomUUID().toString();
         Map<String,String> result = accessor.set("testSetNormal", value);
         assertThat(result.get("_testSetNormal.ttl")).isNull();
@@ -72,7 +77,9 @@ public class EtcdAccessorTest {
 
     @Test
     public void testSetNormal2() throws Exception {
-        if(!execute)return;
+        if (!execute) {
+            return;
+        }
         String value = UUID.randomUUID().toString();
         Map<String,String> result = accessor.set("testSetNormal2", value, null);
         assertThat(result.get("_testSetNormal2.ttl")).isNull();
@@ -81,7 +88,9 @@ public class EtcdAccessorTest {
 
     @Test
     public void testSetWithTTL() throws Exception {
-        if(!execute)return;
+        if (!execute) {
+            return;
+        }
         String value = UUID.randomUUID().toString();
         Map<String,String> result = accessor.set("testSetWithTTL", value, 1);
         assertThat(result.get("_testSetWithTTL.ttl")).isNotNull();
@@ -93,7 +102,9 @@ public class EtcdAccessorTest {
 
     @Test
     public void testDelete() throws Exception {
-        if(!execute)return;
+        if (!execute) {
+            return;
+        }
         String value = UUID.randomUUID().toString();
         Map<String,String> result = accessor.set("testDelete", value, null);
         assertThat(value).isEqualTo(accessor.get("testDelete").get("testDelete"));
@@ -105,7 +116,9 @@ public class EtcdAccessorTest {
 
     @Test
     public void testGetProperties() throws Exception {
-        if(!execute)return;
+        if (!execute) {
+            return;
+        }
         String value = UUID.randomUUID().toString();
         accessor.set("testGetProperties1", value);
         Map<String,String> result = accessor.getProperties("");

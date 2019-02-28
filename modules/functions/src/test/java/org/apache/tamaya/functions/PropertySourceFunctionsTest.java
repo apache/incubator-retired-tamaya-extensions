@@ -26,8 +26,12 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Set;
 
-import static org.apache.tamaya.functions.PropertySourceFunctions.*;
-import static org.assertj.core.api.Assertions.*;
+import static org.apache.tamaya.functions.PropertySourceFunctions.isKeyInSection;
+import static org.apache.tamaya.functions.PropertySourceFunctions.isKeyInSections;
+import static org.apache.tamaya.functions.PropertySourceFunctions.sections;
+import static org.apache.tamaya.functions.PropertySourceFunctions.transitiveSections;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class PropertySourceFunctionsTest {
 

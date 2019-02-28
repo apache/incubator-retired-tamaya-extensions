@@ -23,7 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static junit.framework.TestCase.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by atsti on 30.09.2017.
@@ -36,9 +36,9 @@ public class ActivatorTest extends AbstractOSGITest{
         int size = ConfigEventManager.getInstance().getListeners().size();
         Activator activator = new Activator();
         activator.start(super.bundleContext);
-        assertEquals(ConfigEventManager.getInstance().getListeners().size(), size+1);
+        assertThat(ConfigEventManager.getInstance().getListeners()).hasSize(size + 1);
         activator.stop(super.bundleContext);
-        assertEquals(ConfigEventManager.getInstance().getListeners().size(), size);
+        assertThat(ConfigEventManager.getInstance().getListeners()).hasSize(size);
     }
 
 }

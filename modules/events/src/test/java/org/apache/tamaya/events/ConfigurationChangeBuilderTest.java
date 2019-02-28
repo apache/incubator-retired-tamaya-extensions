@@ -32,100 +32,100 @@ import static org.mockito.Mockito.doReturn;
 
 public class ConfigurationChangeBuilderTest {
 
-	@Test
-	public void compareReturnAnEmptyListOfChangesForTwoEmptyConfigurations() {
-		Configuration oc = Mockito.mock(Configuration.class, new MethodNotMockedAnswer());
-		Configuration nc = Mockito.mock(Configuration.class, new MethodNotMockedAnswer());
+    @Test
+    public void compareReturnAnEmptyListOfChangesForTwoEmptyConfigurations() {
+        Configuration oc = Mockito.mock(Configuration.class, new MethodNotMockedAnswer());
+        Configuration nc = Mockito.mock(Configuration.class, new MethodNotMockedAnswer());
 
-		doReturn(emptyMap()).when(oc).getProperties();
-		doReturn(emptyMap()).when(nc).getProperties();
+        doReturn(emptyMap()).when(oc).getProperties();
+        doReturn(emptyMap()).when(nc).getProperties();
 
-		Collection<PropertyChangeEvent> diff = ConfigurationChangeBuilder.compare(oc, nc);
+        Collection<PropertyChangeEvent> diff = ConfigurationChangeBuilder.compare(oc, nc);
 
-		assertThat(diff).isNotNull().isEmpty();
-	}
+        assertThat(diff).isNotNull().isEmpty();
+    }
 
-	@Test
-	public void compareReturnsAChangeEventIfThereIsANewKeyInTheNewVersionOfTheConfiguration() {
-		Configuration oc = Mockito.mock(Configuration.class, new MethodNotMockedAnswer());
-		Configuration nc = Mockito.mock(Configuration.class, new MethodNotMockedAnswer());
+    @Test
+    public void compareReturnsAChangeEventIfThereIsANewKeyInTheNewVersionOfTheConfiguration() {
+        Configuration oc = Mockito.mock(Configuration.class, new MethodNotMockedAnswer());
+        Configuration nc = Mockito.mock(Configuration.class, new MethodNotMockedAnswer());
 
-		doReturn(emptyMap()).when(oc).getProperties();
-		doReturn(null).when(oc).get(eq("a"));
+        doReturn(emptyMap()).when(oc).getProperties();
+        doReturn(null).when(oc).get(eq("a"));
 
-		Map<String, String> valuesNC = new HashMap<>();
-		valuesNC.put("a", "19");
+        Map<String, String> valuesNC = new HashMap<>();
+        valuesNC.put("a", "19");
 
-		doReturn(valuesNC).when(nc).getProperties();
-		doReturn("19").when(nc).get(eq("a"));
+        doReturn(valuesNC).when(nc).getProperties();
+        doReturn("19").when(nc).get(eq("a"));
 
-		Collection<PropertyChangeEvent> diff = ConfigurationChangeBuilder.compare(oc, nc);
+        Collection<PropertyChangeEvent> diff = ConfigurationChangeBuilder.compare(oc, nc);
 
-		assertThat(diff).isNotNull().isNotEmpty().hasSize(1);
+        assertThat(diff).isNotNull().isNotEmpty().hasSize(1);
 
-		PropertyChangeEvent change = diff.iterator().next();
+        PropertyChangeEvent change = diff.iterator().next();
 
-		assertThat(change).isNotNull();
-		assertThat(change.getNewValue()).isEqualTo("19");
-		assertThat(change.getOldValue()).isNull();
-		assertThat(change.getPropertyName()).isEqualTo("a");
-	}
+        assertThat(change).isNotNull();
+        assertThat(change.getNewValue()).isEqualTo("19");
+        assertThat(change.getOldValue()).isNull();
+        assertThat(change.getPropertyName()).isEqualTo("a");
+    }
 
-	@Test
-	public void compareReturnsAChangeEventIfAKeyHasBeenRemovedInTheNewVersionOfTheConfiguration() {
-		Configuration oc = Mockito.mock(Configuration.class, new MethodNotMockedAnswer());
-		Configuration nc = Mockito.mock(Configuration.class, new MethodNotMockedAnswer());
+    @Test
+    public void compareReturnsAChangeEventIfAKeyHasBeenRemovedInTheNewVersionOfTheConfiguration() {
+        Configuration oc = Mockito.mock(Configuration.class, new MethodNotMockedAnswer());
+        Configuration nc = Mockito.mock(Configuration.class, new MethodNotMockedAnswer());
 
-		Map<String, String> valuesOC = new HashMap<>();
-		valuesOC.put("a", "19");
+        Map<String, String> valuesOC = new HashMap<>();
+        valuesOC.put("a", "19");
 
-		doReturn(valuesOC).when(oc).getProperties();
-		doReturn("19").when(oc).get(eq("a"));
+        doReturn(valuesOC).when(oc).getProperties();
+        doReturn("19").when(oc).get(eq("a"));
 
-		doReturn(emptyMap()).when(nc).getProperties();
-		doReturn(null).when(nc).get(eq("a"));
+        doReturn(emptyMap()).when(nc).getProperties();
+        doReturn(null).when(nc).get(eq("a"));
 
-		Collection<PropertyChangeEvent> diff = ConfigurationChangeBuilder.compare(oc, nc);
+        Collection<PropertyChangeEvent> diff = ConfigurationChangeBuilder.compare(oc, nc);
 
-		assertThat(diff).isNotNull().isNotEmpty().hasSize(1);
+        assertThat(diff).isNotNull().isNotEmpty().hasSize(1);
 
-		PropertyChangeEvent change = diff.iterator().next();
+        PropertyChangeEvent change = diff.iterator().next();
 
-		assertThat(change).isNotNull();
-		assertThat(change.getNewValue()).isNull();
-		assertThat(change.getOldValue()).isEqualTo("19");
-		assertThat(change.getPropertyName()).isEqualTo("a");
-	}
+        assertThat(change).isNotNull();
+        assertThat(change.getNewValue()).isNull();
+        assertThat(change.getOldValue()).isEqualTo("19");
+        assertThat(change.getPropertyName()).isEqualTo("a");
+    }
 
-	@Test
-	public void compareReturnsAChangeEventIfValueOfExistingKeyHasChanged() {
-		Configuration oc = Mockito.mock(Configuration.class, new MethodNotMockedAnswer());
-		Configuration nc = Mockito.mock(Configuration.class, new MethodNotMockedAnswer());
+    @Test
+    public void compareReturnsAChangeEventIfValueOfExistingKeyHasChanged() {
+        Configuration oc = Mockito.mock(Configuration.class, new MethodNotMockedAnswer());
+        Configuration nc = Mockito.mock(Configuration.class, new MethodNotMockedAnswer());
 
-		Map<String, String> valuesOC = new HashMap<>();
-		valuesOC.put("a", "91");
+        Map<String, String> valuesOC = new HashMap<>();
+        valuesOC.put("a", "91");
 
-		doReturn(valuesOC).when(oc).getProperties();
-		doReturn("91").when(oc).get(eq("a"));
-		doReturn("old configuration").when(oc).toString();
+        doReturn(valuesOC).when(oc).getProperties();
+        doReturn("91").when(oc).get(eq("a"));
+        doReturn("old configuration").when(oc).toString();
 
-		Map<String, String> valuesNC = new HashMap<>();
-		valuesNC.put("a", "19");
+        Map<String, String> valuesNC = new HashMap<>();
+        valuesNC.put("a", "19");
 
-		doReturn(valuesNC).when(nc).getProperties();
-		doReturn("19").when(nc).get(eq("a"));
-		doReturn("new configuration").when(nc).toString();
+        doReturn(valuesNC).when(nc).getProperties();
+        doReturn("19").when(nc).get(eq("a"));
+        doReturn("new configuration").when(nc).toString();
 
-		Collection<PropertyChangeEvent> diff = ConfigurationChangeBuilder.compare(oc, nc);
+        Collection<PropertyChangeEvent> diff = ConfigurationChangeBuilder.compare(oc, nc);
 
-		assertThat(diff).isNotNull().isNotEmpty().hasSize(1);
+        assertThat(diff).isNotNull().isNotEmpty().hasSize(1);
 
-		PropertyChangeEvent change = diff.iterator().next();
+        PropertyChangeEvent change = diff.iterator().next();
 
-		assertThat(change).isNotNull();
-		assertThat(change.getNewValue()).isEqualTo("19");
-		assertThat(change.getOldValue()).isEqualTo("91");
-		assertThat(change.getPropertyName()).isEqualTo("a");
-	}
+        assertThat(change).isNotNull();
+        assertThat(change.getNewValue()).isEqualTo("19");
+        assertThat(change.getOldValue()).isEqualTo("91");
+        assertThat(change.getPropertyName()).isEqualTo("a");
+    }
 
 }

@@ -24,11 +24,9 @@ import org.mockito.stubbing.Answer;
 import java.lang.reflect.Method;
 
 @SuppressWarnings("rawtypes")
-public class MethodNotMockedAnswer implements Answer
-{
+public class MethodNotMockedAnswer implements Answer {
     @Override
-    public Object answer(InvocationOnMock invocation) throws Throwable
-    {
+    public Object answer(InvocationOnMock invocation) throws Throwable {
         Method calledMethod = invocation.getMethod();
         String signature = calledMethod.toGenericString();
 

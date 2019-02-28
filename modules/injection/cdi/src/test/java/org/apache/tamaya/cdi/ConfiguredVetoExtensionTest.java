@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.cdi;
 
-import org.apache.tamaya.cdi.BaseTestConfiguration;
 import org.apache.tamaya.cdi.extra.ConfiguredVetoExtension;
 import org.apache.tamaya.cdi.extra.TestKlazz;
 import org.apache.tamaya.cdi.extra.TestKlazz2;
@@ -27,7 +26,10 @@ import org.junit.Test;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 public class ConfiguredVetoExtensionTest extends BaseTestConfiguration {
 

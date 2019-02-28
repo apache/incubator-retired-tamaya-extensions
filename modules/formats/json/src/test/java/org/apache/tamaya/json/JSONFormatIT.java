@@ -19,7 +19,6 @@
 package org.apache.tamaya.json;
 
 import org.apache.tamaya.format.ConfigurationFormat;
-import org.apache.tamaya.json.JSONFormat;
 import org.apache.tamaya.spi.ServiceContextManager;
 import org.junit.Test;
 
