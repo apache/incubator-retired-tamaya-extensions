@@ -65,7 +65,7 @@ import java.lang.reflect.Method;
  * &amp;ConfigSection("section1")
  * public class ConfiguredItem {
  *
- *   &amp;Config(key = {"b"}, fallbackKeys="[a.b.deprecated.keys]", "a"}, defaultValue = "myDefaultValue")
+ *   &amp;Config(key = {"b"}, alternateKeys={"[a.b.deprecated.keys]", "a"}, defaultValue = "myDefaultValue")
  *   private String aValue;
  * }
  * </pre>
@@ -83,7 +83,7 @@ import java.lang.reflect.Method;
  *
  * public class ConfiguredItem {
  *
- *   &amp;Config(key = {"b"}, fallbackKeys={"[a.b.deprecated.keys]", "a"}, defaultValue = "myDefaultValue")
+ *   &amp;Config(key = {"b"}, alternateKeys={"[a.b.deprecated.keys]", "a"}, defaultValue = "myDefaultValue")
  *   private String aValue;
  * }
  * </pre>
