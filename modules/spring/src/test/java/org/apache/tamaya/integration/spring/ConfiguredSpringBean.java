@@ -22,6 +22,7 @@ import org.apache.tamaya.inject.api.Config;
 import org.apache.tamaya.inject.api.ConfigSection;
 import org.apache.tamaya.inject.spi.AbsoluteKeyResolver;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 
 /**
@@ -35,6 +36,12 @@ public class ConfiguredSpringBean {
     @Autowired
     private Environment env;
 
+    @Value("${myConfiguredValue}")
+    private String springInjected;
+
+    @Value("${spring.application:foo}")
+    private String springApplication;
+
     @Config(key="java.version")
     private String javaVersion;
 
@@ -45,12 +52,20 @@ public class ConfiguredSpringBean {
         return javaVersion;
     }
 
+    public String getSpringApplication(){
+        return springApplication;
+    }
+
     public int getTestNumber(){
         return testNumber;
     }
 
     public Environment getEnv(){
         return env;
+    }
+
+    public String getSpringInjected() {
+        return springInjected;
     }
 
     public void setMessage(String message){

@@ -24,7 +24,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 
 @SpringBootApplication
-@ContextConfiguration(classes=TamayaSpringConfig.class)
+@EnableTamayaConfig
 public class MyApplication {
 
     public static void main (String[] args) {

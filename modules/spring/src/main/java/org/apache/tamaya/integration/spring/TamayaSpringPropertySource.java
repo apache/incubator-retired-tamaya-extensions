@@ -18,8 +18,8 @@
  */
 package org.apache.tamaya.integration.spring;
 
-
 import org.apache.tamaya.Configuration;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.core.env.PropertySource;
 
 /**
@@ -27,13 +27,22 @@ import org.springframework.core.env.PropertySource;
  */
 public class TamayaSpringPropertySource extends PropertySource<String> {
 
-    public TamayaSpringPropertySource() {
+    private ObjectFactory<Configuration> configSupplier;
+
+    public TamayaSpringPropertySource(ObjectFactory<Configuration> configSupplier) {
         super("ApacheTamayaConfig");
+        try{
+            Configuration config = configSupplier.getObject();
+            this.configSupplier = configSupplier;
+        }catch(Exception e){
+            this.configSupplier = Configuration::current;
+        }
+
     }
 
     @Override
     public String getProperty(String name) {
-        return Configuration.current().get(name);
+        return configSupplier.getObject().getOrDefault(name, null);
     }
 
 }

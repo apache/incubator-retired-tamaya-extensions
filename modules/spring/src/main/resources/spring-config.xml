@@ -27,6 +27,6 @@ under the License.
 
     <!-- Our dependencies -->
     <bean id="tamayaInjectionProcessor" name="tamayaInjectionProcessor" class="org.apache.tamaya.integration.spring.SpringConfigInjectionPostProcessor"/>
-    <bean id="tamayaConfigProvider" name="tamayaConfigProvider" class="org.apache.tamaya.integration.spring.TamayaSpringConfig"/>
+    <bean id="tamayaConfigProvider" name="tamayaConfigProvider" class="org.apache.tamaya.integration.spring.TamayaSpringConfigurator"/>
 
 </beans>

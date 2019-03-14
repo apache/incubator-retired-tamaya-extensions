@@ -24,8 +24,8 @@ under the License.
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <!-- Our dependencies -->
-    <bean id="tamayaInjectionProcessor" name="tamayaInjectionProcessor" class="org.apache.tamaya.integration.spring.SpringConfigInjectionPostProcessor"/>
-    <bean id="tamayaConfigProvider" name="tamayaConfigProvider" class="org.apache.tamaya.integration.spring.TamayaSpringConfig"/>
+    <bean id="tamayaConfigInjector" name="tamayaConfigInjetor" class="org.apache.tamaya.integration.spring.SpringConfigInjectionPostProcessor"/>
+    <bean id="tamayaConfigProvider" name="tamayaConfigProvider" class="org.apache.tamaya.integration.spring.TamayaSpringConfigurator.DefaultConfig"/>
     <bean id="configuredBean" name="configuredBean" class="org.apache.tamaya.integration.spring.ConfiguredSpringBean"/>
 
 </beans>

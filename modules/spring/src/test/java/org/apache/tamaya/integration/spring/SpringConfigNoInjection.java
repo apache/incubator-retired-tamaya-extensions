@@ -30,8 +30,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Created by Anatole on 25.09.2015.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:spring-config.xml")
-public class SpringConfigTest {
+@ContextConfiguration(classes = {ConfiguredSpringBean.class, SpringConfigNoInjection.class})
+@EnableTamayaConfig(disableTamayaInjection = true)
+public class SpringConfigNoInjection {
 
     @Autowired
     private ConfiguredSpringBean configuredBean;
@@ -43,13 +44,19 @@ public class SpringConfigTest {
 
     @Test
     public void assert_JavaVersion_Injected(){
-        assertThat(configuredBean.getJavaVersion()).isNotNull();
-        assertThat(System.getProperty("java.version")).isEqualTo(configuredBean.getJavaVersion());
+        assertThat(configuredBean.getJavaVersion()).isNull();
+        assertThat(configuredBean.getJavaVersion()).isNull();
+        assertThat(configuredBean.getTestNumber()).isEqualTo(0);
     }
 
     @Test
-    public void assert_Number_Injected(){
-        assertThat(configuredBean.getTestNumber()).isEqualTo(23);
+    public void assert_Environment_Injected() {
+        assertThat(configuredBean.getEnv()).isNotNull();
+    }
+
+    @Test
+    public void assert_SpringInjection(){
+        assertThat(configuredBean.getSpringInjected()).isEqualTo("value11");
     }
 
     @Test

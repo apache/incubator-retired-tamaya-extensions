@@ -18,16 +18,16 @@
  */
 package org.apache.tamaya.integration.spring;
 
-import org.springframework.core.env.MutablePropertySources;
-import org.springframework.core.env.StandardEnvironment;
+import org.springframework.core.env.PropertySource;
 
-/**
- * Tamaya specific environment for Spring.
- */
-public class TamayaEnvironment extends StandardEnvironment{
+public class SpringTestPropertySource extends PropertySource<String> {
 
-    protected void customizePropertySources(MutablePropertySources propertySources) {
-        super.customizePropertySources(propertySources);
-        propertySources.addLast(new TamayaSpringPropertySource());
+    public SpringTestPropertySource(){
+        super("Test-ProipertySource");
+    }
+
+    @Override
+    public String getProperty(String s) {
+        return null;
     }
 }

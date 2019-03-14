@@ -18,21 +18,32 @@
  */
 package org.apache.tamaya.integration.spring;
 
+import org.apache.tamaya.Configuration;
 import org.apache.tamaya.inject.ConfigurationInjector;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.stereotype.Component;
 
 
 /**
  * PostProcessor that performs injection of configured values using Tamaya {@link ConfigurationInjector}.
  */
-@Component
 public class SpringConfigInjectionPostProcessor implements BeanPostProcessor{
+
+    private ObjectFactory<Configuration> configSupplier;
+
+    public SpringConfigInjectionPostProcessor(ObjectFactory<Configuration> configSupplier){
+        try{
+            Configuration config = configSupplier.getObject();
+            this.configSupplier = configSupplier;
+        }catch(Exception e){
+            this.configSupplier = Configuration::current;
+        }
+    }
 
     @Override
     public Object postProcessBeforeInitialization(Object o, String s) throws BeansException {
-        ConfigurationInjector.getInstance().configure(o);
+        ConfigurationInjector.getInstance().configure(o, this.configSupplier.getObject());
         return o;
     }
 
