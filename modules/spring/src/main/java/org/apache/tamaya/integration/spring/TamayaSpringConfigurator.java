@@ -28,7 +28,6 @@ import org.springframework.core.type.AnnotationMetadata;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * Spring Configurator Bean adding {@link TamayaSpringPropertySource} to the current
