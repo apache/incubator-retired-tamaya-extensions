@@ -37,8 +37,6 @@ import java.util.logging.Logger;
  */
 public class TamayaSpringConfigurator implements ImportSelector {
 
-    private Logger LOG = Logger.getLogger(TamayaSpringConfigurator.class.getName());
-
     @Override
     public String[] selectImports(AnnotationMetadata importingClassMetadata) {
         AnnotationAttributes attributes =
@@ -58,6 +56,9 @@ public class TamayaSpringConfigurator implements ImportSelector {
         return configClasses.toArray(new String[configClasses.size()]);
     }
 
+    /**
+     * Configuration active when Tamaya is extending the current Spring configuration only.
+     */
     public static class ExtendingOnlyConfig {
 
         @Bean
@@ -73,6 +74,9 @@ public class TamayaSpringConfigurator implements ImportSelector {
 
     }
 
+    /**
+     * Configuration active when Tamaya is overriding the current Spring configuration (default).
+     */
     public static class DefaultConfig {
 
         @Bean
@@ -88,6 +92,9 @@ public class TamayaSpringConfigurator implements ImportSelector {
 
     }
 
+    /**
+     * Configuration which enables Tamaya Configuration Injection Mechanisms within Spring (default).
+     */
     public static class TamayaInjectionConfig {
 
         @Bean

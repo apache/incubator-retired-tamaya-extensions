@@ -16,20 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
+/**
+ * Tamaya Spring Configuration Extension Module.
+ */
 package org.apache.tamaya.integration.spring;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
-
-@SpringBootApplication
-@EnableTamayaConfig
-public class MyApplication {
-
-    public static void main (String[] args) {
-        ApplicationContext context =
-                SpringApplication.run(MyApplication.class, args);
-
-    }
-
-}
