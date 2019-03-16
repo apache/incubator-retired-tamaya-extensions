@@ -122,7 +122,7 @@ public final class Features {
      * @return true, if <i>tamaya-spring</i> is on the classpath.
      */
     public static boolean springAvailable() {
-        return checkClassIsLoadable("org.apache.tamaya.integration.spring.TamayaEnvironment");
+        return checkClassIsLoadable("org.apache.tamaya.integration.spring.EnableTamayaConfig");
     }
 
     /**
