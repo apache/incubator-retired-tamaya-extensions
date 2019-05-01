@@ -42,6 +42,3 @@ Apart from integration into ASF CI there's a travis build:
 Sonarcloud integration:
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=apache_incubator-tamaya-extensions&metric=alert_status)](https://sonarcloud.io/dashboard?id=apache_incubator-tamaya-extensions)
-
-HINT! Sonarcloud analysis only works on master branch.
-
