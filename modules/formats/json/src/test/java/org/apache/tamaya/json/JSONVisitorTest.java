@@ -78,7 +78,7 @@ public class JSONVisitorTest {
         JSONDataBuilder visitor = new JSONDataBuilder("Test:array", startNode);
         PropertyValue data = visitor.build();
         assertThat(data).isNotNull();
-        System.out.println(data.asString());
+        System.out.println(data.toString());
     }
 
     @Test
@@ -91,7 +91,7 @@ public class JSONVisitorTest {
         JSONDataBuilder visitor = new JSONDataBuilder("Test:array", startNode);
         PropertyValue data = visitor.build();
         assertThat(data).isNotNull();
-        System.out.println(data.asString());
+        System.out.println(data.toString());
     }
 
 }

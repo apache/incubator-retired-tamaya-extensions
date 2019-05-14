@@ -21,11 +21,31 @@ package org.apache.tamaya.microprofile.tck;
 import org.jboss.arquillian.container.test.spi.client.deployment.ApplicationArchiveProcessor;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 
+import java.lang.reflect.Field;
+import java.util.Map;
+
 /**
  * Arquillian extension to load Tamaya into Arquillian context.
  * @author <a href="mailto:anatole@apache.org">Anatole Tresch</a>
  */
 public class TamayaConfigExtension implements LoadableExtension {
+
+    static {
+        System.out.println("Preparing environment for Emily Tests");
+        try {
+            // Modify Environment
+            Map<String, String> map = System.getenv();
+            Field f = map.getClass().getDeclaredField("m");
+            f.setAccessible(true);
+            Map<String, String> modifiableMap = (Map<String, String>)f.get(map);
+            modifiableMap.put("my_int_property", "45");
+            modifiableMap.put("MY_BOOLEAN_PROPERTY", "true");
+            modifiableMap.put("my_string_property", "haha");
+            modifiableMap.put("MY_STRING_PROPERTY", "woohoo");
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void register(ExtensionBuilder extensionBuilder) {

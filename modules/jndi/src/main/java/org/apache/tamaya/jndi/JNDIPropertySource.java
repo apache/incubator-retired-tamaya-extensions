@@ -84,20 +84,20 @@ public class JNDIPropertySource extends BasePropertySource {
     }
 
     /**
-     * If the property source is not scanable, an empty map is returned, otherwise
-     * the current JNDI context is mapped to configuration map:
+     * If the property source is not scanable, an empty mapProperties is returned, otherwise
+     * the current JNDI context is mapped to configuration mapProperties:
      * <ul>
      *   <li>For each leave entry one entry is created.</li>
      *   <li>The key is the fully path of parent contexts, separated by a '.'.</li>
      *   <li>The createValue is the createValue returned from {@code String.createValue(leaveObject)}.</li>
      * </ul>
-     * @return a map representation of the JNDI tree.
+     * @return a mapProperties representation of the JNDI tree.
      */
     @Override
     public Map<String, PropertyValue> getProperties() {
         if(scannable){
             try {
-                return PropertyValue.map(toMap(this.context), getName());
+                return PropertyValue.mapProperties(toMap(this.context), getName());
             } catch (NamingException e) {
                 LOG.log(Level.WARNING, "Error scanning JNDI tree.", e);
             }
@@ -140,14 +140,14 @@ public class JNDIPropertySource extends BasePropertySource {
 
     /**
      * Maps the given JNDI Context to a {@code Map<String,String>}:
-     *  mapped to configuration map:
+     *  mapped to configuration mapProperties:
      * <ul>
      *   <li>For each leave entry one entry is created.</li>
      *   <li>The key is the fully path of parent contexts, separated by a '.'.</li>
      *   <li>The createValue is the createValue returned from {@code String.createValue(leaveObject)}.</li>
      * </ul>
      * @param ctx the JNDI context, not null.
-     * @return the corresponding map, never null.
+     * @return the corresponding mapProperties, never null.
      * @throws NamingException If some JNDI issues occur.
      */
     public static Map<String,String> toMap(Context ctx) throws NamingException {

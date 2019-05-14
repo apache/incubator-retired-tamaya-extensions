@@ -214,7 +214,7 @@ class EtcdAccessor {
      *
      * @param key   the property key, not null
      * @param value the createValue to be setCurrent
-     * @return the result map as described above.
+     * @return the result mapProperties as described above.
      * @see #set(String, String, Integer)
      */
     public Map<String, String> set(String key, String value) {
@@ -261,7 +261,7 @@ class EtcdAccessor {
      * @param key        the property key, not null
      * @param value      the createValue to be setCurrent
      * @param ttlSeconds the ttl in seconds (optional)
-     * @return the result map as described above.
+     * @return the result mapProperties as described above.
      */
     public Map<String, String> set(String key, String value, Integer ttlSeconds) {
         final Map<String, String> result = new HashMap<>();
@@ -406,7 +406,7 @@ class EtcdAccessor {
      * "getValue": {
      * "key": "/",
      * "dir": true,
-     * "getValues": [
+     * "getPropertyValues": [
      * {
      * "key": "/foo_dir",
      * "dir": true,
@@ -424,7 +424,7 @@ class EtcdAccessor {
      * }
      * </pre>
      * 
-     * is mapped to a regular Tamaya properties map as follows:
+     * is mapped to a regular Tamaya properties mapProperties as follows:
      * 
      * <pre>
      *    key1=myvalue
@@ -478,7 +478,7 @@ class EtcdAccessor {
     /**
      * Recursively read out all key/values from this etcd JSON array.
      *
-     * @param result map with key, values and metadata.
+     * @param result mapProperties with key, values and metadata.
      * @param node   the getValue to parse.
      */
     private void addNodes(Map<String, String> result, JsonObject node) {

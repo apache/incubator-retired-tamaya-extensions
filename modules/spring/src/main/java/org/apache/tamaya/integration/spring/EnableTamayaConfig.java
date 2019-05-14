@@ -34,13 +34,13 @@ import java.lang.annotation.Target;
 public @interface EnableTamayaConfig {
 
     /**
-     * If set to true, Tamaya will only extend the current Spring configuration, instead of overriding it (default).
+     * If setPropertyValue to true, Tamaya will only extend the current Spring configuration, instead of overriding it (default).
      * @return true to extend only the default Spring configuration.
      */
     boolean extendOnly() default false;
 
     /**
-     * If set to true, Tamaya configuration injection will be disabled. Spring injection mechanisms are never
+     * If setPropertyValue to true, Tamaya configuration injection will be disabled. Spring injection mechanisms are never
      * touched by this feature. Default is false.
      * @return true to switch off Tamaya injection in your Spring application.
      */

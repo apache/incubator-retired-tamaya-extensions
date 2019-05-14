@@ -23,7 +23,6 @@ import org.junit.Test;
 
 import java.util.Map;
 
-import static org.apache.tamaya.spi.PropertyValue.of;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MappedPropertySourceTest {
@@ -57,9 +56,9 @@ public class MappedPropertySourceTest {
         Map<String, PropertyValue> result = mappedPropertySource.getProperties();
 
         assertThat(result).isNotNull()
-                          .containsEntry("a", of("a", "1", "PS[mapped]"))
-                          .containsEntry("b", of("b", "2", "PS[mapped]"))
-                          .containsEntry("M", of("M", "3", "PS[mapped]"))
+                          .containsEntry("a", PropertyValue.createValue("a", "1").setMeta("source", "PS[mapped]"))
+                          .containsEntry("b", PropertyValue.createValue("b", "2").setMeta("source","PS[mapped]"))
+                          .containsEntry("M", PropertyValue.createValue("M", "3").setMeta("source","PS[mapped]"))
                           .hasSize(3);
     }
 
@@ -76,9 +75,9 @@ public class MappedPropertySourceTest {
         Map<String, PropertyValue> result = mappedPropertySource.getProperties();
 
         assertThat(result).isNotNull()
-                          .containsEntry("a", of("a", "1", "PS[mapped]"))
-                          .containsEntry("b", of("b", "2", "PS[mapped]"))
-                          .containsEntry("c", of("c", "3", "PS[mapped]"))
+                          .containsEntry("a", PropertyValue.createValue("a", "1").setMeta("source","PS[mapped]"))
+                          .containsEntry("b", PropertyValue.createValue("b", "2").setMeta("source","PS[mapped]"))
+                          .containsEntry("c", PropertyValue.createValue("c", "3").setMeta("source","PS[mapped]"))
                           .hasSize(3);
     }
 
@@ -100,8 +99,8 @@ public class MappedPropertySourceTest {
         Map<String, PropertyValue> result = mappedPropertySource.getProperties();
 
         assertThat(result).isNotNull()
-                          .containsEntry("a", of("a", "1", "PS[mapped]"))
-                          .containsEntry("b", of("b", "2", "PS[mapped]"))
+                          .containsEntry("a", PropertyValue.createValue("a", "1").setMeta("source","PS[mapped]"))
+                          .containsEntry("b", PropertyValue.createValue("b", "2").setMeta("source","PS[mapped]"))
                           .hasSize(2);
     }
 
@@ -166,7 +165,8 @@ public class MappedPropertySourceTest {
 
         MappedPropertySource mappedPropertySource = new MappedPropertySource(propertySource, KEY_MAPPER);
 
-        assertThat(mappedPropertySource.get("M")).isNotNull().isEqualTo(of("M", "_a_", "PS[mapped]"));
+        assertThat(mappedPropertySource.get("M")).isNotNull().isEqualTo(PropertyValue.createValue("M", "_a_")
+                .setMeta("source","PS[mapped]"));
     }
 
 

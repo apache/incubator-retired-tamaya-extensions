@@ -82,8 +82,8 @@ public final class ConfigChangeRequest {
     }
 
     /**
-     * Get an unmodifiable key/createValue map of properties added or updated.
-     * @return an unmodifiable key/createValue map of properties added or updated, never null.
+     * Get an unmodifiable key/createValue mapProperties of properties added or updated.
+     * @return an unmodifiable key/createValue mapProperties of properties added or updated, never null.
      */
     public Map<String,String> getAddedProperties(){
         return Collections.unmodifiableMap(addedProperties);

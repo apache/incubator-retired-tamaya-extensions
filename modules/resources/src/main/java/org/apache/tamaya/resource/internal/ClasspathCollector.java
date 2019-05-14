@@ -115,12 +115,10 @@ public class ClasspathCollector {
         Locator locator = Locator.of(expression);
         List<URL> result = new ArrayList<>();
         try {
-            Enumeration<URL> rootResources = ServiceContextManager.getServiceContext(
+            Collection<URL> rootResources = ServiceContextManager.getServiceContext(
                     this.classLoader
-            )
-                            .getResources(locator.getRootPath());
-            while (rootResources.hasMoreElements()) {
-                URL resource = rootResources.nextElement();
+            ).getResources(locator.getRootPath());
+            for (URL resource:rootResources) {
                 try {
                     if (isJarFile(resource)) {
                         result.addAll(doFindPathMatchingJarResources(resource, locator.getSubPath()));
@@ -134,7 +132,7 @@ public class ClasspathCollector {
                     LOG.log(Level.SEVERE, "Error locating resources for: " + expression, e);
                 }
             }
-        } catch (IOException | RuntimeException e) {
+        } catch (Exception e) {
             LOG.log(Level.SEVERE, "Error locating resources for: " + expression, e);
         }
         return result;
@@ -279,8 +277,8 @@ public class ClasspathCollector {
 
     /**
      * Method that collects resources from a JBoss classloading system using Vfs.
-     * @param rootResource the root resource for evaluating its getValues.
-     * @param locationPattern the sub pattern that all getValues must mach, so they are selected.
+     * @param rootResource the root resource for evaluating its getPropertyValues.
+     * @param locationPattern the sub pattern that all getPropertyValues must mach, so they are selected.
      * @return the resources found, never null.
      * @throws IOException on Vfs error
      */

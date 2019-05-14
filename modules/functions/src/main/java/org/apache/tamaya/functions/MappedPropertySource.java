@@ -90,7 +90,7 @@ class MappedPropertySource implements PropertySource {
      * </p>
      *
      * @param key the property's key, not {@code null}.
-     * @return the property createValue map, where {@code map.current(key) == createValue},
+     * @return the property createValue mapProperties, where {@code mapProperties.current(key) == createValue},
      *         including also any metadata. In case a createValue is {@code null},
      *         simply return {@code null}.
      */

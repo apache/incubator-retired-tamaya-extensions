@@ -49,4 +49,11 @@ public class MicroprofileConverter<T> implements Converter<T> {
                 TypeLiteral.of(getClass()).getType())).build();
             return delegate.convert(value, ctx);
     }
+
+    @Override
+    public String toString() {
+        return "TamayaConverter{" +
+                "delegate=" + delegate +
+                '}';
+    }
 }

@@ -138,7 +138,7 @@ public class TamayaConfigPluginTest extends  AbstractOSGITest{
         assertThat(config.getProperties()).isNotNull();
         assertThat(config.getProperties().isEmpty()).isFalse();
         assertThat(config.getProperties().size() > 4).isTrue();
-        // Override should add additional values
+        // Override should addPropertyValue additional values
         assertThat("success1").isEqualTo(config.getProperties().get("my.testProperty1"));
         assertThat("success2").isEqualTo(config.getProperties().get("my.testProperty2"));
         assertThat("success3").isEqualTo(config.getProperties().get("my.testProperty3"));
@@ -161,7 +161,7 @@ public class TamayaConfigPluginTest extends  AbstractOSGITest{
         assertThat(config.getProperties()).isNotNull();
         assertThat(config.getProperties().isEmpty()).isFalse();
         assertThat(config.getProperties().size() > 4).isTrue();
-        // Override should add additional values
+        // Override should addPropertyValue additional values
         assertThat("success1").isEqualTo(config.getProperties().get("my.testProperty1"));
         assertThat("success2").isEqualTo(config.getProperties().get("my.testProperty2"));
         assertThat("success3").isEqualTo(config.getProperties().get("my.testProperty3"));
@@ -212,7 +212,7 @@ public class TamayaConfigPluginTest extends  AbstractOSGITest{
         assertThat(cm).isNotNull();
         Dictionary<String,Object> result = tamayaConfigPlugin.updateConfig("tamaya", Policy.OVERRIDE, true, true);
         assertThat(result).isNotNull();
-        // Override should add additional values
+        // Override should addPropertyValue additional values
         assertThat(result.get("my.testProperty1")).isEqualTo("success1");
         assertThat(result.get("my.testProperty2")).isEqualTo("success2");
         assertThat(result.get("my.testProperty3")).isEqualTo("success3");

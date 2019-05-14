@@ -75,4 +75,10 @@ public class MicroprofileConfigSource implements ConfigSource{
         return valueMap;
     }
 
+    @Override
+    public String toString() {
+        return "TamayaConfigSource{" +
+                "delegate=" + delegate +
+                '}';
+    }
 }

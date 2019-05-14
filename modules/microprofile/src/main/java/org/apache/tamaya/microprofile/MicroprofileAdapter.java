@@ -135,6 +135,20 @@ public final class MicroprofileAdapter{
     }
 
     /**
+     * Converts a Microprofile {@link Converter} into a Tamaya {@link PropertyConverter}.
+     * @param converter the Microprofile {@link Converter} instance, not null.
+     * @param <T> the target type
+     * @return the corresponding Tamaya {@link PropertyConverter} instance, never null.
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public static <T> PropertyConverter<T> toPropertyConverter(int priority, Converter<T> converter) {
+        if(converter instanceof MicroprofileConverter){
+            return ((MicroprofileConverter)converter).getPropertyConverter();
+        }
+        return new TamayaPropertyConverter<>(priority, converter);
+    }
+
+    /**
      * Converts a Tamaya {@link PropertyConverter} into a Microprofile.io {@link Converter}.
      * @param converter the Tamaya {@link PropertyConverter} instance, not null.
      * @param <T> the target type
@@ -158,10 +172,10 @@ public final class MicroprofileAdapter{
     }
 
     /**
-     * Converts the given Tamaya key, createValue map into a corresponding String based map, hereby
+     * Converts the given Tamaya key, createValue mapProperties into a corresponding String based mapProperties, hereby
      * omitting all getMeta-entries.
-     * @param properties the Tamaya key, createValue map, not null.
-     * @return the corresponding String based map, never null.
+     * @param properties the Tamaya key, createValue mapProperties, not null.
+     * @return the corresponding String based mapProperties, never null.
      */
     public static Map<String, String> toStringMap(Map<String, PropertyValue> properties) {
         Map<String, String> valueMap = new HashMap<>(properties.size());
@@ -174,11 +188,11 @@ public final class MicroprofileAdapter{
     }
 
     /**
-     * Converts the given String based key, createValue map into a corresponding String,PropertyValue
-     * based map.
-     * @param properties the String based key, createValue map, not null.
+     * Converts the given String based key, createValue mapProperties into a corresponding String,PropertyValue
+     * based mapProperties.
+     * @param properties the String based key, createValue mapProperties, not null.
      * @param source the source of the entries, not null.
-     * @return the corresponding String,PropertyValue based map, never null.
+     * @return the corresponding String,PropertyValue based mapProperties, never null.
      */
     public static Map<String, PropertyValue> toPropertyValueMap(Map<String, String> properties, String source) {
         Map<String, PropertyValue> valueMap = new HashMap<>(properties.size());

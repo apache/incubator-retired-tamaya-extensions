@@ -23,10 +23,12 @@ import org.junit.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MicroprofileDefaultPropertiesTest {
+
     @Test
     public void hasOrdinalOf100() throws Exception {
-        MicroprofileDefaultProperties properties = new MicroprofileDefaultProperties();
-
+        MicroprofileDefaultProperties properties = new MicroprofileDefaultProperties(
+                getClass().getResource("/META-INF/microprofile-config.properties")
+        );
         assertThat(properties.getOrdinal()).isEqualTo(100);
     }
 }

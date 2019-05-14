@@ -54,7 +54,7 @@ import java.lang.reflect.Method;
  *     <li>Each key evaluated is looked up in the configuration, until a configuration value has been found.</li>
  *     <li>if not successful, {@link Config#defaultValue()} is used, if present.</li>
  *     <li>If no value could be evaluated a ({@link org.apache.tamaya.ConfigException} is thrown, unless {@link Config#required()}
- *     is set to {@code true} (default is {@code false}).</li>
+ *     is setPropertyValue to {@code true} (default is {@code false}).</li>
  *     <li>If necessary, the final <i>raw</i> value is converted into the required type to be injected, using a
  *     {@link org.apache.tamaya.spi.PropertyConverter}, then the value is injected.</li>
  * </ul>

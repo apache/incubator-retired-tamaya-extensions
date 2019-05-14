@@ -93,7 +93,7 @@ public class MutablePropertiesPropertySource extends BasePropertySource
 
     @Override
     public Map<String, PropertyValue> getProperties() {
-        return PropertyValue.map(this.properties, getName());
+        return PropertyValue.mapProperties(this.properties, getName());
     }
 
     /**

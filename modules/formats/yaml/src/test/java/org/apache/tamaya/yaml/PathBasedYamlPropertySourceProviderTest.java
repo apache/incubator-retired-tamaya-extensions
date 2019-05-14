@@ -33,7 +33,7 @@ public class PathBasedYamlPropertySourceProviderTest {
                 "configs/valid/*.yaml"
         );
         assertThat(provider.getPropertySources()).isNotNull();
-        assertThat(provider.getPropertySources()).hasSize(3);
+        assertThat(provider.getPropertySources()).hasSize(4);
     }
 
     @Test

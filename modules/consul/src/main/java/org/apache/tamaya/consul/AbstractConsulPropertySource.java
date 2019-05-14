@@ -229,7 +229,7 @@ implements MutablePropertySource{
                     try{
                         kvClient.putValue(prefix + key,en.getValue());
                     }catch(Exception e) {
-                        LOG.info("Failed to add key to consul: " + prefix + en.getKey() + "=" + en.getValue());
+                        LOG.info("Failed to addPropertyValue key to consul: " + prefix + en.getKey() + "=" + en.getValue());
                     }
                 }
                 // success: stop here

@@ -42,7 +42,7 @@ import java.util.logging.Logger;
  *
  * Basically all kind of property entris can be stored. Additionally this property source allows
  * to pass additional getMeta-entries to control the TTL of the data in milliseconds. For illustration
- * the following map will store {@code my.entry} with a TLL of 20000 milliseconds (20 seconds) and
+ * the following mapProperties will store {@code my.entry} with a TLL of 20000 milliseconds (20 seconds) and
  * store {@code my.otherEntry} with infinite lifetime (as long as the cluster is alive):
  *
  * {@code
@@ -58,9 +58,9 @@ public abstract class AbstractHazelcastPropertySource extends BasePropertySource
 implements MutablePropertySource{
     /** The logger. */
     private static final Logger LOG = Logger.getLogger(AbstractHazelcastPropertySource.class.getName());
-    /** The Hazelcast config map used. */
+    /** The Hazelcast config mapProperties used. */
     private Map<String, PropertyValue> configMap = new HashMap<>();
-    /** The hazelcast map reference ID used, by default {@code tamaya.configuration}. */
+    /** The hazelcast mapProperties reference ID used, by default {@code tamaya.configuration}. */
     private String mapReference = "tamaya.configuration";
     /** Flag if this property source is read-only. */
     private boolean readOnly = false;
@@ -131,7 +131,7 @@ implements MutablePropertySource{
 
     /**
      * Set the Hazelcast reference name for the Tamaya configuration Map.
-     * @param mapReference the map reference to be used, not null.
+     * @param mapReference the mapProperties reference to be used, not null.
      */
     public void setMapReference(String mapReference){
         if (!Objects.equals(mapReference, this.mapReference)) {
@@ -176,7 +176,7 @@ implements MutablePropertySource{
     }
 
     /**
-     * Reloads the configuration map from Hazelcast completely.
+     * Reloads the configuration mapProperties from Hazelcast completely.
      */
     public void refresh() {
         IMap<String,String> config = getHazelcastInstance().getMap(mapReference);

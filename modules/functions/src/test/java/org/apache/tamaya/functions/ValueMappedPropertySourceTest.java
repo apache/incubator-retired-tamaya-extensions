@@ -23,7 +23,6 @@ import org.junit.Test;
 
 import java.util.Map;
 
-import static org.apache.tamaya.spi.PropertyValue.of;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ValueMappedPropertySourceTest {
@@ -152,9 +151,9 @@ public class ValueMappedPropertySourceTest {
 
         assertThat(result).isNotNull()
                           .isNotEmpty()
-                          .containsEntry("a", of("a", "1", "S"))
-                          .containsEntry("b", of("b", "2", "S"))
-                          .containsEntry("c", of("c", "3", "S"))
+                          .containsEntry("a", PropertyValue.createValue("a", "1"))
+                          .containsEntry("b", PropertyValue.createValue("b", "2"))
+                          .containsEntry("c", PropertyValue.createValue("c", "3"))
                           .hasSize(3);
 
     }
@@ -170,9 +169,9 @@ public class ValueMappedPropertySourceTest {
 
         assertThat(result).isNotNull()
                           .isNotEmpty()
-                          .containsEntry("a", of("a", "1", "S"))
-                          .containsEntry("b", of("b", "2", "S"))
-                          .containsEntry("m", of("m", "3m", "S"))
+                          .containsEntry("a", PropertyValue.createValue("a", "1"))
+                          .containsEntry("b", PropertyValue.createValue("b", "2"))
+                          .containsEntry("m", PropertyValue.createValue("m", "3m"))
                           .hasSize(3);
     }
 

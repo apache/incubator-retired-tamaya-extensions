@@ -33,11 +33,13 @@ import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.eclipse.microprofile.config.spi.Converter;
 import org.junit.Test;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MicroprofileAdapterTest {
+
     @Test
     public void toConfig() throws Exception {
         Configuration config = Configuration.current();
@@ -67,13 +69,13 @@ public class MicroprofileAdapterTest {
         assertThat(mpConfig.getPropertyNames()).isEqualTo(config.getProperties().keySet());
     }
 
-    @Test
-    public void toConfigurationWithNoneMicroprofileConfig() throws Exception {
-        Config config = new MyConfig();
-        Configuration result = MicroprofileAdapter.toConfiguration(config);
-
-        assertThat(result).isNotNull().isInstanceOf(TamayaConfiguration.class);
-    }
+//    @Test
+//    public void toConfigurationWithNoneMicroprofileConfig() throws Exception {
+//        Config config = new MyConfig();
+//        Configuration result = MicroprofileAdapter.toConfiguration(config);
+//
+//        assertThat(result).isNotNull().isInstanceOf(TamayaConfiguration.class);
+//    }
 
     @Test
     public void toConfigSources() throws Exception {
@@ -179,27 +181,27 @@ public class MicroprofileAdapterTest {
         assertThat("toPropertyValueMap").isEqualTo(tamayaProps.get("a").getMeta("source"));
     }
 
-    static class MyConfig implements Config {
-        @Override
-        public <T> T getValue(String s, Class<T> aClass) {
-            throw new RuntimeException("Not implemented yet!");
-        }
-
-        @Override
-        public <T> Optional<T> getOptionalValue(String s, Class<T> aClass) {
-            throw new RuntimeException("Not implemented yet!");
-        }
-
-        @Override
-        public Iterable<String> getPropertyNames() {
-            throw new RuntimeException("Not implemented yet!");
-        }
-
-        @Override
-        public Iterable<ConfigSource> getConfigSources() {
-            throw new RuntimeException("Not implemented yet!");
-        }
-    }
+//    private static class MyConfig implements Config {
+//        @Override
+//        public <T> T getValue(String s, Class<T> aClass) {
+//            throw new RuntimeException("Not implemented yet!");
+//        }
+//
+//        @Override
+//        public <T> Optional<T> getOptionalValue(String s, Class<T> aClass) {
+//            throw new RuntimeException("Not implemented yet!");
+//        }
+//
+//        @Override
+//        public Iterable<String> getPropertyNames() {
+//            throw new RuntimeException("Not implemented yet!");
+//        }
+//
+//        @Override
+//        public Iterable<ConfigSource> getConfigSources() {
+//            throw new RuntimeException("Not implemented yet!");
+//        }
+//    }
 
     static class MyConfiguration implements Configuration {
         @Override

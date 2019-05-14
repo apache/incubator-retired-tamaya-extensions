@@ -115,7 +115,7 @@ public class MappedConfigurationDataPropertySource extends BasePropertySource {
      * Method that copies and converts the properties read from the data instance
      * provided.
      * @param data the data returned from the format, not null.
-     * @param meta the metadata to add.
+     * @param meta the metadata to addPropertyValue.
      * @return the final properties to be included.
      */
     protected Map<String, PropertyValue> populateData(ConfigurationData data, Map<String, String> meta) {

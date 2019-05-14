@@ -81,11 +81,11 @@ public class CollectionAdvancedTests {
     }
 
     /**
-     * Redefined map format parsing, Config is as follows:
+     * Redefined mapProperties format parsing, Config is as follows:
      * <pre>
-     *  redefined-map=0==none | 1==single | 2==any
-     *  _redefined-map.map-entry-separator===
-     *  _redefined-map.item-separator=|
+     *  redefined-mapProperties=0==none | 1==single | 2==any
+     *  _redefined-mapProperties.mapProperties-entry-separator===
+     *  _redefined-mapProperties.item-separator=|
      * </pre>
      */
     @Test

@@ -89,8 +89,8 @@ public final class ConfigurationChangeBuilder {
      * Compares the two property config/configurations and creates a collection with all changes
      * that must be applied to render {@code previous} into {@code target}.
      *
-     * @param previous the previous map, not null.
-     * @param current the target map, not null.
+     * @param previous the previous mapProperties, not null.
+     * @param current the target mapProperties, not null.
      * @return a collection current change events, never {@code null}.
      */
     public static Collection<PropertyChangeEvent> compare(Configuration previous, Configuration current) {

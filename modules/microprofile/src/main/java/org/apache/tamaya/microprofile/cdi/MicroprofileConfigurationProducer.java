@@ -35,6 +35,7 @@ import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.spi.PropertyValue;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -118,15 +119,22 @@ public class MicroprofileConfigurationProducer {
         if (String.class.equals(context.getTargetType().getRawType())) {
             return textValue;
         }
-        Object value = null;
-        if (textValue != null || Optional.class.equals(context.getTargetType().getRawType())) {
-            LOGGER.log(Level.FINEST, () -> "Converting KEY: " + context.getKey() + "(" + context.getTargetType() + "), textValue: " + textValue);
+        if(textValue!=null){
+            context = context.toBuilder()
+                .setValues(PropertyValue.createValue(context.getKey(), textValue)
+                .setMeta("source", "Microprofile-Config"))
+                .build();
+        }
+        ConversionContext finalContext = context;
+        Object resolvedValue = null;
+        if (textValue != null || Optional.class.equals(finalContext.getTargetType().getRawType())) {
+            LOGGER.log(Level.FINEST, () -> "Converting KEY: " + finalContext.getKey() + "(" + finalContext.getTargetType() + "), textValue: " + textValue);
             List<PropertyConverter> converters = Configuration.current().getContext()
-                    .getPropertyConverters((TypeLiteral) context.getTargetType());
+                    .getPropertyConverters((TypeLiteral) finalContext.getTargetType());
             for (PropertyConverter<Object> converter : converters) {
                 try {
-                    value = converter.convert(textValue, context);
-                    if (value != null) {
+                    resolvedValue = converter.convert(textValue, finalContext);
+                    if (resolvedValue != null) {
                         LOGGER.log(Level.FINEST, "Parsed default createValue from '" + textValue + "' into " +
                                 injectionPoint);
                         break;
@@ -137,7 +145,7 @@ public class MicroprofileConfigurationProducer {
                 }
             }
         }
-        return value;
+        return resolvedValue;
     }
 
     @Produces

@@ -63,14 +63,14 @@ public class TestPropertySource implements PropertySource {
 
     @Override
     public PropertyValue get(String key) {
-        return PropertyValue.of(key,properties.get(key),getName());
+        return PropertyValue.createValue(key,properties.get(key)).setMeta("source", getName());
     }
 
     @Override
     public Map<String, PropertyValue> getProperties() {
         Map<String,PropertyValue> result = new HashMap<>();
         for(Map.Entry<String,String> en:properties.entrySet()){
-            result.put(en.getKey(), PropertyValue.of(en.getKey(), en.getValue(), getName()));
+            result.put(en.getKey(), PropertyValue.createValue(en.getKey(), en.getValue()).setMeta("source", getName()));
         }
         return result;
     }

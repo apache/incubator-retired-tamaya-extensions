@@ -31,7 +31,7 @@ import org.apache.tamaya.spi.PropertyValue;
 import java.util.Objects;
 
 /**
- * Visitor implementation to read a JSON asString input source.
+ * Visitor implementation to read a JSON toString input source.
  */
 class JSONDataBuilder {
 
@@ -62,11 +62,11 @@ class JSONDataBuilder {
                     dataNode.setValue(key, null);
                     break;
                 case OBJECT:
-                    ObjectValue oval = dataNode.setObject(key);
+                    ObjectValue oval = dataNode.addObject(key);
                     addJsonObject((JsonObject)val, oval);
                     break;
                 case ARRAY:
-                    ListValue aval = dataNode.setList(key);
+                    ListValue aval = dataNode.addList(key);
                     addArray((JsonArray)val, aval);
                     break;
                 default:

@@ -123,7 +123,7 @@ public final class ResourceResolver implements ExpressionResolver, ClassloaderAw
         } else {
             for (ClassLoader cl : classLoaders) {
                 List<URL> resources = new ArrayList<>();
-                Enumeration<URL> found;
+                Collection<URL> found;
                 try {
                     found = ServiceContextManager.getServiceContext(cl)
                             .getResources(expression);
@@ -131,9 +131,7 @@ public final class ResourceResolver implements ExpressionResolver, ClassloaderAw
                     LOG.log(Level.SEVERE, "Error resolving expression: " + expression, e);
                     continue;
                 }
-                while (found.hasMoreElements()) {
-                    resources.add(found.nextElement());
-                }
+                resources.addAll(found);
                 if (!resources.isEmpty()) {
                     if (resources.size() != 1) {
                         LOG.log(Level.WARNING, "Unresolvable expression (ambiguous resource): " + expression);

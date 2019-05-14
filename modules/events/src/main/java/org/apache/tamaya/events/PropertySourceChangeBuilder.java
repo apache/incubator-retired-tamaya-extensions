@@ -83,8 +83,8 @@ public final class PropertySourceChangeBuilder {
      * Compares the two property config/configurations and creates a collection current all changes
      * that must be applied to render {@code map1} into {@code map2}.
      *
-     * @param map1 the source map, not null.
-     * @param map2 the target map, not null.
+     * @param map1 the source mapProperties, not null.
+     * @param map2 the target mapProperties, not null.
      * @return a collection current change events, never null.
      */
     public static Collection<PropertyChangeEvent> compare(PropertySource map1, PropertySource map2) {

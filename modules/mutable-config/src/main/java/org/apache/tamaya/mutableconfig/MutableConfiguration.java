@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  * This interface extends the Configuration interface hereby adding methods to change configuration entries.
  * Hereby not all configuration entries are necessarily mutable, since some entries may be read from non
- * mutable areas of configuration. Of course, it is always possible to add a mutable shadow layer on top of all
+ * mutable areas of configuration. Of course, it is always possible to addPropertyValue a mutable shadow layer on top of all
  * property sources to persist/control any changes applied. The exact management and storage persistence algorithm
  * should be transparent.
  *

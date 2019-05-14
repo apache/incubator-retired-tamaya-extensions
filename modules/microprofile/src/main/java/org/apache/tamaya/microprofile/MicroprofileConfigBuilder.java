@@ -18,12 +18,18 @@
  */
 package org.apache.tamaya.microprofile;
 
+import java.lang.reflect.Type;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Objects;
+import java.util.ServiceLoader;
 
 import org.apache.tamaya.Configuration;
 import org.apache.tamaya.TypeLiteral;
 import org.apache.tamaya.spi.ConfigurationBuilder;
+import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.spi.ServiceContextManager;
+import org.apache.tamaya.spisupport.PriorityServiceComparator;
 import org.apache.tamaya.spisupport.PropertySourceComparator;
 import org.apache.tamaya.spisupport.propertysource.EnvironmentPropertySource;
 import org.apache.tamaya.spisupport.propertysource.SystemPropertySource;
@@ -33,6 +39,8 @@ import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.eclipse.microprofile.config.spi.ConfigSourceProvider;
 import org.eclipse.microprofile.config.spi.Converter;
 
+import javax.annotation.Priority;
+
 /**
  * Created by atsticks on 23.03.17.
  */
@@ -41,6 +49,9 @@ final class MicroprofileConfigBuilder implements ConfigBuilder {
     private ConfigurationBuilder configurationBuilder;
 
     MicroprofileConfigBuilder(ConfigurationBuilder configurationBuilder) {
+        for(ConfigSource cs:ServiceLoader.load(ConfigSource.class)){
+            System.out.println(cs.getName());
+        }
         this.configurationBuilder = Objects.requireNonNull(configurationBuilder);
         configurationBuilder.addDefaultPropertyConverters();
     }
@@ -64,8 +75,12 @@ final class MicroprofileConfigBuilder implements ConfigBuilder {
     public ConfigBuilder addDefaultSources() {
         configurationBuilder.addPropertySources(
                 new SystemPropertySource(400), //
-                new EnvironmentPropertySource(300), //
-                new MicroprofileDefaultProperties() //
+                new EnvironmentPropertySource(300) //
+        );
+        MicroprofileDefaultPropertiesProvider provider = new MicroprofileDefaultPropertiesProvider();
+        provider.init(this.configurationBuilder.getClassLoader());
+        configurationBuilder.addPropertySources(
+                provider.getPropertySources()
         );
         configurationBuilder.sortPropertySources(PropertySourceComparator.getInstance());
         return this;
@@ -133,9 +148,11 @@ final class MicroprofileConfigBuilder implements ConfigBuilder {
     public ConfigBuilder withConverters(Converter<?>... converters) {
         for (Converter<?> converter : converters) {
             TypeLiteral lit = TypeLiteral.of(converter.getClass());
-            TypeLiteral target = TypeLiteral.of(lit.getType());
-
-            configurationBuilder.removePropertyConverters(target);
+            Type[] types = TypeLiteral.getGenericInterfaceTypeParameters(converter.getClass(), Converter.class);
+            if(types.length==0){
+                throw new IllegalArgumentException("Cannot evaluate converter target type for " + converter);
+            }
+            TypeLiteral target = TypeLiteral.of(types[0]);
             configurationBuilder.addPropertyConverters(target,
                     MicroprofileAdapter.toPropertyConverter(converter));
         }
@@ -145,16 +162,45 @@ final class MicroprofileConfigBuilder implements ConfigBuilder {
     @SuppressWarnings("unchecked")
     @Override
     public <T> ConfigBuilder withConverter(Class<T> type, int priority, Converter<T> converter) {
-        configurationBuilder.addPropertyConverters(TypeLiteral.of(type), MicroprofileAdapter.toPropertyConverter(converter));
+        configurationBuilder.addPropertyConverters(TypeLiteral.of(type), MicroprofileAdapter.toPropertyConverter(priority, converter));
         return this;
     }
 
     @Override
     public Config build() {
+        configurationBuilder.sortPropertyConverter(MicroProfileAwareConverterComparator.INSTANCE);
         Configuration config = getConfigurationBuilder().build();
         Configuration.setCurrent(config);
-
         return MicroprofileAdapter.toConfig(config);
+    }
+
+    @Override
+    public String toString() {
+        return "TamayaConfigBuilder{" +
+                "delegate=" + configurationBuilder +
+                '}';
+    }
+
+    /**
+     * This comparator will extract any internally adapted Microprofile {@link Converter} to
+     * evaluate the corrent {@link javax.annotation.Priority} and use this information for comparison.
+     */
+    private static final class MicroProfileAwareConverterComparator implements Comparator<PropertyConverter>{
+
+        static final MicroProfileAwareConverterComparator INSTANCE = new MicroProfileAwareConverterComparator();
+
+        @Override
+        public int compare(PropertyConverter o1, PropertyConverter o2) {
+            int priority1 = PriorityServiceComparator.getPriority(o1) + 99; // Microprofile default
+            int priority2 = PriorityServiceComparator.getPriority(o2) + 99; // Microprofile default
+            if(o1 instanceof TamayaPropertyConverter){
+                priority1 = ((TamayaPropertyConverter)o1).getPriority();
+            }
+            if(o2 instanceof TamayaPropertyConverter){
+                priority2 = ((TamayaPropertyConverter)o2).getPriority();
+            }
+            return priority2 - priority1;
+        }
     }
 
 }

@@ -23,6 +23,7 @@ import org.apache.tamaya.spi.PropertyConverter;
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyValue;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.function.Supplier;
@@ -62,10 +63,62 @@ public final class CollectionConverter implements PropertyConverter<Collection> 
 
     private MappingType mappingType = MappingType.value_all;
 
+    public static Object convertArray(ConversionContext context) {
+        MappingType mappingType = MappingType.valueOf(context.getMeta()
+                .getOrDefault(VALUE_MAPPING, MappingType.value.toString()));
+        TypeLiteral<?> targetType = context.getTargetType();
+        Type[] types = TypeLiteral.getTypeParameters(targetType.getType());
+        TypeLiteral<?> collectionTargetType;
+        if(types.length>0) {
+            collectionTargetType = TypeLiteral.of(types[0]);
+        }else {
+            // Check for array
+            if(targetType.getRawType().isArray()){
+                collectionTargetType = TypeLiteral.of(targetType.getRawType().getComponentType());
+            }else{
+                LOG.warning(String.format("No type information for Collection item type in '%s', using String.",
+                        context.getKey()));
+                collectionTargetType = TypeLiteral.of(String.class);
+            }
+        }
+        List result = new ArrayList<>();
+        switch (mappingType) {
+            case node_all:
+                convertListByNodes(context.getValues(), context,
+                        collectionTargetType, result, true);
+                break;
+            case node:
+                convertListByNodes(context.getValues(), context,
+                        collectionTargetType, result, false);
+                break;
+            case value:
+                convertListByValues(context.getValues(), context,
+                        collectionTargetType, result, false);
+                break;
+            case value_all:
+                convertListByValues(context.getValues(), context,
+                        collectionTargetType, result, true);
+                break;
+            case override:
+                 convertListWithBestGuess(context.getValues(), context,
+                        collectionTargetType, result,false);
+                break;
+            case combine:
+            default:
+                convertListWithBestGuess(context.getValues(), context,
+                        collectionTargetType, result,true);
+        }
+        Object array = Array.newInstance(collectionTargetType.getRawType(), result.size());
+        for(int i=0;i<result.size();i++){
+            Array.set(array, i, result.get(i));
+        }
+        return array;
+    }
+
     public static <T extends Collection> T convertList(ConversionContext context,
                                                        Supplier<T> collectionSupplier) {
         MappingType mappingType = MappingType.valueOf(context.getMeta()
-                .getOrDefault(VALUE_MAPPING, MappingType.combine.toString()));
+                .getOrDefault(VALUE_MAPPING, MappingType.value.toString()));
         TypeLiteral<?> targetType = context.getTargetType();
         Type[] types = TypeLiteral.getTypeParameters(targetType.getType());
         TypeLiteral<?> collectionTargetType;

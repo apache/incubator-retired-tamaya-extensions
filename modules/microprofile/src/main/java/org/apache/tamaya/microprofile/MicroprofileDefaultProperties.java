@@ -18,7 +18,10 @@
  */
 package org.apache.tamaya.microprofile;
 
+import org.apache.tamaya.spi.ServiceContextManager;
 import org.apache.tamaya.spisupport.propertysource.PropertiesResourcePropertySource;
+
+import java.net.URL;
 
 
 /**
@@ -26,8 +29,8 @@ import org.apache.tamaya.spisupport.propertysource.PropertiesResourcePropertySou
  */
 public class MicroprofileDefaultProperties extends PropertiesResourcePropertySource{
 
-    public MicroprofileDefaultProperties() {
-        super("META-INF/microprofile-config.properties", null);
+    public MicroprofileDefaultProperties(URL url) {
+        super(url);
         setDefaultOrdinal(100);
     }
 }

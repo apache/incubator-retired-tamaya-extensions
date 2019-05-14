@@ -21,6 +21,7 @@ package org.apache.tamaya.microprofile;
 
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertySourceProvider;
+import org.apache.tamaya.spisupport.PriorityServiceComparator;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.eclipse.microprofile.config.spi.ConfigSourceProvider;
 
@@ -51,6 +52,14 @@ public class TamayaPropertySourceProvider implements PropertySourceProvider{
             return MicroprofileAdapter.toPropertySources(
                     delegate.getConfigSources(Thread.currentThread().getContextClassLoader()));
         }
+    }
+
+    @Override
+    public String toString() {
+        return "MicroprofileConfigSourceProvider{" +
+                "delegate=" + delegate +
+                ", priority=" + PriorityServiceComparator.getPriority(this) +
+                '}';
     }
 
 }

@@ -89,4 +89,10 @@ public class TamayaConfiguration implements Configuration{
         return new DefaultConfigurationSnapshot(this, keys);
     }
 
+    @Override
+    public String toString() {
+        return "MicroprofileConfigr{" +
+                "delegate=" + delegate +
+                '}';
+    }
 }

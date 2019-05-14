@@ -35,8 +35,8 @@ class ProvidedPropertySource implements PropertySource{
     final Map<String,PropertyValue> config = new HashMap<>();
 
     public ProvidedPropertySource(){
-        config.put("a.b.c.key3", PropertyValue.of("a.b.c.key3","keys current a.b.c.key3",getName()));
-        config.put("a.b.c.key4", PropertyValue.of("a.b.c.key4","keys current a.b.c.key4", getName()));
+        config.put("a.b.c.key3", PropertyValue.createValue("a.b.c.key3","keys current a.b.c.key3").setMeta("source", getName()));
+        config.put("a.b.c.key4", PropertyValue.createValue("a.b.c.key4","keys current a.b.c.key4").setMeta("source", getName()));
     }
 
     @Override

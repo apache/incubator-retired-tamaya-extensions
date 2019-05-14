@@ -26,7 +26,7 @@ import java.util.*;
 
 /**
  * Data that abstracts the data read from a configuration resources using a certain format. The data can be divided
- * into different sections, similar to ini-files. Herebey different sections the best map to entries with different
+ * into different sections, similar to ini-files. Herebey different sections the best mapProperties to entries with different
  * priorities to be applied, when integrated into PropertySource instances.
  */
 public final class ConfigurationData {

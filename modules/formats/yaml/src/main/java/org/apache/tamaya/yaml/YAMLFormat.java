@@ -79,7 +79,7 @@ public class YAMLFormat implements ConfigurationFormat {
                 throw new ConfigException("Unknown YamlType encountered: " + config.getClass().getName());
             }
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.finest(String.format("Read data from %s : %s", resource, data.asString()));
+                LOG.finest(String.format("Read data from %s : %s", resource, data.toString()));
             }
             return new ConfigurationData(resource, this, data);
         } catch (Throwable t) {
@@ -91,10 +91,10 @@ public class YAMLFormat implements ConfigurationFormat {
     private void addObject(Map<String, Object> values, ObjectValue dataNode) {
         values.forEach((key, value) -> {
             if (value instanceof List) {
-                ListValue list = dataNode.setList(key);
+                ListValue list = dataNode.addList(key);
                 addList((List) value, list);
             } else if (value instanceof Map) {
-                ObjectValue object = dataNode.setObject(key);
+                ObjectValue object = dataNode.addObject(key);
                 addObject((Map) value, object);
             } else {
                 if (value == null) {
@@ -115,7 +115,7 @@ public class YAMLFormat implements ConfigurationFormat {
                 ObjectValue ov = dataNode.addObject();
                 addObject((Map) val, ov);
             } else {
-                dataNode.setValue(String.valueOf(val));
+                dataNode.addValue(String.valueOf(val));
             }
         });
     }

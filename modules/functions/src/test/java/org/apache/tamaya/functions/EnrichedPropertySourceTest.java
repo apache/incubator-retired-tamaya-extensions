@@ -27,7 +27,6 @@ import java.util.Map;
 
 import static java.util.Collections.EMPTY_MAP;
 import static org.apache.tamaya.functions.MethodNotMockedAnswer.NOT_MOCKED_ANSWER;
-import static org.apache.tamaya.spi.PropertyValue.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -89,7 +88,7 @@ public class EnrichedPropertySourceTest {
 
         PropertyValue result = sut.get("e");
 
-        assertThat(result).isNotNull().isNotNull().isEqualTo(of("e", "9", "name"));
+        assertThat(result).isNotNull().isNotNull().isEqualTo(PropertyValue.createValue("e", "9"));
     }
 
     @Test
@@ -106,7 +105,7 @@ public class EnrichedPropertySourceTest {
 
         PropertyValue result = sut.get("b");
 
-        assertThat(result).isNotNull().isEqualTo(of("b", "9", "name"));
+        assertThat(result).isNotNull().isEqualTo(PropertyValue.createValue("b", "9"));
     }
 
     @Test
@@ -123,7 +122,7 @@ public class EnrichedPropertySourceTest {
 
         PropertyValue result = sut.get("a");
 
-        assertThat(result).isNotNull().isEqualTo(of("a", "1", "name"));
+        assertThat(result).isNotNull().isEqualTo(PropertyValue.createValue("a", "1"));
     }
 
     @Test
@@ -140,7 +139,7 @@ public class EnrichedPropertySourceTest {
 
         PropertyValue result = sut.get("b");
 
-        assertThat(result).isNotNull().isEqualTo(of("b", "2", "name"));
+        assertThat(result).isNotNull().isEqualTo(PropertyValue.createValue("b", "2"));
     }
 
 
@@ -163,12 +162,12 @@ public class EnrichedPropertySourceTest {
         Map<String, PropertyValue> properties = sut.getProperties();
 
         assertThat(properties).isNotNull().isNotEmpty()
-                              .containsEntry("a", of("a", "1", "name"))
-                              .containsEntry("b", of("b", "2", "name"))
-                              .containsEntry("c", of("c", "3", "name"))
-                              .containsEntry("d", of("d", "4", "name"))
-                              .containsEntry("e", of("e", "9", "name"))
-                              .containsEntry("f", of("f", "11", "name"))
+                              .containsEntry("a", PropertyValue.createValue("a", "1"))
+                              .containsEntry("b", PropertyValue.createValue("b", "2"))
+                              .containsEntry("c", PropertyValue.createValue("c", "3"))
+                              .containsEntry("d", PropertyValue.createValue("d", "4"))
+                              .containsEntry("e", PropertyValue.createValue("e", "9"))
+                              .containsEntry("f", PropertyValue.createValue("f", "11"))
                               .hasSize(6);
     }
 
@@ -187,10 +186,10 @@ public class EnrichedPropertySourceTest {
         Map<String, PropertyValue> properties = sut.getProperties();
 
         assertThat(properties).isNotNull().isNotEmpty()
-                              .containsEntry("a", of("a", "1", "name"))
-                              .containsEntry("b", of("b", "9", "name"))
-                              .containsEntry("c", of("c", "3", "name"))
-                              .containsEntry("d", of("d", "11", "name"))
+                              .containsEntry("a", PropertyValue.createValue("a", "1"))
+                              .containsEntry("b", PropertyValue.createValue("b", "9"))
+                              .containsEntry("c", PropertyValue.createValue("c", "3"))
+                              .containsEntry("d", PropertyValue.createValue("d", "11"))
                               .hasSize(4);
 
     }
@@ -210,10 +209,10 @@ public class EnrichedPropertySourceTest {
         Map<String, PropertyValue> properties = sut.getProperties();
 
         assertThat(properties).isNotNull().isNotEmpty()
-                              .containsEntry("a", of("a", "1", "name"))
-                              .containsEntry("b", of("b", "2", "name"))
-                              .containsEntry("c", of("c", "3", "name"))
-                              .containsEntry("d", of("d", "4", "name"))
+                              .containsEntry("a", PropertyValue.createValue("a", "1"))
+                              .containsEntry("b", PropertyValue.createValue("b", "2"))
+                              .containsEntry("c", PropertyValue.createValue("c", "3"))
+                              .containsEntry("d", PropertyValue.createValue("d", "4"))
                               .hasSize(4);
     }
 

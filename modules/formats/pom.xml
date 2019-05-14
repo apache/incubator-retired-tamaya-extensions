@@ -49,6 +49,8 @@
     <modules>
         <module>base</module>
         <module>json</module>
+        <module>hjson</module>
         <module>yaml</module>
+        <module>hocon</module>
     </modules>
 </project>

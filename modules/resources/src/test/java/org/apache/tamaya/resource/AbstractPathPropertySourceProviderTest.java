@@ -80,7 +80,7 @@ public class AbstractPathPropertySourceProviderTest {
          * <p/>
          * <p>Reordering of the default order of the config-sources:</p>
          * <p>Example: If the properties file/s should be used <b>before</b> the other implementations,
-         * you have to configure an ordinal &gt; 400. That means, you have to add e.g. deltaspike_ordinal=401 to
+         * you have to configure an ordinal &gt; 400. That means, you have to addPropertyValue e.g. deltaspike_ordinal=401 to
          * /META-INF/apache-deltaspike.properties . Hint: In case of property files every file is handled as independent
          * config-source, but all of them have ordinal 400 by default (and can be reordered in a fine-grained manner.</p>
          *

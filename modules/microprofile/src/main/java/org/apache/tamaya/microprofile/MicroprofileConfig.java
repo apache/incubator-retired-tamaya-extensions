@@ -80,17 +80,13 @@ public class MicroprofileConfig implements Config, Serializable {
 
     @Override
     public String toString() {
-        return "MicroprofileConfig{" +
+        return "TamayaConfig{" +
                 "delegate=" + delegate +
                 '}';
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
-        if (!(this.delegate instanceof Serializable)) {
-            out.writeObject(this.delegate.getSnapshot());
-        } else {
-            out.writeObject(this.delegate);
-        }
+        out.writeObject(this.delegate.getSnapshot());
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {

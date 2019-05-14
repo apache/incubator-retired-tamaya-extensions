@@ -21,6 +21,7 @@ package org.apache.tamaya.microprofile;
 
 import org.apache.tamaya.spi.ConversionContext;
 import org.apache.tamaya.spi.PropertyConverter;
+import org.apache.tamaya.spisupport.PriorityServiceComparator;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.eclipse.microprofile.config.spi.Converter;
 
@@ -33,17 +34,42 @@ import java.util.Objects;
 public class TamayaPropertyConverter<T> implements PropertyConverter<T> {
 
     private Converter<T> delegate;
+    private Integer priority;
 
     public TamayaPropertyConverter(Converter<T> delegate){
         this.delegate = Objects.requireNonNull(delegate);
+    }
+
+    public TamayaPropertyConverter(Integer priority, Converter<T> delegate){
+        this.delegate = Objects.requireNonNull(delegate);
+        this.priority = priority;
     }
 
     public Converter<T> getConverter(){
         return this.delegate;
     }
 
+    public Integer getPriority(){
+        if(priority != null) {
+            return priority;
+        }
+        int prio = PriorityServiceComparator.getPriority(this.delegate);
+        if(prio == 1){ // Tamaya default priority
+            prio = 100; // Microprofile default prio
+        }
+        return prio;
+    }
+
     @Override
     public T convert(String value, ConversionContext context) {
         return delegate.convert(value);
+    }
+
+    @Override
+    public String toString() {
+        return "MicroprofileConverter{" +
+                "delegate=" + delegate +
+                ", priority=" + getPriority() +
+                '}';
     }
 }

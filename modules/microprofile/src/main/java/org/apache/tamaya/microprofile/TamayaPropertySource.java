@@ -20,6 +20,7 @@ package org.apache.tamaya.microprofile;
 
 import org.apache.tamaya.spi.PropertySource;
 import org.apache.tamaya.spi.PropertyValue;
+import org.apache.tamaya.spisupport.PriorityServiceComparator;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 
 import java.util.HashMap;
@@ -55,7 +56,11 @@ public class TamayaPropertySource implements PropertySource {
 
     @Override
     public PropertyValue get(String key) {
-        return PropertyValue.createValue(key, delegate.getValue(key)).setMeta("source",getName());
+        String delegateValue = delegate.getValue(key);
+        if(delegateValue==null){
+            return null;
+        }
+        return PropertyValue.createValue(key, delegateValue).setMeta("source",getName());
     }
 
     @Override
@@ -71,4 +76,11 @@ public class TamayaPropertySource implements PropertySource {
         return valueMap;
     }
 
+    @Override
+    public String toString() {
+        return "MicroprofileConfigSource{" +
+                "delegate=" + delegate +
+                ", priority=" + PriorityServiceComparator.getPriority(this) +
+                '}';
+    }
 }

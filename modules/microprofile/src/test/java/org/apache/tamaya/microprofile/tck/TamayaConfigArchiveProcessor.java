@@ -34,6 +34,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 
+import javax.annotation.Priority;
 import javax.enterprise.inject.spi.Extension;
 import java.io.File;
 
@@ -49,6 +50,9 @@ public class TamayaConfigArchiveProcessor implements ApplicationArchiveProcessor
     @Override
     public void process(Archive<?> applicationArchive, TestClass testClass) {
         if (applicationArchive instanceof WebArchive) {
+            File[] annotationLibs = Maven.resolver()
+                    .loadPomFromFile("pom.xml").resolve("javax.annotation:javax.annotation-api")
+                    .withTransitivity().asFile();
             File[] coreLibs = Maven.resolver()
                     .loadPomFromFile("pom.xml").resolve("org.apache.tamaya:tamaya-core")
                     .withTransitivity().asFile();
@@ -58,9 +62,13 @@ public class TamayaConfigArchiveProcessor implements ApplicationArchiveProcessor
             File[] functionsLib = Maven.resolver()
                     .loadPomFromFile("pom.xml").resolve("org.apache.tamaya.ext:tamaya-functions")
                     .withTransitivity().asFile();
+            File[] collectionsLib = Maven.resolver()
+                    .loadPomFromFile("pom.xml").resolve("org.apache.tamaya.ext:tamaya-collections")
+                    .withTransitivity().asFile();
 
             JavaArchive configJar = ShrinkWrap
                     .create(JavaArchive.class, "tamaya-config-impl.jar")
+                    .addClass(Priority.class)
                     .addPackage(MicroprofileAdapter.class.getPackage())
                     .addPackage(MicroprofileCDIExtension.class.getPackage())
                     .addPackage(BooleanAsIntegerConverterFix.class.getPackage())
@@ -71,9 +79,11 @@ public class TamayaConfigArchiveProcessor implements ApplicationArchiveProcessor
                     .addAsServiceProvider(Extension.class, MicroprofileCDIExtension.class);
             ((WebArchive) applicationArchive).addAsLibraries(
                     configJar)
+                    .addAsLibraries(annotationLibs)
                     .addAsLibraries(apiLibs)
                     .addAsLibraries(coreLibs)
-                    .addAsLibraries(functionsLib);
+                    .addAsLibraries(functionsLib)
+                    .addAsLibraries(collectionsLib);
         }
     }
 }

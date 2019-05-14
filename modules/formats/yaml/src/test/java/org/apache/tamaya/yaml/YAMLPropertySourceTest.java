@@ -45,4 +45,14 @@ public class YAMLPropertySourceTest {
         YAMLPropertySource source = new YAMLPropertySource(configURL, 4);
         assertThat(source.getOrdinal()).isEqualTo(4);
     }
+
+    @Test
+    public void testYamlCreateWithURL() throws Exception {
+        URL configURL = YAMLPropertySourceTest.class.getResource("/configs/valid/test.yaml");
+
+        assertThat(configURL).isNotNull();
+
+        YAMLPropertySource source = new YAMLPropertySource(configURL);
+        assertThat(source.getOrdinal()).isEqualTo(0);
+    }
 }

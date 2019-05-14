@@ -156,7 +156,7 @@ public final class InjectionUtils {
             return Collections.singletonList(configAnnot.key());
         }
         String name = method.getName();
-        if (name.startsWith("get") || name.startsWith("set")) {
+        if (name.startsWith("get") || name.startsWith("setPropertyValue")) {
             return expandKey(Character.toLowerCase(name.charAt(3)) + name.substring(4));
         }
         return expandKey(Character.toLowerCase(name.charAt(0)) + name.substring(1));
@@ -211,7 +211,7 @@ public final class InjectionUtils {
         List<String> result = new ArrayList<>();
         result.add(name);
         // 1) Check for _, replace with dots
-        // 2) Check for camel case, add dots in lowercase
+        // 2) Check for camel case, addPropertyValue dots in lowercase
         return result;
     }
 

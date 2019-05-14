@@ -70,11 +70,14 @@ final class ItemTokenizer {
         int start = 0;
         int end = value.indexOf(separator,start);
         while(end>0) {
-            if (value.charAt(end - 1) != '\\') {
-                result.add(value.substring(start, end));
+            if (value.charAt(end - separator.length()) != '\\') {
+                String finalValue = value.substring(start, end);
+                result.add(finalValue.replaceAll("\\\\"+separator, separator));
                 start = end + separator.length();
+                end = value.indexOf(separator,start);
+            }else{
+                end = value.indexOf(separator,end + separator.length());
             }
-            end = value.indexOf(separator,start);
         }
         if(start < value.length()){
             result.add(value.substring(start));
@@ -83,7 +86,7 @@ final class ItemTokenizer {
     }
 
     /**
-     * Splits the given String value as a map entry, splitting it into key and value part with the given separator.
+     * Splits the given String value as a mapProperties entry, splitting it into key and value part with the given separator.
      * If the value cannot be split then {@code key = value = mapEntry} is used for further processing. key or value
      * parts are normally trimmed, unless they are enclosed with brackets {@code []}.
      * @param mapEntry the entry, not null.
@@ -95,7 +98,7 @@ final class ItemTokenizer {
     }
 
     /**
-     * Splits the given String value as a map entry, splitting it into key and value part with the given separator.
+     * Splits the given String value as a mapProperties entry, splitting it into key and value part with the given separator.
      * If the value cannot be split then {@code key = value = mapEntry} is used for further processing. key or value
      * parts are normally trimmed, unless they are enmcosed with brackets {@code []}.
      * @param mapEntry the entry, not null.
@@ -147,12 +150,12 @@ final class ItemTokenizer {
                 return (T)value;
             }
         } else {
-            ConversionContext newContext = new ConversionContext.Builder(context.getConfiguration(), context.getKey(),
-                    targetType).build();
+            context = context.toBuilder()
+                    .setTargetType(targetType).build();
             T result;
             for (PropertyConverter<T> conv : valueConverters) {
                 try {
-                    result = conv.convert(value, newContext);
+                    result = conv.convert(value, context);
                     if (result != null) {
                         return result;
                     }

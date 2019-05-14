@@ -23,7 +23,6 @@ import org.apache.tamaya.spi.PropertyValue;
 import org.junit.Test;
 
 import static org.apache.tamaya.functions.MethodNotMockedAnswer.NOT_MOCKED_ANSWER;
-import static org.apache.tamaya.spi.PropertyValue.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -106,7 +105,7 @@ public class FilteredPropertySourceTest {
 
     @Test
     public void getReturnsNullInsteadOfValueBecausOfFilter() {
-        PropertyValue pv = of("abc", "000", "UT");
+        PropertyValue pv = PropertyValue.createValue("abc", "000");
         PropertySource propertySource = mock(PropertySource.class, NOT_MOCKED_ANSWER);
         doReturn(pv).when(propertySource).get(eq("abc"));
 
@@ -126,7 +125,7 @@ public class FilteredPropertySourceTest {
 
     @Test
     public void getReturnsValueBecauseItIsNotFiltered() {
-        PropertyValue pv = of("abc", "000", "UT");
+        PropertyValue pv = PropertyValue.createValue("abc", "000");
         PropertySource propertySource = mock(PropertySource.class, NOT_MOCKED_ANSWER);
         doReturn(pv).when(propertySource).get(eq("abc"));
 
@@ -182,9 +181,9 @@ public class FilteredPropertySourceTest {
         FilteredPropertySource fps = new FilteredPropertySource(imps, filter);
 
         assertThat(fps.getProperties()).isNotEmpty()
-                                       .containsEntry("a", of("a", "1", "s"))
-                                       .containsEntry("b", of("b", "2", "s"))
-                                       .containsEntry("c", of("c", "3", "s"))
+                                       .containsEntry("a", PropertyValue.createValue("a", "1"))
+                                       .containsEntry("b", PropertyValue.createValue("b", "2"))
+                                       .containsEntry("c", PropertyValue.createValue("c", "3"))
                                        .hasSize(3);
     }
 
@@ -204,8 +203,8 @@ public class FilteredPropertySourceTest {
         FilteredPropertySource fps = new FilteredPropertySource(imps, filter);
 
         assertThat(fps.getProperties()).isNotEmpty()
-                                       .containsEntry("b", of("b", "2", "s"))
-                                       .containsEntry("c", of("c", "3", "s"))
+                                       .containsEntry("b", PropertyValue.createValue("b", "2"))
+                                       .containsEntry("c", PropertyValue.createValue("c", "3"))
                                        .hasSize(2);
 
     }

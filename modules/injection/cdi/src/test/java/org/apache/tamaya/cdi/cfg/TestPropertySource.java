@@ -74,7 +74,7 @@ public class TestPropertySource implements PropertySource{
 
     @Override
     public Map<String, PropertyValue> getProperties() {
-        return PropertyValue.map(config ,getName());
+        return PropertyValue.mapProperties(config ,getName());
     }
 
 }

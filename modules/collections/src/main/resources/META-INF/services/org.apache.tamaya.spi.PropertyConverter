@@ -16,6 +16,7 @@
 # specific language governing permissions and limitations
 # under the License.
 #
+org.apache.tamaya.collections.ObjectArrayConverter
 org.apache.tamaya.collections.ArrayListConverter
 org.apache.tamaya.collections.CollectionConverter
 org.apache.tamaya.collections.HashMapConverter
@@ -29,3 +30,12 @@ org.apache.tamaya.collections.SortedSetConverter
 org.apache.tamaya.collections.SortedMapConverter
 org.apache.tamaya.collections.TreeMapConverter
 org.apache.tamaya.collections.TreeSetConverter
+org.apache.tamaya.collections.BooleanArrayConverter
+org.apache.tamaya.collections.ByteArrayConverter
+org.apache.tamaya.collections.CharArrayConverter
+org.apache.tamaya.collections.DoubleArrayConverter
+org.apache.tamaya.collections.FloatArrayConverter
+org.apache.tamaya.collections.IntArrayConverter
+org.apache.tamaya.collections.LongArrayConverter
+org.apache.tamaya.collections.ObjectArrayConverter
+org.apache.tamaya.collections.ShortArrayConverter

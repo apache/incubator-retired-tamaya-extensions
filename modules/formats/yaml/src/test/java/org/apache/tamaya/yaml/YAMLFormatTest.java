@@ -35,6 +35,11 @@ public class YAMLFormatTest {
     private final YAMLFormat format = new YAMLFormat();
 
     @Test
+    public void testGetName() throws Exception {
+        assertThat(format.getName()).isEqualTo("yaml");
+    }
+
+    @Test
     public void testAcceptURL() throws MalformedURLException {
         assertThat(format.accepts(new URL("http://127.0.0.1/anyfile.yaml"))).isTrue();
     }
@@ -55,9 +60,18 @@ public class YAMLFormatTest {
     }
 
     @Test
-    public void testRead() throws IOException {
+    public void testRead_Map() throws IOException {
         URL configURL = YAMLPropertySourceTest.class.getResource("/configs/valid/contact.yaml");
-        assertThat(format.accepts(configURL)).isTrue();
+        ConfigurationData data = format.readConfiguration(configURL.toString(), configURL.openStream());
+        assertThat(data).isNotNull();
+        for(Map.Entry<String,String> en:data.getData().get(0).toMap().entrySet()) {
+            System.out.println(en.getKey() + " -> " + en.getValue());
+        }
+    }
+
+    @Test
+    public void testRead_List() throws IOException {
+        URL configURL = YAMLPropertySourceTest.class.getResource("/configs/valid/list.yaml");
         ConfigurationData data = format.readConfiguration(configURL.toString(), configURL.openStream());
         assertThat(data).isNotNull();
         for(Map.Entry<String,String> en:data.getData().get(0).toMap().entrySet()) {

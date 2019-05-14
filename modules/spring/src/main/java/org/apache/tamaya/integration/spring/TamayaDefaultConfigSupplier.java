@@ -27,7 +27,7 @@
 //public class TamayaDefaultConfigSupplier implements Supplier<Configuration> {
 //
 //    @Override
-//    public Configuration get() {
+//    public Configuration getPropertyValue() {
 //        return Configuration.current();
 //    }
 //}

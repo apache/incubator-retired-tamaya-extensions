@@ -53,7 +53,7 @@ public abstract class AbstractEtcdPropertySource extends BasePropertySource
 
     private AtomicLong timeout = new AtomicLong();
 
-    /** The Hazelcast config map used. */
+    /** The Hazelcast config mapProperties used. */
     private Map<String, PropertyValue> configMap = new HashMap<>();
 
     public AbstractEtcdPropertySource(){
@@ -201,7 +201,7 @@ public abstract class AbstractEtcdPropertySource extends BasePropertySource
                 }
             }
         }
-        // add getMeta entries
+        // addPropertyValue getMeta entries
         for(Map.Entry<String,String> entry:props.entrySet()) {
             if (entry.getKey().startsWith("_")) {
                 String key = entry.getKey().substring(1);
@@ -217,7 +217,7 @@ public abstract class AbstractEtcdPropertySource extends BasePropertySource
                 }
             }
         }
-        // Map to createValue map.
+        // Map to createValue mapProperties.
 //        Map<String, PropertyValue> values = new HashMap<>();
         for(Map.Entry<String,PropertyValue> en:values.entrySet()) {
             values.put(en.getKey(), en.getValue());
@@ -252,7 +252,7 @@ public abstract class AbstractEtcdPropertySource extends BasePropertySource
                     }
                     Map<String,String> res = accessor.set(key, en.getValue(), ttl);
                     if(res.get("_ERROR")!=null){
-                        LOG.info("Failed to add key to etcd: " + en.getKey()  + "=" + en.getValue());
+                        LOG.info("Failed to addPropertyValue key to etcd: " + en.getKey()  + "=" + en.getValue());
                     }
                 }
                 // success, stop here

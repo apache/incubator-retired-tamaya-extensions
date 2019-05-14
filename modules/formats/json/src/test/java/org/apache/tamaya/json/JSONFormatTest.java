@@ -32,6 +32,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class JSONFormatTest extends CommonJSONTestCaseCollection {
     private final JSONFormat format = new JSONFormat();
 
+    @Test
+    public void testGetName() throws Exception {
+        assertThat(format.getName()).isEqualTo("json");
+    }
+
     @Test(expected = NullPointerException.class)
     public void acceptsNeedsNonNullParameter() throws Exception {
         format.accepts(null);

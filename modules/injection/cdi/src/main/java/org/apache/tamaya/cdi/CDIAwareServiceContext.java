@@ -137,7 +137,7 @@ public class CDIAwareServiceContext implements ServiceContext, ClassloaderAware 
     }
 
     @Override
-    public Enumeration<URL> getResources(String resource) throws IOException {
+    public Collection<URL> getResources(String resource) {
         return defaultServiceContext.getResources(resource);
     }
 

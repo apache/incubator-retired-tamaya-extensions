@@ -49,4 +49,11 @@ public class MicroprofileConfigSourceProvider implements ConfigSourceProvider{
             return MicroprofileAdapter.toConfigSources(delegate.getPropertySources());
         }
     }
+
+    @Override
+    public String toString() {
+        return "TamayaConfigSourceProvider{" +
+                "delegate=" + delegate +
+                '}';
+    }
 }

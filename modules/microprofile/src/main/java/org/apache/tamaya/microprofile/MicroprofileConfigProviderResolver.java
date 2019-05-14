@@ -50,6 +50,7 @@ public class MicroprofileConfigProviderResolver extends ConfigProviderResolver {
             MicroprofileConfigBuilder microConfigBuilder = new MicroprofileConfigBuilder(builder);
             microConfigBuilder.addDefaultSources();
             microConfigBuilder.addDiscoveredSources();
+            microConfigBuilder.addDiscoveredConverters();
             config = microConfigBuilder.build();
             this.configs.put(loader, config);
         }

@@ -27,7 +27,7 @@ import org.apache.tamaya.spi.FilterContext;
  * Hereby
  * <ul>
  *     <li><b>Single</b> filters are applied only when values are explicitly accessed. This is useful, e.g. for
- *     filtering passwords into clear text variants. Nevertheless metadata keys hidden on map level must be
+ *     filtering passwords into clear text variants. Nevertheless metadata keys hidden on mapProperties level must be
  *     accessible (=not filtered) when accessed as single values.</li>
  *     <li><b>Map</b> filters are applied when values are filtered as part of a full properties access.
  *     Often filtering in these cases is more commonly applied, e.g. you dont want to show up all kind of metadata.
@@ -73,7 +73,7 @@ public final class ThreadBasedConfigurationFilter implements PropertyFilter{
     }
 
     /**
-     * Seactivates metadata filtering also on global map access for this thread.
+     * Seactivates metadata filtering also on global mapProperties access for this thread.
      * @see #cleanupFilterContext()
      * @param filtered true,to enable metadata filtering (default).
      */
@@ -94,7 +94,7 @@ public final class ThreadBasedConfigurationFilter implements PropertyFilter{
     /**
      * Access the filtering configuration that is used used on the current thread
      * for filtering configuration properties accessed as full
-     * map.
+     * mapProperties.
      * @return the filtering config, never null.
      */
     public static ThreadFilterContext getMapFilterContext(){

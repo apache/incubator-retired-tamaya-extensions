@@ -63,7 +63,7 @@ public interface ConfigurationFormat {
      * different levels of data:
      * <ul>
      *     <li>Only a <i>default</i> section is returned, since the configuration format does not support
-     *     hierarchies, e.g. a root {@link PropertyValue} with a number of direct getValues.</li>
+     *     hierarchies, e.g. a root {@link PropertyValue} with a number of direct getPropertyValues.</li>
      *     <li>Hierarchical formats such as INI, XML, YAML and JSON can have both createObject mapped childs as well as arrays/createList
      *     childs. With {@link PropertyValue#toMap()} a default mapping to a property based representation is
      *     available.</li>

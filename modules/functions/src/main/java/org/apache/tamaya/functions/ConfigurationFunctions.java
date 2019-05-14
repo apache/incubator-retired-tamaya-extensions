@@ -256,7 +256,7 @@ public final class ConfigurationFunctions {
     }
 
     /**
-     * Creates a {@link PropertySource}, based on the given {@link Configuration}. The keys and propertx map
+     * Creates a {@link PropertySource}, based on the given {@link Configuration}. The keys and propertx mapProperties
      * are dynamically calculated, so the returned PropertySource is a real dynamic wrapper.
      * @param name the name of the property source, not null.
      * @param ordinal ordinal of the property source.

@@ -95,7 +95,7 @@ public class MyTestPropertySource implements PropertySource{
     public Map<String, PropertyValue> getProperties() {
         Map<String, PropertyValue> res = new HashMap<>();
         for(Map.Entry<String,String> en:properties.entrySet()){
-            res.put(en.getKey(), PropertyValue.of(en.getKey(), en.getValue(), "test"));
+            res.put(en.getKey(), PropertyValue.createValue(en.getKey(), en.getValue()));
         }
         return res;
     }
