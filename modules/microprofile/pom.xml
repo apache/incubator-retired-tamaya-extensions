@@ -177,9 +177,9 @@ under the License.
                         <artifactId>maven-surefire-plugin</artifactId>
                         <version>2.20.1</version>
                         <configuration>
-                            <!--<suiteXmlFiles>-->
-                                <!--<suiteXmlFile>src/test/tck-suite.xml</suiteXmlFile>-->
-                            <!--</suiteXmlFiles>-->
+                            <suiteXmlFiles>
+                                <suiteXmlFile>src/test/tck-suite.xml</suiteXmlFile>
+                            </suiteXmlFiles>
                             <!-- These env variables are required for org.eclipse.configjsr.CDIPropertyNameMatchingTest -->
                             <environmentVariables>
                                 <my_int_property>45</my_int_property>
