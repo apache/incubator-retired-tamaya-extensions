@@ -86,10 +86,4 @@ public class MicroprofileConfigTest {
         assertThat("").isEqualTo(config.getValue("my.empty.property", String.class));
     }
 
-    @Test
-    public void testEmptyConfigProperty(){
-        Config config = ConfigProvider.getConfig();
-        assertThat("").isEqualTo(config.getValue("my.empty.property.in.config.file", String.class));
-    }
-
 }

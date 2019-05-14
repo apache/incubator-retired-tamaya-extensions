@@ -18,8 +18,11 @@
  */
 package org.apache.tamaya.microprofile;
 
-import org.apache.tamaya.spi.*;
-import org.apache.tamaya.spisupport.propertysource.PropertiesResourcePropertySource;
+import org.apache.tamaya.spi.ClassloaderAware;
+import org.apache.tamaya.spi.PropertySource;
+import org.apache.tamaya.spi.PropertySourceProvider;
+import org.apache.tamaya.spi.ServiceContext;
+import org.apache.tamaya.spi.ServiceContextManager;
 
 import java.net.URL;
 import java.util.ArrayList;

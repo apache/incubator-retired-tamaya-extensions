@@ -72,7 +72,7 @@ final class ItemTokenizer {
         while(end>0) {
             if (value.charAt(end - separator.length()) != '\\') {
                 String finalValue = value.substring(start, end);
-                result.add(finalValue.replaceAll("\\\\"+separator, separator));
+                result.add(finalValue.replace("\\"+separator, separator));
                 start = end + separator.length();
                 end = value.indexOf(separator,start);
             }else{

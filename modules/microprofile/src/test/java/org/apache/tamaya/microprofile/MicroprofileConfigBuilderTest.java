@@ -112,10 +112,9 @@ public class MicroprofileConfigBuilderTest {
                                          .collect(Collectors.toList());
 
         assertThat(name).hasSize(4)
-                  .containsExactlyInAnyOrder("paris",
-                                             "SystemPropertySource",
-                                             "environment-properties",
-                                             "META-INF/microprofile-config.properties");
+                  .containsAnyOf("SystemPropertySource")
+                .containsAnyOf("environment-properties")
+                .containsAnyOf("paris");
     }
 
     @Test

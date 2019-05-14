@@ -26,7 +26,6 @@ import javax.annotation.Priority;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
-import java.io.IOException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.*;

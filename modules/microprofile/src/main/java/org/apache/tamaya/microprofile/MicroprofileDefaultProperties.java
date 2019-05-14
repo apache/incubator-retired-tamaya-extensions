@@ -18,7 +18,6 @@
  */
 package org.apache.tamaya.microprofile;
 
-import org.apache.tamaya.spi.ServiceContextManager;
 import org.apache.tamaya.spisupport.propertysource.PropertiesResourcePropertySource;
 
 import java.net.URL;

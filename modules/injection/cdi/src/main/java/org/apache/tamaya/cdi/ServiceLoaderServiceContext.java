@@ -24,7 +24,6 @@ import org.apache.tamaya.spi.ServiceContext;
 import org.apache.tamaya.spisupport.PriorityServiceComparator;
 
 import javax.annotation.Priority;
-import java.io.IOException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.*;

@@ -19,7 +19,6 @@
 package org.apache.tamaya.microprofile;
 
 import java.lang.reflect.Type;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.ServiceLoader;
@@ -39,7 +38,6 @@ import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.eclipse.microprofile.config.spi.ConfigSourceProvider;
 import org.eclipse.microprofile.config.spi.Converter;
 
-import javax.annotation.Priority;
 
 /**
  * Created by atsticks on 23.03.17.

@@ -23,12 +23,10 @@ import org.apache.tamaya.spi.ServiceContextManager;
 import org.osgi.service.component.annotations.Component;
 
 import javax.annotation.Priority;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.logging.Logger;
 
