@@ -41,6 +41,7 @@ under the License.
         <module>03-injection-example</module>
         <module>04-events-example</module>
         <module>05-spring-example</module>
+        <module>06-distributed</module>
     </modules>
 
 </project>

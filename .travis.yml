@@ -1,5 +1,5 @@
 language: java
-dist: trusty
+dist: xenial
 sudo: required
 
 addons:
@@ -10,6 +10,8 @@ jobs:
     include:
         - name: "Java 8"
           jdk: openjdk8
+          before_install:
+            - sudo apt-get install -y openjfx
           script: mvn clean install
           after_success: mvn sonar:sonar -Dsonar.organization=apache -Dsonar.projectKey=apache_incubator-tamaya-extensions
 
