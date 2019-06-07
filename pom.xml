@@ -556,7 +556,7 @@ under the License.
                     <artifactId>pitest-maven</artifactId>
                     <version>${pitest-plugin.version}</version>
                     <configuration>
-                        <mutationThreshold>8</mutationThreshold>
+                        <mutationThreshold>6</mutationThreshold>
                         <timestampedReports>false</timestampedReports>
                         <targetClasses>
                             <param>org.apache.tamaya.*</param>
