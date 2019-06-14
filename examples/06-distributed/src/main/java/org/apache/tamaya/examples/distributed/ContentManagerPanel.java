@@ -72,10 +72,10 @@ class ContentManagerPanel extends VBox{
             if(selection!=null){
                 String uuid = selection.split("::")[1];
                 DisplayContent content = new DisplayContent();
-                content.content.put(Display.CONTENT_FIELD, contentField.getText());
-                content.title = titleField.getText();
-                content.displayId = uuid;
-                content.displayName = displayNameField.getText();
+                content.getContent().put(Display.CONTENT_FIELD, contentField.getText());
+                content.setTitle(titleField.getText());
+                content.setDisplayId(uuid);
+                content.setDisplayName(displayNameField.getText());
                 vertx.eventBus().publish(Display.DISPLAY_SHOW_TOPIC, Json.encode(content));
             }
         });

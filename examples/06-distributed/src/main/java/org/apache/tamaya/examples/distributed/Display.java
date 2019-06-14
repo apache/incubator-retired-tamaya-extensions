@@ -108,7 +108,7 @@ public class Display extends Application{
             try {
                 Thread.sleep(100L);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                LOG.severe("Vertx cluster did not respond in time.");
                 Thread.currentThread().interrupt();
             }
         }
@@ -160,16 +160,14 @@ public class Display extends Application{
         vertx.eventBus().consumer(DISPLAY_SHOW_TOPIC, h -> {
             DisplayContent content = Json.decodeValue((String)h.body(), DisplayContent.class);
             logToMonitor("NEW CONTENT: " + content.toString());
-            if(registration.getId().equals(content.displayId)) {
+            if(registration.getId().equals(content.getDisplayId())) {
                 logToMonitor("Applying content: " + content + "...");
-                titleField.setText(content.title);
-                contentField.setText(content.content.get(CONTENT_FIELD));
-                if(content.displayName!=null) {
-                    this.registration.setDisplayName(
-                            content.displayName
-                    );
+                titleField.setText(content.getTitle());
+                contentField.setText(content.getContent().get(CONTENT_FIELD));
+                if(content.getDisplayName()!=null) {
+                    this.registration.setDisplayName(content.getDisplayName());
                     Platform.runLater(() -> {
-                        this.stage.setTitle(content.displayName);
+                        this.stage.setTitle(content.getDisplayName());
                     });
                 }
                 logToMonitor("SUCCESS.");

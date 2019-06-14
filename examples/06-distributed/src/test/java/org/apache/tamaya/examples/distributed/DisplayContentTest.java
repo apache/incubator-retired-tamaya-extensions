@@ -36,9 +36,9 @@ public class DisplayContentTest {
     @org.junit.Test
     public void testJson() throws Exception {
         DisplayContent content = new DisplayContent();
-        content.displayId = "1234";
-        content.title = "myTitle";
-        content.content.put("content", "myContent");
+        content.setDisplayId("1234");
+        content.setTitle("myTitle");
+        content.getContent().put("content", "myContent");
         String val = Json.encode(content);
         DisplayContent decoded = Json.decodeValue(val, DisplayContent.class);
         assertThat(decoded).isNotNull();

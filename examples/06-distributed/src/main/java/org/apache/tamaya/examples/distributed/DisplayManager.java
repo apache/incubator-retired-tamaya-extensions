@@ -95,7 +95,7 @@ public class DisplayManager extends Application{
             try {
                 Thread.sleep(100L);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                LOG.severe("Vertx cluster did not respond in time.");
                 Thread.currentThread().interrupt();
             }
         }
@@ -125,10 +125,10 @@ public class DisplayManager extends Application{
             logToMonitor("NEW CONTENT: " + content.toString());
             logToMonitor("Updating config for content: " + content + "...");
             MutableConfiguration config = MutableConfiguration.create();
-            String id = content.displayId;
-            config.put("displays."+id+".title", content.title);
-            config.put("displays."+id+".timestamp", String.valueOf(content.timestamp));
-            config.put("displays."+id+".content.content", content.content.get(CONTENT_FIELD));
+            String id = content.getDisplayId();
+            config.put("displays."+id+".title", content.getTitle());
+            config.put("displays."+id+".timestamp", String.valueOf(content.getTimestamp()));
+            config.put("displays."+id+".content.content", content.getContent().get(CONTENT_FIELD));
             config.store();
             logToMonitor("UPDATED.");
         });
