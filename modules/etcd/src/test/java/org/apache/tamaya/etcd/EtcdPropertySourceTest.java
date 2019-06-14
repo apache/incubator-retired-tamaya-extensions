@@ -19,7 +19,6 @@
 package org.apache.tamaya.etcd;
 
 import org.apache.tamaya.spi.PropertyValue;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.Map;
@@ -33,11 +32,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class EtcdPropertySourceTest {
 
     private final EtcdPropertySource propertySource = new EtcdPropertySource();
-
-    @BeforeClass
-    public static void setup(){
-        System.setProperty("etcd.server.urls", "http://8.8.8.8:4001,http://192.168.99.105:4001");
-    }
 
     @Test
     public void testGetOrdinal() throws Exception {
@@ -75,13 +69,13 @@ public class EtcdPropertySourceTest {
 
     @Test
     public void testPropertySourceConstructorParams() throws Exception {
-        EtcdPropertySource propertySource = new EtcdPropertySource("http://8.8.8.8:4001", "http://192.168.99.105:4001");
-        assertThat(propertySource.getProperties()).isNotNull();
+        EtcdPropertySource localpropertySource = new EtcdPropertySource("http://1.1.1.1:2379", "http://2.2.2.2:2379");
+        assertThat(localpropertySource.getProperties()).isNotNull();
     }
 
     @Test
     public void testPropertySourceConstructorList() throws Exception {
-        EtcdPropertySource propertySource = new EtcdPropertySource(asList("http://8.8.8.8:4001", "http://192.168.99.105:4001"));
-        assertThat(propertySource.getProperties()).isNotNull();
+        EtcdPropertySource localpropertySource = new EtcdPropertySource(asList("http://3.3.3.3:2379", "http://4.4.4.4:2379"));
+        assertThat(localpropertySource.getProperties()).isNotNull();
     }
 }

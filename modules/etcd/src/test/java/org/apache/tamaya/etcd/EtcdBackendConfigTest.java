@@ -48,9 +48,13 @@ public class EtcdBackendConfigTest {
 
     @Test
     public void testEtcdServerProperty() throws Exception {
-        final String server = "http://localhost:4001";
+        final String server = System.getProperty("etcd.server.urls");
+        if (server == null){
+            return;
+        }
         try {
-            assertThat(EtcdBackendConfig.getServers()).contains("http://127.0.0.1:4001");
+            System.clearProperty("tamaya.etcd.server");
+            assertThat(EtcdBackendConfig.getServers()).contains("http://127.0.0.1:2379");  //the default
             System.setProperty("tamaya.etcd.server", server);
             assertThat(EtcdBackendConfig.getServers()).contains(server);
         } finally {

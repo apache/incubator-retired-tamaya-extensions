@@ -28,7 +28,8 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Tests for the etcd backend integration. You must have setCurrent a system property so, theses tests are executed, e.g.
+ * Tests for the etcd backend integration. You must have setCurrent a system
+ * property so, theses tests are executed, e.g.
  * {@code -Detcd.url=http://127.0.0.1:4001}.
  */
 public class EtcdAccessorTest {
@@ -38,12 +39,16 @@ public class EtcdAccessorTest {
 
     @BeforeClass
     public static void setup() throws MalformedURLException {
-        accessor = new EtcdAccessor("http://192.168.99.105:4001");
-        if (!accessor.getVersion().contains("etcd")) {
+        String servers = System.getProperty("etcd.server.urls");
+        if (servers != null) {
+            accessor = new EtcdAccessor(servers);
+            if (accessor.getVersion().contains("etcd")) {
+                execute = true;
+            }
+        }
+        if (!execute) {
             System.out.println("Disabling etcd tests, etcd not accessible at: " + System.getProperty("etcd.server.urls"));
             System.out.println("Configure etcd with -Detcd.server.urls=http://<IP>:<PORT>");
-        } else {
-            execute = true;
         }
     }
 
@@ -52,7 +57,7 @@ public class EtcdAccessorTest {
         if (!execute) {
             return;
         }
-        assertThat(accessor.getVersion()).isEqualTo("etcd 0.4.9");
+        assertThat(accessor.getVersion()).contains("etcd");
     }
 
     @Test
@@ -60,7 +65,7 @@ public class EtcdAccessorTest {
         if (!execute) {
             return;
         }
-        Map<String,String> result = accessor.get("test1");
+        Map<String, String> result = accessor.get("test1");
         assertThat(result).isNotNull();
     }
 
@@ -70,7 +75,7 @@ public class EtcdAccessorTest {
             return;
         }
         String value = UUID.randomUUID().toString();
-        Map<String,String> result = accessor.set("testSetNormal", value);
+        Map<String, String> result = accessor.set("testSetNormal", value);
         assertThat(result.get("_testSetNormal.ttl")).isNull();
         assertThat(value).isEqualTo(accessor.get("testSetNormal").get("testSetNormal"));
     }
@@ -81,7 +86,7 @@ public class EtcdAccessorTest {
             return;
         }
         String value = UUID.randomUUID().toString();
-        Map<String,String> result = accessor.set("testSetNormal2", value, null);
+        Map<String, String> result = accessor.set("testSetNormal2", value, null);
         assertThat(result.get("_testSetNormal2.ttl")).isNull();
         assertThat(value).isEqualTo(accessor.get("testSetNormal2").get("testSetNormal2"));
     }
@@ -92,7 +97,7 @@ public class EtcdAccessorTest {
             return;
         }
         String value = UUID.randomUUID().toString();
-        Map<String,String> result = accessor.set("testSetWithTTL", value, 1);
+        Map<String, String> result = accessor.set("testSetWithTTL", value, 1);
         assertThat(result.get("_testSetWithTTL.ttl")).isNotNull();
         assertThat(value).isEqualTo(accessor.get("testSetWithTTL").get("testSetWithTTL"));
         Thread.sleep(2000L);
@@ -106,11 +111,11 @@ public class EtcdAccessorTest {
             return;
         }
         String value = UUID.randomUUID().toString();
-        Map<String,String> result = accessor.set("testDelete", value, null);
+        Map<String, String> result = accessor.set("testDelete", value, null);
         assertThat(value).isEqualTo(accessor.get("testDelete").get("testDelete"));
         assertThat(result.get("_testDelete.createdIndex")).isNotNull();
         result = accessor.delete("testDelete");
-        assertThat(value).isEqualTo(result.get("_testDelete.prevNode.createValue"));
+        assertThat(value).isEqualTo(result.get("_testDelete.prevNode.value"));
         assertThat(accessor.get("testDelete").get("testDelete")).isNull();
     }
 
@@ -121,7 +126,7 @@ public class EtcdAccessorTest {
         }
         String value = UUID.randomUUID().toString();
         accessor.set("testGetProperties1", value);
-        Map<String,String> result = accessor.getProperties("");
+        Map<String, String> result = accessor.getProperties("");
         assertThat(result).isNotNull();
         assertThat(value).isEqualTo(result.get("testGetProperties1"));
         assertThat(result.get("_testGetProperties1.createdIndex")).isNotNull();

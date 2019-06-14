@@ -52,7 +52,7 @@ public final class ConfigHistory implements Serializable {
     /**
      * The overall history.
      */
-    private static List<ConfigHistory> history = new LinkedList<>();
+    private static LinkedList<ConfigHistory> history = new LinkedList<>();
 
     /**
      * The entry timestamp.
@@ -285,7 +285,7 @@ public final class ConfigHistory implements Serializable {
             if (serialized != null) {
                 ByteArrayInputStream bis = new ByteArrayInputStream(Base64.getDecoder().decode(serialized));
                 ObjectInputStream ois = new ObjectInputStream(bis);
-                ConfigHistory.history = (List<ConfigHistory>) ois.readObject();
+                ConfigHistory.history = (LinkedList<ConfigHistory>) ois.readObject();
                 ois.close();
             }
         } catch (Exception e) {

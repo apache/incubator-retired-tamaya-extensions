@@ -109,6 +109,7 @@ public class Display extends Application{
                 Thread.sleep(100L);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+                Thread.currentThread().interrupt();
             }
         }
         titleField.getStyleClass().add("title");
