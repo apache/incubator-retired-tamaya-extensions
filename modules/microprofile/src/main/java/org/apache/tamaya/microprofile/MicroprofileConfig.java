@@ -24,9 +24,6 @@ import org.apache.tamaya.spi.PropertySource;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.*;
 
@@ -84,13 +81,4 @@ public class MicroprofileConfig implements Config, Serializable {
                 "delegate=" + delegate +
                 '}';
     }
-
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        out.writeObject(this.delegate.getSnapshot());
-    }
-
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        this.delegate = (Configuration) in.readObject();
-    }
-
 }

@@ -156,7 +156,7 @@ final class InjectionHelper {
         Class<? extends PropertyConverter<T>> converterType;
         if (converterAnnot != null) {
             converterType = (Class<? extends PropertyConverter<T>>) converterAnnot.value();
-            if (!converterType.getName().equals(WithPropertyConverter.class.getName())) {
+            if (!converterType.isAssignableFrom(WithPropertyConverter.class)) {
                 try {
                 // TODO cache here...
                     ConversionContext ctx = new ConversionContext.Builder(key,targetType)

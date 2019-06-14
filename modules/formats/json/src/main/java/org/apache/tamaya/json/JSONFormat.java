@@ -41,15 +41,20 @@ import javax.json.JsonReaderFactory;
  * @see <a href="http://www.json.org">JSON format specification</a>
  */
 public class JSONFormat implements ConfigurationFormat {
-    /** Property that makes Johnzon accept comments. */
+
+    /**
+     * Property that makes Johnzon accept comments.
+     */
     public static final String JOHNZON_SUPPORTS_COMMENTS_PROP = "org.apache.johnzon.supports-comments";
-    /** The reader factory used. */
+    /**
+     * The reader factory used.
+     */
     private final JsonReaderFactory readerFactory;
 
     /**
      * Constructor, initializing the JSON reader factory.
      */
-    public JSONFormat(){
+    public JSONFormat() {
         Map<String, Object> config = new HashMap<>();
         config.put(JOHNZON_SUPPORTS_COMMENTS_PROP, true);
         this.readerFactory = Json.createReaderFactory(config);
@@ -66,14 +71,12 @@ public class JSONFormat implements ConfigurationFormat {
     }
 
     @Override
-    public ConfigurationData readConfiguration(String resource, InputStream inputStream)
-    throws IOException{
-        try{
-            final JsonReader reader = this.readerFactory.createReader(inputStream, Charset.forName("UTF-8"));
+    public ConfigurationData readConfiguration(String resource, InputStream inputStream) throws IOException {
+        try (JsonReader reader = this.readerFactory.createReader(inputStream, Charset.forName("UTF-8"))) {
             JsonObject root = reader.readObject();
             JSONDataBuilder dataBuilder = new JSONDataBuilder(resource, root);
             return new ConfigurationData(resource, this, dataBuilder.build());
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new IOException("Failed to read data from " + resource, e);
         }
     }

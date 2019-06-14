@@ -88,10 +88,6 @@ class EtcdAccessor {
      * The base server url.
      */
     private final String serverURL;
-    /**
-     * The http client.
-     */
-    private final CloseableHttpClient httpclient = HttpClients.createDefault();
 
     /**
      * Creates a new instance with the basic access url.
@@ -118,8 +114,7 @@ class EtcdAccessor {
      */
     public String getVersion() {
         String version = "<ERROR>";
-        try {
-            final CloseableHttpClient httpclient = HttpClients.createDefault();
+        try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
             final HttpGet httpGet = new HttpGet(serverURL + "/version");
             httpGet.setConfig(RequestConfig.copy(RequestConfig.DEFAULT).setSocketTimeout(socketTimeout)
                     .setConnectTimeout(timeout).build());
@@ -139,9 +134,9 @@ class EtcdAccessor {
     }
 
     /**
-     * Ask etcd for a single key, createValue pair. Hereby the response returned from
-     * etcd:
-     * 
+     * Ask etcd for a single key, createValue pair. Hereby the response returned
+     * from etcd:
+     *
      * <pre>
      * {
      * "action": "current",
@@ -153,9 +148,9 @@ class EtcdAccessor {
      * }
      * }
      * </pre>
-     * 
+     *
      * is mapped to:
-     * 
+     *
      * <pre>
      *     key=value
      *     _key.source=[etcd]http://127.0.0.1:4001
@@ -170,34 +165,35 @@ class EtcdAccessor {
      */
     public Map<String, String> get(String key) {
         final Map<String, String> result = new HashMap<>();
-        try {
+        try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
             final HttpGet httpGet = new HttpGet(serverURL + "/v2/keys/" + key);
             httpGet.setConfig(RequestConfig.copy(RequestConfig.DEFAULT).setSocketTimeout(socketTimeout)
                     .setConnectionRequestTimeout(timeout).setConnectTimeout(connectTimeout).build());
-            try (CloseableHttpResponse response = httpclient.execute(httpGet)) {
+            try (CloseableHttpResponse response = httpclient.execute(httpGet);) {
                 if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                     final HttpEntity entity = response.getEntity();
-                    final JsonReader reader = readerFactory
-                            .createReader(new StringReader(EntityUtils.toString(entity)));
-                    final JsonObject o = reader.readObject();
-                    final JsonObject node = o.getJsonObject("value");
-                    if (node.containsKey("key")) {
-                        result.put(key, node.getString("key"));
-                        result.put("_" + key + ".source", "[etcd]" + serverURL);
+                    try (JsonReader reader = readerFactory
+                            .createReader(new StringReader(EntityUtils.toString(entity)))) {
+                        final JsonObject o = reader.readObject();
+                        final JsonObject node = o.getJsonObject("node");
+                        if (node.containsKey("value")) {
+                            result.put(key, node.getString("value"));
+                            result.put("_" + key + ".source", "[etcd]" + serverURL);
+                        }
+                        if (node.containsKey("createdIndex")) {
+                            result.put("_" + key + ".createdIndex", String.valueOf(node.getInt("createdIndex")));
+                        }
+                        if (node.containsKey("modifiedIndex")) {
+                            result.put("_" + key + ".modifiedIndex", String.valueOf(node.getInt("modifiedIndex")));
+                        }
+                        if (node.containsKey("expiration")) {
+                            result.put("_" + key + ".expiration", String.valueOf(node.getString("expiration")));
+                        }
+                        if (node.containsKey("ttl")) {
+                            result.put("_" + key + ".ttl", String.valueOf(node.getInt("ttl")));
+                        }
+                        EntityUtils.consume(entity);
                     }
-                    if (node.containsKey("createdIndex")) {
-                        result.put("_" + key + ".createdIndex", String.valueOf(node.getInt("createdIndex")));
-                    }
-                    if (node.containsKey("modifiedIndex")) {
-                        result.put("_" + key + ".modifiedIndex", String.valueOf(node.getInt("modifiedIndex")));
-                    }
-                    if (node.containsKey("expiration")) {
-                        result.put("_" + key + ".expiration", String.valueOf(node.getString("expiration")));
-                    }
-                    if (node.containsKey("ttl")) {
-                        result.put("_" + key + ".ttl", String.valueOf(node.getInt("ttl")));
-                    }
-                    EntityUtils.consume(entity);
                 } else {
                     result.put("_" + key + ".NOT_FOUND.target", "[etcd]" + serverURL);
                 }
@@ -212,7 +208,7 @@ class EtcdAccessor {
     /**
      * Creates/updates an entry in etcd without any ttl setCurrent.
      *
-     * @param key   the property key, not null
+     * @param key the property key, not null
      * @param value the createValue to be setCurrent
      * @return the result mapProperties as described above.
      * @see #set(String, String, Integer)
@@ -223,7 +219,7 @@ class EtcdAccessor {
 
     /**
      * Creates/updates an entry in etcd. The response as follows:
-     * 
+     *
      * <pre>
      *     {
      * "action": "setCurrent",
@@ -241,9 +237,9 @@ class EtcdAccessor {
      * }
      * }
      * </pre>
-     * 
+     *
      * is mapped to:
-     * 
+     *
      * <pre>
      *     key=createValue
      *     _key.source=[etcd]http://127.0.0.1:4001
@@ -258,14 +254,14 @@ class EtcdAccessor {
      *     _key.prevNode.expiration=...
      * </pre>
      *
-     * @param key        the property key, not null
-     * @param value      the createValue to be setCurrent
+     * @param key the property key, not null
+     * @param value the createValue to be setCurrent
      * @param ttlSeconds the ttl in seconds (optional)
      * @return the result mapProperties as described above.
      */
     public Map<String, String> set(String key, String value, Integer ttlSeconds) {
         final Map<String, String> result = new HashMap<>();
-        try {
+        try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
             final HttpPut put = new HttpPut(serverURL + "/v2/keys/" + key);
             put.setConfig(RequestConfig.copy(RequestConfig.DEFAULT).setSocketTimeout(socketTimeout)
                     .setConnectionRequestTimeout(timeout).setConnectTimeout(connectTimeout).build());
@@ -279,26 +275,27 @@ class EtcdAccessor {
                 if (response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED
                         || response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                     final HttpEntity entity = response.getEntity();
-                    final JsonReader reader = readerFactory
-                            .createReader(new StringReader(EntityUtils.toString(entity)));
-                    final JsonObject o = reader.readObject();
-                    final JsonObject node = o.getJsonObject("value");
-                    if (node.containsKey("createdIndex")) {
-                        result.put("_" + key + ".createdIndex", String.valueOf(node.getInt("createdIndex")));
+                    try (JsonReader reader = readerFactory
+                            .createReader(new StringReader(EntityUtils.toString(entity)))) {
+                        final JsonObject o = reader.readObject();
+                        final JsonObject node = o.getJsonObject("node");
+                        if (node.containsKey("createdIndex")) {
+                            result.put("_" + key + ".createdIndex", String.valueOf(node.getInt("createdIndex")));
+                        }
+                        if (node.containsKey("modifiedIndex")) {
+                            result.put("_" + key + ".modifiedIndex", String.valueOf(node.getInt("modifiedIndex")));
+                        }
+                        if (node.containsKey("expiration")) {
+                            result.put("_" + key + ".expiration", String.valueOf(node.getString("expiration")));
+                        }
+                        if (node.containsKey("ttl")) {
+                            result.put("_" + key + ".ttl", String.valueOf(node.getInt("ttl")));
+                        }
+                        result.put(key, node.getString("value"));
+                        result.put("_" + key + ".source", "[etcd]" + serverURL);
+                        parsePrevNode(key, result, node);
+                        EntityUtils.consume(entity);
                     }
-                    if (node.containsKey("modifiedIndex")) {
-                        result.put("_" + key + ".modifiedIndex", String.valueOf(node.getInt("modifiedIndex")));
-                    }
-                    if (node.containsKey("expiration")) {
-                        result.put("_" + key + ".expiration", String.valueOf(node.getString("expiration")));
-                    }
-                    if (node.containsKey("ttl")) {
-                        result.put("_" + key + ".ttl", String.valueOf(node.getInt("ttl")));
-                    }
-                    result.put(key, node.getString("key"));
-                    result.put("_" + key + ".source", "[etcd]" + serverURL);
-                    parsePrevNode(key, result, node);
-                    EntityUtils.consume(entity);
                 }
             }
         } catch (final Exception e) {
@@ -310,7 +307,7 @@ class EtcdAccessor {
 
     /**
      * Deletes a given key. The response is as follows:
-     * 
+     *
      * <pre>
      *     _key.source=[etcd]http://127.0.0.1:4001
      *     _key.createdIndex=12
@@ -330,31 +327,32 @@ class EtcdAccessor {
      */
     public Map<String, String> delete(String key) {
         final Map<String, String> result = new HashMap<>();
-        try {
+        try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
             final HttpDelete delete = new HttpDelete(serverURL + "/v2/keys/" + key);
             delete.setConfig(RequestConfig.copy(RequestConfig.DEFAULT).setSocketTimeout(socketTimeout)
                     .setConnectionRequestTimeout(timeout).setConnectTimeout(connectTimeout).build());
             try (CloseableHttpResponse response = httpclient.execute(delete)) {
                 if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                     final HttpEntity entity = response.getEntity();
-                    final JsonReader reader = readerFactory
-                            .createReader(new StringReader(EntityUtils.toString(entity)));
-                    final JsonObject o = reader.readObject();
-                    final JsonObject node = o.getJsonObject("value");
-                    if (node.containsKey("createdIndex")) {
-                        result.put("_" + key + ".createdIndex", String.valueOf(node.getInt("createdIndex")));
+                    try (JsonReader reader = readerFactory
+                            .createReader(new StringReader(EntityUtils.toString(entity)))) {
+                        final JsonObject o = reader.readObject();
+                        final JsonObject node = o.getJsonObject("node");
+                        if (node.containsKey("createdIndex")) {
+                            result.put("_" + key + ".createdIndex", String.valueOf(node.getInt("createdIndex")));
+                        }
+                        if (node.containsKey("modifiedIndex")) {
+                            result.put("_" + key + ".modifiedIndex", String.valueOf(node.getInt("modifiedIndex")));
+                        }
+                        if (node.containsKey("expiration")) {
+                            result.put("_" + key + ".expiration", String.valueOf(node.getString("expiration")));
+                        }
+                        if (node.containsKey("ttl")) {
+                            result.put("_" + key + ".ttl", String.valueOf(node.getInt("ttl")));
+                        }
+                        parsePrevNode(key, result, o);
+                        EntityUtils.consume(entity);
                     }
-                    if (node.containsKey("modifiedIndex")) {
-                        result.put("_" + key + ".modifiedIndex", String.valueOf(node.getInt("modifiedIndex")));
-                    }
-                    if (node.containsKey("expiration")) {
-                        result.put("_" + key + ".expiration", String.valueOf(node.getString("expiration")));
-                    }
-                    if (node.containsKey("ttl")) {
-                        result.put("_" + key + ".ttl", String.valueOf(node.getInt("ttl")));
-                    }
-                    parsePrevNode(key, result, o);
-                    EntityUtils.consume(entity);
                 }
             }
         } catch (final Exception e) {
@@ -399,7 +397,7 @@ class EtcdAccessor {
 
     /**
      * Access all properties. The response of:
-     * 
+     *
      * <pre>
      * {
      * "action": "current",
@@ -423,9 +421,9 @@ class EtcdAccessor {
      * }
      * }
      * </pre>
-     * 
+     *
      * is mapped to a regular Tamaya properties mapProperties as follows:
-     * 
+     *
      * <pre>
      *    key1=myvalue
      *     _key1.source=[etcd]http://127.0.0.1:4001
@@ -445,12 +443,13 @@ class EtcdAccessor {
      * </pre>
      *
      * @param directory remote directory to query.
-     * @param recursive allows to setCurrent if querying is performed recursively
+     * @param recursive allows to setCurrent if querying is performed
+     * recursively
      * @return all properties read from the remote server.
      */
     public Map<String, String> getProperties(String directory, boolean recursive) {
         final Map<String, String> result = new HashMap<>();
-        try {
+        try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
             final HttpGet get = new HttpGet(serverURL + "/v2/keys/" + directory + "?recursive=" + recursive);
             get.setConfig(RequestConfig.copy(RequestConfig.DEFAULT).setSocketTimeout(socketTimeout)
                     .setConnectionRequestTimeout(timeout).setConnectTimeout(connectTimeout).build());
@@ -458,13 +457,14 @@ class EtcdAccessor {
 
                 if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                     final HttpEntity entity = response.getEntity();
-                    final JsonReader reader = readerFactory.createReader(new StringReader(EntityUtils.toString(entity)));
-                    final JsonObject o = reader.readObject();
-                    final JsonObject node = o.getJsonObject("value");
-                    if (node != null) {
-                        addNodes(result, node);
+                    try (JsonReader reader = readerFactory.createReader(new StringReader(EntityUtils.toString(entity)))) {
+                        final JsonObject o = reader.readObject();
+                        final JsonObject node = o.getJsonObject("node");
+                        if (node != null){
+                           addNodes(result, node);
+                        }
+                        EntityUtils.consume(entity);
                     }
-                    EntityUtils.consume(entity);
                 }
             }
         } catch (final Exception e) {
@@ -479,7 +479,7 @@ class EtcdAccessor {
      * Recursively read out all key/values from this etcd JSON array.
      *
      * @param result mapProperties with key, values and metadata.
-     * @param node   the getValue to parse.
+     * @param node the getValue to parse.
      */
     private void addNodes(Map<String, String> result, JsonObject node) {
         if (!node.containsKey("dir") || "false".equals(node.get("dir").toString())) {
@@ -499,7 +499,7 @@ class EtcdAccessor {
             }
             result.put("_" + key + ".source", "[etcd]" + serverURL);
         } else {
-            final JsonArray nodes = node.getJsonArray("values");
+            final JsonArray nodes = node.getJsonArray("nodes");
             if (nodes != null) {
                 for (int i = 0; i < nodes.size(); i++) {
                     addNodes(result, nodes.getJsonObject(i));

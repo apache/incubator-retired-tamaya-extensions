@@ -38,46 +38,62 @@ import javax.json.JsonReaderFactory;
 import javax.json.JsonStructure;
 
 import static java.lang.String.format;
+import javax.json.JsonReader;
 
 /**
  * Property source based on a JSON file.
  */
 public class JSONPropertySource implements PropertySource {
-    /** Constant for enabling comments in Johnzon. */
+
+    /**
+     * Constant for enabling comments in Johnzon.
+     */
     public static final String JOHNZON_SUPPORTS_COMMENTS_PROP = "org.apache.johnzon.supports-comments";
 
-    /** The underlying resource. */
+    /**
+     * The underlying resource.
+     */
     private final URL urlResource;
-    /** The values read. */
+    /**
+     * The values read.
+     */
     private final Map<String, PropertyValue> values;
-    /** The evaluated ordinal. */
+    /**
+     * The evaluated ordinal.
+     */
     private int ordinal;
-    /** The JSON reader factory used. */
+    /**
+     * The JSON reader factory used.
+     */
     private JsonReaderFactory readerFactory = initReaderFactory();
 
-    /** Initializes the factory to be used for creating readers. */
+    /**
+     * Initializes the factory to be used for creating readers.
+     */
     private JsonReaderFactory initReaderFactory() {
         Map<String, Object> config = new HashMap<>();
         config.put(JOHNZON_SUPPORTS_COMMENTS_PROP, true);
-       return Json.createReaderFactory(config);
+        return Json.createReaderFactory(config);
     }
 
     /**
      * Constructor, hereby using 0 as the default ordinal.
+     *
      * @param resource the resource modelled as URL, not null.
      * @throws IOException if reading the resource fails.
      */
-    public JSONPropertySource(URL resource)throws IOException {
+    public JSONPropertySource(URL resource) throws IOException {
         this(resource, 0);
     }
 
     /**
      * Constructor.
+     *
      * @param resource the resource modelled as URL, not null.
      * @param defaultOrdinal the defaultOrdinal to be used.
      * @throws IOException if reading the resource fails.
      */
-    public JSONPropertySource(URL resource, int defaultOrdinal)throws IOException {
+    public JSONPropertySource(URL resource, int defaultOrdinal) throws IOException {
         urlResource = Objects.requireNonNull(resource);
         this.ordinal = defaultOrdinal; // may be overriden by read...
         this.values = readConfig(urlResource);
@@ -86,13 +102,12 @@ public class JSONPropertySource implements PropertySource {
         }
     }
 
-
     public int getOrdinal() {
         PropertyValue configuredOrdinal = get(TAMAYA_ORDINAL);
-        if(configuredOrdinal!=null){
-            try{
+        if (configuredOrdinal != null) {
+            try {
                 return Integer.parseInt(configuredOrdinal.getValue());
-            } catch(Exception e){
+            } catch (Exception e) {
                 Logger.getLogger(getClass().getName()).log(Level.WARNING,
                         "Configured Ordinal is not an int number: " + configuredOrdinal, e);
             }
@@ -118,25 +133,28 @@ public class JSONPropertySource implements PropertySource {
 
     /**
      * Reads the configuration.
+     *
      * @param urlResource soure of the configuration.
      * @return the configuration read from the given resource URL.
      * @throws ConfigException if resource URL cannot be read.
      * @throws IOException if reading the urlResource fails.
      */
-    protected Map<String, PropertyValue> readConfig(URL urlResource) throws IOException{
+    protected Map<String, PropertyValue> readConfig(URL urlResource) throws IOException {
         try (InputStream is = urlResource.openStream()) {
-            JsonStructure root = this.readerFactory.createReader(is, StandardCharsets.UTF_8).read();
+            try (JsonReader reader = this.readerFactory.createReader(is, StandardCharsets.UTF_8)) {
+                JsonStructure root = reader.read();
 
-            JSONDataBuilder visitor = new JSONDataBuilder(urlResource.toString(), root);
-            Map<String, String> values = visitor.build().toMap();
-            Map<String, PropertyValue> result = new HashMap<>();
-            for(Map.Entry<String,String> en:values.entrySet()){
-                result.put(en.getKey(), PropertyValue.createValue(en.getKey(), en.getValue()).setMeta("source", getName()));
+                JSONDataBuilder visitor = new JSONDataBuilder(urlResource.toString(), root);
+                Map<String, String> values = visitor.build().toMap();
+                Map<String, PropertyValue> result = new HashMap<>();
+                for (Map.Entry<String, String> en : values.entrySet()) {
+                    result.put(en.getKey(), PropertyValue.createValue(en.getKey(), en.getValue()).setMeta("source", getName()));
+                }
+                return result;
             }
-            return result;
-        }catch(IOException ioe){
+        } catch (IOException ioe) {
             throw ioe;
-        }catch (Exception t) {
+        } catch (Exception t) {
             throw new IOException(format("Failed to read properties from %s", urlResource.toExternalForm()), t);
         }
     }

@@ -72,9 +72,9 @@ final class EtcdBackendConfig {
     }
 
     /**
-     * Evaluate the etcd target servers fomr system/environment property {@code tamaya.etcd.server}.
+     * Evaluate the etcd target servers for system/environment property {@code tamaya.etcd.server}.
      *
-     * @return the servers configured, or {@code http://127.0.0.1:4001} (default).
+     * @return the servers configured, or {@code http://127.0.0.1:2379} (default).
      */
     public static List<String> getServers() {
         String serverURLs = System.getProperty(TAMAYA_ETCD_SERVER_URLS);
@@ -82,7 +82,7 @@ final class EtcdBackendConfig {
             serverURLs = System.getenv(TAMAYA_ETCD_SERVER_URLS);
         }
         if (serverURLs == null) {
-            serverURLs = "http://127.0.0.1:4001";
+            serverURLs = "http://127.0.0.1:2379";
         }
         List<String> servers = new ArrayList<>();
         for (String url : serverURLs.split("\\,")) {

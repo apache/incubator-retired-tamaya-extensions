@@ -48,6 +48,9 @@ public class BooleanAsIntegerConverterFix implements PropertyConverter<Boolean> 
 
     @Override
     public boolean equals(Object o){
+        if (o == null){
+            return false;
+        }
         return getClass().equals(o.getClass());
     }
 

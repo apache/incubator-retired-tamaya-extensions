@@ -102,14 +102,14 @@ public final class InjectionUtils {
             try {
                 keyResolver = sectionAnnot.keyResolver().getDeclaredConstructor().newInstance();
             } catch (Exception e) {
-                LOG.log(Level.SEVERE, "Cannot create KeyResolver: " + sectionAnnot.keyResolver().getName(), e);
+                LOG.log(Level.SEVERE, "Cannot create KeyResolver from section resolver: " + sectionAnnot.keyResolver().getName(), e);
             }
         }
         if(configAnnot!=null && !configAnnot.keyResolver().equals(KeyResolver.class)){
             try {
                 keyResolver = configAnnot.keyResolver().getDeclaredConstructor().newInstance();
             } catch (Exception e) {
-                LOG.log(Level.SEVERE, "Cannot create KeyResolver: " + sectionAnnot.keyResolver().getName(), e);
+                LOG.log(Level.SEVERE, "Cannot create KeyResolver from config resolver: " + configAnnot.keyResolver().getName(), e);
             }
         }
         List<String> alternateKeys = new ArrayList<>();
@@ -134,14 +134,14 @@ public final class InjectionUtils {
             try {
                 keyResolver = sectionAnnot.keyResolver().getDeclaredConstructor().newInstance();
             } catch (Exception e) {
-                LOG.log(Level.SEVERE, "Cannot create KeyResolver: " + sectionAnnot.keyResolver().getName(), e);
+                LOG.log(Level.SEVERE, "Cannot create KeyResolver from section resolver: " + sectionAnnot.keyResolver().getName(), e);
             }
         }
         if(configAnnot!=null && !configAnnot.keyResolver().equals(KeyResolver.class)){
             try {
                 keyResolver = configAnnot.keyResolver().getDeclaredConstructor().newInstance();
             } catch (Exception e) {
-                LOG.log(Level.SEVERE, "Cannot create KeyResolver: " + sectionAnnot.keyResolver().getName(), e);
+                LOG.log(Level.SEVERE, "Cannot create KeyResolver from config resolver: " + configAnnot.keyResolver().getName(), e);
             }
         }
         List<String> alternateKeys = new ArrayList<>();

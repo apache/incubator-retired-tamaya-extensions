@@ -56,7 +56,11 @@ public class DisplayRegistration implements Serializable{
             adr = InetAddress.getLocalHost();
             this.host = adr.getCanonicalHostName();
         } catch(Exception e){
-            this.host = adr.getHostName();
+            if (adr == null){
+                this.host = "localhost";
+            }else{
+                this.host = adr.getHostName();
+            }
         }
     }
 

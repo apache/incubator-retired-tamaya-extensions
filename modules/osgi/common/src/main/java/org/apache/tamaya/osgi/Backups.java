@@ -36,7 +36,7 @@ final class Backups {
 
     private static final Logger LOG = Logger.getLogger(Backups.class.getName());
     public static final String TAMAYA_BACKUP = "tamaya.backup";
-    private static Map<String, Hashtable<String, ?>> initialConfigState = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<String, Hashtable<String, ?>> initialConfigState = new ConcurrentHashMap<>();
 
     private Backups() {
     }
@@ -158,7 +158,7 @@ final class Backups {
             if (serialized != null) {
                 ByteArrayInputStream bis = new ByteArrayInputStream(Base64.getDecoder().decode(serialized));
                 ObjectInputStream ois = new ObjectInputStream(bis);
-                initialConfigState = (Map<String, Hashtable<String, ?>>) ois.readObject();
+                initialConfigState = (ConcurrentHashMap<String, Hashtable<String, ?>>) ois.readObject();
                 ois.close();
             }
         } catch (Exception e) {
