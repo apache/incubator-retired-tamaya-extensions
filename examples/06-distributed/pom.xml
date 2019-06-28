@@ -95,7 +95,6 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -103,6 +102,11 @@
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
+		<dependency>
+		    <groupId>org.projectlombok</groupId>
+		    <artifactId>lombok</artifactId>
+		    <version>1.18.8</version>
+		</dependency>
     </dependencies>
 
     <build>

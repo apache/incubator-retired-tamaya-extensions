@@ -24,9 +24,12 @@ import java.net.InetAddress;
 import java.util.Objects;
 import java.util.UUID;
 
+import lombok.Data;
+
 /**
  * Created by atsticks on 13.11.16.
  */
+@Data
 public class DisplayRegistration implements Serializable{
 
     private static final long serialVersionUID = 1L;
@@ -64,55 +67,6 @@ public class DisplayRegistration implements Serializable{
         }
     }
 
-    public boolean isUpdate(){
-        return this.update;
-    }
-
-    public String getDisplayModel() {
-        return displayModel;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o){
-            return true;
-        }
-        if (!(o instanceof DisplayRegistration)){
-            return false;
-        }
-        DisplayRegistration that = (DisplayRegistration) o;
-        return Objects.equals(getId(), that.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
-    }
-
-    @Override
-    public String toString() {
-        return "DisplayRegistration{" +
-                "\n  id='" + id + '\'' +
-                "\n  displayName='" + displayName + '\'' +
-                "\n  host='" + host + '\'' +
-                "\n  displayModel='" + displayModel + '\'' +
-                "\n  timestamp='" + timestamp + '\'' +
-                "\n  update='" + update + '\'' +
-                "\n}";
-    }
-
     public DisplayRegistration update() {
         DisplayRegistration reg = new DisplayRegistration();
         reg.displayModel = this.displayModel;
@@ -124,7 +78,4 @@ public class DisplayRegistration implements Serializable{
         return reg;
     }
 
-    public void setDisplayName(String displayName) {
-        this.displayName = Objects.requireNonNull(displayName);
-    }
 }
