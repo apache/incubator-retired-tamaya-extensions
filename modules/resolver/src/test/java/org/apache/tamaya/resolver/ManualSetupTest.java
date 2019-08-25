@@ -18,14 +18,10 @@
  */
 package org.apache.tamaya.resolver;
 
-import org.apache.tamaya.Configuration;
-import org.apache.tamaya.ConfigurationProvider;
 import org.apache.tamaya.resolver.internal.DefaultExpressionEvaluator;
 import org.apache.tamaya.resolver.internal.ExpressionResolutionFilter;
 import org.apache.tamaya.resolver.spi.ExpressionEvaluator;
 import org.apache.tamaya.resolver.spi.ExpressionResolver;
-import org.apache.tamaya.spi.ConfigurationBuilder;
-import org.apache.tamaya.spi.FilterContext;
 import org.apache.tamaya.spi.PropertyValue;
 import org.junit.Test;
 
@@ -34,6 +30,9 @@ import java.util.Arrays;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+/**
+ * Creates and test a manual filter setup using a custom resolver.
+ */
 public class ManualSetupTest {
 
     @Test
