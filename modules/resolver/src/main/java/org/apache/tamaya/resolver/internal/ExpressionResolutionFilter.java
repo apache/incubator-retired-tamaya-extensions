@@ -42,6 +42,27 @@ public class ExpressionResolutionFilter implements PropertyFilter, ClassloaderAw
 
     private ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
+    private ExpressionEvaluator evaluator;
+
+    /**
+     * Default constructor loading the {@link ExpressionEvaluator} from the current service context.
+     */
+    public ExpressionResolutionFilter(){
+        this.evaluator = ServiceContextManager.getServiceContext(classLoader).getService(ExpressionEvaluator.class);
+        if(evaluator==null){
+            throw new ConfigException("No ExpressionEvaluator registered.");
+        }
+    }
+
+    /**
+     * Constructor allowing to pass your own {@link ExpressionEvaluator} or to configure your custom evaluator.
+     * @param evaluator the evaluator, not null.
+     * @see DefaultExpressionEvaluator
+     */
+    public ExpressionResolutionFilter(ExpressionEvaluator evaluator){
+        this.evaluator = Objects.requireNonNull(evaluator);
+    }
+
     @Override
     public void init(ClassLoader classLoader) {
         this.classLoader = Objects.requireNonNull(classLoader);
@@ -53,13 +74,7 @@ public class ExpressionResolutionFilter implements PropertyFilter, ClassloaderAw
         return classLoader;
     }
 
-    private final ExpressionEvaluator evaluator(){
-        ExpressionEvaluator evaluator = ServiceContextManager.getServiceContext(classLoader).getService(ExpressionEvaluator.class);
-        if(evaluator==null){
-            throw new ConfigException("No ExpressionEvaluator registered.");
-        }
-        return evaluator;
-    }
+
 
     /**
      * Resolves an expression in the form current <code>${resolverId:expression}</code> or
@@ -101,7 +116,7 @@ public class ExpressionResolutionFilter implements PropertyFilter, ClassloaderAw
     @Override
     public PropertyValue filterProperty(PropertyValue valueToBeFiltered, FilterContext context){
         LOG.finest("Resolving " + valueToBeFiltered);
-        PropertyValue newVal = evaluator().evaluateExpression(valueToBeFiltered, true);
+        PropertyValue newVal = evaluator.evaluateExpression(valueToBeFiltered, true);
         if(newVal!=null){
             return newVal;
         }

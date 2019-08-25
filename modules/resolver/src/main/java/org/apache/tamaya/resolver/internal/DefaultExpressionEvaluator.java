@@ -38,6 +38,22 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
 
     private static final Logger LOG = Logger.getLogger(DefaultExpressionEvaluator.class.getName());
 
+    List<ExpressionResolver> resolvers = new ArrayList<>();
+
+    /**
+     * Default constructor loading its resolvers from the current service context.
+     */
+    public DefaultExpressionEvaluator(){
+        loadResolversFromServiceContext();
+    }
+
+    /**
+     * Default constructor loading its resolvers from the current service context.
+     * @param resolvers the resolvers to be used for evaluation, resolvers at the beginning have precedence.
+     */
+    public DefaultExpressionEvaluator(List<ExpressionResolver> resolvers){
+        this.resolvers.addAll(resolvers);
+    }
 
     /**
      * Comparator used (not needed with Java8).
@@ -112,10 +128,12 @@ public class DefaultExpressionEvaluator implements ExpressionEvaluator {
 
     @Override
     public Collection<ExpressionResolver> getResolvers() {
-        List<ExpressionResolver> resolvers = new ArrayList<>();
+        return resolvers;
+    }
+
+    private void loadResolversFromServiceContext() {
         resolvers.addAll(ServiceContextManager.getServiceContext().getServices(ExpressionResolver.class));
         resolvers.sort(RESOLVER_COMPARATOR);
-        return resolvers;
     }
 
     /**
