@@ -27,8 +27,8 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 /**
  * Creates and test a manual filter setup using a custom resolver.
@@ -40,12 +40,11 @@ public class ManualSetupTest {
         ExpressionEvaluator evaluator = new DefaultExpressionEvaluator(Arrays.asList(new CustomResolver()));
         ExpressionResolutionFilter reolverFilter = new ExpressionResolutionFilter(evaluator);
         PropertyValue filtered = reolverFilter.filterProperty(PropertyValue.createValue("foo", "${foo:cccabABabbaaaba}"), null);
-        assertNotNull(filtered);
         PropertyValue unfiltered = reolverFilter.filterProperty(PropertyValue.createValue("foo", "${url:cccabABabbaaaba}"), null);
-        assertNotNull(filtered);
-        assertEquals("CCCBBABBBBBBBBB", filtered.getValue());
-        assertNotNull(unfiltered);
-        assertEquals("?{url:cccabABabbaaaba}", unfiltered.getValue());
+        assertThat(filtered).isNotNull();
+        assertThat(unfiltered).isNotNull();
+        assertThat(filtered.getValue()).isNotNull().isEqualTo("CCCBBABBBBBBBBB");
+        assertThat(unfiltered.getValue()).isNotNull().isEqualTo("?{url:cccabABabbaaaba}");
     }
 
     private static final class CustomResolver implements ExpressionResolver{
