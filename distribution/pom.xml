@@ -94,7 +94,27 @@ under the License.
             </activation>
             <build>
                 <plugins>
-
+                    <plugin>
+                        <groupId>net.nicoulaj.maven.plugins</groupId>
+                        <artifactId>checksum-maven-plugin</artifactId>
+                        <version>1.8</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>artifacts</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <individualFiles>true</individualFiles>
+                            <attachChecksums>true</attachChecksums>
+                            <failOnError>false</failOnError>
+                            <algorithms>
+                                <algorithm>MD5</algorithm>
+                                <algorithm>SHA-1</algorithm>
+                            </algorithms>
+                        </configuration>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
