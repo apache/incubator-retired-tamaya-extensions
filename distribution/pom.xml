@@ -32,6 +32,10 @@ under the License.
     <name>Apache Tamaya Extension Distribution</name>
     <inceptionYear>2015</inceptionYear>
 
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
     <scm>
         <connection>
             scm:git://git.apache.org/incubator-tamaya.git
@@ -78,5 +82,22 @@ under the License.
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>release-sign-artifacts</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
