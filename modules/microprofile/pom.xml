@@ -22,7 +22,7 @@ under the License.
     <parent>
         <groupId>org.apache.tamaya.ext</groupId>
         <artifactId>tamaya-extensions</artifactId>
-        <version>0.4-incubating-SNAPSHOT</version>
+        <version>0.4-incubating</version>
     </parent>
 
     <artifactId>tamaya-microprofile</artifactId>
@@ -36,7 +36,7 @@ under the License.
         <geronimo-atinject-1.0-spec.version>1.0</geronimo-atinject-1.0-spec.version>
         <geronimo-jcdi-1.1-spec.version>1.0</geronimo-jcdi-1.1-spec.version>
         <version.shrinkwrap.resolvers>2.2.6</version.shrinkwrap.resolvers>
-        <tamaya-version>0.4-incubating-SNAPSHOT</tamaya-version>
+        <tamaya-version>${project.version}</tamaya-version>
         <arquillian.version>1.1.13.Final</arquillian.version>
         <arquillian-weld-embedded.version>2.0.0.Final</arquillian-weld-embedded.version>
         <cdi-api.version>2.0</cdi-api.version>

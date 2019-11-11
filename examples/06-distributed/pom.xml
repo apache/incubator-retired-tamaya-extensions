@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.apache.tamaya.ext.examples</groupId>
         <artifactId>examples</artifactId>
-        <version>0.4-incubating-SNAPSHOT</version>
+        <version>0.4-incubating</version>
     </parent>
 
     <artifactId>06-distributed-example</artifactId>
@@ -34,7 +34,7 @@
         <maven.compile.sourceLevel>1.8</maven.compile.sourceLevel>
         <maven.compile.optimize>false</maven.compile.optimize>
         <maven.compile.deprecation>true</maven.compile.deprecation>
-        <tamaya.version>0.4-incubating-SNAPSHOT</tamaya.version>
+        <tamaya.version>${project.version}</tamaya.version>
         <vertx.version>3.5.4</vertx.version>
         <junit.version>4.12</junit.version>
         <javafx.version>11.0.2</javafx.version>

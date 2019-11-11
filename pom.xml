@@ -29,7 +29,7 @@ under the License.
 
     <groupId>org.apache.tamaya.ext</groupId>
     <artifactId>tamaya-extensions-all</artifactId>
-    <version>0.4-incubating-SNAPSHOT</version>
+    <version>0.4-incubating</version>
     <packaging>pom</packaging>
 
     <name>Apache Tamaya Extensions</name>
@@ -43,9 +43,6 @@ under the License.
     </organization>
 
     <properties>
-        <!-- Used version of Tamaya API&Core -->
-        <tamaya-apicore.version>0.4-incubating-SNAPSHOT</tamaya-apicore.version>
-
         <commons-io.version>2.5</commons-io.version>
         <findbugs.skip>false</findbugs.skip>
         <osgi.version>4.3.1</osgi.version>

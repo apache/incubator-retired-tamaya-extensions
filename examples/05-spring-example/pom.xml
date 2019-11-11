@@ -16,7 +16,7 @@
 	<parent>
 		<groupId>org.apache.tamaya.ext.examples</groupId>
 		<artifactId>examples</artifactId>
-		<version>0.4-incubating-SNAPSHOT</version>
+		<version>0.4-incubating</version>
 	</parent>
 
 	<artifactId>05-spring-example</artifactId>
@@ -24,7 +24,7 @@
 	<properties>
 		<spring.version>5.1.2.RELEASE</spring.version>
 		<spring.boot.version>2.1.0.RELEASE</spring.boot.version>
-		<tamaya-apicore.version>0.4-incubating-SNAPSHOT</tamaya-apicore.version>
+		<tamaya-apicore.version>${project.version}</tamaya-apicore.version>
 	</properties>
 
 	<name>Apache Tamaya Spring Example</name>
@@ -48,7 +48,7 @@
 		<dependency>
 			<groupId>org.apache.tamaya</groupId>
 			<artifactId>tamaya-core</artifactId>
-			<version>${tamaya-apicore.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.tamaya.ext</groupId>
