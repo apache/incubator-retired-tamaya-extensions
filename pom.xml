@@ -29,7 +29,7 @@ under the License.
 
     <groupId>org.apache.tamaya.ext</groupId>
     <artifactId>tamaya-extensions-all</artifactId>
-    <version>0.4-incubating</version>
+    <version>0.5-incubating-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Apache Tamaya Extensions</name>
@@ -85,7 +85,7 @@ under the License.
 
         <!-- Dependencies for site generation -->
         <reflow-skin.version>1.1.1</reflow-skin.version>
-        <released_version>0.3-incubating</released_version>
+        <released_version>0.4-incubating</released_version>
         <!-- API checker -->
         <revapi-java.version>0.18.0</revapi-java.version>
         <revapi.plugin.version>0.10.5</revapi.plugin.version>

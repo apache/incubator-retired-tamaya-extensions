@@ -43,13 +43,8 @@ public class ManualSetupTest {
         PropertyValue unfiltered = reolverFilter.filterProperty(PropertyValue.createValue("foo", "${url:cccabABabbaaaba}"), null);
         assertThat(filtered).isNotNull();
         assertThat(unfiltered).isNotNull();
-<<<<<<< HEAD
         assertThat(filtered.getValue()).isNotNull().isEqualTo("CCCBBABBBBBBBBB");
         assertThat(unfiltered.getValue()).isNotNull().isEqualTo("?{url:cccabABabbaaaba}");
-=======
-        assertThat(filtered.getValue()).isEqualTo("CCCBBABBBBBBBBB");
-        assertThat(unfiltered.getValue()).isEqualTo("?{url:cccabABabbaaaba}");
->>>>>>> release-0.4-incubating
     }
 
     private static final class CustomResolver implements ExpressionResolver{

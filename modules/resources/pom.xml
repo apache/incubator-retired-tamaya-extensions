@@ -24,7 +24,7 @@ under the License.
     <parent>
         <groupId>org.apache.tamaya.ext</groupId>
         <artifactId>tamaya-extensions</artifactId>
-        <version>0.4-incubating</version>
+        <version>0.5-incubating-SNAPSHOT</version>
     </parent>
 
     <artifactId>tamaya-resources</artifactId>

@@ -25,12 +25,11 @@ under the License.
     <parent>
         <groupId>org.apache.tamaya.ext.examples</groupId>
         <artifactId>examples</artifactId>
-        <version>0.4-incubating</version>
+        <version>0.5-incubating-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
     <artifactId>03-injection-example</artifactId>
-    <version>0.4-incubating</version>
     <name>Apache Tamaya Configuration Injection Example</name>
 
     <description>This project contains a simple illustrating how configuration values can be injected.</description>
