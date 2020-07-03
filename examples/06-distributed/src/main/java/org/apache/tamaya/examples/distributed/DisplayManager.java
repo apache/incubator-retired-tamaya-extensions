@@ -72,7 +72,7 @@ public class DisplayManager extends Application{
 
     private TextArea monitorField = new TextArea("Nothing to monitor yet.");
 
-    private StringBuffer monitorBuffer = new StringBuffer();
+    private StringBuilder monitorBuffer = new StringBuilder();
 
     private Vertx vertx;
 

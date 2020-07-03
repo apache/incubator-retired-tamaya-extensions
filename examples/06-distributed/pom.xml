@@ -77,6 +77,12 @@
             <artifactId>vertx-core</artifactId>
             <version>${vertx.version}</version>
         </dependency>
+		<dependency>
+		  <groupId>io.vertx</groupId>
+		  <artifactId>vertx-unit</artifactId>
+		  <version>3.7.1</version>
+		  <scope>test</scope>
+		</dependency>        
         <dependency>
             <groupId>org.apache.tamaya.ext</groupId>
             <artifactId>tamaya-mutable-config</artifactId>
@@ -112,6 +118,31 @@
     <build>
         <defaultGoal>clean install</defaultGoal>
         <plugins>
+        <plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-shade-plugin</artifactId>
+  <executions>
+    <execution>
+      <phase>package</phase>
+      <goals>
+        <goal>shade</goal>
+      </goals>
+      <configuration>
+        <transformers>
+          <transformer
+            implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+            <manifestEntries>
+              <Main-Class>org.apache.tamaya.examples.distributed.DisplayManager</Main-Class>
+              <!-- Main-Verticle>io.vertx.blog.first.MyFirstVerticle</Main-Verticle-->
+            </manifestEntries>
+          </transformer>
+        </transformers>
+        <artifactSet/>
+        <outputFile>${project.build.directory}/${project.artifactId}-${project.version}-fat.jar</outputFile>
+      </configuration>
+    </execution>
+  </executions>
+</plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
