@@ -31,7 +31,7 @@ import java.util.function.Supplier;
  * <p>Types of this interface can be used as injection targets in injected beans or as template resiult on configuration
  * templates.</p>
  *
- * <h3>Implementation Specification</h3>
+ * <h1>Implementation Specification</h1>
  * Implementation of this interface must be
  * <ul>
  *     <li>Serializable, when also the item stored is serializable</li>

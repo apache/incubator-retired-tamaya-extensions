@@ -33,7 +33,7 @@ import java.lang.reflect.Method;
  * backing a configuration template method. Hereby this annotation can be used in multiple
  * ways and combined with other annotations such as {@link WithConfigOperator}, {@link WithPropertyConverter}.
  *
- * <h3>Simplest variant</h3>
+ * <h1>Simplest variant</h1>
  * Below the most simple variant of a configured class is given:
  * <pre>
  * package a.b;

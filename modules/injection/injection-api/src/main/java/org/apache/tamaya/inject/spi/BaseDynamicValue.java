@@ -43,7 +43,7 @@ import java.util.logging.Logger;
  * activate the change in the {@link DynamicValue}. Similarly an instance also can ignore all
  * later changes to the value.
  *
- * <h3>Implementation Specification</h3>
+ * <h1>Implementation Specification</h1>
  * This class is
  * <ul>
  * <li>Serializable, when also the item stored is serializable</li>
